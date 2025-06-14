@@ -27,6 +27,9 @@ importers:
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.1.10
+      '@tsconfig/next':
+        specifier: ^2.0.3
+        version: 2.0.3
       '@types/node':
         specifier: ^20
         version: 20.19.0
@@ -338,6 +341,9 @@ packages:
 
   '@tailwindcss/postcss@4.1.10':
     resolution: {integrity: sha512-B+7r7ABZbkXJwpvt2VMnS6ujcDoR2OOcFaqrLIo1xbcdxje4Vf+VgJdBzNNbrAjBj/rLZ66/tlQ1knIGNLKOBQ==}
+
+  '@tsconfig/next@2.0.3':
+    resolution: {integrity: sha512-b4aKvmdWnv9aUy+NStUFlefirk3SItW20OJtbi5/ue9oMRaQtUYbN5zsr7OmV3rlx6Gp6h7A82gPoCXhrNGVPQ==}
 
   '@types/node@20.19.0':
     resolution: {integrity: sha512-hfrc+1tud1xcdVTABC2JiomZJEklMcXYNTVtZLAeqTVWD+qL5jkHKT+1lOtqDdGxt+mB53DTtiz673vfjU8D1Q==}
@@ -840,6 +846,8 @@ snapshots:
       '@tailwindcss/oxide': 4.1.10
       postcss: 8.5.5
       tailwindcss: 4.1.10
+
+  '@tsconfig/next@2.0.3': {}
 
   '@types/node@20.19.0':
     dependencies:
