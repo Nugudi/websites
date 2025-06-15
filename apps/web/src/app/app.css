@@ -1,4 +1,5 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+@import '@nugudi/nugudi-ui/app.css';
 
 :root {
   --background: #ffffff;

@@ -2,7 +2,18 @@
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!**/.direnv", "!**/.next"]
+    "includes": [
+      "**",
+      "!**/.direnv",
+      "!**/.next",
+      "!**/dist/**",
+      "!**/node_modules/**",
+      "**/.storybook/**/*",
+      "**/*.stories.*",
+      "**/dist/**",
+      "**/lib/**",
+      "**/.next/**"
+    ]
   },
   "linter": {
     "domains": {
@@ -30,5 +41,10 @@
     "enabled": true,
     "formatWithErrors": true,
     "indentStyle": "space"
+  },
+  "css": {
+    "formatter": {
+      "quoteStyle": "single"
+    }
   }
 }
