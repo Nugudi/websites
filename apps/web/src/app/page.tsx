@@ -1,4 +1,4 @@
-import { NugudiButton } from "@nugudi/nugudi-ui/nugudi-button";
+import { Button } from "@nugudi/nugudi-ui/button";
 
 export default function Home() {
   return (
@@ -6,8 +6,7 @@ export default function Home() {
       <h1 className="font-bold text-2xl text-green-500">
         너의 구로 디지털 단지
       </h1>
-      <NugudiButton>너구디 버튼</NugudiButton>
-      {/* <NugudiButton>너구디구디</NugudiButton> */}
+      <Button>너구디 버튼</Button>
     </div>
   );
 }

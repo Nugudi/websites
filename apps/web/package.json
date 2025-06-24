@@ -9,7 +9,7 @@
     "lint": "biome check .",
     "start": "next start",
     "test": "vitest run",
-    "test:watch": "vitest --watch"
+    "test:watch": "vitest watch"
   },
   "dependencies": {
     "@nugudi/nugudi-ui": "workspace:*",
