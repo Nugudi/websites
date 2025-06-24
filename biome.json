@@ -4,15 +4,10 @@
     "ignoreUnknown": true,
     "includes": [
       "**",
+      "!**/dist",
+      "!**/storybook-static",
       "!**/.direnv",
-      "!**/.next",
-      "!**/dist/**",
-      "!**/node_modules/**",
-      "**/.storybook/**/*",
-      "**/*.stories.*",
-      "**/dist/**",
-      "**/lib/**",
-      "**/.next/**"
+      "!**/.next"
     ]
   },
   "linter": {
@@ -34,6 +29,12 @@
             "functions": ["clsx", "cn", "cva", "tw", "tw.*"]
           }
         }
+      },
+      "style": {
+        "useSelfClosingElements": "error"
+      },
+      "suspicious": {
+        "noVar": "error"
       }
     }
   },
