@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "build:storybook": "pnpm --filter @nugudi/nugudi-ui run build:storybook",
     "check-types": "turbo run check-types",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
