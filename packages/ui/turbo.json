@@ -3,7 +3,7 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "with": ["build:storybook"]
+      "with": ["build:storybook", "test:watch"]
     },
     "build:storybook": {
       "outputs": ["storybook-static/**"]

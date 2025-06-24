@@ -1,0 +1,12 @@
+{
+  "$schema": "../../node_modules/turbo/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "dev": {
+      "cache": false,
+      "dependsOn": ["@nugudi/nugudi-ui#build"],
+      "with": ["test:watch"],
+      "persistent": true
+    }
+  }
+}
