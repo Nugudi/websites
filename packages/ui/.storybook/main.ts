@@ -1,9 +1,5 @@
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
 import type { StorybookConfig } from "@storybook/react-vite";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 /**
  * This function is used to resolve the absolute path of a package.
@@ -12,7 +8,6 @@ const __dirname = dirname(__filename);
 function _getAbsolutePath(value: string): any {
   return dirname(require.resolve(join(value, "package.json")));
 }
-
 const config: StorybookConfig = {
   stories: ["../src/*.mdx", "../src/*/*.stories.@(js|jsx|mjs|ts|tsx)"],
   addons: [
