@@ -16,6 +16,18 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "너구디",
   description: "너의 구로 디지털단지",
+  manifest: "/manifest.json",
+  keywords: ["너구디", "너의 구로 디지털단지"],
+  authors: [
+    {
+      name: "너구디",
+      url: "https://nugudi.com",
+    },
+  ],
+  icons: [
+    { rel: "apple-touch-icon", url: "/images/icons/apple-touch-icon.png" },
+    { rel: "icon", url: "/images/icons/favicon.ico" },
+  ],
 };
 
 export default function RootLayout({
