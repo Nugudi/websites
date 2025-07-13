@@ -6,7 +6,7 @@ body:
   - type: input
     id: parentIssueKey
     attributes:
-      label: '상위 Jira 티켓 번호'
+      label: '🎫 상위 Jira 티켓 번호'
       description: '상위 작업의 Jira 티켓 키를 입력하세요 (예: NUGUDI-123)'
       placeholder: 'NUGUDI-000'
     validations:
@@ -15,7 +15,7 @@ body:
   - type: input
     id: issueSummary
     attributes:
-      label: '이슈 요약'
+      label: '🎯 이슈 요약'
       description: '이슈의 간단한 제목을 입력하세요.'
       placeholder: '예: 주문 처리 로직 개선'
     validations:
@@ -24,7 +24,7 @@ body:
   - type: textarea
     id: tasks
     attributes:
-      label: '작업 목록'
+      label: '🔨 작업 목록'
       description: '구체적인 작업 항목을 작성하세요.'
       value: |
         - [ ] Task 1
@@ -35,7 +35,7 @@ body:
   - type: textarea
     id: reference
     attributes:
-      label: '참고 자료'
+      label: '📝 참고 자료'
       description: '관련된 스크린샷, 링크, 로그 등을 첨부하세요.'
     validations:
       required: false
