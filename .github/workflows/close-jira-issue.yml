@@ -1,0 +1,66 @@
+name: Move Jira Ticket to Done on PR Close
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  move-jira-done:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Move Jira Ticket to Done
+        uses: actions/github-script@v7
+        env:
+          JIRA_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+        with:
+          script: |
+            const jiraDomain = 'nuggudi.atlassian.net';
+            const pr = context.payload.pull_request;
+            const title = pr.title;
+
+            const match = title.match(/NUGUDI-\d+/);
+            if (!match) {
+              console.log("PR 제목에서 Jira 티켓 넘버를 찾을 수 없습니다!👀");
+              return;
+            }
+
+            const ticket = match[0];
+
+            // Jira transition 목록 조회
+            const transitionsRes = await fetch(`https://${jiraDomain}/rest/api/3/issue/${ticket}/transitions`, {
+              method: 'GET',
+              headers: {
+                'Authorization': `Basic ${Buffer.from(process.env.JIRA_EMAIL + ':' + process.env.JIRA_TOKEN).toString('base64')}`,
+                'Accept': 'application/json'
+              }
+            });
+
+            const transitions = await transitionsRes.json();
+
+            // 'Done' 상태의 transitionId 찾기
+            const doneTransition = transitions.transitions.find(t => t.name === 'Done');
+            if (!doneTransition) {
+              console.log("Done 상태로 변경할 수 없습니다. transition 확인 필요");
+              return;
+            }
+
+            // 상태 변경
+            await fetch(`https://${jiraDomain}/rest/api/3/issue/${ticket}/transitions`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Basic ${Buffer.from(process.env.JIRA_EMAIL + ':' + process.env.JIRA_TOKEN).toString('base64')}`,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                transition: {
+                  id: doneTransition.id
+                }
+              })
+            });
+
+            console.log(`Jira 티켓 ${ticket} 이 Done 상태로 변경됨 ✅`);

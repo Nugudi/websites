@@ -1,0 +1,86 @@
+name: 'GitHub → Jira 이슈 동기화'
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  sync-to-jira:
+    name: Create Jira Issue
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Jira 로그인
+        uses: atlassian/gajira-login@v3
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+
+      - name: 이슈 템플릿 파싱
+        uses: stefanbuck/github-issue-parser@v3
+        id: parse_issue
+        with:
+          template-path: .github/ISSUE_TEMPLATE/issue-form.yml
+
+      - name: 파싱 결과 디버그 출력
+        run: |
+          echo "Parsed JSON: ${{ steps.parse_issue.outputs.jsonString }}"
+          echo "상위 티켓 키: ${{ steps.parse_issue.outputs.issueparser_parentIssueKey }}"
+
+      - name: Markdown → Jira 포맷 변환
+        uses: peter-evans/jira2md@v1
+        id: convert_md
+        with:
+          input-text: |
+            ### GitHub Issue
+            - ${{ github.event.issue.html_url }}
+            ${{ github.event.issue.body }}
+          mode: md2jira
+
+      - name: Jira 이슈 생성
+        id: create_jira
+        uses: atlassian/gajira-create@v3
+        with:
+          project: NUGUDI
+          issuetype: Task
+          summary: '${{ github.event.issue.title }}'
+          description: '${{ steps.convert_md.outputs.output-text }}'
+          fields: |
+            {
+              "parent": {
+                "key": "${{ steps.parse_issue.outputs.issueparser_parentIssueKey }}"
+              }
+            }
+
+      - name: 생성 결과 로그
+        run: |
+          echo "생성된 Jira 이슈: ${{ steps.create_jira.outputs.issueKey }}"
+
+      - name: 브랜치 생성 및 푸시
+        run: |
+          ISSUE_KEY="${{ steps.create_jira.outputs.issueKey }}"
+          BRANCH_NAME="feature/${ISSUE_KEY}"
+          git checkout -b "${BRANCH_NAME}"
+          git push origin "${BRANCH_NAME}"
+
+      - name: GitHub 이슈 제목 업데이트
+        uses: actions-cool/issues-helper@v3
+        with:
+          actions: 'update-issue'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: '[${{ steps.create_jira.outputs.issueKey }}] ${{ github.event.issue.title }}'
+
+      - name: Jira 링크 댓글 추가
+        uses: actions-cool/issues-helper@v3
+        with:
+          actions: 'create-comment'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            Jira 이슈가 생성되었습니다: [${{ steps.create_jira.outputs.issueKey }}](${{ secrets.JIRA_BASE_URL }}/browse/${{ steps.create_jira.outputs.issueKey }})
