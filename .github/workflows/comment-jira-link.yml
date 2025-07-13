@@ -37,7 +37,6 @@ jobs:
             const jiraIssueUrl = `${apiBase}/browse/${ticket}`;
             const apiUrl = `${apiBase}/rest/api/3/issue/${ticket}`;
 
-            // Jira API 호출
             const res = await fetch(apiUrl, {
               method: 'GET',
               headers: {
@@ -55,7 +54,6 @@ jobs:
             const status = issue.fields.status.name;
             const assignee = issue.fields.assignee?.displayName || 'Unassigned';
 
-            // 기존 코멘트 확인
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -87,3 +85,14 @@ jobs:
                 body: commentBody
               });
             }
+
+      - name: Notify Slack of new PR
+        if: ${{ github.event.action == 'opened' }}
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": ":tada: 새로운 PR이 열렸습니다!\n• 레포: `${{ github.repository }}`\n• PR 제목: `${{ github.event.pull_request.title }}`\n• 링크: `${{ github.event.pull_request.html_url }}`\n• Jira 링크 코멘트가 달렸습니다. 확인해주세요."
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

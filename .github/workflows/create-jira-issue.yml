@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   sync_to_jira:
+    name: Sync GitHub Issue to Jira
     runs-on: ubuntu-latest
 
     steps:
@@ -80,3 +81,13 @@ jobs:
           issue-number: ${{ github.event.issue.number }}
           body: |
             Jira 이슈가 생성되었습니다: [${{ steps.create_jira.outputs.issue }}](${{ secrets.JIRA_BASE_URL }}/browse/${{ steps.create_jira.outputs.issue }})
+
+      - name: Notify Slack of new issue
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": ":sparkles: 새 GitHub 이슈가 생성되었습니다!\n• 레포: `${{ github.repository }}`\n• 이슈 제목: `${{ github.event.issue.title }}`\n• 링크: `${{ github.event.issue.html_url }}`\n• Jira 링크: `<${{ secrets.JIRA_BASE_URL }}/browse/${{ steps.create_jira.outputs.issue }}|${{ steps.create_jira.outputs.issue }}>`"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
