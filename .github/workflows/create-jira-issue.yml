@@ -4,13 +4,16 @@ on:
   issues:
     types: [opened]
 
+permissions:
+  issues: write
+  pull-requests: write
+
 jobs:
-  sync-to-jira:
-    name: Create Jira Issue
+  sync_to_jira:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
@@ -28,10 +31,10 @@ jobs:
         with:
           template-path: .github/ISSUE_TEMPLATE/issue-form.yml
 
-      - name: 파싱 결과 디버그 출력
+      - name: Debug parsed output
         run: |
           echo "Parsed JSON: ${{ steps.parse_issue.outputs.jsonString }}"
-          echo "상위 티켓 키: ${{ steps.parse_issue.outputs.issueparser_parentIssueKey }}"
+          echo "Parent key: ${{ steps.parse_issue.outputs.issueparser_parentIssueKey }}"
 
       - name: Markdown → Jira 포맷 변환
         uses: peter-evans/jira2md@v1
@@ -60,21 +63,14 @@ jobs:
 
       - name: 생성 결과 로그
         run: |
-          echo "생성된 Jira 이슈: ${{ steps.create_jira.outputs.issueKey }}"
-
-      - name: 브랜치 생성 및 푸시
-        run: |
-          ISSUE_KEY="${{ steps.create_jira.outputs.issueKey }}"
-          BRANCH_NAME="feature/${ISSUE_KEY}"
-          git checkout -b "${BRANCH_NAME}"
-          git push origin "${BRANCH_NAME}"
+          echo "생성된 Jira 이슈: ${{ steps.create_jira.outputs.issue }}"
 
       - name: GitHub 이슈 제목 업데이트
         uses: actions-cool/issues-helper@v3
         with:
           actions: 'update-issue'
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: '[${{ steps.create_jira.outputs.issueKey }}] ${{ github.event.issue.title }}'
+          title: '[${{ steps.create_jira.outputs.issue }}] ${{ github.event.issue.title }}'
 
       - name: Jira 링크 댓글 추가
         uses: actions-cool/issues-helper@v3
@@ -83,4 +79,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.issue.number }}
           body: |
-            Jira 이슈가 생성되었습니다: [${{ steps.create_jira.outputs.issueKey }}](${{ secrets.JIRA_BASE_URL }}/browse/${{ steps.create_jira.outputs.issueKey }})
+            Jira 이슈가 생성되었습니다: [${{ steps.create_jira.outputs.issue }}](${{ secrets.JIRA_BASE_URL }}/browse/${{ steps.create_jira.outputs.issue }})
