@@ -1,18 +1,85 @@
+name: 'PR → Jira “IN REVIEW” 전환'
+
 on:
   pull_request:
-    types: [opened, ready_for_review]
+    types:
+      - opened
+      - ready_for_review
+
+permissions:
+  pull-requests: write
+
+env:
+  # env 레벨에서 한번만 선언
+  JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+  JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+  JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
 
 jobs:
-  transition:
+  move_to_in_review:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/github-script@v7
-        env:
-          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
-          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
-          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+      - name: Move Jira Issue to IN REVIEW
+        uses: actions/github-script@v7
         with:
           script: |
+            const core = require('@actions/core');
             const pr = context.payload.pull_request;
+
+            // 1) PR 제목에서 티켓 키 추출
             const ticket = pr.title.match(/NUGUDI-\d+/)?.[0];
-            if (!ticket) return;
+            if (!ticket) {
+              console.log("No Jira ticket found in PR title.");
+              return;
+            }
+
+            // 2) 인증 헤더 & API 베이스 준비
+            const apiBase = process.env.JIRA_BASE_URL.replace(/\/+$/, '');
+            const auth = Buffer.from(
+              `${process.env.JIRA_USER_EMAIL}:${process.env.JIRA_API_TOKEN}`
+            ).toString('base64');
+
+            // 3) 가능한 전환 목록 조회
+            const transRes = await fetch(
+              `${apiBase}/rest/api/3/issue/${ticket}/transitions`,
+              {
+                headers: {
+                  'Authorization': `Basic ${auth}`,
+                  'Accept': 'application/json'
+                }
+              }
+            );
+            if (!transRes.ok) {
+              core.setFailed(`Fetch transitions failed: ${transRes.status}`);
+              return;
+            }
+            const { transitions } = await transRes.json();
+
+            // 4) “IN REVIEW” 전환 ID 찾기 (case-insensitive)
+            const inReview = transitions.find(t =>
+              t.name.toUpperCase() === 'IN REVIEW'
+            );
+            if (!inReview) {
+              core.setFailed('No "IN REVIEW" transition found');
+              return;
+            }
+
+            // 5) 전환 실행
+            const doTrans = await fetch(
+              `${apiBase}/rest/api/3/issue/${ticket}/transitions`,
+              {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Basic ${auth}`,
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json'
+                },
+                body: JSON.stringify({ transition: { id: inReview.id } })
+              }
+            );
+            if (!doTrans.ok) {
+              core.setFailed(`Transition failed: ${doTrans.status}`);
+            } else {
+              console.log(`Jira ${ticket} moved to IN REVIEW`);
+            }
