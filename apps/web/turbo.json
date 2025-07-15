@@ -6,6 +6,11 @@
       "cache": false,
       "dependsOn": ["@nugudi/nugudi-ui#build"],
       "persistent": true
+    },
+    "test:watch": {
+      "cache": false,
+      "dependsOn": ["@nugudi/nugudi-ui#build"],
+      "persistent": true
     }
   }
 }
