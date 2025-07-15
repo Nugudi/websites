@@ -3,6 +3,101 @@
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/utilities.css' layer(utilities);
 
+@layer base {
+  html {
+    font-size: 62.5%;
+  }
+  body {
+    padding: 0;
+    margin: 0;
+  }
+}
+
 @theme {
-  --font-sans: 'Inter', sans-serif;
+  --font-sans: var(--font-pretendard), ui-sans-serif, system-ui, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+  /* H1 large Title */
+  --text-h1-semi30: 3rem;
+  --text-h1-semi30--font-weight: 600;
+  --text-h1-semi30--line-height: 4rem;
+  --text-h1-semi30--letter-spacing: -0.03rem;
+
+  /* T1 title1 */
+  --text-title1-semi28: 2.8rem;
+  --text-title1-semi28--font-weight: 600;
+  --text-title1-semi28--line-height: 3.4rem;
+  --text-title1-semi28--letter-spacing: -0.03rem;
+
+  /* T2 title2 */
+  --text-title2-medi22: 2.2rem;
+  --text-title2-medi22--font-weight: 500;
+  --text-title2-medi22--line-height: 3rem;
+  --text-title2-medi22--letter-spacing: -0.03rem;
+
+  /* T3 title3 */
+  --text-title3-bold20: 2rem;
+  --text-title3-bold20--font-weight: 700;
+  --text-title3-bold20--line-height: 2.8rem;
+  --text-title3-bold20--letter-spacing: -0.03rem;
+
+  /* B1 regular / body */
+  --text-body1-regular17: 1.7rem;
+  --text-body1-regular17--font-weight: 400;
+  --text-body1-regular17--line-height: 2.4rem;
+  --text-body1-regular17--letter-spacing: -0.03rem;
+
+  /* B2 regular / callout */
+  --text-body2-regular16: 1.6rem;
+  --text-body2-regular16--font-weight: 400;
+  --text-body2-regular16--line-height: 2.3rem;
+  --text-body2-regular16--letter-spacing: -0.03rem;
+
+  /* B3 regular / subheadline */
+  --text-subheadline-regular15: 1.5rem;
+  --text-subheadline-regular15--font-weight: 400;
+  --text-subheadline-regular15--line-height: 2rem;
+  --text-subheadline-regular15--letter-spacing: -0.03rem;
+
+  /* B3(B) semibold / subheadline */
+  --text-subheadline-semi15: 1.5rem;
+  --text-subheadline-semi15--font-weight: 600;
+  --text-subheadline-semi15--line-height: 2rem;
+  --text-subheadline-semi15--letter-spacing: -0.03rem;
+
+  /* B4 regular / footnote */
+  --text-footnote-regular13: 1.3rem;
+  --text-footnote-regular13--font-weight: 400;
+  --text-footnote-regular13--line-height: 1.9rem;
+  --text-footnote-regular13--letter-spacing: -0.03rem;
+
+  /* B4(B) semibold / footnote */
+  --text-footnote-semi13: 1.3rem;
+  --text-footnote-semi13--font-weight: 600;
+  --text-footnote-semi13--line-height: 1.9rem;
+  --text-footnote-semi13--letter-spacing: -0.03rem;
+
+  /* E1 regular / Caption 1 */
+  --text-caption1-regular12: 1.2rem;
+  --text-caption1-regular12--font-weight: 400;
+  --text-caption1-regular12--line-height: 1.7rem;
+  --text-caption1-regular12--letter-spacing: -0.03rem;
+
+  /* E2 regular / Caption 2 */
+  --text-caption2-regular11: 1.1rem;
+  --text-caption2-regular11--font-weight: 400;
+  --text-caption2-regular11--line-height: 1.6rem;
+  --text-caption2-regular11--letter-spacing: -0.03rem;
+
+  /* Logo L1 large Title */
+  --text-logo-large34: 3.4rem;
+  --text-logo-large34--font-weight: 600;
+  --text-logo-large34--line-height: 4rem;
+  --text-logo-large34--letter-spacing: -0.03rem;
+
+  /* Logo L2 Title */
+  --text-logo-title20: 2rem;
+  --text-logo-title20--font-weight: 600;
+  --text-logo-title20--line-height: 4rem;
+  --text-logo-title20--letter-spacing: -0.03rem;
 }
