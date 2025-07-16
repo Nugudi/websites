@@ -1,5 +1,8 @@
+import { exec } from "node:child_process";
+import { appendFile, readFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { promisify } from "node:util";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
@@ -14,10 +17,6 @@ function tailwindBuildPlugin() {
     name: "tailwindcss-post-build",
     apply: "build" as const,
     closeBundle: async () => {
-      const { exec } = await import("node:child_process");
-      const { promisify } = await import("node:util");
-      const { readFile, appendFile } = await import("node:fs/promises");
-
       const execAsync = promisify(exec);
 
       await execAsync("npx tailwindcss -i src/app.css -o dist/app.css");
