@@ -1,19 +1,46 @@
 "use client";
 
-import { Button, GiftIcon, HomeIcon, PersonIcon } from "@nugudi/nugudi-ui";
+import {
+  Button,
+  GiftIcon,
+  HomeIcon,
+  PersonIcon,
+  Typography,
+} from "@nugudi/nugudi-ui";
 
 export default function Home() {
   return (
-    <div className="p-10">
-      <h1 className="text-title1-semi28">너의 구로 디지털 단지</h1>
-      <h1 className="font-bold text-green-500 text-title1-semi28">
-        너의 구로 디지털 단지
-      </h1>
+    <div className="h-screen bg-zinc-50 p-10">
+      <Typography size="t1" color="main-500">
+        Typography T1 - 너의 구로 디지털 단지
+      </Typography>
+
+      <Typography size="b1" color="black">
+        Typography B1 - 본문 텍스트
+      </Typography>
+      <Typography size="b3b" color="error">
+        Typography B3-BOLD - 볼드 텍스트
+      </Typography>
+      <Typography size="b4b" color="zinc-100">
+        Typography B4-BOLD - 각주 텍스트
+      </Typography>
+      <Typography size="e1" color="zinc-200">
+        Typography E1 - 캡션 텍스트
+      </Typography>
+      <Typography size="e2" color="zinc-300">
+        Typography E2 - 캡션 텍스트
+      </Typography>
+      <Typography size="h1" color="white">
+        Typography H1 - 메인 헤더 텍스트
+      </Typography>
+
       <Button variant="brand" size="md">
         너구디 버튼
       </Button>
       <div className="flex flex-col gap-4 ">
-        <h2>아이콘 라이브러리</h2>
+        <Typography size={"h1"} color={"main-800"}>
+          아이콘 라이브러리
+        </Typography>
         <HomeIcon className="text-gray-400" />
         <GiftIcon color="#00b23e" />
         <PersonIcon />

@@ -5,6 +5,7 @@ export { default as PersonIcon } from "./assets/icons/person.svg?react";
 
 /* components */
 export { Button } from "./button/index";
+export { Typography } from "./typography/index";
 
 /* utils */
 export * from "./utils";
