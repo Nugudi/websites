@@ -10,7 +10,7 @@ import {
 
 export default function Home() {
   return (
-    <div className="h-screen bg-gray-300 p-10">
+    <div className="h-screen bg-zinc-50 p-10">
       <Typography size="t1" color="main-500">
         Typography T1 - 너의 구로 디지털 단지
       </Typography>
@@ -38,7 +38,9 @@ export default function Home() {
         너구디 버튼
       </Button>
       <div className="flex flex-col gap-4 ">
-        <h2>아이콘 라이브러리</h2>
+        <Typography size={"h1"} color={"main-800"}>
+          아이콘 라이브러리
+        </Typography>
         <HomeIcon className="text-gray-400" />
         <GiftIcon color="#00b23e" />
         <PersonIcon />

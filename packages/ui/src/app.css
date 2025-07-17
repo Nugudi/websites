@@ -1,7 +1,9 @@
-@layer base, components, theme, utilities;
-
+@import 'tailwindcss';
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/utilities.css' layer(utilities);
+
+@layer base, components, theme, utilities;
+@source inline("text-{main-500,main-800,zinc-50,zinc-100,zinc-200,zinc-300,zinc-400,zinc-500,zinc-600,zinc-700,zinc-800,error,white,black}");
 
 @layer base {
   html {
@@ -11,28 +13,28 @@
     padding: 0;
     margin: 0;
   }
+}
 
-  :root {
-    /* Main Colors */
-    --color-main-500: #00b140;
-    --color-main-800: #176435;
+@theme {
+  /* Main Colors */
+  --color-main-500: #00b140;
+  --color-main-800: #176435;
 
-    /* Zinc Gray Scale (Light → Dark) */
-    --color-zinc-50: #fafafa;
-    --color-zinc-100: #f4f4f4;
-    --color-zinc-200: #e4e3e6;
-    --color-zinc-300: #d4d3d8;
-    --color-zinc-400: #a0a1aa;
-    --color-zinc-500: #70717a;
-    --color-zinc-600: #51525b;
-    --color-zinc-700: #403f46;
-    --color-zinc-800: #272729;
+  /* Zinc Gray Scale (Light → Dark) */
+  --color-zinc-50: #fafafa;
+  --color-zinc-100: #f4f4f4;
+  --color-zinc-200: #e4e3e6;
+  --color-zinc-300: #d4d3d8;
+  --color-zinc-400: #a0a1aa;
+  --color-zinc-500: #70717a;
+  --color-zinc-600: #51525b;
+  --color-zinc-700: #403f46;
+  --color-zinc-800: #272729;
 
-    /* System Colors */
-    --color-error: #f44336;
-    --color-white: #ffffff;
-    --color-black: #121212;
-  }
+  /* System Colors */
+  --color-error: #f44336;
+  --color-white: #ffffff;
+  --color-black: #121212;
 }
 
 @layer utilities {
@@ -124,139 +126,5 @@
     line-height: 4rem;
     letter-spacing: -0.3px;
     font-weight: bold;
-  }
-
-  /* Color Utilities */
-  .text-main-500 {
-    color: var(--color-main-500);
-  }
-  .text-main-800 {
-    color: var(--color-main-800);
-  }
-  .text-zinc-50 {
-    color: var(--color-zinc-50);
-  }
-  .text-zinc-100 {
-    color: var(--color-zinc-100);
-  }
-  .text-zinc-200 {
-    color: var(--color-zinc-200);
-  }
-  .text-zinc-300 {
-    color: var(--color-zinc-300);
-  }
-  .text-zinc-400 {
-    color: var(--color-zinc-400);
-  }
-  .text-zinc-500 {
-    color: var(--color-zinc-500);
-  }
-  .text-zinc-600 {
-    color: var(--color-zinc-600);
-  }
-  .text-zinc-700 {
-    color: var(--color-zinc-700);
-  }
-  .text-zinc-800 {
-    color: var(--color-zinc-800);
-  }
-  .text-error {
-    color: var(--color-error);
-  }
-  .text-white {
-    color: var(--color-white);
-  }
-  .text-black {
-    color: var(--color-black);
-  }
-
-  .bg-main-500 {
-    background-color: var(--color-main-500);
-  }
-  .bg-main-800 {
-    background-color: var(--color-main-800);
-  }
-  .bg-zinc-50 {
-    background-color: var(--color-zinc-50);
-  }
-  .bg-zinc-100 {
-    background-color: var(--color-zinc-100);
-  }
-  .bg-zinc-200 {
-    background-color: var(--color-zinc-200);
-  }
-  .bg-zinc-300 {
-    background-color: var(--color-zinc-300);
-  }
-  .bg-zinc-400 {
-    background-color: var(--color-zinc-400);
-  }
-  .bg-zinc-500 {
-    background-color: var(--color-zinc-500);
-  }
-  .bg-zinc-600 {
-    background-color: var(--color-zinc-600);
-  }
-  .bg-zinc-700 {
-    background-color: var(--color-zinc-700);
-  }
-  .bg-zinc-800 {
-    background-color: var(--color-zinc-800);
-  }
-  .bg-error {
-    background-color: var(--color-error);
-  }
-  .bg-white {
-    background-color: var(--color-white);
-  }
-  .bg-black {
-    background-color: var(--color-black);
-  }
-
-  .border-main-500 {
-    border-color: var(--color-main-500);
-  }
-  .border-main-800 {
-    border-color: var(--color-main-800);
-  }
-
-  .border-zinc-50 {
-    border-color: var(--color-zinc-50);
-  }
-  .border-zinc-100 {
-    border-color: var(--color-zinc-100);
-  }
-  .border-zinc-200 {
-    border-color: var(--color-zinc-200);
-  }
-
-  .border-zinc-300 {
-    border-color: var(--color-zinc-300);
-  }
-  .border-zinc-400 {
-    border-color: var(--color-zinc-400);
-  }
-  .border-zinc-500 {
-    border-color: var(--color-zinc-500);
-  }
-
-  .border-zinc-600 {
-    border-color: var(--color-zinc-600);
-  }
-  .border-zinc-700 {
-    border-color: var(--color-zinc-700);
-  }
-  .border-zinc-800 {
-    border-color: var(--color-zinc-800);
-  }
-
-  .border-error {
-    border-color: var(--color-error);
-  }
-  .border-white {
-    border-color: var(--color-white);
-  }
-  .border-black {
-    border-color: var(--color-black);
   }
 }
