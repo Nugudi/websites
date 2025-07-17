@@ -10,21 +10,27 @@ import {
 
 export default function Home() {
   return (
-    <div className="p-10">
-      <Typography variant="T1">
+    <div className="h-screen bg-gray-300 p-10">
+      <Typography size="t1" color="main-500">
         Typography T1 - 너의 구로 디지털 단지
       </Typography>
 
-      <Typography variant="B1">Typography B1 - 본문 텍스트</Typography>
-      <Typography variant="B3-BOLD">
+      <Typography size="b1" color="main-500">
+        Typography B1 - 본문 텍스트
+      </Typography>
+      <Typography size="b3b" color="zinc-50">
         Typography B3-BOLD - 볼드 텍스트
       </Typography>
-      <Typography variant="B4-BOLD">
+      <Typography size="b4b" color="zinc-50">
         Typography B4-BOLD - 각주 텍스트
       </Typography>
-      <Typography variant="E1">Typography E1 - 캡션 텍스트</Typography>
-      <Typography variant="E2">Typography E2 - 캡션 텍스트</Typography>
-      <Typography variant="H1">Typography H1 - 메인 헤더 텍스트</Typography>
+      <Typography size="e1" color="zinc-50">
+        Typography E1 - 캡션 텍스트
+      </Typography>
+      <Typography size="e2" color="zinc-50">
+        Typography E2 - 캡션 텍스트
+      </Typography>
+      <Typography size="h1">Typography H1 - 메인 헤더 텍스트</Typography>
 
       <Button variant="brand" size="md">
         너구디 버튼
