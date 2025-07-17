@@ -15,22 +15,24 @@ export default function Home() {
         Typography T1 - 너의 구로 디지털 단지
       </Typography>
 
-      <Typography size="b1" color="main-500">
+      <Typography size="b1" color="black">
         Typography B1 - 본문 텍스트
       </Typography>
-      <Typography size="b3b" color="zinc-50">
+      <Typography size="b3b" color="error">
         Typography B3-BOLD - 볼드 텍스트
       </Typography>
-      <Typography size="b4b" color="zinc-50">
+      <Typography size="b4b" color="zinc-100">
         Typography B4-BOLD - 각주 텍스트
       </Typography>
-      <Typography size="e1" color="zinc-50">
+      <Typography size="e1" color="zinc-200">
         Typography E1 - 캡션 텍스트
       </Typography>
-      <Typography size="e2" color="zinc-50">
+      <Typography size="e2" color="zinc-300">
         Typography E2 - 캡션 텍스트
       </Typography>
-      <Typography size="h1">Typography H1 - 메인 헤더 텍스트</Typography>
+      <Typography size="h1" color="white">
+        Typography H1 - 메인 헤더 텍스트
+      </Typography>
 
       <Button variant="brand" size="md">
         너구디 버튼

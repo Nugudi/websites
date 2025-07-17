@@ -50,30 +50,9 @@ export const Typography = <T extends ElementType = "p">({
   ...rest
 }: TypographyProps<T>) => {
   const Component = (as || "p") as ElementType;
-  const colorClass =
-    color &&
-    [
-      "main-500",
-      "main-800",
-      "zinc-50",
-      "zinc-100",
-      "zinc-200",
-      "zinc-300",
-      "zinc-400",
-      "zinc-500",
-      "zinc-600",
-      "zinc-700",
-      "zinc-800",
-      "error",
-      "white",
-      "black",
-    ].includes(color)
-      ? `text-${color}`
-      : typeof color === "string"
-        ? color
-        : undefined;
+
   return (
-    <Component className={cn(size, colorClass, className)} {...rest}>
+    <Component className={cn(size, `text-${color}`, className)} {...rest}>
       {children}
     </Component>
   );
