@@ -3,7 +3,7 @@
 @import 'tailwindcss/utilities.css' layer(utilities);
 
 @layer base, components, theme, utilities;
-@source inline("text-{main-500,main-800,zinc-50,zinc-100,zinc-200,zinc-300,zinc-400,zinc-500,zinc-600,zinc-700,zinc-800,error,white,black}");
+@source inline("{text,bg,border}-{main-500,main-800,zinc-50,zinc-100,zinc-200,zinc-300,zinc-400,zinc-500,zinc-600,zinc-700,zinc-800,error,white,black}");
 
 @layer base {
   html {
