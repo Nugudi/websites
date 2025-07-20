@@ -13,6 +13,16 @@ const toCssCasting = (str) => {
     .toLowerCase();
 };
 
+// 클래스명을 kebab-case로 변환하는 함수
+const toClassName = (mainKey, subKey) => {
+  // mainKey와 subKey를 kebab-case로 변환
+  const mainKebab = mainKey.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+
+  const subKebab = subKey.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+
+  return `${mainKebab}-${subKebab}`;
+};
+
 const generateThemeCssVariables = () => {
   const cssString = [];
 
@@ -79,7 +89,7 @@ const generateThemeCssVariables = () => {
   return cssString;
 };
 
-// .headingxl {
+// .heading-h1 {
 //   font-size: 3rem;
 //   font-weight: 700;
 //   line-height: 100%;
@@ -93,7 +103,7 @@ const generateThemeCssClasses = () => {
       .map(([mainKey, mainValue]) =>
         Object.entries(mainValue)
           .map(([subKey, subValue]) => {
-            const className = `.${toCssCasting(mainKey)}${toCssCasting(subKey)}`;
+            const className = `.${toClassName(mainKey, subKey)}`;
 
             const styleProperties = Object.entries(subValue)
               .map(

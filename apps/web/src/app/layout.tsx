@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import "./app.css";
 import localFont from "next/font/local";
 import Providers from "@/shared/providers";
+import "@nugudi/themes/themes.css";
 
 const Pretendard = localFont({
   src: "../../node_modules/pretendard/dist/web/variable/woff2/PretendardVariable.woff2",
@@ -34,7 +34,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" suppressHydrationWarning={true}>
+    <html lang="ko" suppressHydrationWarning={true} className="theme-dark">
       <body className={Pretendard.variable}>
         <Providers>{children}</Providers>
       </body>
