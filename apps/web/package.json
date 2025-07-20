@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@nugudi/nugudi-ui": "workspace:*",
+    "@nugudi/themes": "workspace:*",
     "@sentry/nextjs": "^9.31.0",
     "@tanstack/react-query": "^5.81.2",
     "next": "15.3.3",

@@ -1,49 +1,49 @@
-"use client";
-
-import {
-  Button,
-  GiftIcon,
-  HomeIcon,
-  PersonIcon,
-  Typography,
-} from "@nugudi/nugudi-ui";
-
 export default function Home() {
   return (
-    <div className="h-screen bg-zinc-50 p-10">
-      <Typography size="t1" color="main-500">
-        Typography T1 - 너의 구로 디지털 단지
-      </Typography>
+    <div className="h-screen p-8" style={{ backgroundColor: "var(--zinc-50)" }}>
+      {/* 기본 타이포그래피 테스트 */}
+      <div className="space-y-4">
+        <h1 className="heading-h1" style={{ color: "var(--main-500)" }}>
+          Heading H1
+        </h1>
 
-      <Typography size="b1" color="black">
-        Typography B1 - 본문 텍스트
-      </Typography>
-      <Typography size="b3b" color="error">
-        Typography B3-BOLD - 볼드 텍스트
-      </Typography>
-      <Typography size="b4b" color="zinc-100">
-        Typography B4-BOLD - 각주 텍스트
-      </Typography>
-      <Typography size="e1" color="zinc-200">
-        Typography E1 - 캡션 텍스트
-      </Typography>
-      <Typography size="e2" color="zinc-300">
-        Typography E2 - 캡션 텍스트
-      </Typography>
-      <Typography size="h1" color="white">
-        Typography H1 - 메인 헤더 텍스트
-      </Typography>
+        <div className="title-t1" style={{ color: "var(--main-800)" }}>
+          Title T1
+        </div>
 
-      <Button variant="brand" size="md">
-        너구디 버튼
-      </Button>
-      <div className="flex flex-col gap-4 ">
-        <Typography size={"h1"} color={"main-800"}>
-          아이콘 라이브러리
-        </Typography>
-        <HomeIcon className="text-gray-400" />
-        <GiftIcon color="#00b23e" />
-        <PersonIcon />
+        <p className="body-b3b" style={{ color: "var(--zinc-600)" }}>
+          Body B1 - 기본 본문 텍스트
+        </p>
+
+        <p className="body-b3b" style={{ color: "var(--system-error)" }}>
+          Body B3B - 굵은 본문 텍스트
+        </p>
+      </div>
+
+      {/* 색상 팔레트 간단 테스트 */}
+      <div className="mt-8">
+        <h2 className="title-t2" style={{ color: "var(--main-500)" }}>
+          색상 테스트
+        </h2>
+        <div className="mt-4 flex gap-4">
+          <div
+            className="h-12 w-12 rounded"
+            style={{ backgroundColor: "var(--zinc-100)" }}
+          />
+          <div
+            className="h-12 w-12 rounded"
+            style={{ backgroundColor: "var(--zinc-500)" }}
+          />
+          <div
+            className="h-12 w-12 rounded"
+            style={{ backgroundColor: "var(--zinc-800)" }}
+          />
+        </div>
+      </div>
+
+      {/* 테스트 안내 */}
+      <div className="fixed right-4 bottom-4 rounded border bg-white p-3 text-sm">
+        콘솔: document.body.classList.add('theme-dark')
       </div>
     </div>
   );
