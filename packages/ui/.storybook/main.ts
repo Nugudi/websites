@@ -49,15 +49,6 @@ const config: StorybookConfig = {
     // Optimize bundle size
     config.build = config.build || {};
     config.build.chunkSizeWarningLimit = 1000;
-    config.build.rollupOptions = config.build.rollupOptions || {};
-    config.build.rollupOptions.output = {
-      ...config.build.rollupOptions.output,
-      manualChunks: {
-        react: ["react", "react-dom"],
-        storybook: ["@storybook/react", "@storybook/blocks"],
-        axe: ["axe-core"],
-      },
-    };
 
     return config;
   },
