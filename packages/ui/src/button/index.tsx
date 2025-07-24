@@ -15,7 +15,7 @@ export type ButtonProps = {
 export const Button = ({
   children,
   variant = "brand",
-  size = "md",
+  size = "full",
   className,
   ...props
 }: ButtonProps) => {

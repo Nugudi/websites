@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import Providers from "@/shared/providers";
 import "@nugudi/themes/themes.css";
+import "@nugudi/nugudi-ui/style.css";
 
 const Pretendard = localFont({
   src: "../../node_modules/pretendard/dist/web/variable/woff2/PretendardVariable.woff2",

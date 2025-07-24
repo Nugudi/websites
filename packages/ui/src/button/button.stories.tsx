@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Button } from ".";
+import * as styles from "./button.stories.css";
 
 const meta: Meta<typeof Button> = {
   title: "Components/Button",
@@ -15,12 +16,26 @@ const meta: Meta<typeof Button> = {
     variant: {
       control: "select",
       options: ["brand", "neutral"],
+      description: "버튼의 종류",
+      table: {
+        type: { summary: "brand, neutral" },
+      },
     },
     size: {
       control: "select",
       options: ["sm", "md", "lg", "full"],
+      description: "버튼의 크기",
+      table: {
+        type: { summary: "sm, md, lg, full" },
+      },
     },
-    disabled: { control: "boolean" },
+    disabled: {
+      control: "boolean",
+      description: "버튼의 비활성화 여부",
+      table: {
+        type: { summary: "boolean" },
+      },
+    },
     onClick: { action: "clicked" },
   },
 };
@@ -31,28 +46,28 @@ type Story = StoryObj<typeof Button>;
 export const Brand: Story = {
   args: {
     variant: "brand",
-    size: "md",
+    size: "full",
   },
 };
 
 export const Neutral: Story = {
   args: {
     variant: "neutral",
-    size: "md",
+    size: "full",
   },
 };
 
 export const Disabled: Story = {
   args: {
     variant: "brand",
-    size: "md",
+    size: "full",
     disabled: true,
   },
 };
 
 export const Sizes: Story = {
   render: (args) => (
-    <div className="flex flex-wrap gap-4">
+    <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
       <Button {...args} size="sm" variant="brand">
         Small
       </Button>
@@ -71,10 +86,10 @@ export const Sizes: Story = {
 
 export const ThemeShowcase: Story = {
   render: (args) => (
-    <div className="space-y-6">
-      <div className="space-y-2">
-        <h3 className="font-semibold text-lg">Button Variants</h3>
-        <div className="flex gap-4">
+    <div className={styles.storyContainer}>
+      <div className={styles.storySection}>
+        <h3>Button Variants</h3>
+        <div className={styles.storyRow}>
           <Button {...args} variant="brand">
             Brand Button
           </Button>
@@ -86,13 +101,13 @@ export const ThemeShowcase: Story = {
           </Button>
         </div>
       </div>
-      <div className="space-y-2">
-        <h3 className="font-semibold text-lg">Button Sizes</h3>
-        <div className="flex flex-wrap gap-4">
-          <Button {...args} size="sm">
+      <div className={styles.storySection}>
+        <h3>Button Sizes</h3>
+        <div className={styles.storyRow}>
+          <Button {...args} size="sm" variant="brand">
             Small
           </Button>
-          <Button {...args} size="md">
+          <Button {...args} size="md" variant="brand">
             Medium
           </Button>
           <Button {...args} size="lg">

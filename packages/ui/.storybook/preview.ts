@@ -1,4 +1,5 @@
 import type { Preview } from "@storybook/react-vite";
+import "@nugudi/themes/themes.css";
 import "@/app.css";
 import "@/button/button.css";
 import "@/typography/typography.css";
@@ -16,7 +17,7 @@ const preview: Preview = {
       values: [
         {
           name: "light",
-          value: "#000000",
+          value: "#ffffff",
         },
         {
           name: "dark",
@@ -51,7 +52,11 @@ const preview: Preview = {
     (Story, context) => {
       const theme = context.globals.theme || "light";
 
-      // Remove existing theme classes and apply current theme to body
+      // Apply theme class to html element
+      document.documentElement.classList.remove("theme-light", "theme-dark");
+      document.documentElement.classList.add(`theme-${theme}`);
+
+      // Apply theme class to body
       document.body.classList.remove("theme-light", "theme-dark");
       document.body.classList.add(`theme-${theme}`);
 
@@ -59,16 +64,7 @@ const preview: Preview = {
       const storybook = document.querySelector(".sb-show-main") as HTMLElement;
       if (storybook) {
         storybook.style.backgroundColor =
-          theme === "light" ? "#000000" : "#ffffff";
-      }
-
-      // Also set iframe background
-      const iframe = document.querySelector(
-        "#storybook-preview-iframe",
-      ) as HTMLIFrameElement;
-      if (iframe?.contentDocument) {
-        iframe.contentDocument.body.style.backgroundColor =
-          theme === "light" ? "#000000" : "#ffffff";
+          theme === "light" ? "#ffffff" : "#121212";
       }
 
       return Story();
