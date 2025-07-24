@@ -15,13 +15,27 @@ const meta: Meta<typeof Button> = {
     },
     variant: {
       control: "select",
-      options: ["brand", "neutral", "outline"],
+      options: ["brand", "neutral"],
+      description: "버튼의 종류",
+      table: {
+        type: { summary: "brand, neutral" },
+      },
     },
     size: {
       control: "select",
       options: ["sm", "md", "lg", "full"],
+      description: "버튼의 크기",
+      table: {
+        type: { summary: "sm, md, lg, full" },
+      },
     },
-    disabled: { control: "boolean" },
+    disabled: {
+      control: "boolean",
+      description: "버튼의 비활성화 여부",
+      table: {
+        type: { summary: "boolean" },
+      },
+    },
     onClick: { action: "clicked" },
   },
 };
