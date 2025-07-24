@@ -1,5 +1,6 @@
 export const main = {
   500: "var(--main-500)",
+  600: "var(--main-600)",
   800: "var(--main-800)",
 };
 

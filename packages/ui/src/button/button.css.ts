@@ -7,24 +7,13 @@ export const buttonBase = style({
   cursor: "pointer",
   alignItems: "center",
   justifyContent: "center",
-  borderRadius: vars.box.radii.lg,
+  borderRadius: vars.box.radii.xl,
   border: "none",
   fontWeight: vars.typography.fontWeight[600],
   fontSize: vars.typography.fontSize[15],
-  transition: "all 0.2s ease",
+  transition: "all 0.5s ease",
   ":disabled": {
     cursor: "not-allowed",
-    opacity: 0.5,
-  },
-  selectors: {
-    "&:hover:not(:disabled)": {
-      transform: "translateY(-1px)",
-      boxShadow: vars.box.shadows.md,
-    },
-    "&:active:not(:disabled)": {
-      transform: "translateY(0)",
-      boxShadow: vars.box.shadows.sm,
-    },
   },
 });
 
@@ -36,12 +25,16 @@ export const buttonRecipe = recipe({
         backgroundColor: vars.colors.$scale.main[500],
         color: vars.colors.$scale.system.white,
         ":disabled": {
-          backgroundColor: vars.colors.$scale.zinc[300],
-          color: vars.colors.$scale.zinc[500],
+          backgroundColor: vars.colors.$scale.zinc[50],
+          color: vars.colors.$scale.zinc[200],
         },
         selectors: {
           "&:hover:not(:disabled)": {
-            backgroundColor: vars.colors.$scale.main[800],
+            backgroundColor: vars.colors.$scale.main[600],
+          },
+          ".theme-dark &:disabled": {
+            backgroundColor: vars.colors.$scale.zinc[50],
+            color: vars.colors.$scale.zinc[200],
           },
         },
       },
@@ -49,46 +42,46 @@ export const buttonRecipe = recipe({
         backgroundColor: vars.colors.$scale.zinc[700],
         color: vars.colors.$scale.system.white,
         ":disabled": {
-          backgroundColor: vars.colors.$scale.zinc[300],
-          color: vars.colors.$scale.zinc[500],
+          backgroundColor: vars.colors.$scale.zinc[50],
+          color: vars.colors.$scale.zinc[200],
         },
         selectors: {
           "&:hover:not(:disabled)": {
             backgroundColor: vars.colors.$scale.zinc[800],
+          },
+          ".theme-dark &:disabled": {
+            backgroundColor: vars.colors.$scale.zinc[50],
+            color: vars.colors.$scale.zinc[200],
           },
         },
       },
     },
     size: {
       sm: {
-        height: vars.box.spacing[8],
+        height: vars.box.spacing[10],
         paddingLeft: vars.box.spacing[4],
         paddingRight: vars.box.spacing[4],
-        fontSize: vars.typography.fontSize[13],
       },
       md: {
-        height: vars.box.spacing[10],
+        height: vars.box.spacing[12],
         paddingLeft: vars.box.spacing[5],
         paddingRight: vars.box.spacing[5],
-        fontSize: vars.typography.fontSize[15],
       },
       lg: {
-        height: vars.box.spacing[12],
+        height: vars.box.spacing[14],
         paddingLeft: vars.box.spacing[6],
         paddingRight: vars.box.spacing[6],
-        fontSize: vars.typography.fontSize[16],
       },
       full: {
-        height: vars.box.spacing[12],
+        height: vars.box.spacing[14],
         width: "100%",
         paddingLeft: vars.box.spacing[6],
         paddingRight: vars.box.spacing[6],
-        fontSize: vars.typography.fontSize[16],
       },
     },
   },
   defaultVariants: {
     variant: "brand",
-    size: "md",
+    size: "full",
   },
 });
