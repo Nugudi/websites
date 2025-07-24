@@ -1,5 +1,4 @@
 import type { Preview } from "@storybook/react-vite";
-import React from "react";
 import "@nugudi/themes/themes.css";
 import "@/app.css";
 import "@/button/button.css";
@@ -68,12 +67,7 @@ const preview: Preview = {
           theme === "light" ? "#ffffff" : "#121212";
       }
 
-      // Return story wrapped in themed div
-      return React.createElement(
-        "div",
-        { className: `theme-${theme}` },
-        React.createElement(Story),
-      );
+      return Story();
     },
   ],
 };
