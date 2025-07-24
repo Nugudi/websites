@@ -45,7 +45,7 @@ export default defineConfig({
       formats: ["es"],
     },
     rollupOptions: {
-      external: ["react", "react-dom"],
+      external: ["react", "react-dom", "@vanilla-extract/css"],
       output: {
         globals: {
           react: "React",
