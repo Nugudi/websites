@@ -1,6 +1,7 @@
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import type { StorybookConfig } from "@storybook/react-vite";
+import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin";
 
 const require = createRequire(import.meta.url);
 
@@ -8,7 +9,7 @@ const require = createRequire(import.meta.url);
  * This function is used to resolve the absolute path of a package.
  * It is needed in projects that use Yarn PnP or are set up within a monorepo.
  */
-function _getAbsolutePath(value: string): any {
+function getAbsolutePath(value: string): any {
   return dirname(require.resolve(join(value, "package.json")));
 }
 const config: StorybookConfig = {
@@ -32,19 +33,33 @@ const config: StorybookConfig = {
       "@": join(__dirname, "../src"),
     };
 
+    // Add vanilla-extract plugin
+    config.plugins = config.plugins || [];
+    config.plugins.push(vanillaExtractPlugin());
+
     // Ensure vanilla-extract files are processed
     config.optimizeDeps = config.optimizeDeps || {};
     config.optimizeDeps.include = [
       ...(config.optimizeDeps.include || []),
       "@vanilla-extract/css",
       "@vanilla-extract/recipes",
+      "@vanilla-extract/recipes/createRuntimeFn",
     ];
+
+    // Optimize bundle size
+    config.build = config.build || {};
+    config.build.chunkSizeWarningLimit = 1000;
+    config.build.rollupOptions = config.build.rollupOptions || {};
+    config.build.rollupOptions.output = {
+      ...config.build.rollupOptions.output,
+      manualChunks: {
+        react: ["react", "react-dom"],
+        storybook: ["@storybook/react", "@storybook/blocks"],
+        axe: ["axe-core"],
+      },
+    };
 
     return config;
   },
 };
 export default config;
-
-function getAbsolutePath(value: string): any {
-  return dirname(require.resolve(join(value, "package.json")));
-}

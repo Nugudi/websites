@@ -12,14 +12,14 @@
   },
   "main": "dist/index.js",
   "scripts": {
-    "build": "pnpm run build:js && pnpm run build:type && pnpm run build:css",
-    "build:css": "node ./scripts/build-css-module.js",
-    "build:js": "node build.js",
-    "build:type": "tsc --emitDeclarationOnly",
-    "clean": "rm -rf dist"
+    "build": "pnpm run clean && tsx build.config.ts && pnpm run build:types",
+    "build:types": "tsc --emitDeclarationOnly",
+    "clean": "rm -rf dist",
+    "dev": "tsx watch build.config.ts"
   },
   "devDependencies": {
     "esbuild": "^0.20.0",
+    "tsx": "^4.19.2",
     "typescript": "^5.8.3"
   }
 }

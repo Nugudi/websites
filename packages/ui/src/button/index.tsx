@@ -1,7 +1,6 @@
 import { clsx } from "clsx";
 import type React from "react";
 import type { ComponentPropsWithoutRef } from "react";
-import "./button.css";
 import { buttonRecipe } from "./button.css";
 
 type ButtonVariant = "brand" | "neutral";
