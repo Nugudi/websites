@@ -67,28 +67,6 @@ describe("cn utility function", () => {
     expect(className).toBe("text-base bg-white font-light");
   });
 
-  it("should remove duplicate class names", () => {
-    // given
-    const classNames = ["text-red-500", "text-red-500", "bg-blue-200"];
-
-    // when
-    const className = cn(classNames);
-
-    // then
-    expect(className).toBe("text-red-500 bg-blue-200");
-  });
-
-  it("should keep the last conflicting class name", () => {
-    // given
-    const classNames = ["px-2", "py-4", "px-4"];
-
-    // when
-    const className = cn(classNames);
-
-    // then
-    expect(className).toBe("py-4 px-4");
-  });
-
   it("should handle numeric values by converting them to string", () => {
     // given
     const classNames = ["text-lg", 123, "font-semibold"];

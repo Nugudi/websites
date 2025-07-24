@@ -1,4 +1,5 @@
 import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
+import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin";
 import react from "@vitejs/plugin-react";
 import svgr from "vite-plugin-svgr";
 import tsconfigPaths from "vite-tsconfig-paths";
@@ -9,7 +10,7 @@ export default defineConfig({
     projects: [
       {
         extends: true,
-        plugins: [react(), tsconfigPaths(), svgr()],
+        plugins: [react(), vanillaExtractPlugin(), tsconfigPaths(), svgr()],
         test: {
           name: "js-dom",
           environment: "jsdom",
@@ -20,9 +21,10 @@ export default defineConfig({
         extends: true,
         plugins: [
           storybookTest({ configDir: ".storybook" }),
-          svgr(),
           react(),
+          vanillaExtractPlugin(),
           tsconfigPaths(),
+          svgr(),
         ],
         test: {
           name: "storybook",

@@ -1,49 +1,45 @@
+"use client";
+
+import { Button } from "@nugudi/nugudi-ui";
+import * as styles from "./page.css";
+
 export default function Home() {
   return (
-    <div className="h-screen p-8" style={{ backgroundColor: "var(--zinc-50)" }}>
-      {/* 기본 타이포그래피 테스트 */}
-      <div className="space-y-4">
-        <h1 className="heading-h1" style={{ color: "var(--main-500)" }}>
-          Heading H1
-        </h1>
+    <div className={styles.container}>
+      <div className={styles.section}>
+        <h1>Nugudi UI 컴포넌트 테스트</h1>
 
-        <div className="title-t1" style={{ color: "var(--main-800)" }}>
-          Title T1
-        </div>
-
-        <p className="body-b3b" style={{ color: "var(--zinc-600)" }}>
-          Body B1 - 기본 본문 텍스트
-        </p>
-
-        <p className="body-b3b" style={{ color: "var(--system-error)" }}>
-          Body B3B - 굵은 본문 텍스트
-        </p>
-      </div>
-
-      {/* 색상 팔레트 간단 테스트 */}
-      <div className="mt-8">
-        <h2 className="title-t2" style={{ color: "var(--main-500)" }}>
-          색상 테스트
-        </h2>
-        <div className="mt-4 flex gap-4">
-          <div
-            className="h-12 w-12 rounded"
-            style={{ backgroundColor: "var(--zinc-100)" }}
-          />
-          <div
-            className="h-12 w-12 rounded"
-            style={{ backgroundColor: "var(--zinc-500)" }}
-          />
-          <div
-            className="h-12 w-12 rounded"
-            style={{ backgroundColor: "var(--zinc-800)" }}
-          />
+        <div
+          style={{
+            marginTop: "1rem",
+            display: "flex",
+            gap: "1rem",
+            flexWrap: "wrap",
+          }}
+        >
+          <Button variant="brand" size="lg">
+            Primary Large
+          </Button>
+          <Button variant="neutral" size="md">
+            Secondary Medium
+          </Button>
+          <Button variant="brand" size="sm">
+            Outline Small
+          </Button>
+          <Button variant="brand" size="full">
+            Ghost Button
+          </Button>
         </div>
       </div>
 
-      {/* 테스트 안내 */}
-      <div className="fixed right-4 bottom-4 rounded border bg-white p-3 text-sm">
-        콘솔: document.body.classList.add('theme-dark')
+      <div className={styles.section}>
+        <h2>색상 팔레트</h2>
+        <div className={styles.colorPalette}>
+          <div className={`${styles.colorBox} ${styles.zincLight}`} />
+          <div className={`${styles.colorBox} ${styles.zincMedium}`} />
+          <div className={`${styles.colorBox} ${styles.zincDark}`} />
+          <div className={`${styles.colorBox} ${styles.mainColor}`} />
+        </div>
       </div>
     </div>
   );

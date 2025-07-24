@@ -1,7 +1,11 @@
 import { withSentryConfig } from "@sentry/nextjs";
+import { createVanillaExtractPlugin } from "@vanilla-extract/next-plugin";
 import type { NextConfig } from "next";
 
+const withVanillaExtract = createVanillaExtractPlugin();
+
 const plugins = [
+  withVanillaExtract,
   (config: NextConfig) =>
     withSentryConfig(config, {
       org: "nugudi",

@@ -1,8 +1,7 @@
-import { exec } from "node:child_process";
-import { appendFile, readFile } from "node:fs/promises";
+import { copyFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { promisify } from "node:util";
+import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
@@ -12,17 +11,12 @@ import tsconfigPaths from "vite-tsconfig-paths";
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
 
-function tailwindBuildPlugin() {
+function copyAppCssPlugin() {
   return {
-    name: "tailwindcss-post-build",
+    name: "copy-app-css",
     apply: "build" as const,
     closeBundle: async () => {
-      const execAsync = promisify(exec);
-
-      await execAsync("npx tailwindcss -i src/app.css -o dist/app.css");
-
-      const css = await readFile("src/app.css", "utf-8");
-      await appendFile("dist/app.css", css);
+      await copyFile("src/app.css", "dist/app.css");
     },
   };
 }
@@ -30,8 +24,9 @@ function tailwindBuildPlugin() {
 export default defineConfig({
   plugins: [
     react(),
+    vanillaExtractPlugin(),
     svgr(),
-    tailwindBuildPlugin(),
+    copyAppCssPlugin(),
     dts({
       include: ["src"],
       insertTypesEntry: true,

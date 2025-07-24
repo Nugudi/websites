@@ -1,3 +1,5 @@
+import { colorTokens } from "./color.css";
+
 const colors = [
   "main-500",
   "main-800",
@@ -13,7 +15,7 @@ const colors = [
   "error",
   "white",
   "black",
-];
+] as const;
 
 export default {
   title: "Foundations/Color",
@@ -23,17 +25,46 @@ export default {
 };
 
 export const Color = () => (
-  <div className="grid grid-cols-3 gap-10 p-8 md:grid-cols-4 lg:grid-cols-5">
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns: "repeat(3, 1fr)",
+      gap: "40px",
+      padding: "32px",
+    }}
+  >
     {colors.map((color) => {
       return (
         <div
           key={color}
-          className={`flex flex-col gap-2 rounded-md border border-zinc-50 p-2`}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
+            borderRadius: "6px",
+            border: "1px solid #fafafa",
+            padding: "8px",
+          }}
         >
           <div
-            className={`bg-${color} h-20 w-full rounded-md border border-zinc-50`}
+            className={colorTokens[color]}
+            style={{
+              height: "80px",
+              width: "100%",
+              borderRadius: "6px",
+              border: "1px solid #fafafa",
+            }}
           />
-          <span className="w-20 font-mono text-xs text-zinc-700">{color}</span>
+          <span
+            style={{
+              width: "80px",
+              fontFamily: "monospace",
+              fontSize: "12px",
+              color: "#374151",
+            }}
+          >
+            {color}
+          </span>
         </div>
       );
     })}

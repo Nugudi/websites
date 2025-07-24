@@ -1,5 +1,10 @@
+import { clsx } from "clsx";
 import type { ElementType, ReactNode } from "react";
-import { cn } from "../utils";
+import {
+  typographyBase,
+  typographyColors,
+  typographySizes,
+} from "./typography.css";
 
 export type TypographySize =
   | "h1"
@@ -46,13 +51,21 @@ export const Typography = <T extends ElementType = "p">({
   children,
   className,
   size,
-  color,
+  color = "black",
   ...rest
 }: TypographyProps<T>) => {
   const Component = (as || "p") as ElementType;
 
   return (
-    <Component className={cn(size, `text-${color}`, className)} {...rest}>
+    <Component
+      className={clsx(
+        typographyBase,
+        typographySizes[size],
+        typographyColors[color],
+        className,
+      )}
+      {...rest}
+    >
       {children}
     </Component>
   );
