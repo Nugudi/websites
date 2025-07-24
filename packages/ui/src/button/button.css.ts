@@ -15,6 +15,10 @@ export const buttonBase = style({
   ":disabled": {
     cursor: "not-allowed",
   },
+  ":active": {
+    transform: "scale(0.99)",
+    transition: "all 0.2s ease",
+  },
 });
 
 export const buttonRecipe = recipe({
