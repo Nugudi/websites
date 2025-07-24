@@ -57,6 +57,14 @@ export const buttonRecipe = recipe({
             backgroundColor: vars.colors.$scale.zinc[50],
             color: vars.colors.$scale.zinc[200],
           },
+          ".theme-dark &": {
+            backgroundColor: vars.colors.$scale.zinc[100],
+            color: vars.colors.$scale.zinc[800],
+          },
+          ".theme-dark &:hover:not(:disabled)": {
+            backgroundColor: vars.colors.$scale.zinc[200],
+            color: vars.colors.$scale.zinc[700],
+          },
         },
       },
     },
