@@ -1,3 +1,5 @@
+import { textColors, typographyBase, typographyStyles } from "./typography.css";
+
 const styles = [
   "h1",
   "t1",
@@ -13,7 +15,7 @@ const styles = [
   "e2",
   "l1",
   "l2",
-];
+] as const;
 
 export default {
   title: "Foundations/Typography",
@@ -23,14 +25,35 @@ export default {
 };
 
 export const Typography = () => (
-  <div className="flex w-full flex-col gap-6 p-8">
+  <div
+    style={{
+      display: "flex",
+      width: "100%",
+      flexDirection: "column",
+      gap: "24px",
+      padding: "32px",
+    }}
+  >
     {styles.map((style) => (
       <div
         key={style}
-        className="grid h-16 grid-cols-2 items-center justify-between"
+        style={{
+          display: "grid",
+          height: "64px",
+          gridTemplateColumns: "1fr 1fr",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
       >
-        <span className="text-2xl text-main-500">{style}</span>
-        <p className={style}>너의 구로 디지털 단지</p>
+        <span
+          className={`${typographyBase} ${textColors["main-500"]}`}
+          style={{ fontSize: "24px" }}
+        >
+          {style}
+        </span>
+        <p className={`${typographyBase} ${typographyStyles[style]}`}>
+          너의 구로 디지털 단지
+        </p>
       </div>
     ))}
   </div>

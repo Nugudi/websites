@@ -14,7 +14,7 @@ const meta: Meta<typeof Button> = {
     },
     variant: {
       control: "select",
-      options: ["brand", "neutral", "disabled"],
+      options: ["brand", "neutral"],
     },
     size: {
       control: "select",
@@ -65,6 +65,41 @@ export const Sizes: Story = {
       <Button {...args} size="full" variant="neutral">
         Full Width
       </Button>
+    </div>
+  ),
+};
+
+export const ThemeShowcase: Story = {
+  render: (args) => (
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <h3 className="font-semibold text-lg">Button Variants</h3>
+        <div className="flex gap-4">
+          <Button {...args} variant="brand">
+            Brand Button
+          </Button>
+          <Button {...args} variant="neutral">
+            Neutral Button
+          </Button>
+          <Button {...args} variant="brand" disabled>
+            Disabled Button
+          </Button>
+        </div>
+      </div>
+      <div className="space-y-2">
+        <h3 className="font-semibold text-lg">Button Sizes</h3>
+        <div className="flex flex-wrap gap-4">
+          <Button {...args} size="sm">
+            Small
+          </Button>
+          <Button {...args} size="md">
+            Medium
+          </Button>
+          <Button {...args} size="lg">
+            Large
+          </Button>
+        </div>
+      </div>
     </div>
   ),
 };
