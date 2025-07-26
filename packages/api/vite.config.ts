@@ -17,7 +17,7 @@ export default defineConfig({
       formats: ["es"],
     },
     rollupOptions: {
-      external: ["@faker-js/faker", "@tanstack/react-query", "msw"],
+      external: ["@faker-js/faker", "@tanstack/react-query", "msw", "react"],
     },
   },
 });

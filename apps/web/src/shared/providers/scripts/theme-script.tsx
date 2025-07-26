@@ -2,10 +2,12 @@ export const ThemeScript = () => {
   const initDarkTheme = `
     (() => {
       try {
+        // 기본 다크 테마 설정 (hydration 일관성을 위해)
+        document.documentElement.classList.add('theme-dark');
+        
+        // 사용자 선호도에 따른 테마 적용
         const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (isDark) {
-          document.documentElement.classList.add('theme-dark');
-        } else {
+        if (!isDark) {
           document.documentElement.classList.remove('theme-dark');
         }
 

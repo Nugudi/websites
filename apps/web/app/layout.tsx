@@ -35,8 +35,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" suppressHydrationWarning={true} className="theme-dark">
-      <body className={Pretendard.variable}>
+    <html lang="ko" suppressHydrationWarning={true}>
+      <body className={Pretendard.variable} suppressHydrationWarning={true}>
         <Providers>{children}</Providers>
       </body>
     </html>

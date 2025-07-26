@@ -22,7 +22,7 @@
     "build": "vite build",
     "check-types": "tsc --noEmit",
     "codegen": "pnpm run codegen:fetch && pnpm run codegen:generate",
-    "codegen:fetch": "curl https://petstore3.swagger.io/api/v3/openapi.json -o ./src/api/openapi.json",
+    "codegen:fetch": "curl https://petstore3.swagger.io/openapi.json -o ./src/api/openapi.json",
     "codegen:generate": "orval --config orval.config.ts",
     "dev": "vite",
     "lint": "biome check ."
