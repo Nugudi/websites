@@ -28,3 +28,5 @@ Sentry.init({
     Sentry.browserTracingIntegration(),
   ],
 });
+
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
