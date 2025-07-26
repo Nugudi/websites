@@ -16,13 +16,19 @@ export default (spec) => {
 
   if (spec.paths) {
     Object.values(spec.paths).forEach((pathItem) => {
-      Object.values(pathItem).forEach((operation) => {
-        if (operation.responses) {
-          Object.keys(operation.responses).forEach((status) => {
-            statusCodes.add(status);
-          });
-        }
-      });
+      if (pathItem && typeof pathItem === "object") {
+        Object.values(pathItem).forEach((operation) => {
+          if (
+            operation &&
+            typeof operation === "object" &&
+            operation.responses
+          ) {
+            Object.keys(operation.responses).forEach((status) => {
+              statusCodes.add(status);
+            });
+          }
+        });
+      }
     });
   }
 

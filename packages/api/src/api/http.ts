@@ -19,7 +19,7 @@ export const http = async <T>(url: string, init: RequestInit): Promise<T> => {
 
 const isDateString = (value: unknown): boolean => {
   const pattern =
-    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d*)?(?:[-+]\d{2}:?\d{2}|Z)?$/;
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/;
   return !!value && typeof value === "string" && pattern.test(value);
 };
 
