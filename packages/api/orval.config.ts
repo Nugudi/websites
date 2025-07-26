@@ -10,7 +10,7 @@ export default defineConfig({
   api: {
     input,
     output: {
-      baseUrl: "https://www.nugudi.com",
+      baseUrl: "https://petstore3.swagger.io",
       client: "react-query",
       httpClient: "fetch",
       mode: "split",
