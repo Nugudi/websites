@@ -55,8 +55,7 @@ jobs:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           onlyChanged: true
           autoAcceptChanges: true
-          storybookBaseDir: packages/ui
-          buildScriptName: build:storybook
+          storybookBuildDir: packages/ui/storybook-static
 
       - name: Comment PR with Storybook Link
         if: github.event_name == 'pull_request'
