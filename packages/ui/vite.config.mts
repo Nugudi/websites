@@ -16,7 +16,9 @@ function copyAppCssPlugin() {
     name: "copy-app-css",
     apply: "build" as const,
     closeBundle: async () => {
-      await copyFile("src/app.css", "dist/app.css");
+      const srcPath = resolve(_dirname, "src/app.css");
+      const distPath = resolve(_dirname, "dist/app.css");
+      await copyFile(srcPath, distPath);
     },
   };
 }
