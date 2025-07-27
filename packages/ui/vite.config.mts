@@ -1,4 +1,3 @@
-import { copyFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin";
@@ -11,27 +10,11 @@ import tsconfigPaths from "vite-tsconfig-paths";
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
 
-function copyAppCssPlugin() {
-  return {
-    name: "copy-app-css",
-    apply: "build" as const,
-    closeBundle: async () => {
-      // Only copy app.css when building the library, not during Storybook build
-      if (process.env.STORYBOOK !== "true") {
-        const srcPath = resolve(_dirname, "src/app.css");
-        const distPath = resolve(_dirname, "dist/app.css");
-        await copyFile(srcPath, distPath);
-      }
-    },
-  };
-}
-
 export default defineConfig({
   plugins: [
     react(),
     vanillaExtractPlugin(),
     svgr(),
-    copyAppCssPlugin(),
     dts({
       include: ["src"],
       insertTypesEntry: true,

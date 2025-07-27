@@ -13,7 +13,7 @@ export default defineConfig({
         plugins: [react(), vanillaExtractPlugin(), tsconfigPaths(), svgr()],
         test: {
           name: "js-dom",
-          environment: "jsdom",
+          environment: "jsdom", // 테스트 환경 설정
           include: ["tests/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
         },
       },
