@@ -31,6 +31,7 @@ const config: StorybookConfig = {
     config.resolve.alias = {
       ...(config.resolve.alias || {}),
       "@": join(__dirname, "../src"),
+      "@nugudi/themes": join(__dirname, "../../themes/dist"),
     };
 
     // Add vanilla-extract plugin

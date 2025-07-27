@@ -7,13 +7,13 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./style.css": "./dist/index.css",
-    "./app.css": "./dist/app.css"
+    "./style.css": "./dist/index.css"
   },
   "scripts": {
     "build": "vite build",
     "build:storybook": "storybook build",
     "check-types": "tsc --noEmit",
+    "chromatic": "npx chromatic --build-script-name=build:storybook",
     "deploy:chromatic": "npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN",
     "dev": "vite dev",
     "dev:package": "vite dev",

@@ -1,21 +1,114 @@
-import { Meta, Primary, Controls, Story } from '@storybook/addon-docs/blocks';
+import { Meta } from '@storybook/addon-docs/blocks';
 
 <Meta title='Introduction' />
 
-# ✈️ Nugudi Design System (NUGUDI)
+# Nugudi Design System
 
-### The Design System for Nugudi
+**A comprehensive design system for building consistent, scalable user interfaces**
 
-<br />
+## Overview
 
-## Links
+The Nugudi Design System provides a unified set of design tokens, components, and patterns that enable teams to build cohesive user experiences across all products. Built with React 19 and Vanilla Extract, it emphasizes performance, accessibility, and developer experience.
 
-[Github](https://github.com/nugudi/nugudi)
+### Key Features
 
-## Components(ui)
+- **Type-safe CSS-in-JS** with Vanilla Extract for zero-runtime styling
+- **Component Library** with comprehensive Storybook documentation
+- **Design Tokens** for consistent theming across applications
+- **Chromatic Integration** for automated visual regression testing
+- **Tree-shakeable** exports for optimal bundle sizes
 
-## Design Tokens
+## Getting Started
 
-- Colors
-- Fonts
-- Box Shadow
+### Installation
+
+```bash
+# Using pnpm (recommended)
+pnpm add @nugudi/nugudi-ui
+
+# Import components
+import { Button, Typography } from '@nugudi/nugudi-ui'
+import '@nugudi/nugudi-ui/style.css'
+```
+
+### Prerequisites
+
+- React 19.0.0 or higher
+- React DOM 19.0.0 or higher
+
+## Architecture
+
+### Package Structure
+
+```
+@nugudi/nugudi-ui
+├── components/      # UI components
+│   ├── button/
+│   └── typography/
+├── foundations/     # Design tokens & primitives
+│   ├── color/
+│   ├── typography/
+│   └── icons/
+└── utils/          # Shared utilities
+```
+
+### Core Components
+
+#### Available Now
+
+- **Button** - Primary interactive element with multiple variants
+- **Typography** - Text components with semantic HTML support
+
+#### Foundations
+
+- **Color System** - Semantic color tokens for consistent theming
+- **Typography Scale** - Modular type system based on design principles
+- **Icons** - SVG-based icon system with React components
+
+## Development
+
+### Scripts
+
+```bash
+# Start Storybook development server
+pnpm dev:storybook
+
+# Build the component library
+pnpm build
+
+# Run tests
+pnpm test
+
+# Type checking
+pnpm check-types
+
+# Deploy to Chromatic
+pnpm deploy:chromatic
+```
+
+### Testing Strategy
+
+- **Unit Tests** with Vitest and @vitest/browser
+- **Visual Regression** via Chromatic integration
+- **Accessibility Testing** with Storybook's a11y addon
+
+## Design Principles
+
+1. **Consistency First** - Every component follows established patterns
+2. **Performance Optimized** - Zero-runtime CSS, tree-shakeable exports
+3. **Developer Experience** - Full TypeScript support, comprehensive docs
+4. **Accessibility Built-in** - WCAG 2.1 AA compliance as baseline
+
+## Contributing
+
+See our [contribution guidelines](https://github.com/nugudi/nugudi) for details on our code of conduct and the process for submitting pull requests.
+
+## Resources
+
+- [GitHub Repository](https://github.com/nugudi/nugudi)
+- [Component Documentation](/?path=/docs/components-button--docs)
+- [Design Tokens Reference](/?path=/docs/foundations-color--docs)
+
+## License
+
+This project is part of the Nugudi ecosystem and follows the project's licensing terms.

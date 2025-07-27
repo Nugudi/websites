@@ -31,7 +31,7 @@ const meta: Meta<typeof Button> = {
     },
     disabled: {
       control: "boolean",
-      description: "버튼의 비활성화 여부",
+      description: "버튼의 활성화 여부",
       table: {
         type: { summary: "boolean" },
       },
@@ -88,30 +88,30 @@ export const ThemeShowcase: Story = {
   render: (args) => (
     <div className={styles.storyContainer}>
       <div className={styles.storySection}>
-        <h3>Button Variants</h3>
+        <h3>버튼 변형</h3>
         <div className={styles.storyRow}>
           <Button {...args} variant="brand">
-            Brand Button
+            브랜드 버튼
           </Button>
           <Button {...args} variant="neutral">
-            Neutral Button
+            일반 버튼
           </Button>
           <Button {...args} variant="brand" disabled>
-            Disabled Button
+            비활성 버튼
           </Button>
         </div>
       </div>
       <div className={styles.storySection}>
-        <h3>Button Sizes</h3>
+        <h3>버튼 크기</h3>
         <div className={styles.storyRow}>
           <Button {...args} size="sm" variant="brand">
-            Small
+            작은 크기
           </Button>
           <Button {...args} size="md" variant="brand">
-            Medium
+            중간 크기
           </Button>
           <Button {...args} size="lg">
-            Large
+            큰 크기
           </Button>
         </div>
       </div>

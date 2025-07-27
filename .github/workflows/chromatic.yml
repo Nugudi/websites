@@ -1,0 +1,78 @@
+name: 'Auto Deploy Storybook to Chromatic on Labeled PR'
+
+on:
+  pull_request:
+    types: [synchronize, labeled]
+    branches:
+      - '**'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  storybook:
+    if: contains(github.event.pull_request.labels.*.name, 'storybook-deploy')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install PNPM
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+          run_install: true
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pnpm-store
+            **/node_modules
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - name: Build themes package
+        run: pnpm --filter @nugudi/themes run build
+
+      - name: Build Storybook for Design System
+        run: pnpm --filter @nugudi/nugudi-ui run build:storybook
+
+      - name: Publish to Chromatic
+        id: chromatic
+        uses: chromaui/action@v1
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          onlyChanged: true
+          autoAcceptChanges: true
+          storybookBuildDir: packages/ui/storybook-static
+
+      - name: Comment PR with Storybook Link
+        if: github.event_name == 'pull_request'
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          comment_tag: storybook-preview
+          message: |
+            🧪 **Chromatic Storybook 미리보기 준비 완료!** 
+            📦 변경된 컴포넌트를 Storybook에서 바로 확인해보세요:
+            👉 [🔍 Storybook 미리보기 바로가기](${{ steps.chromatic.outputs.storybookUrl }})
+
+            ℹ️ 라벨(`storybook-deploy`)이 자동 제거되었습니다.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Remove storybook-deploy label
+        if: success()
+        uses: actions-ecosystem/action-remove-labels@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          labels: storybook-deploy

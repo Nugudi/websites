@@ -1,6 +1,5 @@
 import type { Preview } from "@storybook/react-vite";
 import "@nugudi/themes/themes.css";
-import "@/app.css";
 import "@/button/button.css";
 import "@/typography/typography.css";
 
