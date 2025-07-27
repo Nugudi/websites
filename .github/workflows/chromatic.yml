@@ -42,6 +42,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-
 
+      - name: Build themes package
+        run: pnpm --filter @nugudi/themes run build
+
       - name: Build Storybook for Design System
         run: pnpm --filter @nugudi/nugudi-ui run build:storybook
 
