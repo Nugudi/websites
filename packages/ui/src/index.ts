@@ -1,7 +1,3 @@
-/* styles */
-import "./button/button.css";
-import "./typography/typography.css";
-
 /* icons */
 export { default as GiftIcon } from "./assets/icons/gift.svg?react";
 export { default as HomeIcon } from "./assets/icons/home.svg?react";

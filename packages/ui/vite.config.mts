@@ -20,7 +20,7 @@ export default defineConfig({
       insertTypesEntry: true,
       outDir: "dist",
       entryRoot: "src",
-      rollupTypes: true,
+      rollupTypes: false,
       tsconfigPath: "./tsconfig.json",
     }),
     tsconfigPaths(),
@@ -28,8 +28,13 @@ export default defineConfig({
 
   build: {
     lib: {
-      entry: resolve(_dirname, "src/index.ts"),
-      fileName: "index",
+      entry: {
+        index: resolve(_dirname, "src/index.ts"),
+        styles: resolve(_dirname, "src/styles.ts"),
+        "button/index": resolve(_dirname, "src/button/index.tsx"),
+        "typography/index": resolve(_dirname, "src/typography/index.tsx"),
+        "utils/index": resolve(_dirname, "src/utils/index.ts"),
+      },
       formats: ["es"],
     },
     rollupOptions: {
@@ -39,7 +44,7 @@ export default defineConfig({
           react: "React",
           "react-dom": "ReactDOM",
         },
-        entryFileNames: "index.js",
+        entryFileNames: "[name].js",
       },
     },
     sourcemap: true,
