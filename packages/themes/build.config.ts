@@ -1,6 +1,9 @@
-import { writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { build } from "esbuild";
 import * as themes from "./src/index.js";
+
+// Ensure dist directory exists
+mkdirSync("dist", { recursive: true });
 
 // Build JavaScript/TypeScript
 async function buildJS() {
@@ -11,7 +14,6 @@ async function buildJS() {
     format: "esm",
     platform: "neutral",
     target: "es2020",
-    external: ["@vanilla-extract/css"],
   });
 
   await build({
@@ -21,7 +23,6 @@ async function buildJS() {
     format: "cjs",
     platform: "neutral",
     target: "es2020",
-    external: ["@vanilla-extract/css"],
   });
 }
 
@@ -34,11 +35,21 @@ function generateCSS() {
   const cssVariables: string[] = [];
   const cssClasses: string[] = [];
 
+  // Type assertion for themes.vars
+  const vars = themes.vars as Record<string, any>;
+
   // Generate CSS variables
-  Object.entries(themes.vars).forEach(([key, value]) => {
-    if (key === "colors") {
-      Object.entries(value.$static).forEach(([theme, colors]) => {
-        const selector = theme === "light" ? ":root" : ":root .theme-dark";
+  Object.entries(vars).forEach(([key, value]) => {
+    if (key === "colors" && value.$static) {
+      const colorStatic = value.$static as Record<
+        string,
+        Record<string, Record<string, string>>
+      >;
+      Object.entries(colorStatic).forEach(([theme, colors]) => {
+        const selector =
+          theme === "light"
+            ? ":root"
+            : `:root[data-theme="${theme}"], :root .theme-${theme}`;
         const variables = Object.entries(colors)
           .map(([colorGroup, colorValues]) =>
             Object.entries(colorValues)
@@ -52,9 +63,11 @@ function generateCSS() {
 
         cssVariables.push(`${selector} {\n${variables}\n}`);
       });
-    } else {
+    } else if (typeof value === "object" && value !== null) {
       const selector = ":root";
-      const variables = Object.entries(value)
+      const variables = Object.entries(
+        value as Record<string, Record<string, string>>,
+      )
         .map(([group, groupValues]) =>
           Object.entries(groupValues)
             .map(
@@ -65,22 +78,38 @@ function generateCSS() {
         )
         .join("\n");
 
-      cssVariables.push(`${selector} {\n${variables}\n}`);
+      if (variables) {
+        cssVariables.push(`${selector} {\n${variables}\n}`);
+      }
     }
   });
 
-  // Generate CSS classes
-  Object.entries(themes.classes).forEach(([, value]) => {
-    Object.entries(value).forEach(([category, categoryValues]) => {
-      Object.entries(categoryValues).forEach(([variant, styles]) => {
-        const className = `.${toCssProperty(category)}-${toCssProperty(variant)}`;
-        const properties = Object.entries(styles)
-          .map(([prop, val]) => `  ${toCssProperty(prop)}: ${val};`)
-          .join("\n");
+  // Type assertion for themes.classes
+  const classes = themes.classes as Record<
+    string,
+    Record<string, Record<string, Record<string, string>>>
+  >;
 
-        cssClasses.push(`${className} {\n${properties}\n}`);
+  // Generate CSS classes
+  Object.entries(classes).forEach(([, value]) => {
+    if (typeof value === "object" && value !== null) {
+      Object.entries(value).forEach(([category, categoryValues]) => {
+        if (typeof categoryValues === "object" && categoryValues !== null) {
+          Object.entries(categoryValues).forEach(([variant, styles]) => {
+            if (typeof styles === "object" && styles !== null) {
+              const className = `.${toCssProperty(category)}-${toCssProperty(variant)}`;
+              const properties = Object.entries(styles)
+                .map(([prop, val]) => `  ${toCssProperty(prop)}: ${val};`)
+                .join("\n");
+
+              if (properties) {
+                cssClasses.push(`${className} {\n${properties}\n}`);
+              }
+            }
+          });
+        }
       });
-    });
+    }
   });
 
   const css = [...cssVariables, ...cssClasses].join("\n\n");

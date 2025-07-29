@@ -1,14 +1,16 @@
 "use client";
 
-import { Button } from "@nugudi/nugudi-ui";
+import { Button } from "@nugudi/nugudi-ui/button";
+import { Typography } from "@nugudi/nugudi-ui/typography";
 import * as styles from "./page.css";
 
 export default function Home() {
   return (
     <div className={styles.container}>
       <div className={styles.section}>
-        <h1>Nugudi UI 컴포넌트 테스트</h1>
-
+        <Typography size="h1" color="main-800">
+          Nugudi UI 컴포넌트 테스트
+        </Typography>
         <div
           style={{
             marginTop: "1rem",
