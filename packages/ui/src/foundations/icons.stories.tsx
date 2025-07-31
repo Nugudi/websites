@@ -17,6 +17,9 @@ const icons = {
 
 export default {
   title: "Foundations/Icons",
+  parameters: {
+    layout: "centered",
+  },
 };
 
 export const Icons = () => (

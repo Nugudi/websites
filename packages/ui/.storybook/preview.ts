@@ -1,7 +1,5 @@
 import type { Preview } from "@storybook/react-vite";
 import "@nugudi/themes/themes.css";
-import "@/button/button.css";
-import "@/typography/typography.css";
 
 const preview: Preview = {
   parameters: {
