@@ -10,7 +10,15 @@ export default function Home() {
       <Emphasis fontSize="e1" color="blackAlpha">
         Emphasis
       </Emphasis>
-      <Button>Click me</Button>
+      <Button color="main">Click me</Button>
+      <div
+        style={{
+          marginTop: 10,
+        }}
+      />
+      <Button color="blackAlpha" size="lg">
+        Click me
+      </Button>
     </div>
   );
 }

@@ -1,14 +1,17 @@
 {
   "name": "@nugudi/react-components-button",
   "version": "0.0.1",
+  "sideEffects": [
+    "**/*.css",
+    "./dist/index.css"
+  ],
   "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
-    },
-    "./style.css": "./dist/index.css"
+    }
   },
   "main": "dist/index.js",
   "module": "./dist/index.js",
