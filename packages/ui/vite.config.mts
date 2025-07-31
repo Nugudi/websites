@@ -17,6 +17,7 @@ export default defineConfig({
     svgr(),
     dts({
       include: ["src"],
+      exclude: ["**/*.stories.tsx", "**/*.test.tsx"],
       insertTypesEntry: true,
       outDir: "dist",
       entryRoot: "src",
