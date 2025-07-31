@@ -27,7 +27,7 @@ export const buttonRecipe = recipe({
     variant: {
       brand: {
         backgroundColor: vars.colors.$scale.main[500],
-        color: vars.colors.$scale.system.white,
+        color: vars.colors.$static.light.color.white,
         ":disabled": {
           backgroundColor: vars.colors.$scale.zinc[50],
           color: vars.colors.$scale.zinc[200],
@@ -44,7 +44,7 @@ export const buttonRecipe = recipe({
       },
       neutral: {
         backgroundColor: vars.colors.$scale.zinc[700],
-        color: vars.colors.$scale.system.white,
+        color: vars.colors.$static.dark.color.white,
         ":disabled": {
           backgroundColor: vars.colors.$scale.zinc[50],
           color: vars.colors.$scale.zinc[200],

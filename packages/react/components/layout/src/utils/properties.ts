@@ -1,9 +1,3 @@
-import { type ClassValue, clsx } from "clsx";
-
-export function cn(...inputs: ClassValue[]) {
-  return clsx(inputs);
-}
-
 export const extractSprinkleProps = <T extends Object>(
   props: T,
   keys: (keyof T)[],

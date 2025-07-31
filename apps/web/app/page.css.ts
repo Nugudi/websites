@@ -44,7 +44,7 @@ export const testGuide = style({
   right: "1rem",
   bottom: "1rem",
   padding: "0.75rem",
-  backgroundColor: vars.colors.$scale.system.white,
+  backgroundColor: vars.colors.$scale.whiteAlpha[100],
   border: `1px solid ${vars.colors.$scale.zinc[200]}`,
   borderRadius: "0.25rem",
   fontSize: "0.875rem",
