@@ -7,18 +7,6 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./styles": {
-      "import": "./dist/styles.js",
-      "types": "./dist/styles.d.ts"
-    },
-    "./button": {
-      "import": "./dist/button/index.js",
-      "types": "./dist/button/index.d.ts"
-    },
-    "./typography": {
-      "import": "./dist/typography/index.js",
-      "types": "./dist/typography/index.d.ts"
-    },
     "./utils": {
       "import": "./dist/utils/index.js",
       "types": "./dist/utils/index.d.ts"
@@ -39,6 +27,7 @@
     "test:watch": "vitest --watch"
   },
   "dependencies": {
+    "@nugudi/react-components-button": "workspace:*",
     "@nugudi/react-components-layout": "workspace:*",
     "@nugudi/themes": "workspace:*",
     "@vanilla-extract/css": "^1.17.4",

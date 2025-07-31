@@ -30,8 +30,6 @@ export default defineConfig({
     lib: {
       entry: {
         index: resolve(_dirname, "src/index.ts"),
-        styles: resolve(_dirname, "src/styles.ts"),
-        "button/index": resolve(_dirname, "src/button/index.tsx"),
         "utils/index": resolve(_dirname, "src/utils/index.ts"),
       },
       formats: ["es"],

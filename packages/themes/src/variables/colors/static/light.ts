@@ -5,9 +5,16 @@ export const color = {
 };
 
 export const main = {
+  50: "#00B140",
+  100: "#0B8A3A",
+  200: "#176435",
+  300: "#13572F",
+  400: "#0E4226",
   500: "#00B140",
   600: "#0B8A3A",
+  700: "#13572F",
   800: "#176435",
+  900: "#ffffff",
 };
 
 export const zinc = {
@@ -20,6 +27,7 @@ export const zinc = {
   600: "#51525b",
   700: "#403f46",
   800: "#272729",
+  900: "#1A1A1D",
 };
 
 export const whiteAlpha = {

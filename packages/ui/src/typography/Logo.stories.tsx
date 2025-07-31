@@ -1,3 +1,4 @@
+import "@nugudi/react-components-layout/style.css";
 import { Logo as _Logo } from "@nugudi/react-components-layout";
 import { classes, vars } from "@nugudi/themes";
 import type { Meta, StoryObj } from "@storybook/react-vite";
