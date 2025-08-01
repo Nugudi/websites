@@ -1,6 +1,7 @@
 import "@nugudi/react-components-button/style.css";
 import { Button as _Button } from "@nugudi/react-components-button";
 import { Title } from "@nugudi/react-components-layout";
+import { useButton, useToggleButton } from "@nugudi/react-hooks-button";
 import { vars } from "@nugudi/themes";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
@@ -50,8 +51,16 @@ export const ButtonStory: Story = {
 
 export const TextButtonStory: Story = {
   render: () => {
+    const { buttonProps } = useButton({
+      elementType: "div",
+      onClick: () => {
+        console.log("ttt");
+      },
+    });
+
     return (
       <Title
+        {...buttonProps}
         as="div"
         fontSize="t2"
         color="main"
@@ -60,7 +69,7 @@ export const TextButtonStory: Story = {
           cursor: "pointer",
         }}
       >
-        텍스트 버튼입니다.
+        너구디 너구디 버튼
       </Title>
     );
   },
@@ -68,10 +77,18 @@ export const TextButtonStory: Story = {
 
 export const ToggleButtonStory: Story = {
   render: () => {
-    const isSelected = true;
+    const { buttonProps, isSelected } = useToggleButton(
+      { elementType: "button" },
+      false,
+    );
     return (
-      <_Button variant={isSelected ? "brand" : "neutral"} color="main">
+      <_Button
+        {...buttonProps}
+        variant={isSelected ? "brand" : "neutral"}
+        color="zinc"
+      >
         {isSelected ? "😀" : "😂"}
+        {isSelected}
       </_Button>
     );
   },

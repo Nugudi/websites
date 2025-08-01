@@ -1,5 +1,5 @@
-import { Button } from "@nugudi/react-components-button";
 import { Emphasis, Heading } from "@nugudi/react-components-layout";
+import { ButtonContainer } from "./components/button-container";
 
 export default function Home() {
   return (
@@ -10,15 +10,7 @@ export default function Home() {
       <Emphasis fontSize="e1" color="blackAlpha">
         Emphasis
       </Emphasis>
-      <Button color="main">Click me</Button>
-      <div
-        style={{
-          marginTop: 10,
-        }}
-      />
-      <Button color="blackAlpha" size="lg">
-        Click me
-      </Button>
+      <ButtonContainer />
     </div>
   );
 }
