@@ -1,4 +1,7 @@
 /* icons */
+export * from "./assets/icons";
+
+/* icons */
 export { default as AppleIcon } from "./assets/icons/apple.svg?react";
 export { default as ArrowLeftIcon } from "./assets/icons/arrow-left.svg?react";
 export { default as ArrowUpCircleIcon } from "./assets/icons/arrow-up-circle.svg?react";
