@@ -67,17 +67,3 @@ export const searchInput = style({
     boxShadow: `0 0 0 3px ${vars.colors.$scale.zinc[100]}`,
   },
 });
-
-export const categoryFilter = style({
-  padding: vars.box.spacing[3],
-  borderRadius: vars.box.radii.md,
-  border: `1px solid ${vars.colors.$scale.zinc[300]}`,
-  fontSize: vars.typography.fontSize[13],
-  backgroundColor: "white",
-  minWidth: "200px",
-  ":focus": {
-    outline: "none",
-    borderColor: vars.colors.$scale.main[500],
-    boxShadow: `0 0 0 3px ${vars.colors.$scale.zinc[100]}`,
-  },
-});

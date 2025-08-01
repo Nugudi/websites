@@ -25,7 +25,7 @@ export { default as PenIcon } from "./assets/icons/pen.svg?react";
 export { default as PersonIcon } from "./assets/icons/person.svg?react";
 export { default as PicklesIcon } from "./assets/icons/pickles.svg?react";
 export { default as RiceIcon } from "./assets/icons/rice.svg?react";
-export { default as ShardIcon } from "./assets/icons/shard.svg?react";
+export { default as ShareIcon } from "./assets/icons/share.svg?react";
 export { default as SoupIcon } from "./assets/icons/soup.svg?react";
 export { default as SubDishIcon } from "./assets/icons/sub-dish.svg?react";
 export { default as TeaIcon } from "./assets/icons/tea.svg?react";

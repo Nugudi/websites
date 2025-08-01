@@ -13,9 +13,6 @@
  *
  */
 
-import type React from "react";
-import type { ComponentType } from "react";
-
 // Icon imports
 import AppleIcon from "@/assets/icons/apple.svg?react";
 import ArrowLeftIcon from "@/assets/icons/arrow-left.svg?react";
@@ -40,33 +37,11 @@ import PenIcon from "@/assets/icons/pen.svg?react";
 import PersonIcon from "@/assets/icons/person.svg?react";
 import PicklesIcon from "@/assets/icons/pickles.svg?react";
 import RiceIcon from "@/assets/icons/rice.svg?react";
-import ShardIcon from "@/assets/icons/shard.svg?react";
+import ShareIcon from "@/assets/icons/share.svg?react";
 import SoupIcon from "@/assets/icons/soup.svg?react";
 import SubDishIcon from "@/assets/icons/sub-dish.svg?react";
 import TeaIcon from "@/assets/icons/tea.svg?react";
-
-// 타입 정의
-export type IconComponent = ComponentType<{
-  width?: number | string;
-  height?: number | string;
-  className?: string;
-  style?: React.CSSProperties;
-  onClick?: () => void;
-  title?: string;
-  "aria-label"?: string;
-}>;
-
-export interface IconData {
-  component: IconComponent;
-  tags: string[];
-}
-
-export type IconRegistry = Record<string, IconData>;
-
-export interface IconSearchResult {
-  name: string;
-  data: IconData;
-}
+import type { IconRegistry } from "@/types/icon";
 
 // 아이콘 레지스트리
 export const iconRegistry: IconRegistry = {
@@ -150,9 +125,9 @@ export const iconRegistry: IconRegistry = {
     component: PenIcon,
     tags: ["pen", "펜", "쓰기", "편집", "작성"],
   },
-  Shard: {
-    component: ShardIcon,
-    tags: ["shard", "공유"],
+  Share: {
+    component: ShareIcon,
+    tags: ["share", "공유"],
   },
   Bus: {
     component: BusIcon,
