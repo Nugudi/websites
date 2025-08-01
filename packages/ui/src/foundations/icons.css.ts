@@ -38,10 +38,10 @@ export const iconGrid = style({
       gridTemplateColumns: "repeat(5, 1fr)",
     },
     "(min-width: 1024px)": {
-      gridTemplateColumns: "repeat(6, 1fr)",
+      gridTemplateColumns: "repeat(5, 1fr)",
     },
     "(min-width: 1280px)": {
-      gridTemplateColumns: "repeat(7, 1fr)",
+      gridTemplateColumns: "repeat(6, 1fr)",
     },
   },
 });
@@ -50,4 +50,20 @@ export const iconCode = style({
   wordBreak: "break-word",
   textAlign: "center",
   color: vars.colors.$scale.zinc[600],
+});
+
+export const searchInput = style({
+  width: "100%",
+  padding: vars.box.spacing[3],
+  borderRadius: vars.box.radii.md,
+  border: `1px solid ${vars.colors.$scale.zinc[300]}`,
+  fontSize: vars.typography.fontSize[16],
+  "::placeholder": {
+    color: vars.colors.$scale.zinc[400],
+  },
+  ":focus": {
+    outline: "none",
+    borderColor: vars.colors.$scale.main[500],
+    boxShadow: `0 0 0 3px ${vars.colors.$scale.zinc[100]}`,
+  },
 });
