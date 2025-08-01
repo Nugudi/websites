@@ -1,3 +1,4 @@
+import { useButton } from "@nugudi/react-hooks-button";
 import { vars } from "@nugudi/themes";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import { clsx } from "clsx";
@@ -13,6 +14,7 @@ import {
 import type { ButtonProps } from "./types";
 
 const Button = (props: ButtonProps, ref: React.Ref<HTMLButtonElement>) => {
+  const { buttonProps } = useButton(props);
   const {
     variant = "brand",
     size = "md",
@@ -36,11 +38,9 @@ const Button = (props: ButtonProps, ref: React.Ref<HTMLButtonElement>) => {
 
   return (
     <button
+      {...buttonProps}
       type="button"
       ref={ref}
-      data-variant={variant}
-      data-loading={isLoading}
-      disabled={false}
       className={clsx([
         buttonStyle({
           size,

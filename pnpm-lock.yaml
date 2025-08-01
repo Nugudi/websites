@@ -178,6 +178,9 @@ importers:
 
   packages/react/components/button:
     dependencies:
+      '@nugudi/react-hooks-button':
+        specifier: workspace:*
+        version: link:../../hooks/button
       '@nugudi/themes':
         specifier: workspace:*
         version: link:../../../themes
