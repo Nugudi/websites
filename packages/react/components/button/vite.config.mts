@@ -28,7 +28,7 @@ export default defineConfig({
     lib: {
       entry: resolve(_dirname, "src/index.ts"),
       fileName: "index",
-      formats: ["es", "cjs"],
+      formats: ["es"],
     },
     rollupOptions: {
       external: [
@@ -39,7 +39,7 @@ export default defineConfig({
       ],
       output: {
         assetFileNames: (assetInfo) => {
-          if (assetInfo.name === "style.css") return "index.css";
+          if (assetInfo.name?.endsWith('.css')) return "index.css";
           return assetInfo.name || "assets/[name].[ext]";
         },
       },

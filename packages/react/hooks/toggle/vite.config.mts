@@ -17,7 +17,7 @@ export default defineConfig({
     lib: {
       entry: resolve("src/index.ts"),
       fileName: "index",
-      formats: ["es", "cjs"],
+      formats: ["es"],
     },
     rollupOptions: {
       external: ["react", "react-dom", "react/jsx-runtime"],
