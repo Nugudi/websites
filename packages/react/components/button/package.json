@@ -23,8 +23,6 @@
   "scripts": {
     "build": "vite build",
     "check-types": "tsc --noEmit",
-    "dev": "vite dev",
-    "dev:package": "vite dev",
     "lint": "biome check .",
     "test": "vitest run",
     "test:watch": "vitest --watch"
