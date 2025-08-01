@@ -4,7 +4,6 @@ import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
-import svgr from "vite-plugin-svgr";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 const _filename = fileURLToPath(import.meta.url);
@@ -14,38 +13,44 @@ export default defineConfig({
   plugins: [
     react(),
     vanillaExtractPlugin(),
-    svgr(),
     dts({
       include: ["src"],
-      exclude: ["**/*.stories.tsx", "**/*.test.tsx"],
-      insertTypesEntry: true,
+      exclude: ["src/**/*.stories.tsx", "src/**/*.test.tsx"],
       outDir: "dist",
       entryRoot: "src",
+      insertTypesEntry: true,
       rollupTypes: false,
       tsconfigPath: "./tsconfig.json",
     }),
     tsconfigPaths(),
   ],
-
   build: {
     lib: {
-      entry: {
-        index: resolve(_dirname, "src/index.ts"),
-        "utils/index": resolve(_dirname, "src/utils/index.ts"),
-      },
+      entry: resolve(_dirname, "src/index.ts"),
+      fileName: "index",
       formats: ["es"],
     },
     rollupOptions: {
-      external: ["react", "react-dom", "@vanilla-extract/css"],
+      external: [
+        "react",
+        "react-dom",
+        "react/jsx-runtime",
+        "@vanilla-extract/css",
+      ],
       output: {
-        globals: {
-          react: "React",
-          "react-dom": "ReactDOM",
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name?.endsWith('.css')) return "index.css";
+          return assetInfo.name || "assets/[name].[ext]";
         },
-        entryFileNames: "[name].js",
       },
     },
     sourcemap: true,
+    minify: false,
     outDir: "dist",
+  },
+  resolve: {
+    alias: {
+      "@": resolve(_dirname, "./src"),
+    },
   },
 });

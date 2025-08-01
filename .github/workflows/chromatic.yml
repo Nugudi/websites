@@ -45,6 +45,9 @@ jobs:
       - name: Build themes package
         run: pnpm --filter @nugudi/themes run build
 
+      - name: Build React packages
+        run: pnpm --filter "@nugudi/react-*" run build
+
       - name: Build Storybook for Design System
         run: pnpm --filter @nugudi/nugudi-ui run build:storybook
 
