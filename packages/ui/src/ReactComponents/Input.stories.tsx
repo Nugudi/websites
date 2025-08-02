@@ -63,7 +63,7 @@ export const FilledWithError: Story = {
   },
 };
 
-export const ErrorStates: Story = {
+export const AllStates: Story = {
   render: () => (
     <div
       style={{
@@ -73,19 +73,38 @@ export const ErrorStates: Story = {
         width: "100%",
       }}
     >
-      <_Input label="기본 상태" placeholder="너구리를 입력해주세요." />
-      <_Input
-        label="포커스 상태 (타이핑 중)"
-        placeholder="포커스 시 메인 컬러로 변경"
-        autoFocus
-      />
-      <_Input
-        label="에러 상태 (Default)"
-        placeholder="010-2"
-        isError
-        errorMessage="전화번호가 올바르지 않습니다"
-      />
-      <_Input variant="filled" placeholder="너구리를 입력해주세요" isError />
+      <h3>모든 Input 상태</h3>
+
+      <div
+        style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}
+      >
+        <div>
+          <h4>Default Variant</h4>
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+          >
+            <_Input label="기본 상태" placeholder="텍스트를 입력하세요" />
+            <_Input
+              label="에러 상태"
+              placeholder="010-2"
+              isError={true}
+              errorMessage="전화번호가 올바르지 않습니다"
+            />
+            <_Input label="비활성화" placeholder="비활성화된 입력" disabled />
+          </div>
+        </div>
+
+        <div>
+          <h4>Filled Variant</h4>
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+          >
+            <_Input variant="filled" placeholder="텍스트를 입력하세요" />
+            <_Input variant="filled" placeholder="에러 입력" isError={true} />
+            <_Input variant="filled" placeholder="비활성화된 입력" disabled />
+          </div>
+        </div>
+      </div>
     </div>
   ),
 };
