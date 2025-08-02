@@ -26,10 +26,14 @@ export const useTab = (
   const { value, disabled, onKeyDown, onClick } = props;
   const isSelected = selectedValue === value;
 
+  // 고유 ID 생성
+  const tabId = `tab-${value}`;
+  const panelId = `panel-${value}`;
+
   const handleClick = React.useCallback(() => {
     if (!disabled) {
-      onChange(value);
       onClick?.();
+      onChange(value);
     }
   }, [disabled, onChange, value, onClick]);
 
@@ -73,13 +77,15 @@ export const useTab = (
   const tabProps = React.useMemo(
     () => ({
       role: "tab" as const,
+      id: tabId,
       "aria-selected": isSelected,
       "aria-disabled": disabled,
+      "aria-controls": panelId,
       tabIndex: isSelected ? 0 : -1,
       onKeyDown: handleKeyDown,
       onClick: handleClick,
     }),
-    [isSelected, disabled, handleKeyDown, handleClick],
+    [tabId, panelId, isSelected, disabled, handleKeyDown, handleClick],
   );
 
   return {
@@ -95,12 +101,18 @@ export const useTabPanel = (
   const { value } = props;
   const isActive = selectedValue === value;
 
+  // 고유 ID 생성 (탭과 일치)
+  const tabId = `tab-${value}`;
+  const panelId = `panel-${value}`;
+
   const tabPanelProps = React.useMemo(
     () => ({
       role: "tabpanel" as const,
+      id: panelId,
+      "aria-labelledby": tabId,
       tabIndex: 0,
     }),
-    [],
+    [panelId, tabId],
   );
 
   return {

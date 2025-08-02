@@ -55,8 +55,10 @@ export interface UseTabProps {
 export interface UseTabReturn {
   tabProps: {
     role: "tab";
+    id: string;
     "aria-selected": boolean;
     "aria-disabled"?: boolean;
+    "aria-controls": string;
     tabIndex: number;
     onKeyDown: (event: React.KeyboardEvent) => void;
     onClick: () => void;
@@ -71,6 +73,8 @@ export interface UseTabPanelProps {
 export interface UseTabPanelReturn {
   tabPanelProps: {
     role: "tabpanel";
+    id: string;
+    "aria-labelledby": string;
     tabIndex: number;
   };
   isActive: boolean;
