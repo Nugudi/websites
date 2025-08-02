@@ -3,7 +3,7 @@ import { Input as _Input } from "@nugudi/react-components-input";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof _Input> = {
-  title: "Input",
+  title: "Components/Input",
   component: _Input,
   tags: ["autodocs"],
   argTypes: {
