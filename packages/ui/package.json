@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@nugudi/react-components-button": "workspace:*",
+    "@nugudi/react-components-input": "workspace:*",
     "@nugudi/react-components-layout": "workspace:*",
     "@nugudi/react-hooks-button": "workspace:*",
     "@nugudi/themes": "workspace:*",
