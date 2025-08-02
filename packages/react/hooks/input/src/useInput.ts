@@ -4,7 +4,6 @@ import type { UseInputProps, UseInputReturn } from "./types";
 
 export const useInput = (props: UseInputProps): UseInputReturn => {
   const {
-    isDisabled,
     isRequired,
     isReadOnly,
     isInvalid,
@@ -39,7 +38,6 @@ export const useInput = (props: UseInputProps): UseInputReturn => {
   const inputProps: UseInputReturn["inputProps"] = {
     ...rest,
     id,
-    disabled: isDisabled,
     readOnly: isReadOnly,
     required: isRequired,
     onFocus: handleFocus,

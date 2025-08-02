@@ -1,7 +1,6 @@
 import type { InputHTMLAttributes } from "react";
 
 export interface UseInputProps extends InputHTMLAttributes<HTMLInputElement> {
-  isDisabled?: boolean;
   isRequired?: boolean;
   isReadOnly?: boolean;
   isInvalid?: boolean;
