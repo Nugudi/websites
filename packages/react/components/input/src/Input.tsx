@@ -1,4 +1,3 @@
-import { useInput } from "@nugudi/react-hooks-input";
 import { clsx } from "clsx";
 import * as React from "react";
 import {
@@ -8,6 +7,7 @@ import {
   labelStyle,
 } from "./style.css";
 import type { InputProps } from "./types";
+import { useInput } from "./useInput";
 
 const Input = (props: InputProps, ref: React.Ref<HTMLInputElement>) => {
   const {
@@ -18,10 +18,15 @@ const Input = (props: InputProps, ref: React.Ref<HTMLInputElement>) => {
     errorMessage,
     className,
     style,
+    invalid,
     ...inputBaseProps
   } = props;
 
-  const { inputProps, isFocused } = useInput(inputBaseProps);
+  const { inputProps, isFocused } = useInput({
+    ...inputBaseProps,
+    invalid: invalid || isError,
+    errorMessage,
+  });
 
   return (
     <div className={clsx([containerStyle()])} style={{ ...style }}>

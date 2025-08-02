@@ -4,9 +4,7 @@ import type { UseInputProps, UseInputReturn } from "./types";
 
 export const useInput = (props: UseInputProps): UseInputReturn => {
   const {
-    isRequired,
-    isReadOnly,
-    isInvalid,
+    invalid,
     errorMessage,
     id,
     onFocus,
@@ -38,12 +36,10 @@ export const useInput = (props: UseInputProps): UseInputReturn => {
   const inputProps: UseInputReturn["inputProps"] = {
     ...rest,
     id,
-    readOnly: isReadOnly,
-    required: isRequired,
     onFocus: handleFocus,
     onBlur: handleBlur,
-    "aria-invalid": isInvalid,
-    "aria-required": isRequired,
+    "aria-invalid": invalid,
+    "aria-required": rest.required,
     "aria-describedby":
       [ariaDescribedBy, errorId].filter(Boolean).join(" ") || undefined,
   };
