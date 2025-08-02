@@ -18,7 +18,6 @@
     "@nugudi/react-components-input": "workspace:*",
     "@nugudi/react-components-layout": "workspace:*",
     "@nugudi/react-hooks-button": "workspace:*",
-    "@nugudi/react-hooks-input": "workspace:*",
     "@nugudi/themes": "workspace:*",
     "@sentry/nextjs": "^9.31.0",
     "@tanstack/react-query": "^5.81.2",
