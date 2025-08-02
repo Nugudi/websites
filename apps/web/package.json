@@ -12,10 +12,13 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.1",
     "@nugudi/api": "workspace:*",
     "@nugudi/react-components-button": "workspace:*",
+    "@nugudi/react-components-input": "workspace:*",
     "@nugudi/react-components-layout": "workspace:*",
     "@nugudi/react-hooks-button": "workspace:*",
+    "@nugudi/react-hooks-input": "workspace:*",
     "@nugudi/themes": "workspace:*",
     "@sentry/nextjs": "^9.31.0",
     "@tanstack/react-query": "^5.81.2",
@@ -23,6 +26,7 @@
     "pretendard": "^1.3.9",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-hook-form": "^7.62.0",
     "zod": "^4.0.8"
   },
   "devDependencies": {

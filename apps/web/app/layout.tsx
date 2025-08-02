@@ -4,6 +4,7 @@ import Providers from "../src/shared/providers";
 import "@nugudi/themes/themes.css";
 import "@nugudi/react-components-layout/style.css";
 import "@nugudi/react-components-button/style.css";
+import "@nugudi/react-components-input/style.css";
 
 const Pretendard = localFont({
   src: "../node_modules/pretendard/dist/web/variable/woff2/PretendardVariable.woff2",

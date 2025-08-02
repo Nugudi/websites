@@ -1,3 +1,4 @@
+import { useInput } from "@nugudi/react-hooks-input";
 import { clsx } from "clsx";
 import * as React from "react";
 import {
@@ -17,26 +18,24 @@ const Input = (props: InputProps, ref: React.Ref<HTMLInputElement>) => {
     errorMessage,
     className,
     style,
-    onFocus,
-    onBlur,
-    ...rest
+    ...inputBaseProps
   } = props;
 
-  const [isFocused, setIsFocused] = React.useState(false);
+  const { inputProps, isFocused } = useInput(inputBaseProps);
 
   return (
     <div className={clsx([containerStyle()])} style={{ ...style }}>
       {label && (
         <label
           className={labelStyle({ isError, isFocused: isFocused && !isError })}
-          htmlFor={rest.id}
+          htmlFor={inputProps.id}
         >
           {label}
         </label>
       )}
       <div style={{ position: "relative", width: "100%" }}>
         <input
-          {...rest}
+          {...inputProps}
           ref={ref}
           className={clsx(
             [
@@ -48,14 +47,6 @@ const Input = (props: InputProps, ref: React.Ref<HTMLInputElement>) => {
             ],
             className,
           )}
-          onFocus={(e) => {
-            setIsFocused(true);
-            onFocus?.(e);
-          }}
-          onBlur={(e) => {
-            setIsFocused(false);
-            onBlur?.(e);
-          }}
         />
       </div>
       {isError && errorMessage && (

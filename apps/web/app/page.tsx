@@ -1,5 +1,6 @@
 import { Emphasis, Heading } from "@nugudi/react-components-layout";
 import { ButtonContainer } from "./components/button-container";
+import InputContainer from "./components/input-container";
 
 export default function Home() {
   return (
@@ -11,6 +12,7 @@ export default function Home() {
         Emphasis
       </Emphasis>
       <ButtonContainer />
+      <InputContainer />
     </div>
   );
 }

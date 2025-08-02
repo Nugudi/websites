@@ -49,6 +49,14 @@ export const inputStyle = recipe({
         cursor: "not-allowed",
         opacity: 0.4,
       },
+      "&:-webkit-autofill": {
+        WebkitBoxShadow: "0 0 0 30px #fff inset",
+        WebkitTextFillColor: vars.colors.$scale.zinc[800],
+      },
+      "&:-webkit-autofill:hover, &:-webkit-autofill:focus, &:-webkit-autofill:active":
+        {
+          transition: "background-color 5000s ease-in-out 0s",
+        },
     },
   },
   variants: {
