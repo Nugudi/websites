@@ -1,6 +1,5 @@
 import type { InputHTMLAttributes } from "react";
 
-// Base Input Hook types
 export interface UseInputProps extends InputHTMLAttributes<HTMLInputElement> {
   isDisabled?: boolean;
   isRequired?: boolean;
