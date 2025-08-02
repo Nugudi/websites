@@ -6,7 +6,7 @@ import { vars } from "@nugudi/themes";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof _Button> = {
-  title: "Button",
+  title: "Components/Button",
   component: _Button,
   parameters: {
     layout: "centered",

@@ -39,7 +39,7 @@ const Button = (props: ButtonProps, ref: React.Ref<HTMLButtonElement>) => {
   return (
     <button
       {...buttonProps}
-      type="button"
+      type={buttonProps.type ?? "button"}
       ref={ref}
       className={clsx([
         buttonStyle({
