@@ -102,7 +102,7 @@ export const inputStyle = recipe({
         isError: true,
       },
       style: {
-        backgroundColor: "rgba(244, 67, 54, 0.1)",
+        backgroundColor: `${vars.colors.$static.light.color.red}1A`,
       },
     },
   ],
