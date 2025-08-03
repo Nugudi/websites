@@ -36,6 +36,7 @@ export default function Home() {
               Nugudi UI 컴포넌트 테스트
             </Heading>
           </Box>
+          <Divider color="main" size={5} />
 
           <ButtonContainer />
         </Tabs.Panel>
