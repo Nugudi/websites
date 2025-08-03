@@ -1,18 +1,3 @@
-/**
- * 🔧 아이콘 시스템 사용 가이드
- *
- * ## 📝 새 아이콘 추가하기:
- * 1. SVG 파일을 assets/icons/ 폴더에 넣기
- * 2. 아래 import 섹션에 추가: import NewIcon from "@/assets/icons/new-icon.svg?react";
- * 3. iconRegistry에 등록:
- *    NewIcon: {
- *      component: NewIcon,
- *      tags: ["english", "한국어", "키워드"]
- *    }
- * 4. src/index.ts에도 추가: export { default as NewIcon } from "./icons/new-icon.svg?react";
- *
- */
-
 // Icon imports
 import AppleIcon from "../svg/apple.svg?react";
 import ArrowLeftIcon from "../svg/arrow-left.svg?react";
