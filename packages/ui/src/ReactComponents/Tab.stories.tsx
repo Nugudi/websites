@@ -21,13 +21,6 @@ const meta: Meta<typeof Tabs> = {
     ),
   ],
   tags: ["autodocs"],
-  argTypes: {
-    size: {
-      options: ["full"],
-      control: "select",
-      defaultValue: "full",
-    },
-  },
 };
 
 export default meta;
@@ -36,7 +29,7 @@ type Story = StoryObj<typeof meta>;
 
 export const TabStory: Story = {
   render: () => (
-    <Tabs defaultValue="tab1" size="full">
+    <Tabs defaultValue="tab1">
       <Tabs.List>
         <Tabs.Item value="tab1">식당 정보</Tabs.Item>
         <Tabs.Item value="tab2">리뷰</Tabs.Item>
@@ -82,7 +75,7 @@ export const TabStory: Story = {
 
 export const DisabledTabStory: Story = {
   render: () => (
-    <Tabs defaultValue="info" size="full">
+    <Tabs defaultValue="info">
       <Tabs.List>
         <Tabs.Item value="info">정보</Tabs.Item>
         <Tabs.Item value="menu" disabled>

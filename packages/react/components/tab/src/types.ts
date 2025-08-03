@@ -1,17 +1,8 @@
 import type * as React from "react";
 
-export interface TabItem {
-  id: string;
-  label: string;
-  content?: React.ReactNode;
-  disabled?: boolean;
-}
-
 export interface TabsProps {
-  items?: TabItem[];
-  children?: React.ReactNode;
+  children: React.ReactNode;
   defaultValue?: string;
-  size?: "full";
   className?: string;
   style?: React.CSSProperties;
 }

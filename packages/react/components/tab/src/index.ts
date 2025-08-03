@@ -1,7 +1,6 @@
 export { Tabs } from "./Tab";
 export { TabsProvider, useTabsContext } from "./TabsContext";
 export type {
-  TabItem,
   TabListProps,
   TabPanelProps,
   TabProps,

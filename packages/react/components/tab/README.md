@@ -19,7 +19,7 @@ import { Tabs } from "@nugudi/react-components-tab";
 
 const App = () => {
   return (
-    <Tabs defaultValue="tab1" size="full">
+    <Tabs defaultValue="tab1">
       <Tabs.List>
         <Tabs.Item value="tab1">식당 정보</Tabs.Item>
         <Tabs.Item value="tab2">리뷰</Tabs.Item>
@@ -47,10 +47,31 @@ const App = () => {
 };
 ```
 
+### 모바일 스와이프 지원
+
+기본적으로 모바일 스와이프와 자동 높이 조절이 지원됩니다.
+
+```tsx
+<Tabs defaultValue="tab1">
+  <Tabs.List>
+    <Tabs.Item value="tab1">정보</Tabs.Item>
+    <Tabs.Item value="tab2">리뷰</Tabs.Item>
+  </Tabs.List>
+
+  <Tabs.Panel value="tab1">
+    <div style={{ height: 200 }}>정보 컨텐츠</div>
+  </Tabs.Panel>
+
+  <Tabs.Panel value="tab2">
+    <div style={{ height: 400 }}>리뷰 컨텐츠</div>
+  </Tabs.Panel>
+</Tabs>
+```
+
 ## 접근성
 
 이 컴포넌트는 WAI-ARIA 가이드라인을 따릅니다:
 
 - `role="tablist"`, `role="tab"`, `role="tabpanel"` 속성 사용
-- `aria-selected`, `aria-disabled` 상태 관리
+- `aria-selected`, `aria-disabled`, `aria-controls`, `aria-labelledby` 상태 관리
 - 키보드 네비게이션 지원 (화살표 키)

@@ -1,5 +1,5 @@
 import { classes, vars } from "@nugudi/themes";
-import { keyframes, style } from "@vanilla-extract/css";
+import { style } from "@vanilla-extract/css";
 import { recipe } from "@vanilla-extract/recipes";
 
 export const tabsContainerStyle = style({
@@ -46,11 +46,6 @@ export const tabStyle = recipe({
     },
   },
   variants: {
-    size: {
-      full: {
-        padding: "0.75rem",
-      },
-    },
     isActive: {
       true: {
         color: vars.colors.$scale.zinc[600],
@@ -71,18 +66,35 @@ export const tabStyle = recipe({
   },
 });
 
-const tabPanelFadeIn = keyframes({
-  "0%": {
-    opacity: 0,
-    transform: "translateY(8px)",
-  },
-  "100%": {
-    opacity: 1,
-    transform: "translateY(0)",
-  },
-});
-
 export const tabPanelStyle = style({
   padding: "8px 16px",
-  animation: `${tabPanelFadeIn} 0.2s ease-out forwards`,
+  flexShrink: 0,
+  width: "100%",
+  minHeight: 0,
+  boxSizing: "border-box",
+});
+
+export const carouselViewportStyle = style({
+  overflow: "hidden",
+  width: "100%",
+  touchAction: "manipulation",
+  WebkitOverflowScrolling: "touch",
+});
+
+export const carouselContainerStyle = style({
+  display: "flex",
+  transition: "height 300ms ease",
+  backfaceVisibility: "hidden",
+  touchAction: "manipulation",
+  // 드래그 가능하도록 설정
+  userSelect: "none",
+  WebkitUserSelect: "none",
+  MozUserSelect: "none",
+  msUserSelect: "none",
+  cursor: "grab",
+  // iOS Safari 호환성
+  WebkitOverflowScrolling: "touch",
+  ":active": {
+    cursor: "grabbing",
+  },
 });
