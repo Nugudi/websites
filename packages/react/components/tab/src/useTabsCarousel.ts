@@ -1,6 +1,6 @@
 import AutoHeight from "embla-carousel-auto-height";
 import useEmblaCarousel from "embla-carousel-react";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useTabsContext } from "./TabsContext";
 
 export interface UseTabsCarouselProps {
@@ -12,17 +12,16 @@ export interface UseTabsCarouselProps {
 export interface UseTabsCarouselReturn {
   carouselRef: ((node: HTMLDivElement | null) => void) | undefined;
   updateTabIndex: (value: string, index: number) => void;
-  rootProps: Record<string, any>;
+  rootProps: Record<string, unknown>;
 }
-
-const autoHeight = AutoHeight();
-const plugins = [autoHeight];
 
 export const useTabsCarousel = (
   props: UseTabsCarouselProps = {},
 ): UseTabsCarouselReturn => {
   const api = useTabsContext({ strict: false });
   const isInitialScroll = useRef(true);
+
+  const plugins = useMemo(() => [AutoHeight()], []);
 
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
@@ -67,11 +66,7 @@ export const useTabsCarousel = (
 
   useEffect(() => {
     if (emblaApi && api && api.contentIndex !== emblaApi.selectedScrollSnap()) {
-      const engine = emblaApi.internalEngine();
-
-      // biome-ignore lint/correctness/useHookAtTopLevel: This is not a React Hook
-      engine.scrollBody.useDuration(4).useFriction(0.4);
-      engine.scrollTo.index(api.contentIndex, 0);
+      emblaApi.scrollTo(api.contentIndex);
 
       if (isInitialScroll.current) {
         isInitialScroll.current = false;

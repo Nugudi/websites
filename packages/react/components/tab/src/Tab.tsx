@@ -154,9 +154,13 @@ const Tab = ({ value, children, disabled, className, onClick }: TabProps) => {
 const TabPanelContainer = ({ children }: { children: React.ReactNode }) => {
   const { valueToIndexMap, indexToValueMap } = useTabsContext();
   const carouselState = useTabsCarousel();
+  const [isRebuilding, setIsRebuilding] = useState(false);
+  const prevChildrenRef = useRef(children);
 
   const registerPanel = useCallback(
     (value: string) => {
+      if (isRebuilding) return -1; // 재구성 중에는 등록 방지
+
       // 이미 등록된 패널이면 기존 인덱스 반환
       if (valueToIndexMap.has(value)) {
         const existingIndex = valueToIndexMap.get(value);
@@ -172,7 +176,12 @@ const TabPanelContainer = ({ children }: { children: React.ReactNode }) => {
       carouselState.updateTabIndex(value, index);
       return index;
     },
-    [valueToIndexMap, indexToValueMap, carouselState.updateTabIndex],
+    [
+      valueToIndexMap,
+      indexToValueMap,
+      carouselState.updateTabIndex,
+      isRebuilding,
+    ],
   );
 
   const contextValue = useMemo(
@@ -184,6 +193,14 @@ const TabPanelContainer = ({ children }: { children: React.ReactNode }) => {
   );
 
   useEffect(() => {
+    // children이 실제로 변경되었는지 확인
+    if (prevChildrenRef.current === children) {
+      return;
+    }
+    prevChildrenRef.current = children;
+
+    setIsRebuilding(true);
+
     valueToIndexMap.clear();
     indexToValueMap.clear();
 
@@ -221,6 +238,8 @@ const TabPanelContainer = ({ children }: { children: React.ReactNode }) => {
 
       childrenArray.forEach(scanForPanels);
     }
+
+    setIsRebuilding(false);
 
     return () => {
       valueToIndexMap.clear();
