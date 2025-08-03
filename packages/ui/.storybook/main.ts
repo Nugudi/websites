@@ -2,6 +2,7 @@ import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import type { StorybookConfig } from "@storybook/react-vite";
 import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin";
+import svgr from "vite-plugin-svgr";
 
 const require = createRequire(import.meta.url);
 
@@ -32,11 +33,13 @@ const config: StorybookConfig = {
       ...(config.resolve.alias || {}),
       "@": join(__dirname, "../src"),
       "@nugudi/themes": join(__dirname, "../../themes/dist"),
+      "@nugudi/assets-icons": join(__dirname, "../../assets/icons/src"),
     };
 
-    // Add vanilla-extract plugin
+    // Add plugins
     config.plugins = config.plugins || [];
     config.plugins.push(vanillaExtractPlugin());
+    config.plugins.push(svgr());
 
     // Ensure vanilla-extract files are processed
     config.optimizeDeps = config.optimizeDeps || {};
@@ -45,6 +48,7 @@ const config: StorybookConfig = {
       "@vanilla-extract/css",
       "@vanilla-extract/recipes",
       "@vanilla-extract/recipes/createRuntimeFn",
+      "@nugudi/assets-icons",
     ];
 
     // Optimize bundle size

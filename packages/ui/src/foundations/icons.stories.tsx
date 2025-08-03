@@ -1,5 +1,5 @@
+import { iconRegistry, searchIcons } from "@nugudi/assets-icons";
 import { useState } from "react";
-import { iconRegistry, searchIcons } from "../assets/icons";
 import {
   iconCode,
   iconContainer,
