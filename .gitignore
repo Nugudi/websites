@@ -39,3 +39,6 @@ storybook-static
 # storybook
 *storybook.log
 storybook-static
+
+# webstorm
+.idea
