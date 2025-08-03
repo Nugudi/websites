@@ -1,6 +1,6 @@
 import type { vars } from "@nugudi/themes";
 import type { JSX } from "react";
-import type { StyleSprinkles } from "@/core/style.css";
+import type { StyleSprinkles } from "./style.css";
 
 type AsProps = {
   as?: Exclude<keyof JSX.IntrinsicElements, keyof SVGElementTagNameMap>;
