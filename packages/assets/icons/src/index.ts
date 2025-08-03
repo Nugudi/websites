@@ -27,5 +27,5 @@ export { default as ShareIcon } from "../svg/share.svg?react";
 export { default as SoupIcon } from "../svg/soup.svg?react";
 export { default as SubDishIcon } from "../svg/sub-dish.svg?react";
 export { default as TeaIcon } from "../svg/tea.svg?react";
-export * from "./icons";
+export { iconRegistry, icons, searchIcons } from "./icons";
 export * from "./types/icon";
