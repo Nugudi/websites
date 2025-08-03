@@ -51,6 +51,17 @@ const config: StorybookConfig = {
       "@nugudi/assets-icons",
     ];
 
+    // Exclude workspace packages from optimization
+    config.optimizeDeps.exclude = [
+      ...(config.optimizeDeps.exclude || []),
+      "@nugudi/react-components-layout",
+      "@nugudi/react-components-button",
+      "@nugudi/react-components-input",
+      "@nugudi/react-components-tab",
+      "@nugudi/react-hooks-button",
+      "@nugudi/themes",
+    ];
+
     // Optimize bundle size
     config.build = config.build || {};
     config.build.chunkSizeWarningLimit = 1000;
