@@ -9,39 +9,41 @@
  *      component: NewIcon,
  *      tags: ["english", "한국어", "키워드"]
  *    }
- * 4. src/index.ts에도 추가: export { default as NewIcon } from "./assets/icons/new-icon.svg?react";
+ * 4. src/index.ts에도 추가: export { default as NewIcon } from "./icons/new-icon.svg?react";
  *
  */
 
 // Icon imports
-import AppleIcon from "@/assets/icons/apple.svg?react";
-import ArrowLeftIcon from "@/assets/icons/arrow-left.svg?react";
-import ArrowUpCircleIcon from "@/assets/icons/arrow-up-circle.svg?react";
-import BusIcon from "@/assets/icons/bus.svg?react";
-import CalendarIcon from "@/assets/icons/calendar.svg?react";
-import CameraIcon from "@/assets/icons/camera.svg?react";
-import EtcIcon from "@/assets/icons/etc.svg?react";
-import ExitIcon from "@/assets/icons/exit.svg?react";
-import FillHeartIcon from "@/assets/icons/fill-heart.svg?react";
-import FolderIcon from "@/assets/icons/folder.svg?react";
-import GiftIcon from "@/assets/icons/gift.svg?react";
-import GoogleIcon from "@/assets/icons/google.svg?react";
-import HeartIcon from "@/assets/icons/heart.svg?react";
-import HomeIcon from "@/assets/icons/home.svg?react";
-import KakaoIcon from "@/assets/icons/kakao.svg?react";
-import MajorDishIcon from "@/assets/icons/major-dish.svg?react";
-import NaverIcon from "@/assets/icons/naver.svg?react";
-import NoodleIcon from "@/assets/icons/noodle.svg?react";
-import NotiIcon from "@/assets/icons/noti.svg?react";
-import PenIcon from "@/assets/icons/pen.svg?react";
-import PersonIcon from "@/assets/icons/person.svg?react";
-import PicklesIcon from "@/assets/icons/pickles.svg?react";
-import RiceIcon from "@/assets/icons/rice.svg?react";
-import ShareIcon from "@/assets/icons/share.svg?react";
-import SoupIcon from "@/assets/icons/soup.svg?react";
-import SubDishIcon from "@/assets/icons/sub-dish.svg?react";
-import TeaIcon from "@/assets/icons/tea.svg?react";
-import type { IconRegistry } from "@/types/icon";
+import AppleIcon from "../svg/apple.svg?react";
+import ArrowLeftIcon from "../svg/arrow-left.svg?react";
+import ArrowUpCircleIcon from "../svg/arrow-up-circle.svg?react";
+import BusIcon from "../svg/bus.svg?react";
+import CalendarIcon from "../svg/calendar.svg?react";
+import CameraIcon from "../svg/camera.svg?react";
+import CameraLineIcon from "../svg/camera-line.svg?react";
+import CommentIcon from "../svg/comment.svg?react";
+import EtcIcon from "../svg/etc.svg?react";
+import ExitIcon from "../svg/exit.svg?react";
+import FillHeartIcon from "../svg/fill-heart.svg?react";
+import FolderIcon from "../svg/folder.svg?react";
+import GiftIcon from "../svg/gift.svg?react";
+import GoogleIcon from "../svg/google.svg?react";
+import HeartIcon from "../svg/heart.svg?react";
+import HomeIcon from "../svg/home.svg?react";
+import KakaoIcon from "../svg/kakao.svg?react";
+import MajorDishIcon from "../svg/major-dish.svg?react";
+import NaverIcon from "../svg/naver.svg?react";
+import NoodleIcon from "../svg/noodle.svg?react";
+import NotiIcon from "../svg/noti.svg?react";
+import PenIcon from "../svg/pen.svg?react";
+import PersonIcon from "../svg/person.svg?react";
+import PicklesIcon from "../svg/pickles.svg?react";
+import RiceIcon from "../svg/rice.svg?react";
+import ShareIcon from "../svg/share.svg?react";
+import SoupIcon from "../svg/soup.svg?react";
+import SubDishIcon from "../svg/sub-dish.svg?react";
+import TeaIcon from "../svg/tea.svg?react";
+import type { IconRegistry } from "./types/icon";
 
 // 아이콘 레지스트리
 export const iconRegistry: IconRegistry = {
@@ -152,6 +154,14 @@ export const iconRegistry: IconRegistry = {
   Gift: {
     component: GiftIcon,
     tags: ["gift", "선물", "이벤트", "리워드"],
+  },
+  CameraLine: {
+    component: CameraLineIcon,
+    tags: ["camera", "line", "카메라"],
+  },
+  Comment: {
+    component: CommentIcon,
+    tags: ["comment", "댓글"],
   },
 };
 

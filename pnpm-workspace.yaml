@@ -4,5 +4,6 @@ onlyBuiltDependencies:
 packages:
   - apps/*
   - packages/*
+  - packages/assets/*
   - packages/react/components/*
   - packages/react/hooks/*
