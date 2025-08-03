@@ -2,9 +2,9 @@ import { vars } from "@nugudi/themes";
 import { style } from "@vanilla-extract/css";
 
 export const container = style({
-  minHeight: "100vh",
-  padding: "2rem",
-  backgroundColor: vars.colors.$scale.zinc[50],
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
 });
 
 export const section = style({
