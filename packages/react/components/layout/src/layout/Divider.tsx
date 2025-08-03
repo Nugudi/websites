@@ -28,6 +28,7 @@ const Divider = (props: DividerProps, ref: React.Ref<HTMLHRElement>) => {
       style={{
         borderStyle: variant,
         borderColor: color && vars.colors.$scale?.[color]?.[200],
+        backgroundColor: "transparent",
         ...borderStyle,
         ...props.style,
       }}

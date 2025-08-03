@@ -1,6 +1,11 @@
 "use client";
 
-import { Box, Emphasis, Heading } from "@nugudi/react-components-layout";
+import {
+  Box,
+  Divider,
+  Emphasis,
+  Heading,
+} from "@nugudi/react-components-layout";
 import { Tabs } from "@nugudi/react-components-tab";
 import { ButtonContainer } from "./components/button-container";
 import InputContainer from "./components/input-container";
@@ -17,18 +22,19 @@ export default function Home() {
 
         <Tabs.Panel value="tab1">
           <h3>첫 번째 탭 내용</h3>
-          <Box
-            background="main"
-            padding={10}
-            borderRadius="full"
-            color="whiteAlpha"
-          >
-            <Heading as="h1" fontSize="h1" color="whiteAlpha">
+
+          <Heading as="h1" fontSize="h1" color="blackAlpha">
+            Nugudi UI 컴포넌트 테스트
+          </Heading>
+          <Divider color="zinc" orientation="horizontal" size={10} />
+          <Emphasis fontSize="e1" color="blackAlpha">
+            Emphasis
+          </Emphasis>
+          <Divider color="zinc" orientation="horizontal" size={10} />
+          <Box padding={10} background="main">
+            <Heading as="h1" fontSize="h1" color="blackAlpha">
               Nugudi UI 컴포넌트 테스트
             </Heading>
-            <Emphasis fontSize="e1" color="whiteAlpha">
-              Emphasis
-            </Emphasis>
           </Box>
 
           <ButtonContainer />
