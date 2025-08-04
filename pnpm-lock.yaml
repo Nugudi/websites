@@ -92,6 +92,9 @@ importers:
       '@nugudi/react-components-button':
         specifier: workspace:*
         version: link:../../packages/react/components/button
+      '@nugudi/react-components-chip':
+        specifier: workspace:*
+        version: link:../../packages/react/components/chip
       '@nugudi/react-components-input':
         specifier: workspace:*
         version: link:../../packages/react/components/input

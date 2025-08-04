@@ -9,25 +9,15 @@ const Chip = (props: ChipProps, ref: React.Ref<HTMLButtonElement>) => {
     size = "md",
     variant = "default",
     icon,
-    onClick,
     className,
-    disabled,
     ...rest
   } = props;
-
-  const handleClick = () => {
-    if (!disabled && onClick) {
-      onClick();
-    }
-  };
 
   return (
     <button
       {...rest}
       ref={ref}
       type="button"
-      disabled={disabled}
-      onClick={handleClick}
       className={clsx([
         chipStyle({
           size,

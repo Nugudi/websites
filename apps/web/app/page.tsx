@@ -8,6 +8,7 @@ import {
 } from "@nugudi/react-components-layout";
 import { Tabs } from "@nugudi/react-components-tab";
 import { ButtonContainer } from "./components/button-container";
+import ChipContainer from "./components/chip-container";
 import InputContainer from "./components/input-container";
 import * as styles from "./page.css";
 
@@ -43,7 +44,7 @@ export default function Home() {
 
         <Tabs.Panel value="tab2">
           <div className={styles.container}>
-            <h3>두 번째 탭 내용</h3>
+            <ChipContainer />
             <InputContainer />
           </div>
         </Tabs.Panel>
