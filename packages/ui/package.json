@@ -29,6 +29,7 @@
   "dependencies": {
     "@nugudi/assets-icons": "workspace:*",
     "@nugudi/react-components-button": "workspace:*",
+    "@nugudi/react-components-chip": "workspace:*",
     "@nugudi/react-components-input": "workspace:*",
     "@nugudi/react-components-layout": "workspace:*",
     "@nugudi/react-components-tab": "workspace:*",
