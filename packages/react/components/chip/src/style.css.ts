@@ -1,19 +1,11 @@
 import { classes, vars } from "@nugudi/themes";
-import { createVar } from "@vanilla-extract/css";
 import { recipe } from "@vanilla-extract/recipes";
-
-export const backgroundColorVariant = createVar();
-export const textColorVariant = createVar();
-export const borderColorVariant = createVar();
 
 export const chipStyle = recipe({
   base: {
     margin: 0,
     padding: 0,
     border: "1px solid",
-    borderColor: borderColorVariant,
-    background: backgroundColorVariant,
-    color: textColorVariant,
     borderRadius: vars.box.radii.full,
     display: "inline-flex",
     alignItems: "center",
@@ -45,32 +37,18 @@ export const chipStyle = recipe({
       },
     },
     variant: {
-      default: {},
-      primary: {},
-    },
-  },
-  compoundVariants: [
-    {
-      variants: {
-        variant: "default",
-      },
-      style: {
+      default: {
         backgroundColor: vars.colors.$scale.zinc[50],
         color: vars.colors.$scale.zinc[500],
         borderColor: "transparent",
       },
-    },
-    {
-      variants: {
-        variant: "primary",
-      },
-      style: {
+      primary: {
         backgroundColor: `color-mix(in srgb, ${vars.colors.$scale.main[500]} 7%, transparent)`,
         color: vars.colors.$scale.main[800],
         borderColor: vars.colors.$scale.main[500],
       },
     },
-  ],
+  },
 });
 
 export const iconStyle = recipe({

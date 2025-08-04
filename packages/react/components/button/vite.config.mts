@@ -19,7 +19,7 @@ export default defineConfig({
       outDir: "dist",
       entryRoot: "src",
       insertTypesEntry: true,
-      rollupTypes: false,
+      rollupTypes: true,
       tsconfigPath: "./tsconfig.json",
     }),
     tsconfigPaths(),
@@ -39,7 +39,7 @@ export default defineConfig({
       ],
       output: {
         assetFileNames: (assetInfo) => {
-          if (assetInfo.name?.endsWith('.css')) return "index.css";
+          if (assetInfo.name?.endsWith(".css")) return "index.css";
           return assetInfo.name || "assets/[name].[ext]";
         },
       },
