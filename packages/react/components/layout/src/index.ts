@@ -4,8 +4,22 @@ export type {
   FlexProps,
   GridItemProps,
   GridProps,
+  ListItemProps,
+  ListProps,
+  OrderedListProps,
+  UnorderedListProps,
 } from "./layout";
-export { Box, Divider, Flex, Grid, GridItem } from "./layout";
+export {
+  Box,
+  Divider,
+  Flex,
+  Grid,
+  GridItem,
+  List,
+  ListItem,
+  OrderedList,
+  UnorderedList,
+} from "./layout";
 export type {
   BodyProps,
   EmphasisProps,
