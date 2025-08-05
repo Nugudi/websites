@@ -8,7 +8,7 @@ import type {
 export interface UseInputOTPProps {
   length?: number;
   pattern?: string;
-  invalid?: boolean;
+  isError?: boolean;
   errorMessage?: string;
   value?: string;
   onChange?: (value: string) => void;
@@ -31,8 +31,8 @@ export interface UseInputOTPReturn {
     id?: string;
     "aria-invalid"?: boolean;
     "aria-describedby"?: string;
-    onBlur?: (e: React.FocusEvent<HTMLDivElement>) => void;
-    onFocus?: (e: React.FocusEvent<HTMLDivElement>) => void;
+    onBlur?: (e: FocusEvent<HTMLDivElement>) => void;
+    onFocus?: (e: FocusEvent<HTMLDivElement>) => void;
   };
 }
 
@@ -47,7 +47,6 @@ export interface InputOTPProps {
   className?: string;
   inputClassName?: string;
   isError?: boolean;
-  invalid?: boolean;
   errorMessage?: string;
   inputMode?: "text" | "numeric";
   pattern?: string;

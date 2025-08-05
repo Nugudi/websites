@@ -6,7 +6,7 @@ export const useInputOTP = (props: UseInputOTPProps): UseInputOTPReturn => {
   const {
     length = 6,
     pattern = "[0-9]*",
-    invalid,
+    isError,
     errorMessage,
     value: controlledValue,
     onChange,
@@ -72,7 +72,6 @@ export const useInputOTP = (props: UseInputOTPProps): UseInputOTPReturn => {
 
         const updatedValue = newValue.join("");
         setValue(updatedValue);
-        onChange?.(updatedValue);
 
         const nextIndex = Math.min(index + pastedValue.length, length - 1);
         inputRefs.current[nextIndex]?.focus();
@@ -85,13 +84,12 @@ export const useInputOTP = (props: UseInputOTPProps): UseInputOTPReturn => {
       const updatedValue = newValue.join("");
 
       setValue(updatedValue);
-      onChange?.(updatedValue);
 
       if (inputValue && index < length - 1) {
         inputRefs.current[index + 1]?.focus();
       }
     },
-    [length, value, onChange, disabled, validateInput, setValue],
+    [length, value, disabled, validateInput, setValue],
   );
 
   /**
@@ -111,14 +109,12 @@ export const useInputOTP = (props: UseInputOTPProps): UseInputOTPReturn => {
           newValue[index] = "";
           const updatedValue = newValue.join("");
           setValue(updatedValue);
-          onChange?.(updatedValue);
         } else if (index > 0) {
           inputRefs.current[index - 1]?.focus();
           const newValue = value.split("");
           newValue[index - 1] = "";
           const updatedValue = newValue.join("");
           setValue(updatedValue);
-          onChange?.(updatedValue);
         }
       } else if (e.key === "ArrowLeft" && index > 0) {
         e.preventDefault();
@@ -128,7 +124,7 @@ export const useInputOTP = (props: UseInputOTPProps): UseInputOTPReturn => {
         inputRefs.current[index + 1]?.focus();
       }
     },
-    [value, onChange, length, disabled, setValue],
+    [value, length, disabled, setValue],
   );
 
   /**
@@ -158,18 +154,17 @@ export const useInputOTP = (props: UseInputOTPProps): UseInputOTPReturn => {
         .join("");
 
       setValue(filteredData);
-      onChange?.(filteredData);
 
       inputRefs.current[Math.min(filteredData.length, length - 1)]?.focus();
     },
-    [length, onChange, disabled, validateInput, setValue],
+    [length, disabled, validateInput, setValue],
   );
 
   const errorId = errorMessage && id ? `${id}-error` : undefined;
 
   const containerProps = {
     id,
-    "aria-invalid": invalid,
+    "aria-invalid": isError,
     "aria-describedby":
       [ariaDescribedBy, errorId].filter(Boolean).join(" ") || undefined,
     onFocus,

@@ -21,7 +21,6 @@ const InputOTP = (props: InputOTPProps, ref: React.Ref<HTMLDivElement>) => {
     className,
     inputClassName,
     isError = false,
-    invalid,
     errorMessage,
     inputMode = "numeric",
     pattern = "[0-9]*",
@@ -43,7 +42,7 @@ const InputOTP = (props: InputOTPProps, ref: React.Ref<HTMLDivElement>) => {
   } = useInputOTP({
     length,
     pattern,
-    invalid: invalid || isError,
+    isError,
     errorMessage,
     value: value || defaultValue,
     onChange,
@@ -64,7 +63,7 @@ const InputOTP = (props: InputOTPProps, ref: React.Ref<HTMLDivElement>) => {
       <div className={inputContainerStyle}>
         {Array.from({ length }, (_, index) => (
           <input
-            // biome-ignore lint/suspicious/noArrayIndexKey: <onChange={(e) => handleInputChange(index, e.target.value)}>
+            // biome-ignore lint/suspicious/noArrayIndexKey: <Array length is fixed and order doesn't change>
             key={index}
             ref={(el) => {
               inputRefs.current[index] = el;
@@ -82,7 +81,7 @@ const InputOTP = (props: InputOTPProps, ref: React.Ref<HTMLDivElement>) => {
             disabled={disabled}
             className={clsx(
               otpInputStyle({
-                isError: isError || invalid,
+                isError,
                 isFilled: !!currentValue[index],
               }),
               inputClassName,
@@ -90,7 +89,7 @@ const InputOTP = (props: InputOTPProps, ref: React.Ref<HTMLDivElement>) => {
           />
         ))}
       </div>
-      {(isError || invalid) && errorMessage && (
+      {isError && errorMessage && (
         <div
           id={containerProps["aria-describedby"]
             ?.split(" ")
