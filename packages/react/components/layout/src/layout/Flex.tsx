@@ -8,8 +8,8 @@ import type { FlexProps } from "./types";
 const Flex = (props: FlexProps, ref: React.Ref<HTMLElement>) => {
   const {
     as = "div",
-    color,
-    background,
+    color = "blackAlpha",
+    background = "whiteAlpha",
     align,
     basis,
     direction,
