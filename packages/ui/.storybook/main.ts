@@ -59,6 +59,7 @@ const config: StorybookConfig = {
       "@nugudi/react-components-input",
       "@nugudi/react-components-tab",
       "@nugudi/react-components-chip",
+      "@nugudi/react-components-input-otp",
       "@nugudi/react-hooks-button",
       "@nugudi/themes",
     ];
