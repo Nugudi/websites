@@ -4,7 +4,8 @@ import { style } from "@vanilla-extract/css";
 export const container = style({
   display: "flex",
   flexDirection: "column",
-  justifyContent: "center",
+  padding: "1rem",
+  height: "100%",
 });
 
 export const section = style({

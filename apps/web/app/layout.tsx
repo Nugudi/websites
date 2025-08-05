@@ -35,7 +35,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" suppressHydrationWarning={true}>
-      <body className={Pretendard.variable} suppressHydrationWarning={true}>
+      <body
+        className={Pretendard.variable}
+        suppressHydrationWarning={true}
+        style={{
+          width: "100%",
+          maxWidth: "600px",
+          margin: "0 auto",
+        }}
+      >
         <Providers>{children}</Providers>
       </body>
     </html>
