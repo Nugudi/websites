@@ -10,18 +10,19 @@ import { Tabs } from "@nugudi/react-components-tab";
 import { ButtonContainer } from "./components/button-container";
 import ChipContainer from "./components/chip-container";
 import InputContainer from "./components/input-container";
+import InputOTPContainer from "./components/input-otp-container";
 import * as styles from "./page.css";
 
 export default function Home() {
   return (
-    <div>
-      <Tabs defaultValue="tab1">
-        <Tabs.List>
-          <Tabs.Item value="tab1">식당 정보</Tabs.Item>
-          <Tabs.Item value="tab2">리뷰</Tabs.Item>
-        </Tabs.List>
+    <Tabs defaultValue="tab1">
+      <Tabs.List>
+        <Tabs.Item value="tab1">식당 정보</Tabs.Item>
+        <Tabs.Item value="tab2">리뷰</Tabs.Item>
+      </Tabs.List>
 
-        <Tabs.Panel value="tab1">
+      <Tabs.Panel value="tab1">
+        <div className={styles.container}>
           <h3>첫 번째 탭 내용</h3>
 
           <Heading as="h1" fontSize="h1" color="blackAlpha">
@@ -38,17 +39,17 @@ export default function Home() {
             </Heading>
           </Box>
           <Divider color="main" size={5} />
-
           <ButtonContainer />
-        </Tabs.Panel>
+        </div>
+      </Tabs.Panel>
 
-        <Tabs.Panel value="tab2">
-          <div className={styles.container}>
-            <ChipContainer />
-            <InputContainer />
-          </div>
-        </Tabs.Panel>
-      </Tabs>
-    </div>
+      <Tabs.Panel value="tab2" className={styles.container}>
+        <div className={styles.container}>
+          <ChipContainer />
+          <InputContainer />
+          <InputOTPContainer />
+        </div>
+      </Tabs.Panel>
+    </Tabs>
   );
 }
