@@ -6,22 +6,51 @@ export const container = style({
   flexDirection: "column",
   padding: "1rem",
   height: "100%",
+  "@media": {
+    "screen and (max-width: 768px)": {
+      padding: "0.75rem",
+    },
+    "screen and (max-width: 480px)": {
+      padding: "0.5rem",
+    },
+  },
 });
 
 export const section = style({
   marginBottom: "2rem",
+  "@media": {
+    "screen and (max-width: 768px)": {
+      marginBottom: "1.5rem",
+    },
+    "screen and (max-width: 480px)": {
+      marginBottom: "1rem",
+    },
+  },
 });
 
 export const colorPalette = style({
   display: "flex",
   gap: "1rem",
   marginTop: "1rem",
+  flexWrap: "wrap",
+  "@media": {
+    "screen and (max-width: 480px)": {
+      gap: "0.75rem",
+      marginTop: "0.75rem",
+    },
+  },
 });
 
 export const colorBox = style({
   width: "3rem",
   height: "3rem",
   borderRadius: "0.25rem",
+  "@media": {
+    "screen and (max-width: 480px)": {
+      width: "2.5rem",
+      height: "2.5rem",
+    },
+  },
 });
 
 export const zincLight = style({
@@ -50,4 +79,18 @@ export const testGuide = style({
   borderRadius: "0.25rem",
   fontSize: "0.875rem",
   color: vars.colors.$scale.zinc[700],
+  "@media": {
+    "screen and (max-width: 768px)": {
+      right: "0.75rem",
+      bottom: "0.75rem",
+      padding: "0.5rem",
+      fontSize: "0.8125rem",
+    },
+    "screen and (max-width: 480px)": {
+      right: "0.5rem",
+      bottom: "0.5rem",
+      padding: "0.5rem",
+      fontSize: "0.75rem",
+    },
+  },
 });

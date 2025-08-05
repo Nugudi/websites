@@ -53,13 +53,14 @@ jobs:
 
       - name: Publish to Chromatic
         id: chromatic
-        uses: chromaui/action@v1
+        uses: chromaui/action@latest
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           onlyChanged: true
           autoAcceptChanges: true
           storybookBuildDir: packages/ui/storybook-static
           storybookBaseDir: packages/ui
+          buildScriptName: build:storybook
 
       - name: Comment PR with Storybook Link
         if: github.event_name == 'pull_request'
