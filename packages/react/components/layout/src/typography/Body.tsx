@@ -8,7 +8,13 @@ import type { BodyProps } from "@/typography/types";
 import { extractSprinkleProps } from "@/utils/properties";
 
 const Body = (props: BodyProps, ref: Ref<HTMLElement>) => {
-  const { as = "p", fontSize, background, color = "main", children } = props;
+  const {
+    as = "p",
+    fontSize,
+    background,
+    color = "blackAlpha",
+    children,
+  } = props;
 
   return React.createElement(
     as,
