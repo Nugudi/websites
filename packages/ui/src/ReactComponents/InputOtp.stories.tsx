@@ -13,21 +13,6 @@ const meta: Meta<typeof InputOTP> = {
           "InputOTP는 일회용 비밀번호나 인증번호 입력을 위한 컴포넌트입니다.",
       },
     },
-    a11y: {
-      element: "#storybook-root",
-      config: {
-        rules: [
-          {
-            id: "color-contrast",
-            enabled: true,
-          },
-          {
-            id: "label",
-            enabled: true,
-          },
-        ],
-      },
-    },
   },
   tags: ["autodocs"],
   argTypes: {
