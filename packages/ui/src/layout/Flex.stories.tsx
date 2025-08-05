@@ -590,7 +590,7 @@ export const GapVariations: Story = {
             background="main"
             padding={3}
             borderRadius="md"
-            textAlign="center"
+            style={{ textAlign: "center" }}
           >
             위 아이템
           </Box>
@@ -599,7 +599,7 @@ export const GapVariations: Story = {
             padding={3}
             borderRadius="md"
             color="whiteAlpha"
-            textAlign="center"
+            style={{ textAlign: "center" }}
           >
             중간 아이템
           </Box>
@@ -607,7 +607,7 @@ export const GapVariations: Story = {
             background="main"
             padding={3}
             borderRadius="md"
-            textAlign="center"
+            style={{ textAlign: "center" }}
           >
             아래 아이템
           </Box>
