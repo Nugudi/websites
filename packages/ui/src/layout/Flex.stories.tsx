@@ -1,5 +1,6 @@
 import "@nugudi/react-components-layout/style.css";
 import { Flex as _Flex, Box } from "@nugudi/react-components-layout";
+import { vars } from "@nugudi/themes";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof _Flex> = {
@@ -24,7 +25,7 @@ const meta: Meta<typeof _Flex> = {
     },
     grow: {
       control: "select",
-      options: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+      options: Object.keys(vars.box.spacing).map(Number),
     },
     justify: {
       control: "select",
@@ -32,15 +33,14 @@ const meta: Meta<typeof _Flex> = {
     },
     shrink: {
       control: "select",
-      options: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+      options: Object.keys(vars.box.spacing).map(Number),
     },
     wrap: {
       control: "select",
       options: ["nowrap", "wrap", "wrap-reverse"],
     },
     gap: {
-      control: "select",
-      options: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+      control: { type: "range", min: 0, max: 24, step: 1 },
     },
   },
 };
@@ -55,7 +55,7 @@ export const Default: Story = {
     padding: 4,
     background: "whiteAlpha",
     borderRadius: "lg",
-    boxShadow: "md" as const,
+    boxShadow: "md",
   },
   render: (args) => (
     <_Flex {...args}>
@@ -366,46 +366,306 @@ export const GapVariations: Story = {
     borderRadius: "lg",
   },
   render: (args) => (
-    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
       <div>
-        <h4>Gap: 0</h4>
-        <_Flex {...args} gap="0">
-          <Box background="main" padding={2}>
+        <h4>Gap: 0 (간격 없음)</h4>
+        <_Flex {...args} gap={0}>
+          <Box background="main" padding={3} borderRadius="md">
             Item 1
           </Box>
-          <Box background="blackAlpha" padding={2}>
+          <Box
+            background="blackAlpha"
+            padding={3}
+            borderRadius="md"
+            color="whiteAlpha"
+          >
             Item 2
           </Box>
-          <Box background="main" padding={2}>
+          <Box background="main" padding={3} borderRadius="md">
             Item 3
+          </Box>
+          <Box
+            background="blackAlpha"
+            padding={3}
+            borderRadius="md"
+            color="whiteAlpha"
+          >
+            Item 4
           </Box>
         </_Flex>
       </div>
       <div>
-        <h4>Gap: 2</h4>
-        <_Flex {...args} gap="2">
-          <Box background="main" padding={2}>
+        <h4>Gap: 1 (매우 작은 간격)</h4>
+        <_Flex {...args} gap={1}>
+          <Box background="main" padding={3} borderRadius="md">
             Item 1
           </Box>
-          <Box background="blackAlpha" padding={2}>
+          <Box
+            background="blackAlpha"
+            padding={3}
+            borderRadius="md"
+            color="whiteAlpha"
+          >
             Item 2
           </Box>
-          <Box background="main" padding={2}>
+          <Box background="main" padding={3} borderRadius="md">
             Item 3
+          </Box>
+          <Box
+            background="blackAlpha"
+            padding={3}
+            borderRadius="md"
+            color="whiteAlpha"
+          >
+            Item 4
           </Box>
         </_Flex>
       </div>
       <div>
-        <h4>Gap: 6</h4>
-        <_Flex {...args} gap="6">
-          <Box background="main" padding={2}>
+        <h4>Gap: 2 (작은 간격)</h4>
+        <_Flex {...args} gap={2}>
+          <Box background="main" padding={3} borderRadius="md">
             Item 1
           </Box>
-          <Box background="blackAlpha" padding={2}>
+          <Box
+            background="blackAlpha"
+            padding={3}
+            borderRadius="md"
+            color="whiteAlpha"
+          >
             Item 2
           </Box>
-          <Box background="main" padding={2}>
+          <Box background="main" padding={3} borderRadius="md">
             Item 3
+          </Box>
+          <Box
+            background="blackAlpha"
+            padding={3}
+            borderRadius="md"
+            color="whiteAlpha"
+          >
+            Item 4
+          </Box>
+        </_Flex>
+      </div>
+      <div>
+        <h4>Gap: 4 (중간 간격)</h4>
+        <_Flex {...args} gap={4}>
+          <Box background="main" padding={3} borderRadius="md">
+            Item 1
+          </Box>
+          <Box
+            background="blackAlpha"
+            padding={3}
+            borderRadius="md"
+            color="whiteAlpha"
+          >
+            Item 2
+          </Box>
+          <Box background="main" padding={3} borderRadius="md">
+            Item 3
+          </Box>
+          <Box
+            background="blackAlpha"
+            padding={3}
+            borderRadius="md"
+            color="whiteAlpha"
+          >
+            Item 4
+          </Box>
+        </_Flex>
+      </div>
+      <div>
+        <h4>Gap: 6 (큰 간격)</h4>
+        <_Flex {...args} gap={6}>
+          <Box background="main" padding={3} borderRadius="md">
+            Item 1
+          </Box>
+          <Box
+            background="blackAlpha"
+            padding={3}
+            borderRadius="md"
+            color="whiteAlpha"
+          >
+            Item 2
+          </Box>
+          <Box background="main" padding={3} borderRadius="md">
+            Item 3
+          </Box>
+          <Box
+            background="blackAlpha"
+            padding={3}
+            borderRadius="md"
+            color="whiteAlpha"
+          >
+            Item 4
+          </Box>
+        </_Flex>
+      </div>
+      <div>
+        <h4>Gap: 8 (매우 큰 간격)</h4>
+        <_Flex {...args} gap={8}>
+          <Box background="main" padding={3} borderRadius="md">
+            Item 1
+          </Box>
+          <Box
+            background="blackAlpha"
+            padding={3}
+            borderRadius="md"
+            color="whiteAlpha"
+          >
+            Item 2
+          </Box>
+          <Box background="main" padding={3} borderRadius="md">
+            Item 3
+          </Box>
+          <Box
+            background="blackAlpha"
+            padding={3}
+            borderRadius="md"
+            color="whiteAlpha"
+          >
+            Item 4
+          </Box>
+        </_Flex>
+      </div>
+      <div>
+        <h4>Gap: 12 (매우 큰 간격)</h4>
+        <_Flex {...args} gap={12}>
+          <Box background="main" padding={3} borderRadius="md">
+            Item 1
+          </Box>
+          <Box
+            background="blackAlpha"
+            padding={3}
+            borderRadius="md"
+            color="whiteAlpha"
+          >
+            Item 2
+          </Box>
+          <Box background="main" padding={3} borderRadius="md">
+            Item 3
+          </Box>
+          <Box
+            background="blackAlpha"
+            padding={3}
+            borderRadius="md"
+            color="whiteAlpha"
+          >
+            Item 4
+          </Box>
+        </_Flex>
+      </div>
+      <div>
+        <h4>Gap: 16 (엄청 큰 간격)</h4>
+        <_Flex {...args} gap={16}>
+          <Box background="main" padding={3} borderRadius="md">
+            Item 1
+          </Box>
+          <Box
+            background="blackAlpha"
+            padding={3}
+            borderRadius="md"
+            color="whiteAlpha"
+          >
+            Item 2
+          </Box>
+          <Box background="main" padding={3} borderRadius="md">
+            Item 3
+          </Box>
+          <Box
+            background="blackAlpha"
+            padding={3}
+            borderRadius="md"
+            color="whiteAlpha"
+          >
+            Item 4
+          </Box>
+        </_Flex>
+      </div>
+      <div>
+        <h4>세로 방향에서의 Gap</h4>
+        <_Flex {...args} direction="column" gap={4} style={{ width: "200px" }}>
+          <Box
+            background="main"
+            padding={3}
+            borderRadius="md"
+            textAlign="center"
+          >
+            위 아이템
+          </Box>
+          <Box
+            background="blackAlpha"
+            padding={3}
+            borderRadius="md"
+            color="whiteAlpha"
+            textAlign="center"
+          >
+            중간 아이템
+          </Box>
+          <Box
+            background="main"
+            padding={3}
+            borderRadius="md"
+            textAlign="center"
+          >
+            아래 아이템
+          </Box>
+        </_Flex>
+      </div>
+      <div>
+        <h4>반응형 Gap 활용 (Wrap과 함께)</h4>
+        <_Flex {...args} gap={3} wrap="wrap" style={{ width: "300px" }}>
+          <Box
+            background="main"
+            padding={3}
+            borderRadius="md"
+            style={{ minWidth: "80px" }}
+          >
+            태그1
+          </Box>
+          <Box
+            background="blackAlpha"
+            padding={3}
+            borderRadius="md"
+            color="whiteAlpha"
+            style={{ minWidth: "80px" }}
+          >
+            태그2
+          </Box>
+          <Box
+            background="main"
+            padding={3}
+            borderRadius="md"
+            style={{ minWidth: "80px" }}
+          >
+            태그3
+          </Box>
+          <Box
+            background="blackAlpha"
+            padding={3}
+            borderRadius="md"
+            color="whiteAlpha"
+            style={{ minWidth: "80px" }}
+          >
+            태그4
+          </Box>
+          <Box
+            background="main"
+            padding={3}
+            borderRadius="md"
+            style={{ minWidth: "80px" }}
+          >
+            태그5
+          </Box>
+          <Box
+            background="blackAlpha"
+            padding={3}
+            borderRadius="md"
+            color="whiteAlpha"
+            style={{ minWidth: "80px" }}
+          >
+            태그6
           </Box>
         </_Flex>
       </div>
