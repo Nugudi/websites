@@ -2,6 +2,7 @@ import type { vars } from "@nugudi/themes";
 import type React from "react";
 import type { CSSProperties } from "react";
 import type { AsElementProps, StyleProps } from "@/core/types";
+import type { BodyProps } from "../typography";
 
 export type BoxProps = AsElementProps & StyleProps;
 
@@ -46,3 +47,15 @@ export type GridItemProps = {
   rowStart?: CSSProperties["gridRowStart"];
   rowSpan?: CSSProperties["gridRow"];
 } & BoxProps;
+
+export type ListProps = {
+  variant?: "unordered" | "ordered";
+  spacing?: keyof typeof vars.box.spacing;
+} & BoxProps;
+
+export type OrderedListProps = Omit<ListProps, "variant">;
+export type ListItemProps = BodyProps;
+
+export type UnorderedListProps = Omit<ListProps, "variant"> & {
+  listStyleType?: CSSProperties["listStyleType"];
+};
