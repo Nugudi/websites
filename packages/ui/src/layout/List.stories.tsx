@@ -8,7 +8,7 @@ import {
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof _List> = {
-  title: "React Components/Layout/List",
+  title: "Components/Layout/List",
   parameters: {
     layout: "centered",
   },
