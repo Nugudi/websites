@@ -5,7 +5,7 @@ import type { UnorderedListProps } from "./types";
 
 const UnorderedList = (
   props: UnorderedListProps,
-  ref: React.Ref<HTMLOListElement>,
+  ref: React.Ref<HTMLUListElement>,
 ) => {
   const { listStyleType = "disc", spacing = 3, children, ...rest } = props;
 
