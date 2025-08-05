@@ -36,3 +36,13 @@ export type GridProps = {
   templateColumns?: CSSProperties["gridTemplateColumns"];
   templateRows?: CSSProperties["gridTemplateRows"];
 } & BoxProps;
+
+export type GridItemProps = {
+  area?: CSSProperties["gridArea"];
+  colEnd?: CSSProperties["gridColumnEnd"];
+  colStart?: CSSProperties["gridColumnStart"];
+  colSpan?: CSSProperties["gridColumn"];
+  rowEnd?: CSSProperties["gridRowEnd"];
+  rowStart?: CSSProperties["gridRowStart"];
+  rowSpan?: CSSProperties["gridRow"];
+} & BoxProps;
