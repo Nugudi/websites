@@ -15,7 +15,7 @@
   },
   "scripts": {
     "build": "vite build",
-    "build:storybook": "storybook build",
+    "build:storybook": "storybook build --webpack-stats-json",
     "check-types": "tsc --noEmit",
     "chromatic": "npx chromatic --build-script-name=build:storybook",
     "deploy:chromatic": "npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name=build:storybook",
