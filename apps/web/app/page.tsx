@@ -4,6 +4,7 @@ import {
   Box,
   Divider,
   Emphasis,
+  Flex,
   Heading,
 } from "@nugudi/react-components-layout";
 import { Tabs } from "@nugudi/react-components-tab";
@@ -25,21 +26,56 @@ export default function Home() {
         <div className={styles.container}>
           <h3>첫 번째 탭 내용</h3>
 
-          <Heading as="h1" fontSize="h1" color="blackAlpha">
-            Nugudi UI 컴포넌트 테스트
-          </Heading>
-          <Divider color="zinc" orientation="horizontal" size={10} />
-          <Emphasis fontSize="e1" color="blackAlpha">
-            Emphasis
-          </Emphasis>
-          <Divider color="zinc" orientation="horizontal" size={10} />
-          <Box padding={10} background="main">
-            <Heading as="h1" fontSize="h1" color="blackAlpha">
-              Nugudi UI 컴포넌트 테스트
-            </Heading>
-          </Box>
-          <Divider color="main" size={5} />
-          <ButtonContainer />
+          <Flex direction="column" gap={16} align="stretch">
+            <Box borderRadius="2xl">
+              <Heading as="h1" fontSize="h1" color="blackAlpha">
+                Nugudi UI 컴포넌트 테스트
+              </Heading>
+            </Box>
+
+            <Divider color="zinc" orientation="horizontal" size={2} />
+
+            <Box>
+              <Emphasis fontSize="e1" color="blackAlpha">
+                Emphasis 컴포넌트 예시
+              </Emphasis>
+            </Box>
+
+            <Divider color="zinc" orientation="horizontal" size={2} />
+
+            <Box borderRadius="2xl">
+              <Heading as="h2" fontSize="h1" color="whiteAlpha">
+                강조 박스 컴포넌트
+              </Heading>
+            </Box>
+
+            <Divider color="main" size={3} />
+
+            <Box borderRadius="2xl">
+              <ButtonContainer />
+            </Box>
+
+            <Divider color="zinc" orientation="horizontal" size={2} />
+
+            <Flex
+              direction="row"
+              gap={12}
+              justify="space-between"
+              align="center"
+              wrap="wrap"
+            >
+              <Box borderRadius="2xl">
+                <Heading as="h3" fontSize="h1" color="zinc">
+                  플렉스 박스 1
+                </Heading>
+              </Box>
+              <Box borderRadius="2xl">
+                <Heading as="h3" fontSize="h1" color="blackAlpha">
+                  플렉스 박스 2
+                </Heading>
+              </Box>
+            </Flex>
+          </Flex>
         </div>
       </Tabs.Panel>
 
