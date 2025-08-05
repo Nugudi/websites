@@ -1,5 +1,5 @@
-export type { BoxProps, DividerProps } from "./layout";
-export { Box, Divider } from "./layout";
+export type { BoxProps, DividerProps, FlexProps } from "./layout";
+export { Box, Divider, Flex } from "./layout";
 export type {
   BodyProps,
   EmphasisProps,
