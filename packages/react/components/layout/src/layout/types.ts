@@ -22,3 +22,17 @@ export type FlexProps = {
   wrap?: CSSProperties["flexWrap"];
   gap?: CSSProperties["gap"];
 } & BoxProps;
+
+export type GridProps = {
+  autoColumns?: CSSProperties["gridAutoColumns"];
+  autoFlow?: CSSProperties["gridAutoFlow"];
+  autoRows?: CSSProperties["gridAutoRows"];
+  column?: CSSProperties["gridColumn"];
+  columnGap?: CSSProperties["columnGap"];
+  gap?: CSSProperties["gap"];
+  row?: CSSProperties["gridRow"];
+  rowGap?: CSSProperties["rowGap"];
+  templateAreas?: CSSProperties["gridTemplateAreas"];
+  templateColumns?: CSSProperties["gridTemplateColumns"];
+  templateRows?: CSSProperties["gridTemplateRows"];
+} & BoxProps;
