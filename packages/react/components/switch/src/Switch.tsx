@@ -5,6 +5,8 @@ import { clsx } from "clsx";
 import * as React from "react";
 import {
   backgroundColorVariant,
+  labelText,
+  labelWrapper,
   switchContainer,
   switchThumb,
   switchTrack,
@@ -22,6 +24,9 @@ const Switch = (props: SwitchProps, ref: React.Ref<HTMLButtonElement>) => {
     onToggle,
     style,
     className,
+    id,
+    label,
+    labelPlacement = "end",
     ...restProps
   } = props;
 
@@ -45,10 +50,11 @@ const Switch = (props: SwitchProps, ref: React.Ref<HTMLButtonElement>) => {
 
   const thumbColor = vars.colors.$scale.whiteAlpha[900];
 
-  return (
+  const switchButton = (
     <button
       {...restProps}
       ref={ref}
+      id={id}
       type="button"
       role="switch"
       aria-checked={isSelected}
@@ -67,6 +73,22 @@ const Switch = (props: SwitchProps, ref: React.Ref<HTMLButtonElement>) => {
         <span className={switchThumb({ size, isSelected })} />
       </span>
     </button>
+  );
+
+  if (!label) {
+    return switchButton;
+  }
+
+  return (
+    <label className={labelWrapper({ labelPlacement })} htmlFor={id}>
+      {labelPlacement === "start" && (
+        <span className={labelText({ size })}>{label}</span>
+      )}
+      {switchButton}
+      {labelPlacement === "end" && (
+        <span className={labelText({ size })}>{label}</span>
+      )}
+    </label>
   );
 };
 

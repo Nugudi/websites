@@ -1,3 +1,4 @@
+import { vars } from "@nugudi/themes";
 import { createVar } from "@vanilla-extract/css";
 import { recipe } from "@vanilla-extract/recipes";
 
@@ -138,5 +139,50 @@ export const switchThumb = recipe({
   defaultVariants: {
     size: "md",
     isSelected: false,
+  },
+});
+
+export const labelWrapper = recipe({
+  base: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "0.75rem",
+    cursor: "pointer",
+    userSelect: "none",
+  },
+  variants: {
+    labelPlacement: {
+      start: {
+        flexDirection: "row",
+      },
+      end: {
+        flexDirection: "row",
+      },
+    },
+  },
+  defaultVariants: {
+    labelPlacement: "end",
+  },
+});
+
+export const labelText = recipe({
+  base: {
+    color: vars.colors.$scale.zinc[700],
+  },
+  variants: {
+    size: {
+      sm: {
+        fontSize: "0.875rem",
+      },
+      md: {
+        fontSize: "1rem",
+      },
+      lg: {
+        fontSize: "1.125rem",
+      },
+    },
+  },
+  defaultVariants: {
+    size: "md",
   },
 });

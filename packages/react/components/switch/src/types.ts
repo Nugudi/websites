@@ -7,7 +7,10 @@ export type SwitchProps = {
   defaultSelected?: boolean;
   isSelected?: boolean;
   onToggle?: (isSelected: boolean) => void;
+  id?: string;
+  label?: React.ReactNode;
+  labelPlacement?: "start" | "end";
 } & Omit<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
-  "onClick" | "disabled" | "type" | "role"
+  "onClick" | "disabled" | "type" | "role" | "id"
 >;
