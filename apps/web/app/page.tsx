@@ -12,6 +12,7 @@ import { ButtonContainer } from "./components/button-container";
 import ChipContainer from "./components/chip-container";
 import InputContainer from "./components/input-container";
 import InputOTPContainer from "./components/input-otp-container";
+import { SwitchContainer } from "./components/switch-container";
 import * as styles from "./page.css";
 
 export default function Home() {
@@ -53,6 +54,7 @@ export default function Home() {
 
             <Box borderRadius="2xl">
               <ButtonContainer />
+              <SwitchContainer />
             </Box>
 
             <Divider color="zinc" orientation="horizontal" size={2} />
