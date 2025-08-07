@@ -5,8 +5,6 @@ import { clsx } from "clsx";
 import * as React from "react";
 import {
   backgroundColorVariant,
-  labelText,
-  labelWrapper,
   switchContainer,
   switchThumb,
   switchTrack,
@@ -24,9 +22,8 @@ const Switch = (props: SwitchProps, ref: React.Ref<HTMLButtonElement>) => {
     onToggle,
     style,
     className,
-    id,
     label,
-    labelPlacement = "end",
+    labelPlacement,
     ...restProps
   } = props;
 
@@ -50,11 +47,10 @@ const Switch = (props: SwitchProps, ref: React.Ref<HTMLButtonElement>) => {
 
   const thumbColor = vars.colors.$scale.whiteAlpha[900];
 
-  const switchButton = (
+  const switchElement = (
     <button
       {...restProps}
       ref={ref}
-      id={id}
       type="button"
       role="switch"
       aria-checked={isSelected}
@@ -76,19 +72,19 @@ const Switch = (props: SwitchProps, ref: React.Ref<HTMLButtonElement>) => {
   );
 
   if (!label) {
-    return switchButton;
+    return switchElement;
   }
 
   return (
-    <label className={labelWrapper({ labelPlacement })} htmlFor={id}>
+    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
       {labelPlacement === "start" && (
-        <span className={labelText({ size })}>{label}</span>
+        <label htmlFor={restProps.id}>{label}</label>
       )}
-      {switchButton}
-      {labelPlacement === "end" && (
-        <span className={labelText({ size })}>{label}</span>
+      {switchElement}
+      {labelPlacement !== "start" && (
+        <label htmlFor={restProps.id}>{label}</label>
       )}
-    </label>
+    </div>
   );
 };
 
