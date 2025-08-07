@@ -18,7 +18,7 @@ const Switch = (props: SwitchProps, ref: React.Ref<HTMLButtonElement>) => {
     color = "main",
     isDisabled = false,
     defaultSelected = false,
-    isSelected: controlledSelected,
+    isSelected: externalIsSelected,
     onToggle,
     style,
     className,
@@ -27,63 +27,78 @@ const Switch = (props: SwitchProps, ref: React.Ref<HTMLButtonElement>) => {
     ...restProps
   } = props;
 
-  const isControlled = controlledSelected !== undefined;
-  const { isSelected, toggle } = useToggle({
-    isSelected: isControlled ? controlledSelected : defaultSelected,
-  });
+  const isControlledComponent = externalIsSelected !== undefined;
+  const { isSelected: internalIsSelected, toggle: toggleInternalState } =
+    useToggle({
+      isSelected: isControlledComponent ? externalIsSelected : defaultSelected,
+    });
 
-  const handleClick = React.useCallback(() => {
+  const currentIsSelected = isControlledComponent
+    ? externalIsSelected
+    : internalIsSelected;
+
+  const handleSwitchClick = React.useCallback(() => {
     if (isDisabled) return;
 
-    if (!isControlled) {
-      toggle();
-    }
-    onToggle?.(!isSelected);
-  }, [isDisabled, isControlled, toggle, onToggle, isSelected]);
+    const nextSelectedState = !currentIsSelected;
 
-  const backgroundColor = isSelected
+    if (!isControlledComponent) {
+      toggleInternalState();
+    }
+
+    onToggle?.(nextSelectedState);
+  }, [
+    isDisabled,
+    isControlledComponent,
+    toggleInternalState,
+    onToggle,
+    currentIsSelected,
+  ]);
+
+  const trackBackgroundColor = currentIsSelected
     ? vars.colors.$scale[color][500]
     : vars.colors.$scale.zinc[300];
 
-  const thumbColor = vars.colors.$scale.whiteAlpha[900];
+  const thumbBackgroundColor = vars.colors.$scale.whiteAlpha[900];
 
-  const switchElement = (
+  const switchButtonElement = (
     <button
       {...restProps}
       ref={ref}
       type="button"
       role="switch"
-      aria-checked={isSelected}
+      aria-checked={currentIsSelected}
       disabled={isDisabled}
-      onClick={handleClick}
+      onClick={handleSwitchClick}
       className={clsx([switchContainer({ size, isDisabled }), className])}
       style={{
         ...assignInlineVars({
-          [backgroundColorVariant]: backgroundColor,
-          [thumbColorVariant]: thumbColor,
+          [backgroundColorVariant]: trackBackgroundColor,
+          [thumbColorVariant]: thumbBackgroundColor,
         }),
         ...style,
       }}
     >
       <span className={switchTrack({ size })}>
-        <span className={switchThumb({ size, isSelected })} />
+        <span
+          className={switchThumb({ size, isSelected: currentIsSelected })}
+        />
       </span>
     </button>
   );
 
   if (!label) {
-    return switchElement;
+    return switchButtonElement;
   }
+
+  const isLabelAtStart = labelPlacement === "start";
+  const labelElement = <label htmlFor={restProps.id}>{label}</label>;
 
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-      {labelPlacement === "start" && (
-        <label htmlFor={restProps.id}>{label}</label>
-      )}
-      {switchElement}
-      {labelPlacement !== "start" && (
-        <label htmlFor={restProps.id}>{label}</label>
-      )}
+      {isLabelAtStart && labelElement}
+      {switchButtonElement}
+      {!isLabelAtStart && labelElement}
     </div>
   );
 };

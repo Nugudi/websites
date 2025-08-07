@@ -12,7 +12,7 @@ export const SwitchContainer = () => {
       <Switch
         isSelected={isSelected}
         onToggle={toggle}
-        color={"main"}
+        color="main"
         label={`스위치가 ${isSelected ? "켜짐" : "꺼짐"} 상태입니다`}
         labelPlacement="end"
         id="switch"
@@ -20,9 +20,9 @@ export const SwitchContainer = () => {
       <Switch
         isSelected={isSelected}
         onToggle={toggle}
-        color={"zinc"}
+        color="zinc"
         label={`스위치가 ${isSelected ? "켜짐" : "꺼짐"} 상태입니다`}
-        labelPlacement="end"
+        labelPlacement="start"
         id="switch2"
       />
     </Flex>
