@@ -50,6 +50,7 @@ export default function TextareaContainer() {
           {...register("review")}
           isError={!!errors.review}
           errorMessage={errors.review?.message}
+          maxLength={50}
         />
 
         <Button type="submit" color="main" variant="brand" disabled={!isValid}>

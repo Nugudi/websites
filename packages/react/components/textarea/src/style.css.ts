@@ -102,3 +102,14 @@ export const errorMessageStyle = recipe({
     marginLeft: "0.25rem",
   },
 });
+
+export const characterCountStyle = recipe({
+  base: {
+    position: "absolute",
+    right: "1rem",
+    bottom: "1rem",
+    color: vars.colors.$scale.zinc[500],
+    pointerEvents: "none",
+    ...classes.typography.body.b4,
+  },
+});

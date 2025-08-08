@@ -66,6 +66,38 @@ function App() {
 />
 ```
 
+### 문자 수 제한
+
+`maxLength` prop을 사용하여 입력 가능한 최대 문자 수를 제한할 수 있습니다. 문자 수 제한이 설정되면 우하단에 현재 글자 수와 최대 글자 수가 표시됩니다.
+
+```tsx
+// 기본 문자 수 제한
+<Textarea placeholder="최대 100자까지 입력할 수 있습니다" maxLength={100} />;
+
+// Controlled 컴포넌트로 사용
+function ControlledTextarea() {
+  const [value, setValue] = React.useState("");
+
+  return (
+    <Textarea
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+      maxLength={200}
+      placeholder="최대 200자까지 입력 가능"
+    />
+  );
+}
+
+// React Hook Form과 함께 사용
+<Textarea
+  {...register("content")}
+  maxLength={150}
+  placeholder="최대 150자까지 입력 가능"
+  isError={!!errors.content}
+  errorMessage={errors.content?.message}
+/>;
+```
+
 ## React Hook Form과 함께 사용하기
 
 ### 기본 사용법

@@ -60,6 +60,13 @@ const meta: Meta<typeof _Textarea> = {
         category: "Basic",
       },
     },
+    maxLength: {
+      control: "number",
+      table: {
+        type: { summary: "number" },
+        category: "Basic",
+      },
+    },
   },
 };
 
@@ -103,6 +110,14 @@ export const NoResize: Story = {
   },
 };
 
+export const WithMaxLength: Story = {
+  args: {
+    label: "리뷰",
+    placeholder: "최대 200자까지 입력할 수 있습니다.",
+    maxLength: 20,
+  },
+};
+
 export const AllStates: Story = {
   render: () => (
     <div
@@ -125,6 +140,11 @@ export const AllStates: Story = {
           errorMessage="리뷰는 10자 이상 작성해주세요"
         />
         <_Textarea placeholder="비활성화된 입력" disabled />
+        <_Textarea
+          label="문자 수 제한"
+          placeholder="최대 100자까지 입력 가능합니다."
+          maxLength={100}
+        />
       </div>
 
       <div>
