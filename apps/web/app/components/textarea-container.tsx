@@ -9,8 +9,6 @@ import { z } from "zod";
 
 const formSchema = z.object({
   review: z.string().min(10, "리뷰는 10자 이상 작성해주세요"),
-  feedback: z.string().min(5, "피드백은 5자 이상 작성해주세요"),
-  description: z.string().optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
