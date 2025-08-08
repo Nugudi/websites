@@ -56,7 +56,7 @@ export const textareaStyle = recipe({
         opacity: 0.4,
       },
       "&:-webkit-autofill": {
-        WebkitBoxShadow: "0 0 0 30px #fff inset",
+        WebkitBoxShadow: `0 0 0 30px ${vars.colors.$static.light.color.white} inset`,
         WebkitTextFillColor: vars.colors.$scale.zinc[800],
       },
       "&:-webkit-autofill:hover, &:-webkit-autofill:focus, &:-webkit-autofill:active":
