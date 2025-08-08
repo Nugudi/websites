@@ -4,6 +4,9 @@ import { recipe } from "@vanilla-extract/recipes";
 
 export const tabsContainerStyle = style({
   width: "100%",
+  height: "100dvh",
+  display: "flex",
+  flexDirection: "column",
   WebkitTapHighlightColor: "transparent",
 });
 
@@ -70,19 +73,22 @@ export const tabPanelStyle = style({
   padding: "8px 16px",
   flexShrink: 0,
   width: "100%",
-  minHeight: 0,
+  height: "100%",
+  overflow: "auto",
   boxSizing: "border-box",
 });
 
 export const carouselViewportStyle = style({
   overflow: "hidden",
   width: "100%",
+  flex: 1,
   touchAction: "manipulation",
   WebkitOverflowScrolling: "touch",
 });
 
 export const carouselContainerStyle = style({
   display: "flex",
+  height: "100%",
   transition: "height 300ms ease",
   backfaceVisibility: "hidden",
   touchAction: "manipulation",
