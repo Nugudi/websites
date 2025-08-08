@@ -39,22 +39,22 @@ export type UseToggleSwitchReturn<T> = UseSwitchReturn<T> & {
 export type OverloadedToggleSwitchFunction = {
   (
     props: BaseSwitchProps<"button">,
-    isSelected?: boolean,
+    defaultSelected?: boolean,
   ): UseToggleSwitchReturn<HTMLButtonElement>;
   (
     props: BaseSwitchProps<"a">,
-    isSelected?: boolean,
+    defaultSelected?: boolean,
   ): UseToggleSwitchReturn<HTMLAnchorElement>;
   (
     props: BaseSwitchProps<"div">,
-    isSelected?: boolean,
+    defaultSelected?: boolean,
   ): UseToggleSwitchReturn<HTMLDivElement>;
   (
     props: BaseSwitchProps<"input">,
-    isSelected?: boolean,
+    defaultSelected?: boolean,
   ): UseToggleSwitchReturn<HTMLInputElement>;
   (
     props: BaseSwitchProps<"span">,
-    isSelected?: boolean,
+    defaultSelected?: boolean,
   ): UseToggleSwitchReturn<HTMLSpanElement>;
 };

@@ -25,7 +25,7 @@ const Switch = (props: SwitchProps, ref: React.Ref<HTMLButtonElement>) => {
   } = props;
 
   const { switchProps, isSelected } = useToggleSwitch(
-    { ...restProps, elementType: "button" as const },
+    { ...restProps, elementType: "button" },
     defaultSelected,
   );
 
@@ -35,9 +35,12 @@ const Switch = (props: SwitchProps, ref: React.Ref<HTMLButtonElement>) => {
 
   const thumbBackgroundColor = vars.colors.$scale.whiteAlpha[900];
 
+  const switchId = props.id;
+
   const switchButtonElement = (
     <button
       {...switchProps}
+      id={switchId}
       type={"button"}
       ref={ref}
       className={clsx([
@@ -63,7 +66,7 @@ const Switch = (props: SwitchProps, ref: React.Ref<HTMLButtonElement>) => {
   }
 
   const isLabelAtStart = labelPlacement === "start";
-  const labelElement = <label htmlFor={switchProps.id}>{label}</label>;
+  const labelElement = <label htmlFor={switchId}>{label}</label>;
 
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>

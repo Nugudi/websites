@@ -66,11 +66,20 @@ export const BasicSwitch: Story = {
 };
 
 export const SwitchWithBuiltInLabel: Story = {
-  args: {
-    size: "md",
-    color: "main",
-    label: "알림 활성화",
-    labelPlacement: "end",
+  render: () => {
+    const { isSelected, toggle } = useToggle({ isSelected: false });
+
+    return (
+      <_Switch
+        id="notification-switch"
+        size="md"
+        color="main"
+        label="알림 활성화"
+        labelPlacement="end"
+        isSelected={isSelected}
+        onToggle={toggle}
+      />
+    );
   },
   parameters: {
     docs: {
@@ -84,10 +93,31 @@ export const SwitchWithBuiltInLabel: Story = {
 
 export const LabelPlacementStory: Story = {
   render: () => {
+    const { isSelected: isSelected1, toggle: toggle1 } = useToggle({
+      isSelected: false,
+    });
+    const { isSelected: isSelected2, toggle: toggle2 } = useToggle({
+      isSelected: false,
+    });
+
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-        <_Switch label="라벨이 오른쪽에" labelPlacement="end" color="main" />
-        <_Switch label="라벨이 왼쪽에" labelPlacement="start" color="main" />
+        <_Switch
+          id="right-label-switch"
+          label="라벨이 오른쪽에"
+          labelPlacement="end"
+          color="main"
+          isSelected={isSelected1}
+          onToggle={toggle1}
+        />
+        <_Switch
+          id="left-label-switch"
+          label="라벨이 왼쪽에"
+          labelPlacement="start"
+          color="main"
+          isSelected={isSelected2}
+          onToggle={toggle2}
+        />
       </div>
     );
   },
@@ -193,12 +223,11 @@ export const DisabledSwitch: Story = {
 
 export const TextSwitchStory: Story = {
   render: () => {
+    const { isSelected, toggle } = useToggle({ isSelected: true });
     const { switchProps } = useSwitch({
       elementType: "div",
-      isSelected: true,
-      onToggle: () => {
-        console.log("Switch toggled");
-      },
+      isSelected: isSelected,
+      onToggle: toggle,
     });
 
     return (
@@ -212,8 +241,9 @@ export const TextSwitchStory: Story = {
           cursor: "pointer",
           padding: "10px",
           borderRadius: "8px",
-          backgroundColor: switchProps["aria-checked"] ? "#4CAF50" : "#ccc",
-          transition: "background-color 0.3s",
+          backgroundColor: switchProps["aria-checked"] ? "#4CAF50" : "#e0e0e0",
+          color: switchProps["aria-checked"] ? "white" : "#666",
+          transition: "all 0.3s",
         }}
       >
         {switchProps["aria-checked"] ? "스위치 켜짐" : "스위치 꺼짐"}
@@ -290,33 +320,87 @@ export const ToggleSwitchStory: Story = {
 
 export const WithExternalLabel: Story = {
   render: () => {
-    const { isSelected, toggle } = useToggle({ isSelected: false });
+    const { isSelected: builtInSelected, toggle: builtInToggle } = useToggle({
+      isSelected: false,
+    });
+    const { isSelected: externalSelected, toggle: externalToggle } = useToggle({
+      isSelected: false,
+    });
+    const { isSelected: htmlLabelSelected, toggle: htmlLabelToggle } =
+      useToggle({ isSelected: false });
 
     return (
-      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-        {/* 내장 라벨 사용 */}
-        <_Switch
-          label="내장 라벨 (어디든 클릭 가능)"
-          isSelected={isSelected}
-          onToggle={toggle}
-          color="main"
-        />
-
-        {/* 외부 라벨 방식 */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.75rem",
-          }}
-        >
+      <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+        {/* 내장 라벨: Switch 컴포넌트의 label prop 사용 */}
+        <div>
+          <Title fontSize="t4" color="main" style={{ marginBottom: "0.5rem" }}>
+            1. 내장 라벨 (권장)
+          </Title>
           <_Switch
-            isSelected={!isSelected}
-            onToggle={() => toggle()}
-            color="zinc"
+            id="built-in-label-demo"
+            label="알림 받기"
+            isSelected={builtInSelected}
+            onToggle={builtInToggle}
+            color="main"
           />
-          <Body fontSize="b2" color="zinc">
-            외부 라벨 (스위치만 클릭 가능)
+          <Body fontSize="b3" color="zinc" style={{ marginTop: "0.5rem" }}>
+            → Switch 컴포넌트의 label prop 사용
+            <br />→ 라벨 클릭 시 자동으로 토글됨 (접근성 보장)
+          </Body>
+        </div>
+
+        {/* 외부 라벨: HTML label 요소 사용 */}
+        <div>
+          <Title fontSize="t4" color="main" style={{ marginBottom: "0.5rem" }}>
+            2. HTML label 요소 (표준)
+          </Title>
+          <div
+            style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}
+          >
+            <_Switch
+              id="html-label-demo"
+              isSelected={htmlLabelSelected}
+              onToggle={htmlLabelToggle}
+              color="zinc"
+            />
+            <label htmlFor="html-label-demo" style={{ cursor: "pointer" }}>
+              <Body fontSize="b2" color="zinc">
+                다크 모드 활성화
+              </Body>
+            </label>
+          </div>
+          <Body fontSize="b3" color="zinc" style={{ marginTop: "0.5rem" }}>
+            → HTML label 요소와 htmlFor 속성 사용
+            <br />→ 라벨 클릭 시 자동으로 토글됨 (웹 표준)
+          </Body>
+        </div>
+
+        {/* 단순 텍스트: 클릭 이벤트 직접 처리 */}
+        <div>
+          <Title fontSize="t4" color="main" style={{ marginBottom: "0.5rem" }}>
+            3. 단순 텍스트 (비추천)
+          </Title>
+          <div
+            style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}
+          >
+            <_Switch
+              id="simple-text-demo"
+              isSelected={externalSelected}
+              onToggle={externalToggle}
+              color="blackAlpha"
+            />
+            <Body
+              fontSize="b2"
+              color="zinc"
+              style={{ cursor: "pointer" }}
+              onClick={externalToggle}
+            >
+              푸시 알림 허용
+            </Body>
+          </div>
+          <Body fontSize="b3" color="zinc" style={{ marginTop: "0.5rem" }}>
+            → 단순 텍스트에 onClick 이벤트 추가
+            <br />→ 접근성 도구가 연결을 인식하지 못함 (비추천)
           </Body>
         </div>
       </div>
@@ -326,7 +410,7 @@ export const WithExternalLabel: Story = {
     docs: {
       description: {
         story:
-          "라벨 처리 방식을 비교하는 예제입니다. 내장 라벨은 라벨을 클릭해도 스위치가 토글되지만, 외부 라벨은 스위치만 클릭 가능합니다.",
+          "라벨 처리 방식을 비교하는 예제입니다. 내장 라벨, HTML label 요소, 단순 텍스트의 차이점을 보여줍니다. 접근성을 위해 내장 라벨이나 HTML label 요소 사용을 권장합니다.",
       },
     },
   },
