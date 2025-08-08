@@ -22,4 +22,5 @@ export type InputProps = {
   isError?: boolean;
   errorMessage?: string;
   invalid?: boolean; // aria-invalid용
+  rightIcon?: React.ReactNode;
 } & React.InputHTMLAttributes<HTMLInputElement>;
