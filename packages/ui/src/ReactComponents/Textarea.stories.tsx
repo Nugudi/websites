@@ -18,6 +18,29 @@ const meta: Meta<typeof _Textarea> = {
         category: "Basic",
       },
     },
+    label: {
+      control: "text",
+      defaultValue: "",
+      table: {
+        type: { summary: "string" },
+        category: "Basic",
+      },
+    },
+    placeholder: {
+      control: "text",
+      defaultValue: "오늘의 메뉴 어떠셨나요?",
+      table: {
+        type: { summary: "string" },
+        category: "Basic",
+      },
+    },
+    maxLength: {
+      control: "number",
+      table: {
+        type: { summary: "number" },
+        category: "Basic",
+      },
+    },
     disabled: {
       control: "boolean",
       defaultValue: false,
@@ -42,29 +65,6 @@ const meta: Meta<typeof _Textarea> = {
       table: {
         type: { summary: "string" },
         category: "State",
-      },
-    },
-    label: {
-      control: "text",
-      defaultValue: "",
-      table: {
-        type: { summary: "string" },
-        category: "Basic",
-      },
-    },
-    placeholder: {
-      control: "text",
-      defaultValue: "오늘의 메뉴 어떠셨나요?",
-      table: {
-        type: { summary: "string" },
-        category: "Basic",
-      },
-    },
-    maxLength: {
-      control: "number",
-      table: {
-        type: { summary: "number" },
-        category: "Basic",
       },
     },
   },
