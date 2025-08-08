@@ -333,7 +333,7 @@ export const WithExternalLabel: Story = {
       <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
         {/* 내장 라벨: Switch 컴포넌트의 label prop 사용 */}
         <div>
-          <Title fontSize="t4" color="main" style={{ marginBottom: "0.5rem" }}>
+          <Title fontSize="t2" color="main" style={{ marginBottom: "0.5rem" }}>
             1. 내장 라벨 (권장)
           </Title>
           <_Switch
@@ -351,7 +351,7 @@ export const WithExternalLabel: Story = {
 
         {/* 외부 라벨: HTML label 요소 사용 */}
         <div>
-          <Title fontSize="t4" color="main" style={{ marginBottom: "0.5rem" }}>
+          <Title fontSize="t2" color="main" style={{ marginBottom: "0.5rem" }}>
             2. HTML label 요소 (표준)
           </Title>
           <div
@@ -377,7 +377,7 @@ export const WithExternalLabel: Story = {
 
         {/* 단순 텍스트: 클릭 이벤트 직접 처리 */}
         <div>
-          <Title fontSize="t4" color="main" style={{ marginBottom: "0.5rem" }}>
+          <Title fontSize="t2" color="main" style={{ marginBottom: "0.5rem" }}>
             3. 단순 텍스트 (비추천)
           </Title>
           <div
