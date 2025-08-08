@@ -14,6 +14,7 @@
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
     "@nugudi/api": "workspace:*",
+    "@nugudi/assets-icons": "workspace:*",
     "@nugudi/react-components-button": "workspace:*",
     "@nugudi/react-components-chip": "workspace:*",
     "@nugudi/react-components-input": "workspace:*",

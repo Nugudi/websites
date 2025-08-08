@@ -104,6 +104,9 @@ importers:
       '@nugudi/api':
         specifier: workspace:*
         version: link:../../packages/api
+      '@nugudi/assets-icons':
+        specifier: workspace:*
+        version: link:../../packages/assets/icons
       '@nugudi/react-components-button':
         specifier: workspace:*
         version: link:../../packages/react/components/button
