@@ -1,6 +1,7 @@
 import "@nugudi/react-components-switch/style.css";
-import { Body } from "@nugudi/react-components-layout";
+import { Body, Title } from "@nugudi/react-components-layout";
 import { Switch as _Switch } from "@nugudi/react-components-switch";
+import { useSwitch, useToggleSwitch } from "@nugudi/react-hooks-switch";
 import { useToggle } from "@nugudi/react-hooks-toggle";
 import { vars } from "@nugudi/themes";
 import type { Meta, StoryObj } from "@storybook/react-vite";
@@ -185,6 +186,103 @@ export const DisabledSwitch: Story = {
       description: {
         story:
           "비활성화된 Switch 컴포넌트입니다. isDisabled prop을 true로 설정하면 사용자가 스위치를 조작할 수 없습니다.",
+      },
+    },
+  },
+};
+
+export const TextSwitchStory: Story = {
+  render: () => {
+    const { switchProps } = useSwitch({
+      elementType: "div",
+      isSelected: true,
+      onToggle: () => {
+        console.log("Switch toggled");
+      },
+    });
+
+    return (
+      <Title
+        {...switchProps}
+        as="div"
+        fontSize="t2"
+        color="main"
+        style={{
+          userSelect: "none",
+          cursor: "pointer",
+          padding: "10px",
+          borderRadius: "8px",
+          backgroundColor: switchProps["aria-checked"] ? "#4CAF50" : "#ccc",
+          transition: "background-color 0.3s",
+        }}
+      >
+        {switchProps["aria-checked"] ? "스위치 켜짐" : "스위치 꺼짐"}
+      </Title>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "useSwitch 훅을 사용하여 커스텀 스위치를 만드는 예제입니다. div 엘리먼트를 스위치처럼 동작하게 할 수 있습니다.",
+      },
+    },
+  },
+};
+
+export const ToggleSwitchStory: Story = {
+  render: () => {
+    const { switchProps, isSelected } = useToggleSwitch(
+      { elementType: "button" },
+      false,
+    );
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "1rem",
+          alignItems: "center",
+        }}
+      >
+        <button
+          {...switchProps}
+          type="button"
+          style={{
+            width: "60px",
+            height: "30px",
+            borderRadius: "15px",
+            border: "none",
+            backgroundColor: isSelected ? "#4CAF50" : "#ccc",
+            position: "relative",
+            cursor: "pointer",
+            transition: "background-color 0.3s",
+          }}
+        >
+          <span
+            style={{
+              position: "absolute",
+              top: "3px",
+              left: isSelected ? "33px" : "3px",
+              width: "24px",
+              height: "24px",
+              borderRadius: "50%",
+              backgroundColor: "white",
+              transition: "left 0.3s",
+            }}
+          />
+        </button>
+        <Body fontSize="b2" color="zinc">
+          {isSelected ? "활성화됨" : "비활성화됨"}
+        </Body>
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "useToggleSwitch 훅을 사용하여 토글 가능한 스위치를 만드는 예제입니다. 내부적으로 상태를 관리합니다.",
       },
     },
   },
