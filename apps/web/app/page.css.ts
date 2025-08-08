@@ -6,14 +6,6 @@ export const container = style({
   flexDirection: "column",
   padding: "1rem",
   height: "100%",
-  "@media": {
-    "screen and (max-width: 768px)": {
-      padding: "0.75rem",
-    },
-    "screen and (max-width: 480px)": {
-      padding: "0.5rem",
-    },
-  },
 });
 
 export const section = style({
@@ -73,24 +65,10 @@ export const testGuide = style({
   position: "fixed",
   right: "1rem",
   bottom: "1rem",
-  padding: "0.75rem",
+
   backgroundColor: vars.colors.$scale.whiteAlpha[100],
   border: `1px solid ${vars.colors.$scale.zinc[200]}`,
   borderRadius: "0.25rem",
   fontSize: "0.875rem",
   color: vars.colors.$scale.zinc[700],
-  "@media": {
-    "screen and (max-width: 768px)": {
-      right: "0.75rem",
-      bottom: "0.75rem",
-      padding: "0.5rem",
-      fontSize: "0.8125rem",
-    },
-    "screen and (max-width: 480px)": {
-      right: "0.5rem",
-      bottom: "0.5rem",
-      padding: "0.5rem",
-      fontSize: "0.75rem",
-    },
-  },
 });

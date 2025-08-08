@@ -13,6 +13,7 @@ import ChipContainer from "./components/chip-container";
 import InputContainer from "./components/input-container";
 import InputOTPContainer from "./components/input-otp-container";
 import { SwitchContainer } from "./components/switch-container";
+import TextareaContainer from "./components/textarea-container";
 import * as styles from "./page.css";
 
 export default function Home() {
@@ -82,11 +83,10 @@ export default function Home() {
       </Tabs.Panel>
 
       <Tabs.Panel value="tab2" className={styles.container}>
-        <div className={styles.container}>
-          <ChipContainer />
-          <InputContainer />
-          <InputOTPContainer />
-        </div>
+        <ChipContainer />
+        <InputContainer />
+        <TextareaContainer />
+        <InputOTPContainer />
       </Tabs.Panel>
     </Tabs>
   );
