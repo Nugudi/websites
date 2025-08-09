@@ -1,28 +1,78 @@
 import "@nugudi/react-components-input/style.css";
+import { HeartIcon } from "@nugudi/assets-icons";
 import { Input as _Input } from "@nugudi/react-components-input";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+
+const iconOptions = {
+  none: null,
+  heart: <HeartIcon />,
+};
 
 const meta: Meta<typeof _Input> = {
   title: "Components/Input",
   component: _Input,
   tags: ["autodocs"],
   argTypes: {
-    variant: {
-      options: ["default", "filled"],
-      control: "select",
-      defaultValue: "default",
+    label: {
+      control: "text",
+      table: {
+        type: { summary: "string" },
+        category: "Basic",
+      },
+    },
+    placeholder: {
+      control: "text",
+      table: {
+        type: { summary: "string" },
+        category: "Basic",
+      },
     },
     disabled: {
       control: "boolean",
       defaultValue: false,
+      table: {
+        type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
+        category: "State",
+      },
     },
     isError: {
       control: "boolean",
       defaultValue: false,
+      table: {
+        type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
+        category: "State",
+      },
     },
     errorMessage: {
       control: "text",
       defaultValue: "",
+      table: {
+        type: { summary: "string" },
+        category: "State",
+      },
+    },
+    variant: {
+      options: ["default", "filled"],
+      control: "select",
+      defaultValue: "default",
+      table: {
+        type: { summary: "default | filled" },
+        defaultValue: { summary: "default" },
+        category: "Appearance",
+      },
+    },
+    rightIcon: {
+      options: Object.keys(iconOptions),
+      mapping: iconOptions,
+      control: { type: "select" },
+      description: "오른쪽에 표시될 아이콘",
+      table: {
+        type: { summary: "ReactNode" },
+        defaultValue: { summary: "none" },
+        category: "Appearance",
+      },
     },
   },
 };
@@ -42,6 +92,22 @@ export const Filled: Story = {
   args: {
     variant: "filled",
     placeholder: "너구리를 입력해주세요.",
+  },
+};
+
+export const DefaultWithRightIcon: Story = {
+  args: {
+    variant: "default",
+    placeholder: "너구리를 입력해주세요.",
+    rightIcon: "heart",
+  },
+};
+
+export const FilledWithRightIcon: Story = {
+  args: {
+    variant: "filled",
+    placeholder: "너구리를 입력해주세요.",
+    rightIcon: "heart",
   },
 };
 
@@ -91,6 +157,11 @@ export const AllStates: Story = {
               errorMessage="전화번호가 올바르지 않습니다"
             />
             <_Input label="비활성화" placeholder="비활성화된 입력" disabled />
+            <_Input
+              label="오른쪽 아이콘"
+              placeholder="너구리를 입력해주세요."
+              rightIcon={<HeartIcon />}
+            />
           </div>
         </div>
 
@@ -102,6 +173,11 @@ export const AllStates: Story = {
             <_Input variant="filled" placeholder="텍스트를 입력하세요" />
             <_Input variant="filled" placeholder="에러 입력" isError={true} />
             <_Input variant="filled" placeholder="비활성화된 입력" disabled />
+            <_Input
+              variant="filled"
+              placeholder="너구리를 입력해주세요."
+              rightIcon={<HeartIcon />}
+            />
           </div>
         </div>
       </div>

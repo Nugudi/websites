@@ -5,6 +5,7 @@ import {
   errorMessageStyle,
   inputStyle,
   labelStyle,
+  rightIconStyle,
 } from "./style.css";
 import type { InputProps } from "./types";
 import { useInput } from "./useInput";
@@ -16,6 +17,7 @@ const Input = (props: InputProps, ref: React.Ref<HTMLInputElement>) => {
     label,
     isError,
     errorMessage,
+    rightIcon,
     className,
     style,
     invalid,
@@ -48,11 +50,13 @@ const Input = (props: InputProps, ref: React.Ref<HTMLInputElement>) => {
                 size,
                 variant,
                 isError,
+                hasRightIcon: !!rightIcon,
               }),
             ],
             className,
           )}
         />
+        {rightIcon && <div className={rightIconStyle()}>{rightIcon}</div>}
       </div>
       {isError && errorMessage && (
         <div className={errorMessageStyle()}>{errorMessage}</div>

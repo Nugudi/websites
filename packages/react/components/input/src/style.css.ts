@@ -94,6 +94,11 @@ export const inputStyle = recipe({
         },
       },
     },
+    hasRightIcon: {
+      true: {
+        paddingRight: "3rem",
+      },
+    },
   },
   compoundVariants: [
     {
@@ -113,5 +118,20 @@ export const errorMessageStyle = recipe({
     ...classes.typography.emphasis.e2,
     color: vars.colors.$static.light.color.red,
     marginTop: "0.25rem",
+  },
+});
+
+export const rightIconStyle = recipe({
+  base: {
+    position: "absolute",
+    right: "0.75rem",
+    top: "50%",
+    transform: "translateY(-50%)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    pointerEvents: "none",
+    width: "24px",
+    height: "24px",
   },
 });
