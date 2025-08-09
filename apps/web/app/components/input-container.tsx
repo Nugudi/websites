@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { HeartIcon } from "@nugudi/assets-icons";
 import { Button } from "@nugudi/react-components-button";
 import { Input } from "@nugudi/react-components-input";
 import { useForm } from "react-hook-form";
@@ -9,7 +10,7 @@ import { z } from "zod";
 // Zod 스키마 정의
 const formSchema = z.object({
   name: z.string().min(2, "최소 2글자 이상 입력해주세요"),
-  email: z.string().email("올바른 이메일 주소를 입력해주세요"),
+  email: z.email("올바른 이메일 주소를 입력해주세요"),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -64,7 +65,7 @@ export default function InputContainer() {
             errorMessage={errors.email?.message}
           />
         </div>
-
+        <HeartIcon />
         <Button type="submit" color="main" variant="brand">
           제출
         </Button>

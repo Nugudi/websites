@@ -1,33 +1,35 @@
 // Icon imports
-import AppleIcon from "../svg/apple.svg?react";
-import ArrowLeftIcon from "../svg/arrow-left.svg?react";
-import ArrowUpCircleIcon from "../svg/arrow-up-circle.svg?react";
-import BusIcon from "../svg/bus.svg?react";
-import CalendarIcon from "../svg/calendar.svg?react";
-import CameraIcon from "../svg/camera.svg?react";
-import CameraLineIcon from "../svg/camera-line.svg?react";
-import CommentIcon from "../svg/comment.svg?react";
-import EtcIcon from "../svg/etc.svg?react";
-import ExitIcon from "../svg/exit.svg?react";
-import FillHeartIcon from "../svg/fill-heart.svg?react";
-import FolderIcon from "../svg/folder.svg?react";
-import GiftIcon from "../svg/gift.svg?react";
-import GoogleIcon from "../svg/google.svg?react";
-import HeartIcon from "../svg/heart.svg?react";
-import HomeIcon from "../svg/home.svg?react";
-import KakaoIcon from "../svg/kakao.svg?react";
-import MajorDishIcon from "../svg/major-dish.svg?react";
-import NaverIcon from "../svg/naver.svg?react";
-import NoodleIcon from "../svg/noodle.svg?react";
-import NotiIcon from "../svg/noti.svg?react";
-import PenIcon from "../svg/pen.svg?react";
-import PersonIcon from "../svg/person.svg?react";
-import PicklesIcon from "../svg/pickles.svg?react";
-import RiceIcon from "../svg/rice.svg?react";
-import ShareIcon from "../svg/share.svg?react";
-import SoupIcon from "../svg/soup.svg?react";
-import SubDishIcon from "../svg/sub-dish.svg?react";
-import TeaIcon from "../svg/tea.svg?react";
+import AppleIcon from "./svg/apple.svg?react";
+import ArrowLeftIcon from "./svg/arrow-left.svg?react";
+import ArrowUpCircleIcon from "./svg/arrow-up-circle.svg?react";
+import BusIcon from "./svg/bus.svg?react";
+import CalendarIcon from "./svg/calendar.svg?react";
+import CameraIcon from "./svg/camera.svg?react";
+import CameraLineIcon from "./svg/camera-line.svg?react";
+import CommentIcon from "./svg/comment.svg?react";
+import EtcIcon from "./svg/etc.svg?react";
+import ExitIcon from "./svg/exit.svg?react";
+import FailIcon from "./svg/failure.svg?react";
+import FillHeartIcon from "./svg/fill-heart.svg?react";
+import FolderIcon from "./svg/folder.svg?react";
+import GiftIcon from "./svg/gift.svg?react";
+import GoogleIcon from "./svg/google.svg?react";
+import HeartIcon from "./svg/heart.svg?react";
+import HomeIcon from "./svg/home.svg?react";
+import KakaoIcon from "./svg/kakao.svg?react";
+import MajorDishIcon from "./svg/major-dish.svg?react";
+import NaverIcon from "./svg/naver.svg?react";
+import NoodleIcon from "./svg/noodle.svg?react";
+import NotiIcon from "./svg/noti.svg?react";
+import PenIcon from "./svg/pen.svg?react";
+import PersonIcon from "./svg/person.svg?react";
+import PicklesIcon from "./svg/pickles.svg?react";
+import RiceIcon from "./svg/rice.svg?react";
+import ShareIcon from "./svg/share.svg?react";
+import SoupIcon from "./svg/soup.svg?react";
+import SubDishIcon from "./svg/sub-dish.svg?react";
+import SuccessIcon from "./svg/success.svg?react";
+import TeaIcon from "./svg/tea.svg?react";
 import type { IconRegistry } from "./types/icon";
 
 // 아이콘 레지스트리
@@ -147,6 +149,14 @@ export const iconRegistry: IconRegistry = {
   Comment: {
     component: CommentIcon,
     tags: ["comment", "댓글"],
+  },
+  Success: {
+    component: SuccessIcon,
+    tags: ["success", "성공"],
+  },
+  Fail: {
+    component: FailIcon,
+    tags: ["fail", "실패"],
   },
 };
 
