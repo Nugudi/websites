@@ -1,0 +1,333 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "너구디 API",
+    "description": "구내식당 플랫폼 API",
+    "contact": {
+      "name": "너구디 개발팀",
+      "url": "https://github.com/Nugudi",
+      "email": "nugudi@gmail.com"
+    },
+    "version": "v1"
+  },
+  "servers": [
+    { "url": "http://dev.nugudi.com", "description": "Generated server url" }
+  ],
+  "tags": [
+    {
+      "name": "사용자 인증",
+      "description": "회원가입, 로그인, 로그아웃 등 인증 관련 API"
+    }
+  ],
+  "paths": {
+    "/api/v1/auth/signup/local": {
+      "post": {
+        "tags": ["사용자 인증"],
+        "operationId": "signUpLocal",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SignUpLocalRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponseSignUpResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/email/verify-code": {
+      "post": {
+        "tags": ["사용자 인증"],
+        "operationId": "verifyEmailCode",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/EmailVerifyRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponseEmailVerifyResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/email/send-code": {
+      "post": {
+        "tags": ["사용자 인증"],
+        "operationId": "sendEmailVerificationCode",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailVerificationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponseEmailVerificationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DeviceInfoDto": {
+        "required": ["deviceType"],
+        "type": "object",
+        "properties": {
+          "deviceType": {
+            "type": "string",
+            "description": "디바이스 타입",
+            "example": "ANDROID",
+            "enum": ["IOS", "ANDROID", "WEB", "IOS", "ANDROID", "WEB"]
+          },
+          "deviceUniqueId": {
+            "type": "string",
+            "description": "디바이스 고유 ID",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "deviceName": {
+            "type": "string",
+            "description": "디바이스 이름",
+            "example": "iPhone 15 Pro"
+          },
+          "deviceModel": {
+            "type": "string",
+            "description": "디바이스 모델",
+            "example": "iPhone15,2"
+          },
+          "osVersion": {
+            "type": "string",
+            "description": "OS 버전",
+            "example": "17.1.1"
+          },
+          "appVersion": {
+            "type": "string",
+            "description": "앱 버전",
+            "example": "1.0.0"
+          },
+          "pushToken": {
+            "type": "string",
+            "description": "푸시 토큰 (알림 동의시에만 필수)",
+            "example": "dHJhbnNhY3Rpb25faWQ6MTIzNDU2Nzg5MA=="
+          }
+        },
+        "description": "디바이스 정보 (일반/소셜 공통)"
+      },
+      "SignUpLocalRequest": {
+        "required": [
+          "acceptsMarketingEmail",
+          "acceptsNotifications",
+          "deviceInfo",
+          "email",
+          "nickname",
+          "password",
+          "termAgreements"
+        ],
+        "type": "object",
+        "properties": {
+          "nickname": {
+            "type": "string",
+            "description": "닉네임",
+            "example": "너구디유저"
+          },
+          "email": {
+            "type": "string",
+            "description": "이메일",
+            "example": "user@nugudi.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "비밀번호 (최소 8자 이상, 최대 20자 이하, 영문/숫자/특수문자/대문자 1개 이상 포함)",
+            "example": "SecurePass123!"
+          },
+          "termAgreements": {
+            "type": "array",
+            "description": "약관 동의 목록",
+            "items": { "$ref": "#/components/schemas/TermAgreementDto" }
+          },
+          "acceptsNotifications": {
+            "type": "boolean",
+            "description": "알림 수신 동의 여부",
+            "example": true
+          },
+          "acceptsMarketingEmail": {
+            "type": "boolean",
+            "description": "마케팅 이메일 수신 동의 여부",
+            "example": false
+          },
+          "deviceInfo": { "$ref": "#/components/schemas/DeviceInfoDto" }
+        },
+        "description": "일반 회원가입 요청 정보"
+      },
+      "TermAgreementDto": {
+        "required": ["isAgreed", "termPolicyId"],
+        "type": "object",
+        "properties": {
+          "termPolicyId": {
+            "type": "integer",
+            "description": "약관 정책 ID",
+            "format": "int64",
+            "example": 1
+          },
+          "isAgreed": {
+            "type": "boolean",
+            "description": "동의 여부",
+            "example": true
+          }
+        },
+        "description": "약관 동의 정보 (일반/소셜 공통)"
+      },
+      "SignUpResponse": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "description": "사용자 ID",
+            "format": "int64",
+            "example": 123
+          },
+          "message": {
+            "type": "string",
+            "description": "성공 메시지",
+            "example": "회원가입이 완료되었습니다"
+          }
+        },
+        "description": "회원가입 성공 응답 (일반/소셜 공통)"
+      },
+      "SuccessResponseSignUpResponse": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "success": { "type": "boolean" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/SignUpResponse" }
+        }
+      },
+      "EmailVerifyRequest": {
+        "required": ["code", "email", "purpose"],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "이메일",
+            "example": "user@nugudi.com"
+          },
+          "code": {
+            "type": "string",
+            "description": "인증 코드",
+            "example": "123456"
+          },
+          "purpose": {
+            "type": "string",
+            "description": "인증 목적 (SIGNUP: 회원가입, PASSWORD_RESET: 비밀번호 재설정)",
+            "example": "SIGNUP",
+            "enum": ["SIGNUP", "PASSWORD_RESET"]
+          }
+        },
+        "description": "이메일 인증 코드 확인 요청"
+      },
+      "EmailVerifyResponse": {
+        "type": "object",
+        "properties": {
+          "verified": {
+            "type": "boolean",
+            "description": "인증 성공 여부",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "description": "성공 메시지",
+            "example": "이메일 인증이 완료되었습니다"
+          }
+        },
+        "description": "이메일 인증 코드 확인 응답"
+      },
+      "SuccessResponseEmailVerifyResponse": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "success": { "type": "boolean" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/EmailVerifyResponse" }
+        }
+      },
+      "EmailVerificationRequest": {
+        "required": ["email", "purpose"],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "이메일",
+            "example": "user@nugudi.com"
+          },
+          "purpose": {
+            "type": "string",
+            "description": "인증 목적 (SIGNUP: 회원가입, PASSWORD_RESET: 비밀번호 재설정)",
+            "example": "SIGNUP",
+            "enum": ["SIGNUP", "PASSWORD_RESET"]
+          }
+        },
+        "description": "이메일 인증 코드 발송 요청"
+      },
+      "EmailVerificationResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "성공 메시지",
+            "example": "인증 코드가 발송되었습니다"
+          },
+          "expiresInSeconds": {
+            "type": "integer",
+            "description": "만료 시간(초)",
+            "format": "int64",
+            "example": 300
+          }
+        },
+        "description": "이메일 인증 코드 발송 응답"
+      },
+      "SuccessResponseEmailVerificationResponse": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "success": { "type": "boolean" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/EmailVerificationResponse" }
+        }
+      }
+    }
+  }
+}

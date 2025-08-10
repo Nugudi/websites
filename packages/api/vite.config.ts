@@ -4,7 +4,7 @@ import tsConfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   plugins: [
-    dts({ include: ["src/index*.ts"], entryRoot: "src", rollupTypes: true }),
+    dts({ include: ["src/**/*.ts"], entryRoot: "src" }),
     tsConfigPaths(),
   ],
   build: {
@@ -17,7 +17,7 @@ export default defineConfig({
       formats: ["es"],
     },
     rollupOptions: {
-      external: ["@faker-js/faker", "@tanstack/react-query", "msw", "react"],
+      external: ["@faker-js/faker", "@tanstack/react-query", "msw"],
     },
   },
 });

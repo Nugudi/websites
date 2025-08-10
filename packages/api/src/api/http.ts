@@ -19,7 +19,7 @@ export const http = async <T>(url: string, init: RequestInit): Promise<T> => {
 
 const isDateString = (value: unknown): boolean => {
   const pattern =
-    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/;
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d*)?(?:[-+]\d{2}:?\d{2}|Z)?$/;
   return !!value && typeof value === "string" && pattern.test(value);
 };
 
@@ -29,10 +29,10 @@ const handleDate = <T>(body: T): T => {
   }
 
   for (const key of Object.keys(body)) {
-    // biome-ignore lint/suspicious/noExplicitAny: body type check
+    // biome-ignore lint/suspicious/noExplicitAny: Unable to infer the type because the body type has not been determined yet
     const value = (body as any)[key];
     if (isDateString(value)) {
-      // biome-ignore lint/suspicious/noExplicitAny: body type check
+      // biome-ignore lint/suspicious/noExplicitAny: Unable to infer the type because the body type has not been determined yet
       (body as any)[key] = new Date(value);
     } else if (typeof value === "object") {
       handleDate(value);
