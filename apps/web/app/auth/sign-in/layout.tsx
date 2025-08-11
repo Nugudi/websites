@@ -1,11 +1,7 @@
 import { Flex } from "@nugudi/react-components-layout";
 import type React from "react";
 
-export default function LoginLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+const LoginLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <Flex
       direction="column"
@@ -19,4 +15,6 @@ export default function LoginLayout({
       {children}
     </Flex>
   );
-}
+};
+
+export default LoginLayout;

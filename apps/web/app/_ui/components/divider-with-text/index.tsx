@@ -1,4 +1,4 @@
-import * as styles from "./divider-with-text.css";
+import * as styles from "./index.css";
 
 interface DividerWithTextProps {
   text?: string;

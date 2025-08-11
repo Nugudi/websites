@@ -1,8 +1,8 @@
 import { Flex } from "@nugudi/react-components-layout";
 import Image from "next/image";
-import WelcomeText from "../components/welcome-text";
-import LoginSection from "../sections/login-section";
-import * as styles from "./login-view.css";
+import WelcomeText from "../../components/welcome-text";
+import LoginSection from "../../sections/login-section";
+import * as styles from "./index.css";
 
 const LoginView = () => {
   return (

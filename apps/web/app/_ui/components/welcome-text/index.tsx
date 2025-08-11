@@ -1,6 +1,6 @@
 import { LogoTextIcon } from "@nugudi/assets-icons";
 import { Flex } from "@nugudi/react-components-layout";
-import * as styles from "./welcome-text.css";
+import * as styles from "./index.css";
 
 interface WelcomeTextProps {
   paddingLeft?: string | number;

@@ -9,7 +9,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import * as styles from "./email-login-form.css";
+import * as styles from "../email-login-form.css";
 
 const formSchema = z.object({
   email: z.email("올바른 이메일 주소를 입력해주세요"),

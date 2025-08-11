@@ -1,8 +1,8 @@
 import { Flex } from "@nugudi/react-components-layout";
 import Link from "next/link";
-import { DividerWithText } from "../components/divider-with-text";
-import SocialLoginButtons from "../components/social-login-buttons";
-import * as styles from "./login-section.css";
+import { DividerWithText } from "../../components/divider-with-text";
+import SocialLoginButtonList from "../../components/social-login-button-list";
+import * as styles from "./index.css";
 
 const LoginSection = () => {
   return (
@@ -13,7 +13,7 @@ const LoginSection = () => {
         gap={32}
         align="center"
       >
-        <SocialLoginButtons />
+        <SocialLoginButtonList />
         <DividerWithText />
         <Flex gap={4} align="center">
           <Link href="/auth/sign-in/email" className={styles.authLink}>

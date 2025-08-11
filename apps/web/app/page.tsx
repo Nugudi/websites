@@ -8,6 +8,7 @@ import {
   Heading,
 } from "@nugudi/react-components-layout";
 import { Tabs } from "@nugudi/react-components-tab";
+import Link from "next/link";
 import { ButtonContainer } from "./components/button-container";
 import ChipContainer from "./components/chip-container";
 import InputOTPContainer from "./components/input-otp-container";
@@ -15,7 +16,7 @@ import { SwitchContainer } from "./components/switch-container";
 import TextareaContainer from "./components/textarea-container";
 import * as styles from "./page.css";
 
-export default function Home() {
+const HomePage = () => {
   return (
     <Tabs defaultValue="tab1">
       <Tabs.List>
@@ -24,6 +25,7 @@ export default function Home() {
       </Tabs.List>
 
       <Tabs.Panel value="tab1" className={styles.container}>
+        <Link href="/auth/sign-in">로그인</Link>
         <Flex direction="column" gap={16} align="stretch">
           <Box borderRadius="2xl">
             <Heading as="h1" fontSize="h1" color="blackAlpha">
@@ -84,4 +86,6 @@ export default function Home() {
       </Tabs.Panel>
     </Tabs>
   );
-}
+};
+
+export default HomePage;
