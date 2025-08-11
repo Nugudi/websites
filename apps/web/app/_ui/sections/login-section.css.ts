@@ -15,8 +15,10 @@ export const authLink = style({
   textDecoration: "none",
   color: vars.colors.$scale.zinc[500],
   ...classes.typography.body.b4,
-  ":hover": {
-    textDecoration: "underline",
+  selectors: {
+    "&:hover": {
+      textDecoration: "underline",
+    },
   },
 });
 

@@ -1,10 +1,12 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { EyeIcon, EyeOffIcon } from "@nugudi/assets-icons";
 import { Button } from "@nugudi/react-components-button";
 import { Input } from "@nugudi/react-components-input";
 import { Flex } from "@nugudi/react-components-layout";
 import Link from "next/link";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import * as styles from "./email-login-form.css";
@@ -17,6 +19,8 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 export default function EmailLoginForm() {
+  const [showPassword, setShowPassword] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -32,6 +36,10 @@ export default function EmailLoginForm() {
 
   const onSubmit = (data: FormData) => {
     console.log("Form submitted:", data);
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -50,6 +58,21 @@ export default function EmailLoginForm() {
           {...register("password")}
           isError={!!errors.password}
           errorMessage={errors.password?.message}
+          type={showPassword ? "text" : "password"}
+          rightIcon={
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              style={{
+                cursor: "pointer",
+                pointerEvents: "auto",
+                background: "none",
+                border: "none",
+              }}
+            >
+              {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+            </button>
+          }
         />
         <Flex
           gap={4}
@@ -57,7 +80,7 @@ export default function EmailLoginForm() {
           justify="center"
           className={styles.linksContainer}
         >
-          <Link href="/login/email" className={styles.authLink}>
+          <Link href="/password/reset" className={styles.authLink}>
             비밀번호 찾기
           </Link>
           <span className={styles.divider}>|</span>

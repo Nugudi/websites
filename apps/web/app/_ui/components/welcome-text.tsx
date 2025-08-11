@@ -23,7 +23,7 @@ export default function WelcomeText({
       }}
     >
       <Flex gap={6} align="center">
-        <LogoTextIcon className={styles.logoTextIcon} />
+        <LogoTextIcon className={styles.logoTextIcon} aria-hidden />
         <span className={styles.title}>에</span>
       </Flex>
       <span className={styles.title}>오신 것을 환영해요!</span>
