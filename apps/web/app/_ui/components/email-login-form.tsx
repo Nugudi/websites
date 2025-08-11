@@ -18,7 +18,7 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-export default function EmailLoginForm() {
+const EmailLoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -80,11 +80,11 @@ export default function EmailLoginForm() {
           justify="center"
           className={styles.linksContainer}
         >
-          <Link href="/password/reset" className={styles.authLink}>
+          <Link href="/auth/password/forgot" className={styles.authLink}>
             비밀번호 찾기
           </Link>
           <span className={styles.divider}>|</span>
-          <Link href="/signup" className={styles.authLink}>
+          <Link href="/auth/sign-up" className={styles.authLink}>
             회원가입
           </Link>
         </Flex>
@@ -102,4 +102,6 @@ export default function EmailLoginForm() {
       </div>
     </form>
   );
-}
+};
+
+export default EmailLoginForm;

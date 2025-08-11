@@ -4,7 +4,7 @@ import WelcomeText from "../components/welcome-text";
 import LoginSection from "../sections/login-section";
 import * as styles from "./login-view.css";
 
-export default function LoginView() {
+const LoginView = () => {
   return (
     <Flex
       className={styles.container}
@@ -26,4 +26,6 @@ export default function LoginView() {
       <LoginSection />
     </Flex>
   );
-}
+};
+
+export default LoginView;

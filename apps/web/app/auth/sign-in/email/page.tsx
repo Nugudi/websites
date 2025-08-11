@@ -1,5 +1,7 @@
 import EmailLoginView from "@/app/_ui/views/email-login-view";
 
-export default function EmailPage() {
+const EmailLoginPage = () => {
   return <EmailLoginView />;
-}
+};
+
+export default EmailLoginPage;

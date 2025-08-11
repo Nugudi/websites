@@ -4,7 +4,7 @@ import { DividerWithText } from "../components/divider-with-text";
 import SocialLoginButtons from "../components/social-login-buttons";
 import * as styles from "./login-section.css";
 
-export default function LoginSection() {
+const LoginSection = () => {
   return (
     <Flex className={styles.container} direction="column" align="center">
       <Flex
@@ -16,15 +16,17 @@ export default function LoginSection() {
         <SocialLoginButtons />
         <DividerWithText />
         <Flex gap={4} align="center">
-          <Link href="/login/email" className={styles.authLink}>
+          <Link href="/auth/sign-in/email" className={styles.authLink}>
             이메일로 로그인
           </Link>
           <span className={styles.divider}>|</span>
-          <Link href="/signup" className={styles.authLink}>
+          <Link href="/auth/sign-up" className={styles.authLink}>
             회원가입
           </Link>
         </Flex>
       </Flex>
     </Flex>
   );
-}
+};
+
+export default LoginSection;
