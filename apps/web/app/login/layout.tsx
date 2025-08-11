@@ -1,5 +1,4 @@
 import { Flex } from "@nugudi/react-components-layout";
-import { vars } from "@nugudi/themes";
 import type React from "react";
 
 export default function LoginLayout({
@@ -15,7 +14,6 @@ export default function LoginLayout({
       style={{
         minHeight: "100vh",
         width: "100%",
-        background: vars.colors.$static.light.gradient.linearGreen,
       }}
     >
       {children}

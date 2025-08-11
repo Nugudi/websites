@@ -10,7 +10,6 @@ import {
 import { Tabs } from "@nugudi/react-components-tab";
 import { ButtonContainer } from "./components/button-container";
 import ChipContainer from "./components/chip-container";
-import InputContainer from "./components/input-container";
 import InputOTPContainer from "./components/input-otp-container";
 import { SwitchContainer } from "./components/switch-container";
 import TextareaContainer from "./components/textarea-container";
@@ -80,7 +79,6 @@ export default function Home() {
 
       <Tabs.Panel value="tab2" className={styles.container}>
         <ChipContainer />
-        <InputContainer />
         <TextareaContainer />
         <InputOTPContainer />
       </Tabs.Panel>
