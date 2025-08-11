@@ -9,6 +9,8 @@ export { default as CameraLineIcon } from "./svg/camera-line.svg?react";
 export { default as CommentIcon } from "./svg/comment.svg?react";
 export { default as EtcIcon } from "./svg/etc.svg?react";
 export { default as ExitIcon } from "./svg/exit.svg?react";
+export { default as EyeIcon } from "./svg/eye.svg?react";
+export { default as EyeOffIcon } from "./svg/eye_off.svg?react";
 export { default as FailIcon } from "./svg/failure.svg?react";
 export { default as FillHeartIcon } from "./svg/fill-heart.svg?react";
 export { default as FolderIcon } from "./svg/folder.svg?react";

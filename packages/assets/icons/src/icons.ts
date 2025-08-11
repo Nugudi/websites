@@ -9,6 +9,8 @@ import CameraLineIcon from "./svg/camera-line.svg?react";
 import CommentIcon from "./svg/comment.svg?react";
 import EtcIcon from "./svg/etc.svg?react";
 import ExitIcon from "./svg/exit.svg?react";
+import EyeIcon from "./svg/eye.svg?react";
+import EyeOffIcon from "./svg/eye_off.svg?react";
 import FailIcon from "./svg/failure.svg?react";
 import FillHeartIcon from "./svg/fill-heart.svg?react";
 import FolderIcon from "./svg/folder.svg?react";
@@ -162,6 +164,14 @@ export const iconRegistry: IconRegistry = {
   Fail: {
     component: FailIcon,
     tags: ["fail", "실패"],
+  },
+  Eye: {
+    component: EyeIcon,
+    tags: ["eye", "눈", "보기"],
+  },
+  EyeOff: {
+    component: EyeOffIcon,
+    tags: ["eye", "off", "눈"],
   },
 };
 
