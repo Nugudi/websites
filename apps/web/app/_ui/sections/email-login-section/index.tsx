@@ -1,4 +1,4 @@
-import EmailLoginForm from "../../components/email-login-form/email-login-form";
+import EmailLoginForm from "../../components/email-login-form";
 import * as styles from "./index.css";
 
 const EmailLoginSection = () => {
