@@ -17,14 +17,26 @@ export const hidden = style({
 
 export const backButton = style({
   backgroundColor: "transparent",
+  border: "none",
   padding: "0",
-  transition: "background-color 0.2s ease",
+  cursor: "pointer",
+  position: "relative",
+  transition: "color 0.2s ease",
   color: vars.colors.$scale.zinc[800],
 
   selectors: {
+    "&::before": {
+      content: '""',
+      position: "absolute",
+      top: "-12px",
+      left: "-12px",
+      right: "-12px",
+      bottom: "-12px",
+    },
     "&:hover": {
       color: vars.colors.$scale.main[500],
     },
+
     "&:focus-visible": {
       color: vars.colors.$scale.main[500],
     },
