@@ -1,10 +1,10 @@
 import { Flex } from "@nugudi/react-components-layout";
 import Image from "next/image";
 import WelcomeText from "../../components/welcome-text";
-import LoginSection from "../../sections/login-section";
+import SignInSection from "../../sections/sign-in-section";
 import * as styles from "./index.css";
 
-const LoginView = () => {
+const SignInView = () => {
   return (
     <Flex
       className={styles.container}
@@ -24,9 +24,9 @@ const LoginView = () => {
         />
       </div>
 
-      <LoginSection />
+      <SignInSection />
     </Flex>
   );
 };
 
-export default LoginView;
+export default SignInView;

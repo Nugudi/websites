@@ -1,9 +1,9 @@
 import NavBar from "@/src/shared/components/nav-bar";
 import WelcomeText from "../../components/welcome-text";
-import EmailLoginSection from "../../sections/email-login-section";
+import EmailLoginSection from "../../sections/email-sign-in-section";
 import * as styles from "./index.css";
 
-const EmailLoginView = () => {
+const EmailSignInView = () => {
   return (
     <div className={styles.container}>
       <NavBar />
@@ -13,4 +13,4 @@ const EmailLoginView = () => {
   );
 };
 
-export default EmailLoginView;
+export default EmailSignInView;
