@@ -6,6 +6,7 @@ import { Button } from "@nugudi/react-components-button";
 import { Input } from "@nugudi/react-components-input";
 import { Box, Flex, Heading } from "@nugudi/react-components-layout";
 import Image from "next/image";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   type SignUpNicknameSchema,
@@ -15,7 +16,10 @@ import { useSignUpStore } from "@/src/domains/auth/sign-up/stores/use-sign-up-st
 import * as styles from "./index.css";
 
 const NicknameForm = () => {
-  const { setData, resetAll } = useSignUpStore();
+  const { setData, setStep } = useSignUpStore();
+  const [isDuplicateChecked, setIsDuplicateChecked] = useState(false);
+  const [isDuplicateLoading, setIsDuplicateLoading] = useState(false);
+  const [duplicateError, setDuplicateError] = useState<string | null>(null);
 
   const form = useForm<SignUpNicknameSchema>({
     resolver: zodResolver(signUpNicknameSchema),
@@ -25,12 +29,40 @@ const NicknameForm = () => {
     mode: "onTouched",
   });
 
-  const onSubmit = (data: SignUpNicknameSchema) => {
-    setData({
-      ...data,
-      nickname: data.nickname,
-    });
-    resetAll();
+  const checkNicknameDuplicate = async (nickname: string) => {
+    setIsDuplicateLoading(true);
+    setDuplicateError(null);
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const duplicateNicknames = ["매튜", "애옹", "조이"];
+      const isDuplicate = duplicateNicknames.includes(nickname.toLowerCase());
+
+      if (isDuplicate) {
+        setDuplicateError("이미 사용 중인 닉네임입니다.");
+        setIsDuplicateChecked(false);
+      } else {
+        setIsDuplicateChecked(true);
+      }
+    } catch {
+      setDuplicateError("중복 확인 중 오류가 발생했습니다.");
+      setIsDuplicateChecked(false);
+    } finally {
+      setIsDuplicateLoading(false);
+    }
+  };
+
+  const onSubmit = async (data: SignUpNicknameSchema) => {
+    if (!isDuplicateChecked) {
+      await checkNicknameDuplicate(data.nickname);
+    } else {
+      setData({
+        ...data,
+        nickname: data.nickname,
+      });
+      setStep(5);
+    }
   };
 
   return (
@@ -58,17 +90,36 @@ const NicknameForm = () => {
         <Input
           label="닉네임"
           placeholder="2자 이상 12자 이하의 닉네임"
-          {...form.register("nickname")}
-          isError={!!form.formState.errors.nickname}
-          errorMessage={form.formState.errors.nickname?.message}
-          rightIcon={
-            form.formState.isValid && form.formState.isDirty && <SuccessIcon />
+          {...form.register("nickname", {
+            onChange: () => {
+              setIsDuplicateChecked(false);
+              setDuplicateError(null);
+            },
+          })}
+          isError={!!form.formState.errors.nickname || !!duplicateError}
+          errorMessage={
+            form.formState.errors.nickname?.message ||
+            duplicateError ||
+            undefined
           }
+          rightIcon={isDuplicateChecked && !duplicateError && <SuccessIcon />}
         />
       </Box>
 
-      <Button type="submit" color="zinc" variant="brand" size="lg">
-        중복확인
+      <Button
+        type="submit"
+        color="zinc"
+        variant="brand"
+        size="lg"
+        disabled={isDuplicateLoading || !form.formState.isValid}
+      >
+        {isDuplicateLoading
+          ? "확인 중..."
+          : isDuplicateChecked
+            ? "다음"
+            : form.formState.isValid && form.formState.isDirty
+              ? "중복확인"
+              : "다음"}
       </Button>
     </form>
   );

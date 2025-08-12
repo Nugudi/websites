@@ -1,6 +1,7 @@
 "use client";
 
 import { useSignUpStore } from "@/src/domains/auth/sign-up/stores/use-sign-up-store";
+import AgreementForm from "./steps/agreement-form";
 import EmailForm from "./steps/email-form";
 import EmailVerificationCodeForm from "./steps/email-verification-code-form";
 import NicknameForm from "./steps/nickname-form";
@@ -20,6 +21,7 @@ const SignUpForm = () => {
       {step === 2 && <EmailVerificationCodeForm />}
       {step === 3 && <PasswordForm />}
       {step === 4 && <NicknameForm />}
+      {step === 5 && <AgreementForm />}
     </>
   );
 };
