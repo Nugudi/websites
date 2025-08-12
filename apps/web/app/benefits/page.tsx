@@ -1,5 +1,3 @@
-import "@nugudi/react-components-step-indicator/style.css";
-
 const BenefitsPage = () => {
   return (
     <div>

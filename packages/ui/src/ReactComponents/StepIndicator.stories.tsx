@@ -11,42 +11,40 @@ const meta: Meta<typeof _StepIndicator> = {
   parameters: {
     layout: "centered",
   },
+  args: {
+    currentStep: 1,
+    totalSteps: 4,
+    size: "sm",
+    color: "main",
+  },
   argTypes: {
     currentStep: {
-      control: { type: "number", min: 1, max: 5 },
-      defaultValue: 1,
+      control: { type: "number", min: 1, max: 10 },
       table: {
         type: { summary: "number" },
-        defaultValue: { summary: "1" },
         category: "Basic",
       },
     },
     totalSteps: {
       control: { type: "number", min: 2, max: 10 },
-      defaultValue: 4,
       table: {
         type: { summary: "number" },
-        defaultValue: { summary: "4" },
         category: "Basic",
       },
     },
     size: {
       options: ["sm", "md", "lg"],
       control: "select",
-      defaultValue: "sm",
       table: {
         type: { summary: "sm | md | lg" },
-        defaultValue: { summary: "sm" },
         category: "Appearance",
       },
     },
     color: {
       options: ["main", "zinc"],
       control: "select",
-      defaultValue: "main",
       table: {
         type: { summary: "main | zinc" },
-        defaultValue: { summary: "main" },
         category: "Appearance",
       },
     },

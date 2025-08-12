@@ -45,6 +45,7 @@ const StepIndicator = (
       aria-valuenow={currentStep}
       aria-valuemin={1}
       aria-valuemax={totalSteps}
+      aria-valuetext={`단계 ${currentStep} / ${totalSteps}`}
     >
       {steps.map((step) => (
         <div
