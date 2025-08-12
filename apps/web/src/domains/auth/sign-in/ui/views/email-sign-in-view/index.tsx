@@ -1,4 +1,4 @@
-import NavBar from "@/src/shared/components/nav-bar";
+import NavBar from "@/src/shared/ui/components/nav-bar";
 import WelcomeText from "../../components/welcome-text";
 import EmailLoginSection from "../../sections/email-sign-in-section";
 import * as styles from "./index.css";
