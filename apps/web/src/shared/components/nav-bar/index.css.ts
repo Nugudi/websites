@@ -19,10 +19,14 @@ export const backButton = style({
   backgroundColor: "transparent",
   padding: "0",
   transition: "background-color 0.2s ease",
+  color: vars.colors.$scale.zinc[800],
 
   selectors: {
     "&:hover": {
-      color: vars.colors.$scale.zinc[800],
+      color: vars.colors.$scale.main[500],
+    },
+    "&:focus-visible": {
+      color: vars.colors.$scale.main[500],
     },
   },
 });
