@@ -6,6 +6,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import * as styles from "./index.css";
 
+const NAVBAR_SHOW_SCROLL_THRESHOLD = 10;
+const NAVBAR_HIDE_SCROLL_THRESHOLD = 56;
+
 interface NavBarProps {
   title?: string;
   showBackButton?: boolean;
@@ -37,9 +40,15 @@ const NavBar = ({
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      if (currentScrollY < lastScrollY || currentScrollY < 10) {
+      if (
+        currentScrollY < lastScrollY ||
+        currentScrollY < NAVBAR_SHOW_SCROLL_THRESHOLD
+      ) {
         setIsVisible(true);
-      } else if (currentScrollY > lastScrollY && currentScrollY > 56) {
+      } else if (
+        currentScrollY > lastScrollY &&
+        currentScrollY > NAVBAR_HIDE_SCROLL_THRESHOLD
+      ) {
         setIsVisible(false);
       }
 
