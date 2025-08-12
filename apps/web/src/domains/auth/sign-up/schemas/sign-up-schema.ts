@@ -19,15 +19,9 @@ export const signUpSchema = z.object({
     .string()
     .min(2, "최소 2자 이상 입력해주세요")
     .max(12, "최대 12자 이하로 입력해주세요"),
-  acceptPrivacyPolicy: z.boolean().refine((value) => value, {
-    message: "개인정보 처리 방침 동의가 필요합니다.",
-  }),
-  acceptTermsOfService: z.boolean().refine((value) => value, {
-    message: "이용 약관 동의가 필요합니다.",
-  }),
-  acceptMarketingEmail: z.boolean().refine((value) => value, {
-    message: "마케팅 수신 동의가 필요합니다.",
-  }),
+  acceptPrivacyPolicy: z.boolean(),
+  acceptTermsOfService: z.boolean(),
+  acceptMarketingEmail: z.boolean(),
 });
 
 export const signUpEmailSchema = signUpSchema.pick({
