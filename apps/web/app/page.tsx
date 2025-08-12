@@ -1,6 +1,6 @@
 import { Flex } from "@nugudi/react-components-layout";
 import Link from "next/link";
-import { TabBar } from "@/src/shared/components/tab-bar";
+import TabBar from "@/src/shared/components/tab-bar";
 import * as styles from "./page.css";
 
 const HomePage = () => {

@@ -1,6 +1,6 @@
 import { Flex } from "@nugudi/react-components-layout";
 import type React from "react";
-import { TabBar } from "@/src/shared/components/tab-bar";
+import TabBar from "@/src/shared/components/tab-bar";
 
 const BenefitsLayout = ({ children }: { children: React.ReactNode }) => {
   return (

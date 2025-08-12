@@ -19,7 +19,7 @@ const tabs: TabItem[] = [
   { id: "my", label: "마이", icon: PersonIcon, path: "/auth/my" },
 ];
 
-export function TabBar() {
+const TabBar = () => {
   const pathname = usePathname();
 
   const tabElements = useMemo(() => {
@@ -42,4 +42,6 @@ export function TabBar() {
   }, [pathname]);
 
   return <footer className={styles.container}>{tabElements}</footer>;
-}
+};
+
+export default TabBar;
