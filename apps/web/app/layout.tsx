@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import Providers from "../src/shared/providers";
 import "../src/shared/styles/globals.css";
+import MobileFirstLayout from "@/src/shared/components/mobile-first-layout";
 
 const Pretendard = localFont({
   src: "../node_modules/pretendard/dist/web/variable/woff2/PretendardVariable.woff2",
@@ -36,15 +37,12 @@ const RootLayout = ({
   return (
     <html lang="ko" suppressHydrationWarning={true}>
       <body
-        className={Pretendard.variable}
+        className={`${Pretendard.variable}`}
         suppressHydrationWarning={true}
-        style={{
-          width: "100%",
-          maxWidth: "600px",
-          margin: "0 auto",
-        }}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          <MobileFirstLayout>{children}</MobileFirstLayout>
+        </Providers>
       </body>
     </html>
   );

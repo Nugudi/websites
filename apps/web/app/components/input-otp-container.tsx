@@ -3,6 +3,7 @@ import { Button } from "@nugudi/react-components-button";
 import { InputOTP } from "@nugudi/react-components-input-otp";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
+import * as styles from "./input-otp-container.css";
 
 const otpSchema = z.object({
   otp: z.string().min(6, "6자리 인증번호를 입력해주세요"),
@@ -29,16 +30,8 @@ export default function InputOTPContainer() {
   };
 
   return (
-    <div style={{ marginTop: "4rem" }}>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "1rem",
-          maxWidth: "400px",
-        }}
-      >
+    <div className={styles.wrapper}>
+      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
         <Controller
           name="otp"
           control={control}

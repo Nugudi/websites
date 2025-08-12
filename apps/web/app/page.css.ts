@@ -1,9 +1,13 @@
+import { vars } from "@nugudi/themes";
 import { style } from "@vanilla-extract/css";
 
 export const container = style({
   display: "flex",
   flexDirection: "column",
-  padding: "1rem",
-  marginTop: "1rem",
+  justifyContent: "center",
+  alignItems: "center",
+  background: vars.colors.$static.light.gradient.linearGreen,
+  minHeight: "calc(100dvh - 67px)",
   height: "100%",
+  width: "100%",
 });
