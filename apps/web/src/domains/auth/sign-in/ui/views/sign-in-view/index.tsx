@@ -16,7 +16,7 @@ const SignInView = () => {
       <div className={styles.logo}>
         <Image
           className={styles.logoImage}
-          src="/images/nuguri.png"
+          src="/images/nuguri.webp"
           alt="logo"
           width={370}
           height={306}

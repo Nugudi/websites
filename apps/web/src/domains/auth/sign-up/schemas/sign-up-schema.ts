@@ -26,6 +26,10 @@ export const signUpPasswordSchema = signUpSchema
     path: ["passwordConfirm"],
   });
 
+export const signUpNicknameSchema = signUpSchema.pick({
+  nickname: true,
+});
+
 export type SignUpSchema = z.infer<typeof signUpSchema>;
 
 export type SignUpEmailSchema = z.infer<typeof signUpEmailSchema>;
@@ -35,3 +39,5 @@ export type SignUpEmailVerificationCodeSchema = z.infer<
 >;
 
 export type SignUpPasswordSchema = z.infer<typeof signUpPasswordSchema>;
+
+export type SignUpNicknameSchema = z.infer<typeof signUpNicknameSchema>;

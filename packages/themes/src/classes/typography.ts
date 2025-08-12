@@ -4,7 +4,8 @@ export const heading = {
   h1: {
     fontSize: typography.fontSize[30],
     letterSpacing: typography.letterSpacing[30],
-    lineHeight: typography.lineHeight[130],
+    lineHeight: typography.lineHeight[140],
+    fontWeight: typography.fontWeight[700],
   },
 };
 
