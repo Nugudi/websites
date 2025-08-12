@@ -22,6 +22,7 @@ const Button = (props: ButtonProps, ref: React.Ref<HTMLButtonElement>) => {
     isLoading,
     children,
     style,
+    type = "button",
     ...restProps
   } = props;
 
@@ -38,7 +39,7 @@ const Button = (props: ButtonProps, ref: React.Ref<HTMLButtonElement>) => {
   return (
     <button
       {...restProps}
-      type="button"
+      type={type}
       ref={ref}
       disabled={restProps.disabled || isLoading}
       data-loading={isLoading ? "true" : undefined}
