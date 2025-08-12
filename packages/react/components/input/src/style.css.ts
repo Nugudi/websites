@@ -33,6 +33,8 @@ export const labelStyle = recipe({
 
 export const inputStyle = recipe({
   base: {
+    WebkitAppearance: "none",
+    borderRadius: 0,
     margin: 0,
     padding: 0,
     border: 0,
