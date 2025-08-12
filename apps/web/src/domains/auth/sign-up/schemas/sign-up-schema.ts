@@ -8,4 +8,10 @@ export const signUpSchema = z.object({
   nickname: z.string().min(2, "최소 2자 이상 입력해주세요"),
 });
 
+export const signUpEmailSchema = signUpSchema.pick({
+  email: true,
+});
+
 export type SignUpSchema = z.infer<typeof signUpSchema>;
+
+export type SignUpEmailSchema = z.infer<typeof signUpEmailSchema>;

@@ -8,7 +8,7 @@ import type { TitleProps } from "@/typography/types";
 import { extractSprinkleProps } from "@/utils/properties";
 
 const Title = (props: TitleProps, ref: Ref<HTMLElement>) => {
-  const { as = "t1", fontSize, background, color = "main", children } = props;
+  const { as = "t1", fontSize, background, color = "zinc", children } = props;
 
   return React.createElement(
     as,
@@ -26,7 +26,7 @@ const Title = (props: TitleProps, ref: Ref<HTMLElement>) => {
         props.className,
       ]),
       style: {
-        color: color && vars.colors.$scale?.[color]?.[500],
+        color: color && vars.colors.$scale?.[color]?.[700],
         background: background && vars.colors.$scale?.[background]?.[500],
         ...props.style,
       },
