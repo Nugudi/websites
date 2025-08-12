@@ -1,5 +1,7 @@
+import SignUpForm from "@/src/domains/auth/sign-up/ui/components/sign-up-form";
+
 const SignUpSection = () => {
-  return <div>SignUpSection</div>;
+  return <SignUpForm />;
 };
 
 export default SignUpSection;
