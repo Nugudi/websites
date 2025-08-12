@@ -8,7 +8,6 @@ export const containerStyle = recipe({
   base: {
     display: "flex",
     alignItems: "center",
-    gap: "8px",
   },
   variants: {
     size: {
