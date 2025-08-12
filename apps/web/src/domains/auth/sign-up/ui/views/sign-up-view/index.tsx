@@ -1,5 +1,5 @@
 import { Flex } from "@nugudi/react-components-layout";
-import SignUpSection from "../../sections/sign-up-section";
+import SignUpSection from "@/src/domains/auth/sign-up/ui/sections/sign-up-section";
 
 const SignUpView = () => {
   return (

@@ -1,4 +1,4 @@
-import SignUpView from "../../_ui/views/sign-up-view";
+import SignUpView from "@/src/domains/auth/sign-up/ui/views/sign-up-view";
 
 const SignUpPage = () => {
   return <SignUpView />;
