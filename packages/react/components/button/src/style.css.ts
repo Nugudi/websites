@@ -12,10 +12,10 @@ export const buttonStyle = recipe({
     padding: 0,
     border: 0,
     background: "none",
-
-    borderRadius: vars.box.radii.md,
+    borderRadius: vars.box.radii.xl,
     display: "flex",
     alignItems: "center",
+    justifyContent: "center",
     cursor: "pointer",
     userSelect: "none",
     transition: "background-color 0.2s, color 0.2s, border-color 0.2s",
@@ -31,19 +31,11 @@ export const buttonStyle = recipe({
     },
     "&:focus-visible": {
       outline: "none",
-
       boxShadow: vars.box.shadows.outline,
     },
   },
   variants: {
     size: {
-      xs: {
-        ...classes.typography.body.b4,
-        fontWeight: vars.typography.fontWeight[600],
-        padding: "0 0.5rem",
-        gap: "0.5rem",
-        height: "1.5rem",
-      },
       sm: {
         ...classes.typography.body.b3,
         fontWeight: vars.typography.fontWeight[600],
@@ -52,18 +44,18 @@ export const buttonStyle = recipe({
         height: "2rem",
       },
       md: {
-        ...classes.typography.body.b2,
+        ...classes.typography.body.b3,
         fontWeight: vars.typography.fontWeight[600],
         padding: "0 1rem",
         gap: "0.5rem",
-        height: "2.5rem",
+        height: "3rem",
       },
       lg: {
-        ...classes.typography.body.b1,
+        ...classes.typography.body.b3,
         fontWeight: vars.typography.fontWeight[600],
         padding: "0 1.5rem",
         gap: "0.5rem",
-        height: "3rem",
+        height: "3.375rem",
       },
     },
     variant: {
@@ -103,20 +95,16 @@ export const spanStyle = recipe({
   },
   variants: {
     size: {
-      xs: {
-        ...classes.typography.body.b4,
-        fontWeight: vars.typography.fontWeight[600],
-      },
       sm: {
         ...classes.typography.body.b3,
         fontWeight: vars.typography.fontWeight[600],
       },
       md: {
-        ...classes.typography.body.b2,
+        ...classes.typography.body.b3,
         fontWeight: vars.typography.fontWeight[600],
       },
       lg: {
-        ...classes.typography.body.b1,
+        ...classes.typography.body.b3,
         fontWeight: vars.typography.fontWeight[600],
       },
     },
@@ -141,11 +129,6 @@ export const spinnerStyle = recipe({
   },
   variants: {
     size: {
-      xs: {
-        width: vars.typography.fontSize[11],
-        height: vars.typography.fontSize[11],
-        left: `calc(50% - ${vars.typography.fontSize[11]}/2)`,
-      },
       sm: {
         width: vars.typography.fontSize[12],
         height: vars.typography.fontSize[12],

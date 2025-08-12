@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Test</title>
+    <style>
+        body {
+            padding: 50px;
+            font-family: system-ui;
+        }
+        .test-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 400px;
+        }
+        
+        /* Button base styles */
+        .test-button {
+            margin: 0;
+            padding: 0 1.5rem;
+            border: 0;
+            background: #3b82f6;
+            color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            height: 3.375rem;
+            gap: 0.5rem;
+            position: relative;
+            transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+        }
+        
+        .test-button[disabled] {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        
+        .test-button[data-loading="true"] span {
+            opacity: 0;
+        }
+        
+        /* Spinner styles */
+        .spinner {
+            position: absolute;
+            animation: spin 0.45s linear infinite;
+            display: inline-block;
+            border-top: 2px solid currentcolor;
+            border-right: 2px solid currentcolor;
+            border-bottom: 2px solid transparent;
+            border-left: 2px solid transparent;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            left: calc(50% - 9px);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h2>Button 테스트</h2>
+        
+        <button class="test-button">
+            <span>일반 버튼</span>
+        </button>
+        
+        <button class="test-button" data-loading="true">
+            <div class="spinner"></div>
+            <span>로딩 중...</span>
+        </button>
+        
+        <button class="test-button" disabled>
+            <span>비활성화</span>
+        </button>
+        
+        <button class="test-button" data-loading="true" disabled>
+            <div class="spinner"></div>
+            <span>로딩 + 비활성화</span>
+        </button>
+    </div>
+    
+    <script>
+        console.log('버튼 테스트 페이지 로드됨');
+    </script>
+</body>
+</html>
