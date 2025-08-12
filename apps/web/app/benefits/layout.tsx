@@ -1,6 +1,7 @@
 import { Flex } from "@nugudi/react-components-layout";
 import type React from "react";
 import TabBar from "@/src/shared/components/tab-bar";
+import * as styles from "./layout.css";
 
 const BenefitsLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -8,23 +9,9 @@ const BenefitsLayout = ({ children }: { children: React.ReactNode }) => {
       direction="column"
       align="center"
       justify="space-between"
-      style={{
-        minHeight: "100dvh",
-        height: "100%",
-        width: "100%",
-      }}
+      className={styles.container}
     >
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          width: "100%",
-        }}
-      >
-        {children}
-      </div>
+      <div className={styles.contentWrapper}>{children}</div>
       <TabBar />
     </Flex>
   );

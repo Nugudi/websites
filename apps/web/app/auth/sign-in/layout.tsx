@@ -1,5 +1,6 @@
 import { Flex } from "@nugudi/react-components-layout";
 import type React from "react";
+import * as styles from "./layout.css";
 
 const LoginLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -7,10 +8,7 @@ const LoginLayout = ({ children }: { children: React.ReactNode }) => {
       direction="column"
       align="center"
       justify="center"
-      style={{
-        minHeight: "100vh",
-        width: "100%",
-      }}
+      className={styles.container}
     >
       {children}
     </Flex>

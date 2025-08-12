@@ -6,6 +6,7 @@ import { Textarea } from "@nugudi/react-components-textarea";
 import "@nugudi/react-components-textarea/style.css";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import * as styles from "./textarea-container.css";
 
 const formSchema = z.object({
   review: z.string().min(10, "리뷰는 10자 이상 작성해주세요"),
@@ -31,17 +32,8 @@ export default function TextareaContainer() {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "2rem",
-        maxWidth: "600px",
-        marginTop: "16px",
-      }}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+    <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+      <div className={styles.inner}>
         <Textarea
           label="리뷰"
           placeholder="오늘의 메뉴 어떠셨나요? (10자 이상)"

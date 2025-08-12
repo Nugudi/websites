@@ -93,12 +93,7 @@ const EmailLoginForm = () => {
       </Flex>
 
       <div className={styles.buttonContainer}>
-        <Button
-          type="submit"
-          color="main"
-          variant="brand"
-          style={{ width: "100%" }}
-        >
+        <Button type="submit" color="main" variant="brand">
           다음
         </Button>
       </div>

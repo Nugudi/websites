@@ -34,4 +34,5 @@ export const divider = style({
 export const buttonContainer = style({
   marginTop: "auto",
   paddingTop: "2rem",
+  width: "100%",
 });
