@@ -15,6 +15,7 @@ export const labelStyle = recipe({
     color: vars.colors.$scale.zinc[500],
     ...classes.typography.emphasis.e2,
     transition: "color 0.2s",
+    textAlign: "left",
   },
   variants: {
     isError: {
@@ -118,6 +119,7 @@ export const errorMessageStyle = recipe({
     ...classes.typography.emphasis.e2,
     color: vars.colors.$static.light.color.red,
     marginTop: "0.25rem",
+    textAlign: "left",
   },
 });
 

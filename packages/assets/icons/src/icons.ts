@@ -9,6 +9,8 @@ import CameraLineIcon from "./svg/camera-line.svg?react";
 import CommentIcon from "./svg/comment.svg?react";
 import EtcIcon from "./svg/etc.svg?react";
 import ExitIcon from "./svg/exit.svg?react";
+import EyeIcon from "./svg/eye.svg?react";
+import EyeOffIcon from "./svg/eye_off.svg?react";
 import FailIcon from "./svg/failure.svg?react";
 import FillHeartIcon from "./svg/fill-heart.svg?react";
 import FolderIcon from "./svg/folder.svg?react";
@@ -17,6 +19,7 @@ import GoogleIcon from "./svg/google.svg?react";
 import HeartIcon from "./svg/heart.svg?react";
 import HomeIcon from "./svg/home.svg?react";
 import KakaoIcon from "./svg/kakao.svg?react";
+import LogoTextIcon from "./svg/logo_text.svg?react";
 import MajorDishIcon from "./svg/major-dish.svg?react";
 import NaverIcon from "./svg/naver.svg?react";
 import NoodleIcon from "./svg/noodle.svg?react";
@@ -34,6 +37,10 @@ import type { IconRegistry } from "./types/icon";
 
 // 아이콘 레지스트리
 export const iconRegistry: IconRegistry = {
+  LogoText: {
+    component: LogoTextIcon,
+    tags: ["logo", "text", "너구디", "로고"],
+  },
   Apple: {
     component: AppleIcon,
     tags: ["apple", "사과", "과일", "음식"],
@@ -157,6 +164,14 @@ export const iconRegistry: IconRegistry = {
   Fail: {
     component: FailIcon,
     tags: ["fail", "실패"],
+  },
+  Eye: {
+    component: EyeIcon,
+    tags: ["eye", "눈", "보기"],
+  },
+  EyeOff: {
+    component: EyeOffIcon,
+    tags: ["eye", "off", "눈"],
   },
 };
 

@@ -55,3 +55,7 @@ export const blackAlpha = {
   100: "rgba(0, 0, 0, 0.80)",
   50: "rgba(0, 0, 0, 0.92)",
 };
+
+export const gradient = {
+  linearGreen: "linear-gradient(180deg, #1A2A1A 0%, #272729 29.81%)",
+};

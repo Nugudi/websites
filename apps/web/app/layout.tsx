@@ -28,11 +28,11 @@ export const metadata: Metadata = {
   ],
 };
 
-export default function RootLayout({
+const RootLayout = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>) => {
   return (
     <html lang="ko" suppressHydrationWarning={true}>
       <body
@@ -48,4 +48,6 @@ export default function RootLayout({
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;
