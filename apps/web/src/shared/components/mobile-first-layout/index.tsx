@@ -1,16 +1,31 @@
+"use client";
+
 import { Flex } from "@nugudi/react-components-layout";
+import { usePathname } from "next/navigation";
+import TabBar from "../tab-bar";
 import * as styles from "./index.css";
 
-const MobileFirstLayout = ({ children }: { children: React.ReactNode }) => {
+interface MobileFirstLayoutProps {
+  children: React.ReactNode;
+}
+
+// TabBar를 표시할 경로들
+const TAB_BAR_PATHS = ["/", "/benefits", "/auth/my"];
+
+const MobileFirstLayout = ({ children }: MobileFirstLayoutProps) => {
+  const pathname = usePathname();
+  const showTabBar = TAB_BAR_PATHS.includes(pathname);
+
   return (
     <div className={styles.container}>
       <Flex
         direction="column"
         align="center"
-        justify="center"
+        justify="space-between"
         className={styles.contentWrapper}
       >
         {children}
+        {showTabBar && <TabBar />}
       </Flex>
     </div>
   );
