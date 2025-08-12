@@ -3,9 +3,11 @@ import { style } from "@vanilla-extract/css";
 
 export const container = style({
   width: "100%",
+  minHeight: "100vh",
+  height: "100%",
   position: "relative",
   overflow: "hidden",
-  minHeight: "100vh",
+  boxSizing: "border-box",
   background: vars.colors.$static.light.gradient.linearGreen,
 });
 

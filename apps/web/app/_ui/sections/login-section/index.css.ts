@@ -4,11 +4,11 @@ import { style } from "@vanilla-extract/css";
 export const container = style({
   width: "100%",
   marginBottom: "16px",
+  zIndex: 1,
 });
 
 export const content = style({
   width: "100%",
-  padding: `0 ${vars.box.spacing[8]}`,
 });
 
 export const authLink = style({

@@ -10,6 +10,7 @@ const LoginView = () => {
       className={styles.container}
       direction="column"
       justify={"space-around"}
+      align={"center"}
     >
       <WelcomeText />
       <div className={styles.logo}>
