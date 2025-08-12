@@ -92,11 +92,9 @@ const EmailLoginForm = () => {
         </Flex>
       </Flex>
 
-      <div className={styles.buttonContainer}>
-        <Button type="submit" color="main" variant="brand">
-          다음
-        </Button>
-      </div>
+      <Button type="submit" color="main" variant="brand" size="lg">
+        다음
+      </Button>
     </form>
   );
 };

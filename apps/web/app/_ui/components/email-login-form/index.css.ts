@@ -30,9 +30,3 @@ export const divider = style({
   color: vars.colors.$scale.zinc[500],
   ...classes.typography.emphasis.e2,
 });
-
-export const buttonContainer = style({
-  marginTop: "auto",
-  paddingTop: "2rem",
-  width: "100%",
-});
