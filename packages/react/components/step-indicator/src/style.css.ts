@@ -26,7 +26,7 @@ export const containerStyle = recipe({
 
 export const stepStyle = recipe({
   base: {
-    borderRadius: "9999px",
+    borderRadius: "full",
     transition: "all 0.2s ease-in-out",
   },
   variants: {
