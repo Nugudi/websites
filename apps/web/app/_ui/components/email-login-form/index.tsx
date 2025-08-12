@@ -62,6 +62,8 @@ const EmailLoginForm = () => {
           rightIcon={
             <button
               type="button"
+              aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
+              aria-pressed={showPassword}
               onClick={togglePasswordVisibility}
               style={{
                 cursor: "pointer",

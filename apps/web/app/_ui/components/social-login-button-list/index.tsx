@@ -6,13 +6,13 @@ import Link from "next/link";
 const SocialLoginButtonList = () => {
   return (
     <Flex gap={vars.box.spacing[4]}>
-      <Link href="/login/google">
+      <Link href="/login/google" aria-label="Google 계정으로 로그인">
         <GoogleIcon />
       </Link>
-      <Link href="/login/kakao">
+      <Link href="/login/kakao" aria-label="Kakao 계정으로 로그인">
         <KakaoIcon />
       </Link>
-      <Link href="/login/naver">
+      <Link href="/login/naver" aria-label="Naver 계정으로 로그인">
         <NaverIcon />
       </Link>
     </Flex>

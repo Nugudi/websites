@@ -21,6 +21,7 @@ export default function WelcomeText({
         paddingLeft,
         marginTop,
       }}
+      aria-label="NUGUDI에 오신 것을 환영해요!"
     >
       <Flex gap={6} align="center">
         <LogoTextIcon className={styles.logoTextIcon} aria-hidden />
