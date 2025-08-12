@@ -1,0 +1,38 @@
+import { classes, vars } from "@nugudi/themes";
+import { style } from "@vanilla-extract/css";
+
+export const container = style({
+  display: "flex",
+  alignItems: "center",
+  backgroundColor: vars.colors.$static.light.color.white,
+  position: "sticky",
+  top: 0,
+  zIndex: 1,
+  transition: "transform 0.3s ease",
+});
+
+export const hidden = style({
+  transform: "translateY(-100%)",
+});
+
+export const backButton = style({
+  backgroundColor: "transparent",
+  padding: "0",
+  transition: "background-color 0.2s ease",
+
+  selectors: {
+    "&:hover": {
+      color: vars.colors.$scale.zinc[800],
+    },
+  },
+});
+
+export const title = style({
+  flex: 1,
+  textAlign: "center",
+  ...classes.typography.body.b3,
+  fontWeight: vars.typography.fontWeight[600],
+  color: vars.colors.$scale.zinc[800],
+  margin: 0,
+  marginRight: "25px",
+});
