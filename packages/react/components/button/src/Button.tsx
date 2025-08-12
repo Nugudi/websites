@@ -23,6 +23,8 @@ const Button = (props: ButtonProps, ref: React.Ref<HTMLButtonElement>) => {
     children,
     style,
     type = "button",
+    disabled,
+    className,
     ...restProps
   } = props;
 
@@ -41,14 +43,14 @@ const Button = (props: ButtonProps, ref: React.Ref<HTMLButtonElement>) => {
       {...restProps}
       type={type}
       ref={ref}
-      disabled={restProps.disabled || isLoading}
+      disabled={disabled || isLoading}
       data-loading={isLoading ? "true" : undefined}
       className={clsx([
         buttonStyle({
           size,
           variant,
         }),
-        restProps.className,
+        className,
       ])}
       style={{
         ...assignInlineVars({
