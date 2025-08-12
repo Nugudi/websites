@@ -16,6 +16,16 @@ export const signUpEmailVerificationCodeSchema = signUpSchema.pick({
   code: true,
 });
 
+export const signUpPasswordSchema = signUpSchema
+  .pick({
+    password: true,
+    passwordConfirm: true,
+  })
+  .refine((data) => data.password === data.passwordConfirm, {
+    message: "비밀번호가 일치하지 않습니다.",
+    path: ["passwordConfirm"],
+  });
+
 export type SignUpSchema = z.infer<typeof signUpSchema>;
 
 export type SignUpEmailSchema = z.infer<typeof signUpEmailSchema>;
@@ -23,3 +33,5 @@ export type SignUpEmailSchema = z.infer<typeof signUpEmailSchema>;
 export type SignUpEmailVerificationCodeSchema = z.infer<
   typeof signUpEmailVerificationCodeSchema
 >;
+
+export type SignUpPasswordSchema = z.infer<typeof signUpPasswordSchema>;
