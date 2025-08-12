@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { useSignUpStore } from "@/src/domains/auth/sign-up/stores/use-sign-up-store";
 import EmailForm from "./steps/email-form";
 import EmailVerificationCodeForm from "./steps/email-verification-code-form";
@@ -11,9 +10,9 @@ const SignUpForm = () => {
   const { step } = useSignUpStore();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: Zustand Persist의 동작 방식(zustand persist는 비동기) - https://zustand.docs.pmnd.rs/integrations/persisting-store-data
-  useEffect(() => {
-    if (!useSignUpStore.persist.hasHydrated) return;
-  }, [useSignUpStore.persist.hasHydrated]);
+  // useEffect(() => {
+  //   if (!useSignUpStore.persist.hasHydrated) return;
+  // }, [useSignUpStore.persist.hasHydrated]);
 
   return (
     <>

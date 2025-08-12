@@ -12,6 +12,14 @@ export const signUpEmailSchema = signUpSchema.pick({
   email: true,
 });
 
+export const signUpEmailVerificationCodeSchema = signUpSchema.pick({
+  code: true,
+});
+
 export type SignUpSchema = z.infer<typeof signUpSchema>;
 
 export type SignUpEmailSchema = z.infer<typeof signUpEmailSchema>;
+
+export type SignUpEmailVerificationCodeSchema = z.infer<
+  typeof signUpEmailVerificationCodeSchema
+>;
