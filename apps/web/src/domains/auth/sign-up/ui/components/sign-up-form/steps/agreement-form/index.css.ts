@@ -4,67 +4,8 @@ export const form = style({
   display: "flex",
   flexDirection: "column",
   width: "100%",
-  height: "100vh",
-  padding: "0 20px",
-  backgroundColor: "#fff",
-});
-
-export const header = style({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  paddingTop: "20px",
-  paddingBottom: "20px",
-});
-
-export const backButton = style({
-  background: "none",
-  border: "none",
-  padding: "8px",
-  cursor: "pointer",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-});
-
-export const profileSection = style({
-  alignItems: "center",
-  gap: "12px",
-});
-
-export const profileImageContainer = style({
-  position: "relative",
-  display: "flex",
-  alignItems: "center",
-  gap: "8px",
-});
-
-export const profileImage = style({
-  width: "40px",
-  height: "40px",
-  borderRadius: "50%",
-  backgroundColor: "#4285f4",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  position: "relative",
-});
-
-export const profileInitial = style({
-  color: "white",
-  fontSize: "16px",
-  fontWeight: "600",
-});
-
-export const profileCat = style({
-  position: "absolute",
-  right: "-8px",
-  bottom: "-4px",
-  width: "32px",
-  height: "32px",
-  borderRadius: "50%",
-  border: "2px solid white",
-  backgroundColor: "#f0f0f0",
+  height: "100%",
+  flex: 1,
 });
 
 export const titleContainer = style({
@@ -80,8 +21,8 @@ export const descriptionContainer = style({
 });
 
 export const agreementContainer = style({
-  flex: 1,
   display: "flex",
+  flex: 1,
   flexDirection: "column",
   gap: "0",
 });
