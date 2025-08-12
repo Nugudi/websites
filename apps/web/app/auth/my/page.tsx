@@ -1,9 +1,8 @@
 import { Flex } from "@nugudi/react-components-layout";
-import * as styles from "./page.css";
 
 const MyPage = () => {
   return (
-    <Flex direction="column" className={styles.container}>
+    <Flex direction="column">
       <div>마이페이지</div>
     </Flex>
   );

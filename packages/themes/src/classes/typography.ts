@@ -4,7 +4,8 @@ export const heading = {
   h1: {
     fontSize: typography.fontSize[30],
     letterSpacing: typography.letterSpacing[30],
-    lineHeight: typography.lineHeight[130],
+    lineHeight: typography.lineHeight[140],
+    fontWeight: typography.fontWeight[700],
   },
 };
 
@@ -12,7 +13,8 @@ export const title = {
   t1: {
     fontSize: typography.fontSize[28],
     letterSpacing: typography.letterSpacing[28],
-    lineHeight: typography.lineHeight[130],
+    lineHeight: typography.lineHeight[134],
+    fontWeight: typography.fontWeight[700],
   },
   t2: {
     fontSize: typography.fontSize[22],

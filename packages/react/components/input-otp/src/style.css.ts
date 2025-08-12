@@ -11,13 +11,16 @@ export const containerStyle = style({
 
 export const inputContainerStyle = style({
   display: "flex",
+  width: "100%",
+  justifyContent: "space-between",
   gap: "8px",
 });
 
 export const otpInputStyle = recipe({
   base: {
-    width: "45px",
-    height: "55px",
+    flex: 1,
+    minWidth: "45px",
+    height: "74px",
     textAlign: "center",
     borderRadius: vars.box.radii.xl,
     backgroundColor: vars.colors.$scale.zinc[50],
