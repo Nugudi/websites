@@ -36,7 +36,7 @@ const NavigationItem = React.forwardRef<HTMLButtonElement, NavigationItemProps>(
       <Comp
         {...restProps}
         ref={ref}
-        type={asChild ? undefined : "button"}
+        {...(!asChild && { type: "button" })}
         disabled={disabled}
         onClick={handleClick}
         className={clsx([
