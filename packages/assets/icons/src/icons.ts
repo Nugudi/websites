@@ -1,6 +1,7 @@
 // Icon imports
 import AppleIcon from "./svg/apple.svg?react";
 import ArrowLeftIcon from "./svg/arrow-left.svg?react";
+import ArrowRightIcon from "./svg/arrow-right.svg?react";
 import ArrowUpCircleIcon from "./svg/arrow-up-circle.svg?react";
 import BusIcon from "./svg/bus.svg?react";
 import CalendarIcon from "./svg/calendar.svg?react";
@@ -172,6 +173,10 @@ export const iconRegistry: IconRegistry = {
   EyeOff: {
     component: EyeOffIcon,
     tags: ["eye", "off", "눈"],
+  },
+  ArrowRight: {
+    component: ArrowRightIcon,
+    tags: ["arrow", "right", "화살표", "오른쪽"],
   },
 };
 
