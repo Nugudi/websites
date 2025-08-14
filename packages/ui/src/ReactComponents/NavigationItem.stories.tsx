@@ -58,11 +58,6 @@ const meta: Meta<typeof _NavigationItem> = {
         category: "Appearance",
       },
     },
-    asChild: {
-      table: {
-        disable: true,
-      },
-    },
   },
 };
 
@@ -111,6 +106,16 @@ export const Disabled: Story = {
     disabled: true,
     size: "md",
   },
+};
+
+export const WithLink: Story = {
+  render: () => (
+    <a href="/settings" style={{ textDecoration: "none" }}>
+      <_NavigationItem leftIcon={<BusIcon />} rightIcon={<ArrowRightIcon />}>
+        Link로 감싸서 사용
+      </_NavigationItem>
+    </a>
+  ),
 };
 
 export const AllSizes: Story = {

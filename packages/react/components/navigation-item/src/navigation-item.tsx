@@ -1,4 +1,3 @@
-import { Slot } from "@radix-ui/react-slot";
 import { clsx } from "clsx";
 import * as React from "react";
 import {
@@ -9,7 +8,7 @@ import {
 } from "./style.css";
 import type { NavigationItemProps } from "./types";
 
-const NavigationItem = React.forwardRef<HTMLButtonElement, NavigationItemProps>(
+const NavigationItem = React.forwardRef<HTMLDivElement, NavigationItemProps>(
   (
     {
       children,
@@ -17,28 +16,15 @@ const NavigationItem = React.forwardRef<HTMLButtonElement, NavigationItemProps>(
       rightIcon,
       disabled = false,
       size = "md",
-      onClick,
       className,
-      asChild = false,
       ...restProps
     },
     ref,
   ) => {
-    const Comp = asChild ? Slot : "button";
-
-    const handleClick = () => {
-      if (!disabled && onClick) {
-        onClick();
-      }
-    };
-
     return (
-      <Comp
-        {...restProps}
+      <div
         ref={ref}
-        {...(!asChild && { type: "button" })}
-        disabled={disabled}
-        onClick={handleClick}
+        {...restProps}
         className={clsx([
           navigationItemStyle({
             size,
@@ -52,13 +38,13 @@ const NavigationItem = React.forwardRef<HTMLButtonElement, NavigationItemProps>(
             {leftIcon}
           </span>
         )}
-        <div className={labelStyle}>{children}</div>
+        <span className={labelStyle}>{children}</span>
         {rightIcon && (
           <span className={rightIconStyle({ size })} aria-hidden="true">
             {rightIcon}
           </span>
         )}
-      </Comp>
+      </div>
     );
   },
 );

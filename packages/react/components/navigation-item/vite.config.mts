@@ -36,6 +36,7 @@ export default defineConfig({
         "react-dom",
         "react/jsx-runtime",
         "@vanilla-extract/css",
+        "@radix-ui/react-slot",
       ],
       output: {
         assetFileNames: (assetInfo) => {

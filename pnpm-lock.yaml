@@ -128,6 +128,9 @@ importers:
       '@nugudi/react-components-layout':
         specifier: workspace:*
         version: link:../../packages/react/components/layout
+      '@nugudi/react-components-navigation-item':
+        specifier: workspace:*
+        version: link:../../packages/react/components/navigation-item
       '@nugudi/react-components-step-indicator':
         specifier: workspace:*
         version: link:../../packages/react/components/step-indicator
