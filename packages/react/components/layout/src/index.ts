@@ -15,6 +15,7 @@ export {
   Flex,
   Grid,
   GridItem,
+  HStack,
   List,
   ListItem,
   OrderedList,
