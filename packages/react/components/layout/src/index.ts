@@ -18,6 +18,7 @@ export {
   List,
   ListItem,
   OrderedList,
+  Stack,
   UnorderedList,
 } from "./layout";
 export type {

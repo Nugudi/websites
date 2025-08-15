@@ -6,6 +6,7 @@ export { GridItem } from "./GridItem";
 export { List } from "./List";
 export { ListItem } from "./ListItem";
 export { OrderedList } from "./OrderedList";
+export { Stack } from "./Stack";
 export type {
   BoxProps,
   DividerProps,
