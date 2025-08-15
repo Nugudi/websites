@@ -21,6 +21,7 @@ export {
   OrderedList,
   Stack,
   UnorderedList,
+  VStack,
 } from "./layout";
 export type {
   BodyProps,

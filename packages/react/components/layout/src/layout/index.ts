@@ -20,3 +20,4 @@ export type {
   UnorderedListProps,
 } from "./types";
 export { UnorderedList } from "./UnOrderedList";
+export { VStack } from "./VStack";
