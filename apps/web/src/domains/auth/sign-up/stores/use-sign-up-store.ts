@@ -89,6 +89,7 @@ export const useSignUpStore = create<UseSignUpStoreState>()(
 
       resetAll: () => {
         localStorage.removeItem(SIGN_UP_STORE_KEY);
+        set({ step: 1, data: {} });
       },
     }),
     {
