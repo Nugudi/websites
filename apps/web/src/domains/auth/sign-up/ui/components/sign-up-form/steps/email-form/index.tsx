@@ -13,12 +13,12 @@ import { useSignUpStore } from "@/src/domains/auth/sign-up/stores/use-sign-up-st
 import * as styles from "./index.css";
 
 const EmailForm = () => {
-  const { setStep, setData } = useSignUpStore();
+  const { setStep, setData, data } = useSignUpStore();
 
   const form = useForm<SignUpEmailSchema>({
     resolver: zodResolver(signUpEmailSchema),
     defaultValues: {
-      email: "",
+      email: data.email ?? "",
     },
     mode: "onTouched",
   });

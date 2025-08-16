@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@nugudi/react-components-button";
 import { InputOTP } from "@nugudi/react-components-input-otp";
-import { Box, Title } from "@nugudi/react-components-layout";
+import { Box, HStack, Title } from "@nugudi/react-components-layout";
 import { useForm } from "react-hook-form";
 import {
   type SignUpEmailVerificationCodeSchema,
@@ -23,7 +23,11 @@ const EmailVerificationCodeForm = () => {
     mode: "onTouched",
   });
 
-  const onSubmit = (data: SignUpEmailVerificationCodeSchema) => {
+  const onPrevious = () => {
+    setStep(1);
+  };
+
+  const onNext = (data: SignUpEmailVerificationCodeSchema) => {
     setStep(3);
     setData({
       ...data,
@@ -32,7 +36,7 @@ const EmailVerificationCodeForm = () => {
   };
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className={styles.form}>
+    <form onSubmit={form.handleSubmit(onNext)} className={styles.form}>
       <Box className={styles.titleContainer}>
         <Title fontSize="t1" color="zinc">
           인증 번호를 입력해주세요
@@ -51,9 +55,27 @@ const EmailVerificationCodeForm = () => {
         />
       </Box>
 
-      <Button type="submit" color="zinc" variant="brand" size="lg">
-        다음
-      </Button>
+      <HStack gap={5}>
+        <Button
+          type="button"
+          color="zinc"
+          variant="neutral"
+          size="lg"
+          onClick={onPrevious}
+          width="full"
+        >
+          이전
+        </Button>
+        <Button
+          type="submit"
+          color="zinc"
+          variant="brand"
+          size="lg"
+          width="full"
+        >
+          다음
+        </Button>
+      </HStack>
     </form>
   );
 };

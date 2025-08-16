@@ -7,4 +7,5 @@ export type ButtonProps = {
   rightIcon?: React.ReactNode;
   size?: "sm" | "md" | "lg";
   variant?: "brand" | "neutral";
+  width?: "auto" | "full";
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
