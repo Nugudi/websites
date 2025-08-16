@@ -15,10 +15,13 @@ export {
   Flex,
   Grid,
   GridItem,
+  HStack,
   List,
   ListItem,
   OrderedList,
+  Stack,
   UnorderedList,
+  VStack,
 } from "./layout";
 export type {
   BodyProps,
