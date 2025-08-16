@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SuccessIcon } from "@nugudi/assets-icons";
 import { Button } from "@nugudi/react-components-button";
 import { Input } from "@nugudi/react-components-input";
-import { Box, Flex, Heading } from "@nugudi/react-components-layout";
+import { Box, Flex, Heading, HStack } from "@nugudi/react-components-layout";
 import Image from "next/image";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -65,6 +65,10 @@ const NicknameForm = () => {
     }
   };
 
+  const onPrevious = () => {
+    setStep(3);
+  };
+
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className={styles.form}>
       <Box className={styles.titleContainer}>
@@ -106,21 +110,34 @@ const NicknameForm = () => {
         />
       </Box>
 
-      <Button
-        type="submit"
-        color="zinc"
-        variant="brand"
-        size="lg"
-        disabled={isDuplicateLoading || !form.formState.isValid}
-      >
-        {isDuplicateLoading
-          ? "확인 중..."
-          : isDuplicateChecked
-            ? "다음"
-            : form.formState.isValid && form.formState.isDirty
-              ? "중복확인"
-              : "다음"}
-      </Button>
+      <HStack gap={5}>
+        <Button
+          type="button"
+          color="zinc"
+          variant="neutral"
+          size="lg"
+          onClick={onPrevious}
+          width="full"
+        >
+          이전
+        </Button>
+        <Button
+          type="submit"
+          color="zinc"
+          variant="brand"
+          size="lg"
+          disabled={isDuplicateLoading || !form.formState.isValid}
+          width="full"
+        >
+          {isDuplicateLoading
+            ? "확인 중..."
+            : isDuplicateChecked
+              ? "다음"
+              : form.formState.isValid && form.formState.isDirty
+                ? "중복확인"
+                : "다음"}
+        </Button>
+      </HStack>
     </form>
   );
 };

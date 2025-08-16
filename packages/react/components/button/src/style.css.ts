@@ -85,6 +85,17 @@ export const buttonStyle = recipe({
         },
       },
     },
+    width: {
+      auto: {
+        width: "auto",
+      },
+      full: {
+        width: "100%",
+      },
+    },
+  },
+  defaultVariants: {
+    width: "auto",
   },
 });
 
