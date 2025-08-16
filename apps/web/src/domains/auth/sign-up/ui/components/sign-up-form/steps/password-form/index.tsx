@@ -15,7 +15,7 @@ import { useSignUpStore } from "@/src/domains/auth/sign-up/stores/use-sign-up-st
 import * as styles from "./index.css";
 
 const PasswordForm = () => {
-  const { setStep, setData } = useSignUpStore();
+  const { setStep, setData, data } = useSignUpStore();
   const [visibilityState, setVisibilityState] = useState({
     password: false,
     passwordConfirm: false,
@@ -23,8 +23,8 @@ const PasswordForm = () => {
   const form = useForm({
     resolver: zodResolver(signUpPasswordSchema),
     defaultValues: {
-      password: "",
-      passwordConfirm: "",
+      password: data.password ?? "",
+      passwordConfirm: data.passwordConfirm ?? "",
     },
     mode: "onTouched",
   });
