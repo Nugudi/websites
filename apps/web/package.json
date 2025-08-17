@@ -27,6 +27,7 @@
     "@nugudi/react-components-textarea": "workspace:*",
     "@nugudi/react-hooks-button": "workspace:*",
     "@nugudi/react-hooks-toggle": "workspace:*",
+    "@nugudi/react-hooks-use-stepper": "workspace:*",
     "@nugudi/themes": "workspace:*",
     "@sentry/nextjs": "^9.31.0",
     "@tanstack/react-query": "^5.81.2",

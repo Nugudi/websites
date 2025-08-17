@@ -149,6 +149,9 @@ importers:
       '@nugudi/react-hooks-toggle':
         specifier: workspace:*
         version: link:../../packages/react/hooks/toggle
+      '@nugudi/react-hooks-use-stepper':
+        specifier: workspace:*
+        version: link:../../packages/react/hooks/use-stepper
       '@nugudi/themes':
         specifier: workspace:*
         version: link:../../packages/themes

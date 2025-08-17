@@ -1,5 +1,7 @@
+import PasswordForgotView from "@/src/domains/auth/password-forgot/ui/views/password-forgot-view";
+
 const PasswordForgotPage = () => {
-  return <div>Password Forgot Page</div>;
+  return <PasswordForgotView />;
 };
 
 export default PasswordForgotPage;
