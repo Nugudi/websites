@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeIcon, EyeOffIcon } from "@nugudi/assets-icons";
 import { Button } from "@nugudi/react-components-button";
 import { Input } from "@nugudi/react-components-input";
-import { Body, Box, Title } from "@nugudi/react-components-layout";
+import { Body, Box, HStack, Title } from "@nugudi/react-components-layout";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
@@ -15,7 +15,7 @@ import { useSignUpStore } from "@/src/domains/auth/sign-up/stores/use-sign-up-st
 import * as styles from "./index.css";
 
 const PasswordForm = () => {
-  const { setStep, setData } = useSignUpStore();
+  const { setStep, setData, data } = useSignUpStore();
   const [visibilityState, setVisibilityState] = useState({
     password: false,
     passwordConfirm: false,
@@ -23,13 +23,17 @@ const PasswordForm = () => {
   const form = useForm({
     resolver: zodResolver(signUpPasswordSchema),
     defaultValues: {
-      password: "",
-      passwordConfirm: "",
+      password: data.password ?? "",
+      passwordConfirm: data.passwordConfirm ?? "",
     },
     mode: "onTouched",
   });
 
-  const onSubmit = (data: SignUpPasswordSchema) => {
+  const onPrevious = () => {
+    setStep(2);
+  };
+
+  const onNext = (data: SignUpPasswordSchema) => {
     setStep(4);
     setData({
       ...data,
@@ -46,7 +50,7 @@ const PasswordForm = () => {
   };
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className={styles.form}>
+    <form onSubmit={form.handleSubmit(onNext)} className={styles.form}>
       <Box className={styles.titleContainer}>
         <Title fontSize="t1" color="zinc">
           비밀번호를 입력해주세요
@@ -118,9 +122,27 @@ const PasswordForm = () => {
         />
       </Box>
 
-      <Button type="submit" color="zinc" variant="brand" size="lg">
-        다음
-      </Button>
+      <HStack gap={5}>
+        <Button
+          type="button"
+          color="zinc"
+          variant="neutral"
+          size="lg"
+          onClick={onPrevious}
+          width="full"
+        >
+          이전
+        </Button>
+        <Button
+          type="submit"
+          color="zinc"
+          variant="brand"
+          size="lg"
+          width="full"
+        >
+          다음
+        </Button>
+      </HStack>
     </form>
   );
 };

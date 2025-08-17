@@ -25,6 +25,7 @@ const Button = (props: ButtonProps, ref: React.Ref<HTMLButtonElement>) => {
     type = "button",
     disabled,
     className,
+    width = "auto",
     ...restProps
   } = props;
 
@@ -49,6 +50,7 @@ const Button = (props: ButtonProps, ref: React.Ref<HTMLButtonElement>) => {
         buttonStyle({
           size,
           variant,
+          width,
         }),
         className,
       ])}
