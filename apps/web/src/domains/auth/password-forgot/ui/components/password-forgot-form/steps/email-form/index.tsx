@@ -10,9 +10,10 @@ import {
 } from "@nugudi/react-components-layout";
 import { useForm } from "react-hook-form";
 import {
-  type SignUpEmailSchema,
-  signUpEmailSchema,
-} from "@/src/domains/auth/sign-up/schemas/sign-up-schema";
+  type PasswordForgotEmailSchema,
+  passwordForgotEmailSchema,
+} from "@/src/domains/auth/password-forgot/schemas/password-forgot-schema";
+import { usePasswordForgotStore } from "@/src/domains/auth/password-forgot/stores/use-password-forgot-store";
 import * as styles from "./index.css";
 
 interface EmailFormProps {
@@ -20,17 +21,21 @@ interface EmailFormProps {
 }
 
 export const EmailForm = ({ onNext }: EmailFormProps) => {
-  const form = useForm<SignUpEmailSchema>({
-    resolver: zodResolver(signUpEmailSchema),
+  const { setData, data } = usePasswordForgotStore();
+
+  const form = useForm<PasswordForgotEmailSchema>({
+    resolver: zodResolver(passwordForgotEmailSchema),
     defaultValues: {
-      email: "",
+      email: data.email ?? "",
     },
     mode: "onTouched",
   });
 
-  const onSubmit = (data: SignUpEmailSchema) => {
-    // TODO: 데이터 전역 상태 저장.
-    console.log(data);
+  const onSubmit = (data: PasswordForgotEmailSchema) => {
+    setData({
+      ...data,
+      email: data.email,
+    });
     onNext();
   };
 
