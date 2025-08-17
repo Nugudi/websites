@@ -41,3 +41,11 @@ export type PasswordForgotSchema = z.infer<typeof passwordForgotSchema>;
 export type PasswordForgotEmailSchema = z.infer<
   typeof passwordForgotEmailSchema
 >;
+
+export type PasswordForgotEmailVerificationCodeSchema = z.infer<
+  typeof passwordForgotEmailVerificationCodeSchema
+>;
+
+export type PasswordForgotPasswordSchema = z.infer<
+  typeof passwordForgotPasswordSchema
+>;
