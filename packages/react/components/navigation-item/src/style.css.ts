@@ -9,6 +9,7 @@ export const navigationItemStyle = recipe({
       alignItems: "center",
       gap: "16px",
       width: "100%",
+      boxSizing: "border-box",
       transition: "all 0.2s ease",
       borderRadius: vars.box.radii.lg,
       outline: "none",
@@ -97,7 +98,13 @@ export const labelStyle = style({
 export const rightIconStyle = recipe({
   base: iconBaseStyle,
   variants: {
-    size: iconSizeVariants,
+    size: {
+      ...iconSizeVariants,
+      lg: {
+        width: "24px",
+        height: "24px",
+      },
+    },
   },
   defaultVariants: {
     size: "md",
