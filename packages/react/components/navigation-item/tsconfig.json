@@ -5,7 +5,7 @@
     "**/*.tsx",
     "./global.d.ts",
     "vite.config.mts",
-    "vitest.config.ts"
+    "vitest.config.mts"
   ],
   "exclude": ["node_modules"]
 }
