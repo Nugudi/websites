@@ -3,14 +3,14 @@ import type { StepProps, StepperProps } from "./types";
 
 /**
  * @param steps - The steps to use in the stepper.
- * @returns The Stepper, Step, and setStep functions.
+ * @returns The Stepper, Step, setStep, and step functions.
  * @example
  * ```tsx
  * export type StepType = typeof SIGNUP_REGISTRATION_STEPS;
  *
  * const SIGNUP_REGISTRATION_STEPS = ["이름_입력", "이메일_입력", "비밀번호_입력", "비밀번호_확인", "전화번호_입력"] as const;
  *
- * const { Stepper, Step, setStep } = useStepper<StepType>(SIGNUP_REGISTRATION_STEPS);
+ * const { Stepper, Step, setStep, step } = useStepper<StepType>(SIGNUP_REGISTRATION_STEPS);
  *
  * return (
  *   <Stepper>
@@ -39,5 +39,5 @@ export const useStepper = <T extends readonly string[]>(steps: T) => {
     return React.createElement(React.Fragment, null, targetStep);
   });
 
-  return { Stepper, Step, setStep };
+  return { Stepper, Step, setStep, step };
 };

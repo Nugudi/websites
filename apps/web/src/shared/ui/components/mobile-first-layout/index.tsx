@@ -10,7 +10,7 @@ interface MobileFirstLayoutProps {
 }
 
 // TabBar를 표시할 경로들
-const TAB_BAR_PATHS = ["/", "/benefits", "/auth/my", "/auth/password/forgot"];
+const TAB_BAR_PATHS = ["/", "/benefits", "/auth/my"];
 
 const MobileFirstLayout = ({ children }: MobileFirstLayoutProps) => {
   const pathname = usePathname();
