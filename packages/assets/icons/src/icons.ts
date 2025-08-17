@@ -7,6 +7,7 @@ import BusIcon from "./svg/bus.svg?react";
 import CalendarIcon from "./svg/calendar.svg?react";
 import CameraIcon from "./svg/camera.svg?react";
 import CameraLineIcon from "./svg/camera-line.svg?react";
+import CoinIcon from "./svg/coin.svg?react";
 import CommentIcon from "./svg/comment.svg?react";
 import EtcIcon from "./svg/etc.svg?react";
 import ExitIcon from "./svg/exit.svg?react";
@@ -26,6 +27,7 @@ import NaverIcon from "./svg/naver.svg?react";
 import NoodleIcon from "./svg/noodle.svg?react";
 import NotiIcon from "./svg/noti.svg?react";
 import PenIcon from "./svg/pen.svg?react";
+import PencilIcon from "./svg/pencil.svg?react";
 import PersonIcon from "./svg/person.svg?react";
 import PicklesIcon from "./svg/pickles.svg?react";
 import RiceIcon from "./svg/rice.svg?react";
@@ -177,6 +179,14 @@ export const iconRegistry: IconRegistry = {
   ArrowRight: {
     component: ArrowRightIcon,
     tags: ["arrow", "right", "화살표", "오른쪽"],
+  },
+  Coin: {
+    component: CoinIcon,
+    tags: ["coin", "코인", "point", "포인트"],
+  },
+  Pencil: {
+    component: PencilIcon,
+    tags: ["pencil", "펜", "쓰기", "편집", "작성"],
   },
 };
 
