@@ -1,3 +1,4 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@nugudi/react-components-button";
 import { Input } from "@nugudi/react-components-input";
 import {
@@ -7,6 +8,11 @@ import {
   Title,
   VStack,
 } from "@nugudi/react-components-layout";
+import { useForm } from "react-hook-form";
+import {
+  type SignUpEmailSchema,
+  signUpEmailSchema,
+} from "@/src/domains/auth/sign-up/schemas/sign-up-schema";
 import * as styles from "./index.css";
 
 interface EmailFormProps {
@@ -14,8 +20,22 @@ interface EmailFormProps {
 }
 
 export const EmailForm = ({ onNext }: EmailFormProps) => {
+  const form = useForm<SignUpEmailSchema>({
+    resolver: zodResolver(signUpEmailSchema),
+    defaultValues: {
+      email: "",
+    },
+    mode: "onTouched",
+  });
+
+  const onSubmit = (data: SignUpEmailSchema) => {
+    // TODO: 데이터 전역 상태 저장.
+    console.log(data);
+    onNext();
+  };
+
   return (
-    <form onSubmit={onNext} className={styles.form}>
+    <form onSubmit={form.handleSubmit(onSubmit)} className={styles.form}>
       <Box className={styles.titleContainer}>
         <Flex direction="column" justify="start" align="start">
           <VStack gap={5}>
@@ -35,9 +55,9 @@ export const EmailForm = ({ onNext }: EmailFormProps) => {
       <Box className={styles.inputContainer}>
         <Input
           placeholder="이메일"
-          // {...form.register("email")}
-          // isError={!!form.formState.errors.email}
-          // errorMessage={form.formState.errors.email?.message}
+          {...form.register("email")}
+          isError={!!form.formState.errors.email}
+          errorMessage={form.formState.errors.email?.message}
         />
       </Box>
 
