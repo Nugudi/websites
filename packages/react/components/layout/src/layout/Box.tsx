@@ -12,6 +12,7 @@ const Box = (props: BoxProps, ref: React.Ref<HTMLElement>) => {
     background,
     borderRadius,
     padding,
+    boxShadow,
     children,
     ...restProps
   } = props;
@@ -33,6 +34,7 @@ const Box = (props: BoxProps, ref: React.Ref<HTMLElement>) => {
         background: background && vars.colors.$scale?.[background]?.[500],
         borderRadius: borderRadius && vars.box.radii?.[borderRadius],
         padding: padding && vars.box.spacing?.[padding],
+        boxShadow: boxShadow && vars.box.shadows?.[boxShadow],
         ...props.style,
       },
     },

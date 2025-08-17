@@ -10,6 +10,7 @@ const ProfileSection = () => {
   return (
     <Flex className={styles.container}>
       <Image
+        priority
         src="/images/nuguri.webp"
         alt="profile"
         width={60}
