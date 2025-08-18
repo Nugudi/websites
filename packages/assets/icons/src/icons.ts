@@ -3,6 +3,7 @@ import AppleIcon from "./svg/apple.svg?react";
 import ArrowLeftIcon from "./svg/arrow-left.svg?react";
 import ArrowRightIcon from "./svg/arrow-right.svg?react";
 import ArrowUpCircleIcon from "./svg/arrow-up-circle.svg?react";
+import BreadIcon from "./svg/bread.svg?react";
 import BusIcon from "./svg/bus.svg?react";
 import CalendarIcon from "./svg/calendar.svg?react";
 import CameraIcon from "./svg/camera.svg?react";
@@ -187,6 +188,10 @@ export const iconRegistry: IconRegistry = {
   Pencil: {
     component: PencilIcon,
     tags: ["pencil", "펜", "쓰기", "편집", "작성"],
+  },
+  Bread: {
+    component: BreadIcon,
+    tags: ["bread", "빵", "토스트", "샌드위치"],
   },
 };
 

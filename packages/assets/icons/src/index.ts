@@ -3,6 +3,7 @@ export { default as AppleIcon } from "./svg/apple.svg?react";
 export { default as ArrowLeftIcon } from "./svg/arrow-left.svg?react";
 export { default as ArrowRightIcon } from "./svg/arrow-right.svg?react";
 export { default as ArrowUpCircleIcon } from "./svg/arrow-up-circle.svg?react";
+export { default as BreadIcon } from "./svg/bread.svg?react";
 export { default as BusIcon } from "./svg/bus.svg?react";
 export { default as CalendarIcon } from "./svg/calendar.svg?react";
 export { default as CameraIcon } from "./svg/camera.svg?react";
