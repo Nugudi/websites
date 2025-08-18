@@ -29,7 +29,7 @@ export const menuCardPackagingAvailable = style({
   alignItems: "center",
   gap: "4px",
   ...classes.typography.emphasis.e1,
-  color: vars.colors.$scale.main[500],
+  color: vars.colors.$scale.main[600],
   margin: 0,
 });
 
