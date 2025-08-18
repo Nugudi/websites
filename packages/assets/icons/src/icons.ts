@@ -8,6 +8,7 @@ import BusIcon from "./svg/bus.svg?react";
 import CalendarIcon from "./svg/calendar.svg?react";
 import CameraIcon from "./svg/camera.svg?react";
 import CameraLineIcon from "./svg/camera-line.svg?react";
+import ClockIcon from "./svg/clock.svg?react";
 import CoinIcon from "./svg/coin.svg?react";
 import CommentIcon from "./svg/comment.svg?react";
 import EtcIcon from "./svg/etc.svg?react";
@@ -192,6 +193,10 @@ export const iconRegistry: IconRegistry = {
   Bread: {
     component: BreadIcon,
     tags: ["bread", "빵", "토스트", "샌드위치"],
+  },
+  Clock: {
+    component: ClockIcon,
+    tags: ["clock", "시간", "시계"],
   },
 };
 

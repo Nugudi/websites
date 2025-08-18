@@ -8,6 +8,7 @@ export { default as BusIcon } from "./svg/bus.svg?react";
 export { default as CalendarIcon } from "./svg/calendar.svg?react";
 export { default as CameraIcon } from "./svg/camera.svg?react";
 export { default as CameraLineIcon } from "./svg/camera-line.svg?react";
+export { default as ClockIcon } from "./svg/clock.svg?react";
 export { default as CoinIcon } from "./svg/coin.svg?react";
 export { default as CommentIcon } from "./svg/comment.svg?react";
 export { default as EtcIcon } from "./svg/etc.svg?react";
