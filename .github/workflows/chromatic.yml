@@ -1,10 +1,10 @@
-name: 'Auto Deploy Storybook to Chromatic on Labeled PR'
+name: "Auto Deploy Storybook to Chromatic on Labeled PR"
 
 on:
   pull_request:
     types: [synchronize, labeled]
     branches:
-      - '**'
+      - "**"
 
 permissions:
   contents: write
@@ -44,6 +44,9 @@ jobs:
 
       - name: Build themes package
         run: pnpm --filter @nugudi/themes run build
+
+      - name: Build assets packages
+        run: pnpm --filter "@nugudi/assets-*" run build
 
       - name: Build React packages
         run: pnpm --filter "@nugudi/react-*" run build
