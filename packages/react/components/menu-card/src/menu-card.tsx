@@ -21,7 +21,7 @@ const MenuCard = ({
           {isPackagingAvailable && (
             <div className={styles.menuCardPackagingAvailable}>
               <PackagingIcon width={16} height={16} />
-              포장 가능
+              포장 도시락 판매
             </div>
           )}
         </div>

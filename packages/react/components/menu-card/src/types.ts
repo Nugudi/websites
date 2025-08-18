@@ -22,9 +22,3 @@ export interface MenuCardProps {
   items: MenuItem[];
   isPackagingAvailable?: boolean;
 }
-
-export interface CategoryConfig {
-  icon: string;
-  color: string;
-  label: string;
-}

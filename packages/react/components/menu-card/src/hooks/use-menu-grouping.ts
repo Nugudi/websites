@@ -1,6 +1,19 @@
 import { useMemo } from "react";
 import type { MenuCategory, MenuItem } from "../types";
 
+const CATEGORY_ORDER: MenuCategory[] = [
+  "RICE",
+  "NOODLE",
+  "SOUP",
+  "MAIN_DISH",
+  "SIDE_DISH",
+  "KIMCHI",
+  "BREAD_SANDWICH",
+  "SALAD_FRUIT",
+  "DRINK",
+  "OTHER",
+];
+
 /**
  * 메뉴 아이템들을 카테고리별로 그룹화하는 커스텀 훅
  *
@@ -42,7 +55,15 @@ const useMenuGrouping = (items: MenuItem[]) => {
       grouped.set(item.category, [...existing, item]);
     });
 
-    return grouped;
+    const orderedGrouped = new Map<MenuCategory, MenuItem[]>();
+    CATEGORY_ORDER.forEach((category) => {
+      const items = grouped.get(category);
+      if (items) {
+        orderedGrouped.set(category, items);
+      }
+    });
+
+    return orderedGrouped;
   }, [items]);
 };
 

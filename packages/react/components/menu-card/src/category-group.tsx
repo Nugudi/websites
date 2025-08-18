@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { CATEGORY_CONFIG } from "./constants/category-config";
 import { categoryGroupWrapper, categoryIcon, categoryLabel } from "./style.css";
 import type { MenuCategory, MenuItem } from "./types";
@@ -13,7 +14,10 @@ export const CategoryGroupComponent = ({
 }: CategoryGroupProps) => {
   const config = CATEGORY_CONFIG[category];
   const IconComponent = config.Icon;
-  const itemNames = items.map((item) => item.name).join(", ");
+  const itemNames = useMemo(
+    () => items.map((item) => item.name).join(", "),
+    [items],
+  );
 
   return (
     <div className={categoryGroupWrapper}>
