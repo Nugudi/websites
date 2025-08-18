@@ -28,6 +28,7 @@ export { default as MajorDishIcon } from "./svg/major-dish.svg?react";
 export { default as NaverIcon } from "./svg/naver.svg?react";
 export { default as NoodleIcon } from "./svg/noodle.svg?react";
 export { default as NotiIcon } from "./svg/noti.svg?react";
+export { default as PackagingIcon } from "./svg/packaging.svg?react";
 export { default as PenIcon } from "./svg/pen.svg?react";
 export { default as PencilIcon } from "./svg/pencil.svg?react";
 export { default as PersonIcon } from "./svg/person.svg?react";

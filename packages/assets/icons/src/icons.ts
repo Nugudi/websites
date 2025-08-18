@@ -28,6 +28,7 @@ import MajorDishIcon from "./svg/major-dish.svg?react";
 import NaverIcon from "./svg/naver.svg?react";
 import NoodleIcon from "./svg/noodle.svg?react";
 import NotiIcon from "./svg/noti.svg?react";
+import PackagingIcon from "./svg/packaging.svg?react";
 import PenIcon from "./svg/pen.svg?react";
 import PencilIcon from "./svg/pencil.svg?react";
 import PersonIcon from "./svg/person.svg?react";
@@ -197,6 +198,10 @@ export const iconRegistry: IconRegistry = {
   Clock: {
     component: ClockIcon,
     tags: ["clock", "시간", "시계"],
+  },
+  Packaging: {
+    component: PackagingIcon,
+    tags: ["packaging", "포장", "포장 가능"],
   },
 };
 

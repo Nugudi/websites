@@ -33,6 +33,7 @@
     "@nugudi/react-components-input": "workspace:*",
     "@nugudi/react-components-input-otp": "workspace:*",
     "@nugudi/react-components-layout": "workspace:*",
+    "@nugudi/react-components-menu-card": "workspace:*",
     "@nugudi/react-components-navigation-item": "workspace:*",
     "@nugudi/react-components-step-indicator": "workspace:*",
     "@nugudi/react-components-switch": "workspace:*",
