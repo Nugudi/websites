@@ -3,10 +3,12 @@ import AppleIcon from "./svg/apple.svg?react";
 import ArrowLeftIcon from "./svg/arrow-left.svg?react";
 import ArrowRightIcon from "./svg/arrow-right.svg?react";
 import ArrowUpCircleIcon from "./svg/arrow-up-circle.svg?react";
+import BreadIcon from "./svg/bread.svg?react";
 import BusIcon from "./svg/bus.svg?react";
 import CalendarIcon from "./svg/calendar.svg?react";
 import CameraIcon from "./svg/camera.svg?react";
 import CameraLineIcon from "./svg/camera-line.svg?react";
+import ClockIcon from "./svg/clock.svg?react";
 import CoinIcon from "./svg/coin.svg?react";
 import CommentIcon from "./svg/comment.svg?react";
 import EtcIcon from "./svg/etc.svg?react";
@@ -26,6 +28,7 @@ import MajorDishIcon from "./svg/major-dish.svg?react";
 import NaverIcon from "./svg/naver.svg?react";
 import NoodleIcon from "./svg/noodle.svg?react";
 import NotiIcon from "./svg/noti.svg?react";
+import PackagingIcon from "./svg/packaging.svg?react";
 import PenIcon from "./svg/pen.svg?react";
 import PencilIcon from "./svg/pencil.svg?react";
 import PersonIcon from "./svg/person.svg?react";
@@ -187,6 +190,18 @@ export const iconRegistry: IconRegistry = {
   Pencil: {
     component: PencilIcon,
     tags: ["pencil", "펜", "쓰기", "편집", "작성"],
+  },
+  Bread: {
+    component: BreadIcon,
+    tags: ["bread", "빵", "토스트", "샌드위치"],
+  },
+  Clock: {
+    component: ClockIcon,
+    tags: ["clock", "시간", "시계"],
+  },
+  Packaging: {
+    component: PackagingIcon,
+    tags: ["packaging", "포장", "포장 가능"],
   },
 };
 
