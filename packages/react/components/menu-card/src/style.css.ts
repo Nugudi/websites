@@ -5,7 +5,7 @@ export const menuCardWrapper = style({
   backgroundColor: vars.colors.$static.light.color.white,
   borderRadius: vars.box.radii.xl,
   border: `1px solid ${vars.colors.$scale.zinc[100]}`,
-  padding: "24px",
+  padding: "16px",
   boxSizing: "border-box",
   width: "100%",
 });
