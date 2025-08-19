@@ -3,6 +3,7 @@ import RecommendRestaurant from "@/src/domains/restaurant/ui/components/recommen
 import * as styles from "./index.css";
 
 const RecommendRestaurantSection = () => {
+  // api 연결 후 mock data 삭제
   const recommendRestaurantData = {
     restaurantId: "1",
     restaurantName: "너구리 푸드",

@@ -1,52 +1,37 @@
-"use client";
-
 import { MenuCard } from "@nugudi/react-components-menu-card";
-import { useState } from "react";
-import type { Swiper as SwiperType } from "swiper";
-import { Swiper, SwiperSlide } from "swiper/react";
+import SwiperWithCounter from "@/src/shared/ui/components/swiper-with-counter";
 import type { Restaurant } from "../../sections/browse-meals-section";
-import * as styles from "./swiper-styles.css";
-
-import "swiper/css";
 
 interface MealListProps {
   restaurantList: Restaurant[];
 }
 
 const MealList = ({ restaurantList }: MealListProps) => {
-  const [currentSlide, setCurrentSlide] = useState(1);
-
-  const handleSlideChange = (swiper: SwiperType) => {
-    setCurrentSlide(swiper.activeIndex + 1);
-  };
+  const menuCards = restaurantList.map((restaurant) => (
+    <MenuCard
+      key={restaurant.id}
+      title={restaurant.name}
+      subtitle={restaurant.subtitle}
+      timeRange={restaurant.timeRange}
+      isPackagingAvailable={restaurant.isPackagingAvailable}
+      items={restaurant.items}
+    />
+  ));
 
   return (
-    <div className={styles.container}>
-      <Swiper
-        spaceBetween={16}
-        slidesPerView={1}
-        onSlideChange={handleSlideChange}
-        touchStartPreventDefault={false}
-        allowTouchMove={true}
-        simulateTouch={true}
-        className={styles.swiperContainer}
-      >
-        {restaurantList.map((restaurant) => (
-          <SwiperSlide key={restaurant.id}>
-            <MenuCard
-              title={restaurant.name}
-              subtitle={restaurant.subtitle}
-              timeRange={restaurant.timeRange}
-              isPackagingAvailable={restaurant.isPackagingAvailable}
-              items={restaurant.items}
-            />
-          </SwiperSlide>
-        ))}
-      </Swiper>
-      <div className={styles.slideCounter}>
-        {currentSlide}/{restaurantList.length}
-      </div>
-    </div>
+    <SwiperWithCounter
+      spaceBetween={16}
+      slidesPerView={1}
+      showCounter={true}
+      touchStartPreventDefault={false}
+      allowTouchMove={true}
+      simulateTouch={true}
+      slideHeight="440px"
+      maxWidth="600px"
+      counterPosition="top-right"
+    >
+      {menuCards}
+    </SwiperWithCounter>
   );
 };
 
