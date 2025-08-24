@@ -55,7 +55,7 @@ const OptimizedImage = ({
     <picture>
       {sourceFormats.map((format) => (
         <source
-          key={format}
+          key={`${src}-${format}`}
           srcSet={`${src}.${format}`}
           type={`image/${format}`}
         />
