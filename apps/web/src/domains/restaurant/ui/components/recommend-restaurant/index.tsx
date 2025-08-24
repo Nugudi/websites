@@ -1,7 +1,7 @@
 import { ArrowRightIcon, ClockIcon } from "@nugudi/assets-icons";
 import { VStack } from "@nugudi/react-components-layout";
-import Image from "next/image";
 import Link from "next/link";
+import OptimizedImage from "@/src/shared/ui/components/optimized-image";
 import * as styles from "./index.css";
 
 interface RecommendRestaurantProps {
@@ -34,16 +34,13 @@ const RecommendRestaurant = ({
           {restaurantTime}
         </span>
       </VStack>
-      <ArrowRightIcon />
-      <Image
-        priority
-        aria-hidden="true"
+      <OptimizedImage
+        priority="high"
+        src="/images/sleep-nuguri"
+        alt="sleep-nuguri"
         className={styles.logoImage}
-        src={"/images/sleep-nuguri.png"}
-        alt={"sleep-nuguri"}
-        width={150}
-        height={100}
       />
+      <ArrowRightIcon />
     </Link>
   );
 };
