@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { SIGN_UP_STORE_KEY } from "@/src/domains/auth/sign-up/constants/sign-up";
-import type { SignUpSchema } from "@/src/domains/auth/sign-up/schemas/sign-up-schema";
+import { SIGN_UP_STORE_KEY } from "../constants/sign-up";
+import type { SignUpSchema } from "../schemas/sign-up-schema";
 
 type UseSignUpStoreState = Partial<SignUpSchema> & {
   data: Partial<SignUpSchema>;

@@ -2,6 +2,7 @@ export const color = {
   black: "#000000",
   white: "#FFFFFF",
   red: "#F44336",
+  backdrop: "rgba(0, 0, 0, 0.6)",
 };
 
 export const main = {

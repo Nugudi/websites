@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { PASSWORD_FORGOT_STORE_KEY } from "@/src/domains/auth/password-forgot/constants/password-forgot";
-import type { PasswordForgotSchema } from "@/src/domains/auth/password-forgot/schemas/password-forgot-schema";
+import { PASSWORD_FORGOT_STORE_KEY } from "../constants/password-forgot";
+import type { PasswordForgotSchema } from "../schemas/password-forgot-schema";
 
 type UsePasswordForgotStoreState = Partial<PasswordForgotSchema> & {
   data: Partial<PasswordForgotSchema>;

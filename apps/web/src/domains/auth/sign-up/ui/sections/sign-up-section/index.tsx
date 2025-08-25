@@ -1,4 +1,4 @@
-import SignUpForm from "@/src/domains/auth/sign-up/ui/components/sign-up-form";
+import SignUpForm from "../../components/sign-up-form";
 
 const SignUpSection = () => {
   return <SignUpForm />;
