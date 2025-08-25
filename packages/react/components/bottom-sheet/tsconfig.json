@@ -1,0 +1,11 @@
+{
+  "extends": "@tsconfig/vite-react/tsconfig.json",
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "src/global.d.ts",
+    "vite.config.mts",
+    "vitest.config.mts"
+  ],
+  "exclude": ["node_modules"]
+}
