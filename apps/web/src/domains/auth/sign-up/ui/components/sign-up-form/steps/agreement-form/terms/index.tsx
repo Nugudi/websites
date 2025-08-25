@@ -1,7 +1,7 @@
 import type { MouseEvent } from "react";
-import { 약관목록 } from "@/src/domains/auth/sign-up/constants/sign-up";
-import type { TermsProps } from "@/src/domains/auth/sign-up/types/sign-up";
 import Agreement from "@/src/shared/ui/components/agreement";
+import { 약관목록 } from "../../../../../../constants/sign-up";
+import type { TermsProps } from "../../../../../../types/sign-up";
 
 const Terms = ({
   agreements,

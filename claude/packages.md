@@ -606,6 +606,51 @@ pnpm commit                 # Commit with commitizen
 6. Domain-specific code
 7. Shared utilities
 
+### Import Rules
+
+#### Within Same Domain - Use Relative Imports
+
+```typescript
+// ✅ CORRECT - Within same domain (e.g., auth/sign-up)
+// From: src/domains/auth/sign-up/ui/views/sign-up-view/index.tsx
+import { SignUpForm } from '../../components/sign-up-form';
+import { useSignUpStore } from '../../../stores/use-sign-up-store';
+import { signUpSchema } from '../../../schemas/sign-up-schema';
+import type { SignUpFormData } from '../../../types/sign-up';
+
+// ✅ CORRECT - From section to component in same domain
+// From: src/domains/auth/sign-up/ui/sections/sign-up-section/index.tsx
+import { EmailForm } from '../../components/sign-up-form/steps/email-form';
+import { PasswordForm } from '../../components/sign-up-form/steps/password-form';
+
+// ✅ CORRECT - Within same folder
+// From: src/domains/auth/sign-up/ui/components/sign-up-form/steps/email-form/index.tsx
+import * as styles from './index.css';
+```
+
+#### Cross-Domain or from App - Use Absolute Imports
+
+```typescript
+// ✅ CORRECT - Cross-domain imports
+// From: src/domains/menu/...
+import { useAuth } from '@/domains/auth/hooks/use-auth';
+
+// ✅ CORRECT - From app pages
+// From: app/auth/sign-up/page.tsx
+import { SignUpView } from '@/domains/auth/sign-up/ui/views/sign-up-view';
+```
+
+#### Package Imports - Always Use Package Path
+
+```typescript
+// ✅ CORRECT - Always use package imports for packages
+import Button from '@nugudi/react/components/button';
+import { variables } from '@nugudi/themes';
+
+// ❌ WRONG - Never use relative imports for packages
+import Button from '../../../../../packages/react/components/button'; // NO!
+```
+
 ---
 
 ## 💡 Tips for Claude Code

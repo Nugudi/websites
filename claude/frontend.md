@@ -21,11 +21,11 @@ Improving the clarity and ease of understanding code.
 ```typescript
 const ANIMATION_DELAY_MS = 300;
 
-async function onLikeClick() {
+const onLikeClick = async () => {
   await postLike(url);
   await delay(ANIMATION_DELAY_MS); // Clearly indicates waiting for animation
   await refetchPostLike();
-}
+};
 ```
 
 ## Abstracting Implementation Details
@@ -43,7 +43,7 @@ async function onLikeClick() {
 
 ```tsx
 // App structure
-function App() {
+const App = () => {
   return (
     <AuthGuard>
       {' '}
@@ -51,10 +51,10 @@ function App() {
       <LoginStartPage />
     </AuthGuard>
   );
-}
+};
 
 // AuthGuard component encapsulates the check/redirect logic
-function AuthGuard({ children }) {
+const AuthGuard = ({ children }) => {
   const status = useCheckLoginStatus();
   useEffect(() => {
     if (status === 'LOGGED_IN') {
@@ -64,13 +64,13 @@ function AuthGuard({ children }) {
 
   // Render children only if not logged in, otherwise render null (or loading)
   return status !== 'LOGGED_IN' ? children : null;
-}
+};
 
 // LoginStartPage is now simpler, focused only on login UI/logic
-function LoginStartPage() {
+const LoginStartPage = () => {
   // ... login related logic ONLY ...
   return <>{/* ... login related components ... */}</>;
-}
+};
 ```
 
 #### Recommended Pattern 2: Dedicated Interaction Component
@@ -78,7 +78,7 @@ function LoginStartPage() {
 (Dialog logic abstracted into a dedicated `InviteButton` component)
 
 ```tsx
-export function FriendInvitation() {
+export const FriendInvitation = () => {
   const { data } = useQuery(/* ... */);
 
   return (
@@ -88,10 +88,10 @@ export function FriendInvitation() {
       {/* ... other UI ... */}
     </>
   );
-}
+};
 
 // InviteButton handles the confirmation flow internally
-function InviteButton({ name }) {
+const InviteButton = ({ name }) => {
   const handleClick = async () => {
     const canInvite = await overlay.openAsync(({ isOpen, close }) => (
       <ConfirmDialog
@@ -106,7 +106,7 @@ function InviteButton({ name }) {
   };
 
   return <Button onClick={handleClick}>Invite</Button>;
-}
+};
 ```
 
 ## Separating Code Paths for Conditional Rendering
@@ -124,26 +124,26 @@ components.
 (Separate components for each role)
 
 ```tsx
-function SubmitButton() {
+const SubmitButton = () => {
   const isViewer = useRole() === 'viewer';
 
   // Delegate rendering to specialized components
   return isViewer ? <ViewerSubmitButton /> : <AdminSubmitButton />;
-}
+};
 
 // Component specifically for the 'viewer' role
-function ViewerSubmitButton() {
+const ViewerSubmitButton = () => {
   return <TextButton disabled>Submit</TextButton>;
-}
+};
 
 // Component specifically for the 'admin' (or non-viewer) role
-function AdminSubmitButton() {
+const AdminSubmitButton = () => {
   useEffect(() => {
     showAnimation(); // Animation logic isolated here
   }, []);
 
   return <Button type='submit'>Submit</Button>;
-}
+};
 ```
 
 ## Simplifying Complex Ternary Operators
@@ -182,7 +182,7 @@ context switching.
 #### Recommended Pattern A: Inline `switch`
 
 ```tsx
-function Page() {
+const Page = () => {
   const user = useUser();
 
   // Logic is directly visible here
@@ -204,13 +204,13 @@ function Page() {
     default:
       return null;
   }
-}
+};
 ```
 
 #### Recommended Pattern B: Colocated simple policy object
 
 ```tsx
-function Page() {
+const Page = () => {
   const user = useUser();
   // Simple policy defined right here, easy to see
   const policy = {
@@ -227,7 +227,7 @@ function Page() {
       <Button disabled={!policy.canView}>View</Button>
     </div>
   );
-}
+};
 ```
 
 ## Naming Complex Conditions
@@ -283,19 +283,19 @@ Ensuring code behaves as expected based on its name, parameters, and context.
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 
 // Assuming fetchUser returns Promise<UserType>
-function useUser(): UseQueryResult<UserType, Error> {
+const useUser = (): UseQueryResult<UserType, Error> => {
   const query = useQuery({ queryKey: ['user'], queryFn: fetchUser });
   return query;
-}
+};
 
 // Assuming fetchServerTime returns Promise<Date>
-function useServerTime(): UseQueryResult<Date, Error> {
+const useServerTime = (): UseQueryResult<Date, Error> => {
   const query = useQuery({
     queryKey: ['serverTime'],
     queryFn: fetchServerTime,
   });
   return query;
-}
+};
 ```
 
 #### Recommended Pattern 2: Validation Functions
@@ -305,20 +305,20 @@ function useServerTime(): UseQueryResult<Date, Error> {
 ```typescript
 type ValidationResult = { ok: true } | { ok: false; reason: string };
 
-function checkIsNameValid(name: string): ValidationResult {
+const checkIsNameValid = (name: string): ValidationResult => {
   if (name.length === 0) return { ok: false, reason: 'Name cannot be empty.' };
   if (name.length >= 20)
     return { ok: false, reason: 'Name cannot be longer than 20 characters.' };
   return { ok: true };
-}
+};
 
-function checkIsAgeValid(age: number): ValidationResult {
+const checkIsAgeValid = (age: number): ValidationResult => {
   if (!Number.isInteger(age))
     return { ok: false, reason: 'Age must be an integer.' };
   if (age < 18) return { ok: false, reason: 'Age must be 18 or older.' };
   if (age > 99) return { ok: false, reason: 'Age must be 99 or younger.' };
   return { ok: true };
-}
+};
 
 // Usage allows safe access to 'reason' only when ok is false
 const nameValidation = checkIsNameValid(name);
@@ -341,17 +341,17 @@ implied by their signature (SRP).
 
 ```typescript
 // Function *only* fetches balance
-async function fetchBalance(): Promise<number> {
+const fetchBalance = async (): Promise<number> => {
   const balance = await http.get<number>('...');
   return balance;
-}
+};
 
 // Caller explicitly performs logging where needed
-async function handleUpdateClick() {
+const handleUpdateClick = async () => {
   const balance = await fetchBalance(); // Fetch
   logging.log('balance_fetched'); // Log (explicit action)
   await syncBalance(balance); // Another action
-}
+};
 ```
 
 ## Using Unique and Descriptive Names (Avoiding Ambiguity)
@@ -373,7 +373,7 @@ import { http as httpLibrary } from '@some-library/http';
 
 export const httpService = {
   // Unique module name
-  async getWithAuth(url: string) {
+  getWithAuth: async (url: string) => {
     // Descriptive function name
     const token = await fetchToken();
     return httpLibrary.get(url, {
@@ -384,10 +384,10 @@ export const httpService = {
 
 // In fetchUser.ts - Usage clearly indicates auth
 import { httpService } from './httpService';
-export async function fetchUser() {
+export const fetchUser = async () => {
   // Name 'getWithAuth' makes the behavior explicit
   return await httpService.getWithAuth('...');
-}
+};
 ```
 
 # Cohesion
@@ -410,7 +410,7 @@ purpose.
 // Each field uses its own `validate` function
 import { useForm } from 'react-hook-form';
 
-export function Form() {
+export const Form = () => {
   const {
     register,
     formState: { errors },
@@ -450,7 +450,7 @@ export function Form() {
       <button type='submit'>Submit</button>
     </form>
   );
-}
+};
 ```
 
 #### Recommended Pattern (Form-Level Example):
@@ -466,7 +466,7 @@ const schema = z.object({
   email: z.string().min(1, 'Please enter your email.').email('Invalid email.'),
 });
 
-export function Form() {
+export const Form = () => {
   const {
     register,
     formState: { errors },
@@ -493,7 +493,7 @@ export function Form() {
       <button type='submit'>Submit</button>
     </form>
   );
-}
+};
 ```
 
 **Guidance:** Choose **field-level** for independent validation, async checks,
@@ -556,12 +556,12 @@ src/
 // Constant clearly named and potentially defined near animation logic
 const ANIMATION_DELAY_MS = 300;
 
-async function onLikeClick() {
+const onLikeClick = async () => {
   await postLike(url);
   // Delay uses the constant, maintaining the link to the animation
   await delay(ANIMATION_DELAY_MS);
   await refetchPostLike();
-}
+};
 ```
 
 _Ensure constants are maintained alongside the logic they depend on or clearly
@@ -613,7 +613,7 @@ hooks/contexts.
 import { useQueryParam, NumberParam } from 'use-query-params';
 import { useCallback } from 'react';
 
-export function useCardIdQueryParam() {
+export const useCardIdQueryParam = () => {
   // Assuming 'query' provides the raw param value
   const [cardIdParam, setCardIdParam] = useQueryParam('cardId', NumberParam);
 
@@ -626,10 +626,10 @@ export function useCardIdQueryParam() {
 
   // Provide a stable return tuple
   return [cardIdParam ?? undefined, setCardId] as const;
-}
+};
 
 // Separate hook for date range, etc.
-// export function useDateRangeQueryParam() { /* ... */ }
+// export const useDateRangeQueryParam = () => { /* ... */ }
 ```
 
 Components now only import and use `useCardIdQueryParam` if they need `cardId`,
@@ -652,7 +652,13 @@ import React, { useState } from 'react';
 
 // Assume Modal, Input, Button, ItemEditList components exist
 
-function ItemEditModal({ open, items, recommendedItems, onConfirm, onClose }) {
+const ItemEditModal = ({
+  open,
+  items,
+  recommendedItems,
+  onConfirm,
+  onClose,
+}) => {
   const [keyword, setKeyword] = useState('');
 
   // Render children directly within Modal, passing props only where needed
@@ -682,7 +688,7 @@ function ItemEditModal({ open, items, recommendedItems, onConfirm, onClose }) {
       />
     </Modal>
   );
-}
+};
 
 // The intermediate ItemEditBody component is eliminated, reducing coupling.
 ```

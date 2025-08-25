@@ -11,8 +11,8 @@ import { useForm } from "react-hook-form";
 import {
   type SignUpNicknameSchema,
   signUpNicknameSchema,
-} from "@/src/domains/auth/sign-up/schemas/sign-up-schema";
-import { useSignUpStore } from "@/src/domains/auth/sign-up/stores/use-sign-up-store";
+} from "../../../../../schemas/sign-up-schema";
+import { useSignUpStore } from "../../../../../stores/use-sign-up-store";
 import * as styles from "./index.css";
 
 const NicknameForm = () => {
