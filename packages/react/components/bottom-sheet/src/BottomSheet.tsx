@@ -1,28 +1,26 @@
+import { Backdrop } from "@nugudi/react-components-backdrop";
 import { clsx } from "clsx";
 import {
+  type CSSProperties,
   forwardRef,
+  type MouseEvent as ReactMouseEvent,
+  type TouchEvent as ReactTouchEvent,
+  type Ref,
   useCallback,
   useEffect,
+  useImperativeHandle,
   useRef,
   useState,
-  type CSSProperties,
-  type MouseEvent as ReactMouseEvent,
-  type Ref,
-  type TouchEvent as ReactTouchEvent,
 } from "react";
 import {
   containerStyle,
   contentStyle,
   handleContainerStyle,
   handleStyle,
-  overlayStyle,
 } from "./style.css";
 import type { BottomSheetProps } from "./types";
 
-const BottomSheet = (
-  props: BottomSheetProps,
-  ref: Ref<HTMLDivElement>,
-) => {
+const BottomSheet = (props: BottomSheetProps, ref: Ref<HTMLDivElement>) => {
   const {
     isOpen,
     onClose,
@@ -46,10 +44,13 @@ const BottomSheet = (
   const [animationState, setAnimationState] = useState<
     "entering" | "entered" | "exiting" | "exited"
   >("exited");
+  const [shouldRender, setShouldRender] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
+
+  // Merge external ref with internal ref
+  useImperativeHandle(ref, () => containerRef.current as HTMLDivElement, []);
 
   const getCurrentHeight = useCallback(
     (snapIndex: number) => {
@@ -59,21 +60,47 @@ const BottomSheet = (
     [snapPoints],
   );
 
+  // Prevent body scroll when open
   useEffect(() => {
     if (isOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (isOpen) {
+      setShouldRender(true);
       setAnimationState("entering");
-      setCurrentSnapIndex(defaultSnapPoint);
-      requestAnimationFrame(() => {
+      const clampedIndex = Math.max(
+        0,
+        Math.min(defaultSnapPoint, snapPoints.length - 1),
+      );
+      setCurrentSnapIndex(clampedIndex);
+      // Reset scroll position when opening
+      if (contentRef.current) {
+        contentRef.current.scrollTop = 0;
+      }
+      const rafId = requestAnimationFrame(() => {
         setAnimationState("entered");
       });
-    } else if (animationState !== "exited") {
+      return () => cancelAnimationFrame(rafId);
+    } else if (!isOpen && shouldRender) {
       setAnimationState("exiting");
       const timer = setTimeout(() => {
         setAnimationState("exited");
+        setShouldRender(false);
+        // Reset scroll position after closing
+        if (contentRef.current) {
+          contentRef.current.scrollTop = 0;
+        }
       }, 300);
       return () => clearTimeout(timer);
     }
-  }, [isOpen, defaultSnapPoint, animationState]);
+  }, [isOpen, defaultSnapPoint, snapPoints.length, shouldRender]);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -167,7 +194,8 @@ const BottomSheet = (
     }
   }, [closeOnOverlayClick, onClose]);
 
-  if (animationState === "exited" && !isOpen) {
+  // Remove from DOM when fully closed
+  if (!shouldRender) {
     return null;
   }
 
@@ -175,27 +203,34 @@ const BottomSheet = (
 
   return (
     <>
-      <div
-        ref={overlayRef}
-        className={clsx(
-          overlayStyle({ state: animationState }),
-          overlayClassName,
-        )}
-        onClick={handleOverlayClick}
-        aria-hidden="true"
+      <Backdrop
+        className={overlayClassName}
+        onClick={closeOnOverlayClick ? handleOverlayClick : undefined}
+        style={{
+          opacity:
+            animationState === "entered" || animationState === "entering"
+              ? 1
+              : 0,
+          transition: "opacity 0.3s ease",
+          pointerEvents: animationState === "exited" ? "none" : "auto",
+        }}
       />
       <div
         {...restProps}
-        ref={ref || containerRef}
+        ref={containerRef}
         className={clsx(
           containerStyle({ state: animationState, isDragging }),
           className,
         )}
-        style={{
-          ...style,
-          height: currentHeight,
-          maxHeight: currentHeight,
-        } as CSSProperties}
+        style={
+          {
+            ...style,
+            height: currentHeight,
+            maxHeight: currentHeight,
+          } as CSSProperties
+        }
+        role="dialog"
+        aria-modal="true"
       >
         {showHandle && (
           <button
@@ -203,7 +238,8 @@ const BottomSheet = (
             className={handleContainerStyle}
             onMouseDown={handleDragStart}
             onTouchStart={handleDragStart}
-            aria-label="Drag handle"
+            aria-label="Drag to resize bottom sheet"
+            aria-roledescription="Drag handle"
           >
             <div className={handleStyle} />
           </button>

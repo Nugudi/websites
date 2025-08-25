@@ -339,6 +339,9 @@ importers:
 
   packages/react/components/bottom-sheet:
     dependencies:
+      '@nugudi/react-components-backdrop':
+        specifier: workspace:*
+        version: link:../backdrop
       '@nugudi/themes':
         specifier: workspace:*
         version: link:../../../themes

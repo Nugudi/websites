@@ -3,7 +3,7 @@ import { BottomSheet as _BottomSheet } from "@nugudi/react-components-bottom-she
 import { Button } from "@nugudi/react-components-button";
 import { Body, Title } from "@nugudi/react-components-layout";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { type Key, useState } from "react";
+import { useState } from "react";
 
 const meta: Meta<typeof _BottomSheet> = {
   title: "Components/BottomSheet",
@@ -189,14 +189,15 @@ export const NoOverlayClose: Story = {
   },
 };
 
-// Long Content
-export const LongContent: Story = {
+// Content With List
+export const ContentWithList: Story = {
   render: () => {
     const [isOpen, setIsOpen] = useState(false);
+    const items = ["Option 1", "Option 2", "Option 3", "Option 4", "Option 5"];
 
     return (
       <div style={{ minHeight: "100vh", padding: "2rem" }}>
-        <Button onClick={() => setIsOpen(true)}>Open with Long Content</Button>
+        <Button onClick={() => setIsOpen(true)}>Open List</Button>
 
         <_BottomSheet
           isOpen={isOpen}
@@ -204,16 +205,25 @@ export const LongContent: Story = {
           snapPoints={[50, 90]}
         >
           <Title as="h2" fontSize="t2" style={{ marginBottom: "1rem" }}>
-            Long Content Example
+            Select an Option
           </Title>
-          {Array.from({ length: 20 }, (a, i) => (
-            <Body key={a as Key} fontSize="b2" style={{ marginBottom: "1rem" }}>
-              Paragraph {i + 1}: Lorem ipsum dolor sit amet, consectetur
-              adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-              exercitation ullamco laboris.
-            </Body>
-          ))}
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
+          >
+            {items.map((item) => (
+              <Button
+                key={item}
+                variant="neutral"
+                onClick={() => {
+                  console.log(`Selected: ${item}`);
+                  setIsOpen(false);
+                }}
+                style={{ width: "100%", justifyContent: "flex-start" }}
+              >
+                {item}
+              </Button>
+            ))}
+          </div>
         </_BottomSheet>
       </div>
     );

@@ -2,16 +2,6 @@ import { vars } from "@nugudi/themes";
 import { keyframes, style } from "@vanilla-extract/css";
 import { recipe } from "@vanilla-extract/recipes";
 
-const fadeIn = keyframes({
-  from: { opacity: 0 },
-  to: { opacity: 1 },
-});
-
-const fadeOut = keyframes({
-  from: { opacity: 1 },
-  to: { opacity: 0 },
-});
-
 const slideUp = keyframes({
   from: { transform: "translateY(100%)" },
   to: { transform: "translateY(0)" },
@@ -20,37 +10,6 @@ const slideUp = keyframes({
 const slideDown = keyframes({
   from: { transform: "translateY(0)" },
   to: { transform: "translateY(100%)" },
-});
-
-export const overlayStyle = recipe({
-  base: {
-    position: "fixed",
-    inset: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    zIndex: 999,
-    cursor: "pointer",
-    willChange: "opacity",
-  },
-  variants: {
-    state: {
-      entering: {
-        animation: `${fadeIn} 0.2s ease-out`,
-        animationFillMode: "forwards",
-      },
-      entered: {
-        opacity: 1,
-      },
-      exiting: {
-        animation: `${fadeOut} 0.2s ease-out`,
-        animationFillMode: "forwards",
-      },
-      exited: {
-        opacity: 0,
-        pointerEvents: "none",
-        visibility: "hidden",
-      },
-    },
-  },
 });
 
 export const containerStyle = recipe({
@@ -141,4 +100,6 @@ export const contentStyle = style({
   padding: "0 1.5rem 1.5rem",
   WebkitOverflowScrolling: "touch",
   minHeight: 0,
+  maxHeight: "100%",
+  scrollbarGutter: "stable",
 });
