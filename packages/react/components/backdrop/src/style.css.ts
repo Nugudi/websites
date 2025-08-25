@@ -4,7 +4,7 @@ import { style } from "@vanilla-extract/css";
 export const backdropStyle = style({
   position: "fixed",
   inset: 0,
-  backgroundColor: vars.colors.$scale.blackAlpha[700],
+  backgroundColor: vars.colors.$static.light.color.backdrop,
   display: "flex",
   justifyContent: "center",
   alignItems: "center",

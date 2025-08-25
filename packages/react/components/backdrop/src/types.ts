@@ -1,6 +1,3 @@
-import type { PropsWithChildren } from "react";
+import type { HTMLAttributes, PropsWithChildren } from "react";
 
-export type BackdropProps = PropsWithChildren<{
-  onClick?: () => void;
-  className?: string;
-}>;
+export type BackdropProps = PropsWithChildren<HTMLAttributes<HTMLDivElement>>;

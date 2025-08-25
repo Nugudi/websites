@@ -5,11 +5,11 @@ import { backdropStyle } from "./style.css";
 import type { BackdropProps } from "./types";
 
 const Backdrop = (
-  { children, className }: BackdropProps,
+  { children, className, ...restProps }: BackdropProps,
   ref: Ref<HTMLDivElement>,
 ) => {
   return (
-    <div ref={ref} className={clsx(backdropStyle, className)}>
+    <div ref={ref} className={clsx(backdropStyle, className)} {...restProps}>
       {children}
     </div>
   );
