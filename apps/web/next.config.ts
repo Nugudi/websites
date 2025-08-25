@@ -29,4 +29,7 @@ const plugins = [
 
 export default plugins.reduce((acc, plugin) => plugin(acc), {
   reactStrictMode: true,
+  images: {
+    formats: ["image/avif", "image/webp"],
+  },
 } as NextConfig);
