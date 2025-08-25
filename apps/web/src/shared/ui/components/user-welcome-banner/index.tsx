@@ -1,5 +1,5 @@
 import { Box } from "@nugudi/react-components-layout";
-import OptimizedImage from "../optimized-image";
+import Image from "next/image";
 import * as styles from "./index.css";
 
 const UserWelcomeBanner = () => {
@@ -12,11 +12,14 @@ const UserWelcomeBanner = () => {
         <span className={styles.name}>{name}</span>님 오늘도 <br />
         맛난 점심식사다 너굴
       </div>
-      <OptimizedImage
-        priority="high"
-        src="/images/level-2-nuguri"
+      <Image
+        src="/images/level-2-nuguri.png"
         alt="level-2 너구리"
+        aria-hidden="true"
         className={styles.image}
+        width={150}
+        height={100}
+        priority
       />
     </Box>
   );
