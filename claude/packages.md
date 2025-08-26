@@ -31,10 +31,10 @@ nugudi/
 
 ```typescript
 // ✅ CORRECT - Use packages
-import { Button } from '@nugudi/react/components/button';
-import { useToggle } from '@nugudi/react/hooks/toggle';
+import Button from '@nugudi/react-components-button';
+import { useToggle } from '@nugudi/react-hooks-toggle';
 import { variables } from '@nugudi/themes';
-import { Icons } from '@nugudi/assets/icons';
+import { Icons } from '@nugudi/assets-icons';
 
 // ❌ WRONG - Don't create new implementations
 import Button from './components/button'; // NO!
@@ -117,33 +117,33 @@ Co-Authored-By: Claude <noreply@anthropic.com>"  # NO!
 
 ## 📦 Package Usage Guidelines
 
-### React Components (`@nugudi/react/components/*`)
+### React Components (`@nugudi/react-components-*`)
 
 ```typescript
 // Individual component imports
-import Button from '@nugudi/react/components/button';
-import Input from '@nugudi/react/components/input';
-import { Box, Flex, VStack, HStack } from '@nugudi/react/components/layout';
-import Chip from '@nugudi/react/components/chip';
-import NavigationItem from '@nugudi/react/components/navigation-item';
-import Switch from '@nugudi/react/components/switch';
-import Tab from '@nugudi/react/components/tab';
-import Textarea from '@nugudi/react/components/textarea';
-import InputOTP from '@nugudi/react/components/input-otp';
-import StepIndicator from '@nugudi/react/components/step-indicator';
-import MenuCard from '@nugudi/react/components/menu-card';
-import BottomSheet from '@nugudi/react/components/bottom-sheet';
-import Backdrop from '@nugudi/react/components/backdrop';
+import Button from '@nugudi/react-components-button';
+import Input from '@nugudi/react-components-input';
+import { Box, Flex, VStack, HStack } from '@nugudi/react-components-layout';
+import Chip from '@nugudi/react-components-chip';
+import NavigationItem from '@nugudi/react-components-navigation-item';
+import Switch from '@nugudi/react-components-switch';
+import Tab from '@nugudi/react-components-tab';
+import Textarea from '@nugudi/react-components-textarea';
+import InputOTP from '@nugudi/react-components-input-otp';
+import StepIndicator from '@nugudi/react-components-step-indicator';
+import MenuCard from '@nugudi/react-components-menu-card';
+import BottomSheet from '@nugudi/react-components-bottom-sheet';
+import Backdrop from '@nugudi/react-components-backdrop';
 ```
 
-### React Hooks (`@nugudi/react/hooks/*`)
+### React Hooks (`@nugudi/react-hooks-*`)
 
 ```typescript
 // Individual hook imports
-import { useButton, useToggleButton } from '@nugudi/react/hooks/button';
-import { useSwitch, useToggleSwitch } from '@nugudi/react/hooks/switch';
-import { useToggle } from '@nugudi/react/hooks/toggle';
-import { useStepper } from '@nugudi/react/hooks/use-stepper';
+import { useButton, useToggleButton } from '@nugudi/react-hooks-button';
+import { useSwitch, useToggleSwitch } from '@nugudi/react-hooks-switch';
+import { useToggle } from '@nugudi/react-hooks-toggle';
+import { useStepper } from '@nugudi/react-hooks-use-stepper';
 ```
 
 ### API Client (`@nugudi/api`)
@@ -176,11 +176,11 @@ import { classes } from '@nugudi/themes';
 const { colors, typography, box } = variables;
 ```
 
-### Assets (`@nugudi/assets/icons`)
+### Assets (`@nugudi/assets-icons`)
 
 ```typescript
 // Icon components
-import { Icons } from '@nugudi/assets/icons';
+import { Icons } from '@nugudi/assets-icons';
 
 // Use icons
 <Icons.Apple />
@@ -524,30 +524,30 @@ pnpm storybook --filter=ui
 
 ```typescript
 // Component Packages
-@nugudi/react/components/button
-@nugudi/react/components/input
-@nugudi/react/components/chip
-@nugudi/react/components/layout
-@nugudi/react/components/navigation-item
-@nugudi/react/components/switch
-@nugudi/react/components/tab
-@nugudi/react/components/textarea
-@nugudi/react/components/input-otp
-@nugudi/react/components/step-indicator
-@nugudi/react/components/menu-card
-@nugudi/react/components/bottom-sheet
-@nugudi/react/components/backdrop
+@nugudi/react-components-button
+@nugudi/react-components-input
+@nugudi/react-components-chip
+@nugudi/react-components-layout
+@nugudi/react-components-navigation-item
+@nugudi/react-components-switch
+@nugudi/react-components-tab
+@nugudi/react-components-textarea
+@nugudi/react-components-input-otp
+@nugudi/react-components-step-indicator
+@nugudi/react-components-menu-card
+@nugudi/react-components-bottom-sheet
+@nugudi/react-components-backdrop
 
 // Hook Packages
-@nugudi/react/hooks/button
-@nugudi/react/hooks/switch
-@nugudi/react/hooks/toggle
-@nugudi/react/hooks/use-stepper
+@nugudi/react-hooks-button
+@nugudi/react-hooks-switch
+@nugudi/react-hooks-toggle
+@nugudi/react-hooks-use-stepper
 
 // Core Packages
 @nugudi/api                  // API client + mocks
 @nugudi/themes               // Design tokens
-@nugudi/assets/icons         // Icon components
+@nugudi/assets-icons         // Icon components
 @nugudi/ui                   // Storybook UI documentation
 ```
 
@@ -555,12 +555,12 @@ pnpm storybook --filter=ui
 
 ```typescript
 // Component usage
-import Button from '@nugudi/react/components/button';
-import { Box, Flex } from '@nugudi/react/components/layout';
+import Button from '@nugudi/react-components-button';
+import { Box, Flex } from '@nugudi/react-components-layout';
 
 // Hook usage
-import { useToggle } from '@nugudi/react/hooks/toggle';
-import { useStepper } from '@nugudi/react/hooks/use-stepper';
+import { useToggle } from '@nugudi/react-hooks-toggle';
+import { useStepper } from '@nugudi/react-hooks-use-stepper';
 
 // API usage
 import { api } from '@nugudi/api';
@@ -569,7 +569,7 @@ import { api } from '@nugudi/api';
 import { variables } from '@nugudi/themes';
 
 // Icon usage
-import { Icons } from '@nugudi/assets/icons';
+import { Icons } from '@nugudi/assets-icons';
 ```
 
 ---
@@ -598,11 +598,11 @@ pnpm commit                 # Commit with commitizen
 
 ### Import Priority
 
-1. `@nugudi/react/components/*` - React components
-2. `@nugudi/react/hooks/*` - React hooks
+1. `@nugudi/react-components-*` - React components
+2. `@nugudi/react-hooks-*` - React hooks
 3. `@nugudi/api` - API client & mocks
 4. `@nugudi/themes` - Design tokens
-5. `@nugudi/assets/icons` - Icons
+5. `@nugudi/assets-icons` - Icons
 6. Domain-specific code
 7. Shared utilities
 
@@ -644,7 +644,7 @@ import { SignUpView } from '@/domains/auth/sign-up/ui/views/sign-up-view';
 
 ```typescript
 // ✅ CORRECT - Always use package imports for packages
-import Button from '@nugudi/react/components/button';
+import Button from '@nugudi/react-components-button';
 import { variables } from '@nugudi/themes';
 
 // ❌ WRONG - Never use relative imports for packages
