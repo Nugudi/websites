@@ -3,7 +3,7 @@ import { BottomSheet as _BottomSheet } from "@nugudi/react-components-bottom-she
 import { Button } from "@nugudi/react-components-button";
 import { Body, Title } from "@nugudi/react-components-layout";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 const meta: Meta<typeof _BottomSheet> = {
   title: "Components/BottomSheet",
@@ -51,9 +51,13 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: () => {
     const [isOpen, setIsOpen] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
 
     return (
-      <div style={{ minHeight: "100vh", padding: "2rem" }}>
+      <div
+        ref={containerRef}
+        style={{ minHeight: "100vh", padding: "2rem", position: "relative" }}
+      >
         <Button
           variant="brand"
           color="main"
@@ -67,6 +71,7 @@ export const Default: Story = {
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
           snapPoints={[50, 100]}
+          containerRef={containerRef}
         >
           <Title as="h2" fontSize="t2" style={{ marginBottom: "1rem" }}>
             Bottom Sheet Title
@@ -85,9 +90,13 @@ export const Default: Story = {
 export const MultipleSnapPoints: Story = {
   render: () => {
     const [isOpen, setIsOpen] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
 
     return (
-      <div style={{ minHeight: "100vh", padding: "2rem" }}>
+      <div
+        ref={containerRef}
+        style={{ minHeight: "100vh", padding: "2rem", position: "relative" }}
+      >
         <Button
           variant="brand"
           color="main"
@@ -102,6 +111,7 @@ export const MultipleSnapPoints: Story = {
           onClose={() => setIsOpen(false)}
           snapPoints={[25, 50, 90]}
           defaultSnapPoint={1}
+          containerRef={containerRef}
         >
           <Title as="h2" fontSize="t2" style={{ marginBottom: "1rem" }}>
             Multiple Snap Points
@@ -119,47 +129,17 @@ export const MultipleSnapPoints: Story = {
   },
 };
 
-// Without Handle
-export const WithoutHandle: Story = {
-  render: () => {
-    const [isOpen, setIsOpen] = useState(false);
-
-    return (
-      <div style={{ minHeight: "100vh", padding: "2rem" }}>
-        <Button
-          variant="brand"
-          color="main"
-          size="lg"
-          onClick={() => setIsOpen(true)}
-        >
-          Open without Handle
-        </Button>
-
-        <_BottomSheet
-          isOpen={isOpen}
-          onClose={() => setIsOpen(false)}
-          snapPoints={[70]}
-        >
-          <Title as="h2" fontSize="t2" style={{ marginBottom: "1rem" }}>
-            No Handle
-          </Title>
-          <Body fontSize="b2">
-            This bottom sheet doesn't have a drag handle. You can still close it
-            by clicking the overlay or pressing Escape.
-          </Body>
-        </_BottomSheet>
-      </div>
-    );
-  },
-};
-
 // No Overlay Click Close
 export const NoOverlayClose: Story = {
   render: () => {
     const [isOpen, setIsOpen] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
 
     return (
-      <div style={{ minHeight: "100vh", padding: "2rem" }}>
+      <div
+        ref={containerRef}
+        style={{ minHeight: "100vh", padding: "2rem", position: "relative" }}
+      >
         <Button
           variant="brand"
           color="main"
@@ -173,6 +153,7 @@ export const NoOverlayClose: Story = {
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
           snapPoints={[60]}
+          containerRef={containerRef}
         >
           <Title as="h2" fontSize="t2" style={{ marginBottom: "1rem" }}>
             Overlay Click Disabled
@@ -192,10 +173,14 @@ export const NoOverlayClose: Story = {
 export const ContentWithList: Story = {
   render: () => {
     const [isOpen, setIsOpen] = useState(false);
-    const items = ["Option 1", "Option 2", "Option 3", "Option 4", "Option 5"];
+    const containerRef = useRef<HTMLDivElement>(null);
+    const items = ["혜택 1", "혜택 2", "혜택 3", "혜택 4", "혜택 5"];
 
     return (
-      <div style={{ minHeight: "100vh", padding: "2rem" }}>
+      <div
+        ref={containerRef}
+        style={{ minHeight: "100vh", padding: "2rem", position: "relative" }}
+      >
         <Button
           variant="brand"
           color="main"
@@ -209,6 +194,7 @@ export const ContentWithList: Story = {
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
           snapPoints={[50, 90]}
+          containerRef={containerRef}
         >
           <Title as="h2" fontSize="t2" style={{ marginBottom: "1rem" }}>
             Select an Option
@@ -220,8 +206,9 @@ export const ContentWithList: Story = {
               <Button
                 key={item}
                 variant="neutral"
+                color="main"
+                size="md"
                 onClick={() => {
-                  console.log(`Selected: ${item}`);
                   setIsOpen(false);
                 }}
                 style={{ width: "100%", justifyContent: "flex-start" }}
@@ -240,9 +227,13 @@ export const ContentWithList: Story = {
 export const InteractiveForm: Story = {
   render: () => {
     const [isOpen, setIsOpen] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
 
     return (
-      <div style={{ minHeight: "100vh", padding: "2rem" }}>
+      <div
+        ref={containerRef}
+        style={{ minHeight: "100vh", padding: "2rem", position: "relative" }}
+      >
         <Button
           variant="brand"
           color="main"
@@ -256,6 +247,7 @@ export const InteractiveForm: Story = {
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
           snapPoints={[75]}
+          containerRef={containerRef}
         >
           <Title as="h2" fontSize="t2" style={{ marginBottom: "1.5rem" }}>
             Contact Form
@@ -314,11 +306,17 @@ export const InteractiveForm: Story = {
             </div>
 
             <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
-              <Button style={{ flex: 1 }} onClick={() => setIsOpen(false)}>
+              <Button
+                variant="brand"
+                color="main"
+                style={{ flex: 1 }}
+                onClick={() => setIsOpen(false)}
+              >
                 Submit
               </Button>
               <Button
                 variant="neutral"
+                color="main"
                 style={{ flex: 1 }}
                 onClick={() => setIsOpen(false)}
               >
