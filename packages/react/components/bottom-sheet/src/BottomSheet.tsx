@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as styles from "./style.css";
 import type { BottomSheetProps } from "./types";
 
@@ -11,7 +11,9 @@ export const BottomSheet = ({
   initialHeight = 50,
   snapPoints = [20, 50, 90],
   defaultSnapPoint = 0,
-  containerId = "mobile-layout-container",
+  containerRef,
+  maxHeightPercentage = 90,
+  closeThresholdRatio = 0.5,
 }: BottomSheetProps) => {
   const defaultHeight = snapPoints[defaultSnapPoint] || initialHeight;
   const [sheetHeight, setSheetHeight] = useState(defaultHeight);
@@ -19,6 +21,12 @@ export const BottomSheet = ({
   const [mounted, setMounted] = useState(false);
   const dragStartY = useRef<number>(0);
   const initialHeightRef = useRef<number>(defaultHeight);
+
+  // Memoize sorted snap points
+  const sortedSnapPoints = useMemo(
+    () => [...snapPoints].sort((a, b) => a - b),
+    [snapPoints],
+  );
 
   // Client-side only mounting
   useEffect(() => {
@@ -48,17 +56,17 @@ export const BottomSheet = ({
       if (!isDragging) return;
 
       const deltaY = dragStartY.current - e.clientY;
-      const container = document.getElementById(containerId);
-      const containerHeight = container?.clientHeight || window.innerHeight;
+      const containerHeight =
+        containerRef?.current?.clientHeight || window.innerHeight;
       const deltaPercentage = (deltaY / containerHeight) * 100;
       const newHeight = Math.min(
-        90, // Max 90% to keep handle visible
+        maxHeightPercentage,
         Math.max(0, initialHeightRef.current + deltaPercentage),
       );
 
       setSheetHeight(newHeight);
     },
-    [isDragging, containerId],
+    [isDragging, containerRef, maxHeightPercentage],
   );
 
   const handleDragEnd = useCallback(
@@ -69,11 +77,8 @@ export const BottomSheet = ({
       // Release pointer capture
       e.currentTarget.releasePointerCapture(e.pointerId);
 
-      // Find closest snap point
-      const sortedSnapPoints = [...snapPoints].sort((a, b) => a - b);
-
       // If below the lowest snap point, close
-      if (sheetHeight < sortedSnapPoints[0] * 0.5) {
+      if (sheetHeight < sortedSnapPoints[0] * closeThresholdRatio) {
         onClose();
         return;
       }
@@ -92,7 +97,7 @@ export const BottomSheet = ({
 
       setSheetHeight(closestSnapPoint);
     },
-    [isDragging, sheetHeight, onClose, snapPoints],
+    [isDragging, sheetHeight, onClose, sortedSnapPoints, closeThresholdRatio],
   );
 
   // Prevent body scroll when bottom sheet is open
@@ -136,6 +141,6 @@ export const BottomSheet = ({
     </div>
   );
 
-  // Always render directly without portal to ensure proper positioning
+  // Render directly to maintain current positioning behavior
   return bottomSheetContent;
 };

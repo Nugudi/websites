@@ -5,5 +5,7 @@ export interface BottomSheetProps {
   initialHeight?: number;
   snapPoints?: number[];
   defaultSnapPoint?: number;
-  containerId?: string;
+  containerRef?: React.RefObject<HTMLElement | null>;
+  maxHeightPercentage?: number;
+  closeThresholdRatio?: number;
 }
