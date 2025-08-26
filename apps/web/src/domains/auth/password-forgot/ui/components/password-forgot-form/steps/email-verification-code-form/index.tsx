@@ -12,8 +12,8 @@ import { useForm } from "react-hook-form";
 import {
   type PasswordForgotEmailVerificationCodeSchema,
   passwordForgotEmailVerificationCodeSchema,
-} from "@/src/domains/auth/password-forgot/schemas/password-forgot-schema";
-import { usePasswordForgotStore } from "@/src/domains/auth/password-forgot/stores/use-password-forgot-store";
+} from "../../../../../schemas/password-forgot-schema";
+import { usePasswordForgotStore } from "../../../../../stores/use-password-forgot-store";
 import * as styles from "./index.css";
 
 interface EmailVerificationCodeFormProps {

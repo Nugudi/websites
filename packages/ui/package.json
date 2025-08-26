@@ -39,6 +39,8 @@
     "@nugudi/react-components-switch": "workspace:*",
     "@nugudi/react-components-tab": "workspace:*",
     "@nugudi/react-components-textarea": "workspace:*",
+    "@nugudi/react-components-backdrop": "workspace:*",
+    "@nugudi/react-components-bottom-sheet": "workspace:*",
     "@nugudi/react-hooks-button": "workspace:*",
     "@nugudi/react-hooks-switch": "workspace:*",
     "@nugudi/react-hooks-toggle": "workspace:*",

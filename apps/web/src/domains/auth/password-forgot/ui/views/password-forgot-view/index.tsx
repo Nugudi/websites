@@ -1,6 +1,6 @@
 import { Flex } from "@nugudi/react-components-layout";
-import PasswordForgotSection from "@/src/domains/auth/password-forgot/ui/sections/password-forgot-section";
 import NavBar from "@/src/shared/ui/components/nav-bar";
+import PasswordForgotSection from "../../sections/password-forgot-section";
 import * as styles from "./index.css";
 
 const PasswordForgotView = () => {

@@ -6,15 +6,15 @@ import { Body, Box, Heading } from "@nugudi/react-components-layout";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { 약관목록 } from "@/src/domains/auth/sign-up/constants/sign-up";
+import { 약관목록 } from "../../../../../constants/sign-up";
 import {
   type SignUpAgreementSchema,
   signUpAgreementSchema,
-} from "@/src/domains/auth/sign-up/schemas/sign-up-schema";
-import { useSignUpStore } from "@/src/domains/auth/sign-up/stores/use-sign-up-store";
-import type { TermsAgreements } from "@/src/domains/auth/sign-up/types/sign-up";
-import Terms from "@/src/domains/auth/sign-up/ui/components/sign-up-form/steps/agreement-form/terms";
+} from "../../../../../schemas/sign-up-schema";
+import { useSignUpStore } from "../../../../../stores/use-sign-up-store";
+import type { TermsAgreements } from "../../../../../types/sign-up";
 import * as styles from "./index.css";
+import Terms from "./terms";
 
 const AgreementForm = () => {
   const { setData, resetAll } = useSignUpStore();
