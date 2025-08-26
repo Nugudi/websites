@@ -22,33 +22,6 @@ const meta: Meta<typeof _BottomSheet> = {
         category: "State",
       },
     },
-    showHandle: {
-      control: "boolean",
-      defaultValue: true,
-      table: {
-        type: { summary: "boolean" },
-        defaultValue: { summary: "true" },
-        category: "Appearance",
-      },
-    },
-    closeOnOverlayClick: {
-      control: "boolean",
-      defaultValue: true,
-      table: {
-        type: { summary: "boolean" },
-        defaultValue: { summary: "true" },
-        category: "Behavior",
-      },
-    },
-    closeOnEscape: {
-      control: "boolean",
-      defaultValue: true,
-      table: {
-        type: { summary: "boolean" },
-        defaultValue: { summary: "true" },
-        category: "Behavior",
-      },
-    },
     snapPoints: {
       control: "object",
       defaultValue: [50, 100],
@@ -81,7 +54,14 @@ export const Default: Story = {
 
     return (
       <div style={{ minHeight: "100vh", padding: "2rem" }}>
-        <Button onClick={() => setIsOpen(true)}>Open Bottom Sheet</Button>
+        <Button
+          variant="brand"
+          color="main"
+          size="lg"
+          onClick={() => setIsOpen(true)}
+        >
+          Open Bottom Sheet
+        </Button>
 
         <_BottomSheet
           isOpen={isOpen}
@@ -108,7 +88,14 @@ export const MultipleSnapPoints: Story = {
 
     return (
       <div style={{ minHeight: "100vh", padding: "2rem" }}>
-        <Button onClick={() => setIsOpen(true)}>Open with 3 Snap Points</Button>
+        <Button
+          variant="brand"
+          color="main"
+          size="lg"
+          onClick={() => setIsOpen(true)}
+        >
+          Open with 3 Snap Points
+        </Button>
 
         <_BottomSheet
           isOpen={isOpen}
@@ -139,12 +126,18 @@ export const WithoutHandle: Story = {
 
     return (
       <div style={{ minHeight: "100vh", padding: "2rem" }}>
-        <Button onClick={() => setIsOpen(true)}>Open without Handle</Button>
+        <Button
+          variant="brand"
+          color="main"
+          size="lg"
+          onClick={() => setIsOpen(true)}
+        >
+          Open without Handle
+        </Button>
 
         <_BottomSheet
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
-          showHandle={false}
           snapPoints={[70]}
         >
           <Title as="h2" fontSize="t2" style={{ marginBottom: "1rem" }}>
@@ -167,12 +160,18 @@ export const NoOverlayClose: Story = {
 
     return (
       <div style={{ minHeight: "100vh", padding: "2rem" }}>
-        <Button onClick={() => setIsOpen(true)}>Open (No Overlay Close)</Button>
+        <Button
+          variant="brand"
+          color="main"
+          size="lg"
+          onClick={() => setIsOpen(true)}
+        >
+          Open (No Overlay Close)
+        </Button>
 
         <_BottomSheet
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
-          closeOnOverlayClick={false}
           snapPoints={[60]}
         >
           <Title as="h2" fontSize="t2" style={{ marginBottom: "1rem" }}>
@@ -197,7 +196,14 @@ export const ContentWithList: Story = {
 
     return (
       <div style={{ minHeight: "100vh", padding: "2rem" }}>
-        <Button onClick={() => setIsOpen(true)}>Open List</Button>
+        <Button
+          variant="brand"
+          color="main"
+          size="lg"
+          onClick={() => setIsOpen(true)}
+        >
+          Open List
+        </Button>
 
         <_BottomSheet
           isOpen={isOpen}
@@ -237,7 +243,14 @@ export const InteractiveForm: Story = {
 
     return (
       <div style={{ minHeight: "100vh", padding: "2rem" }}>
-        <Button onClick={() => setIsOpen(true)}>Open Form</Button>
+        <Button
+          variant="brand"
+          color="main"
+          size="lg"
+          onClick={() => setIsOpen(true)}
+        >
+          Open Form
+        </Button>
 
         <_BottomSheet
           isOpen={isOpen}

@@ -1,105 +1,131 @@
 import { vars } from "@nugudi/themes";
-import { keyframes, style } from "@vanilla-extract/css";
+import { globalStyle, keyframes, style } from "@vanilla-extract/css";
 import { recipe } from "@vanilla-extract/recipes";
 
 const slideUp = keyframes({
-  from: { transform: "translateY(100%)" },
-  to: { transform: "translateY(0)" },
+  from: {
+    transform: "translateX(-50%) translateY(100%)",
+  },
+  to: {
+    transform: "translateX(-50%) translateY(0)",
+  },
 });
 
 const slideDown = keyframes({
-  from: { transform: "translateY(0)" },
-  to: { transform: "translateY(100%)" },
+  from: {
+    transform: "translateX(-50%) translateY(0)",
+  },
+  to: {
+    transform: "translateX(-50%) translateY(100%)",
+  },
 });
 
-export const containerStyle = recipe({
+export const modalContent = recipe({
   base: {
     position: "fixed",
     bottom: 0,
-    left: 0,
-    right: 0,
+    left: "50%",
+    transform: "translateX(-50%)",
+    width: "100%",
+    maxWidth: "100vw",
+    height: "50%",
+    maxHeight: "calc(100dvh - 40px)",
     backgroundColor: vars.colors.$static.light.color.white,
-    borderTopLeftRadius: vars.box.radii.xl,
-    borderTopRightRadius: vars.box.radii.xl,
-    boxShadow: vars.box.shadows.lg,
-    zIndex: 1000,
+    padding: `${vars.box.spacing["6"]} ${vars.box.spacing["5"]}`,
+    borderRadius: `${vars.box.radii["3xl"]} ${vars.box.radii["3xl"]} 0 0`,
+    boxShadow: vars.box.shadows.xl,
+    transition: "height 0.2s ease-out",
+    willChange: "height",
     display: "flex",
     flexDirection: "column",
-    touchAction: "none",
-    userSelect: "none",
-    overflow: "hidden",
-    willChange: "transform, height",
-  },
-  variants: {
-    state: {
-      entering: {
-        animation: `${slideUp} 0.3s cubic-bezier(0.32, 0.72, 0, 1)`,
-        animationFillMode: "forwards",
-      },
-      entered: {
-        transform: "translateY(0)",
-      },
-      exiting: {
-        animation: `${slideDown} 0.3s cubic-bezier(0.32, 0.72, 0, 1)`,
-        animationFillMode: "forwards",
-      },
-      exited: {
-        transform: "translateY(100%)",
-        visibility: "hidden",
+    zIndex: 1001,
+    boxSizing: "border-box",
+    overflowX: "hidden",
+    touchAction: "none", // Prevent browser touch gestures interfering
+    "@media": {
+      "(min-width: 601px)": {
+        width: "min(600px, 100vw)",
       },
     },
-    isDragging: {
+  },
+  variants: {
+    dragging: {
       true: {
         transition: "none",
       },
       false: {
-        transition: "height 0.3s cubic-bezier(0.32, 0.72, 0, 1)",
+        transition: "height 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+      },
+    },
+    visible: {
+      true: {
+        animation: `${slideUp} 0.3s ease-out`,
+      },
+      false: {
+        animation: `${slideDown} 0.3s ease-out`,
       },
     },
   },
   defaultVariants: {
-    isDragging: false,
+    dragging: false,
+    visible: false,
   },
 });
 
-export const handleContainerStyle = style({
-  width: "100%",
-  padding: "0.75rem",
+export const modalHeader = style({
   display: "flex",
   justifyContent: "center",
-  alignItems: "center",
-  cursor: "grab",
-  touchAction: "none",
-  background: "transparent",
-  border: "none",
-  outline: "none",
-  selectors: {
-    "&:active": {
-      cursor: "grabbing",
+  marginBottom: "10px",
+});
+
+export const dragIcon = recipe({
+  base: {
+    cursor: "grab",
+    userSelect: "none",
+    padding: "15px 30px",
+    marginTop: "-15px",
+    marginBottom: "-10px",
+    display: "inline-block",
+    background: "transparent",
+    border: "none",
+    touchAction: "none", // Prevent browser touch gestures
+    WebkitTapHighlightColor: "transparent", // Remove tap highlight on mobile
+  },
+  variants: {
+    dragging: {
+      true: {
+        cursor: "grabbing",
+      },
+      false: {
+        cursor: "grab",
+      },
     },
-    "&:focus-visible": {
-      outline: "2px solid",
-      outlineColor: vars.colors.$scale.main[500],
-      outlineOffset: "-2px",
-      borderRadius: vars.box.radii.md,
-    },
+  },
+  defaultVariants: {
+    dragging: false,
   },
 });
 
-export const handleStyle = style({
-  width: "3rem",
-  height: "0.25rem",
+export const dragIconLine = style({
+  height: "4px",
+  width: "48px",
+  display: "block",
+  backgroundColor: vars.colors.$scale.zinc[400],
   borderRadius: vars.box.radii.full,
-  backgroundColor: vars.colors.$scale.zinc[300],
+  transition: "background-color 0.2s ease",
+  ":hover": {
+    backgroundColor: vars.colors.$scale.zinc[500],
+  },
 });
 
-export const contentStyle = style({
+export const modalBody = style({
+  width: "100%",
   flex: 1,
   overflowY: "auto",
-  overflowX: "hidden",
-  padding: "0 1.5rem 1.5rem",
-  WebkitOverflowScrolling: "touch",
+  padding: "15px 0 40px 0",
   minHeight: 0,
-  maxHeight: "100%",
-  scrollbarGutter: "stable",
+});
+
+globalStyle(`${modalBody}::-webkit-scrollbar`, {
+  display: "none",
 });
