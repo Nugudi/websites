@@ -129,45 +129,6 @@ export const MultipleSnapPoints: Story = {
   },
 };
 
-// Without Handle
-export const WithoutHandle: Story = {
-  render: () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const containerRef = useRef<HTMLDivElement>(null);
-
-    return (
-      <div
-        ref={containerRef}
-        style={{ minHeight: "100vh", padding: "2rem", position: "relative" }}
-      >
-        <Button
-          variant="brand"
-          color="main"
-          size="lg"
-          onClick={() => setIsOpen(true)}
-        >
-          Open without Handle
-        </Button>
-
-        <_BottomSheet
-          isOpen={isOpen}
-          onClose={() => setIsOpen(false)}
-          snapPoints={[70]}
-          containerRef={containerRef}
-        >
-          <Title as="h2" fontSize="t2" style={{ marginBottom: "1rem" }}>
-            No Handle
-          </Title>
-          <Body fontSize="b2">
-            This bottom sheet doesn't have a drag handle. You can still close it
-            by clicking the overlay or pressing Escape.
-          </Body>
-        </_BottomSheet>
-      </div>
-    );
-  },
-};
-
 // No Overlay Click Close
 export const NoOverlayClose: Story = {
   render: () => {
@@ -213,7 +174,7 @@ export const ContentWithList: Story = {
   render: () => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
-    const items = ["Option 1", "Option 2", "Option 3", "Option 4", "Option 5"];
+    const items = ["혜택 1", "혜택 2", "혜택 3", "혜택 4", "혜택 5"];
 
     return (
       <div
@@ -245,8 +206,9 @@ export const ContentWithList: Story = {
               <Button
                 key={item}
                 variant="neutral"
+                color="main"
+                size="md"
                 onClick={() => {
-                  console.log(`Selected: ${item}`);
                   setIsOpen(false);
                 }}
                 style={{ width: "100%", justifyContent: "flex-start" }}
@@ -344,11 +306,17 @@ export const InteractiveForm: Story = {
             </div>
 
             <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
-              <Button style={{ flex: 1 }} onClick={() => setIsOpen(false)}>
+              <Button
+                variant="brand"
+                color="main"
+                style={{ flex: 1 }}
+                onClick={() => setIsOpen(false)}
+              >
                 Submit
               </Button>
               <Button
                 variant="neutral"
+                color="main"
                 style={{ flex: 1 }}
                 onClick={() => setIsOpen(false)}
               >
