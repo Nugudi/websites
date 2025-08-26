@@ -17,7 +17,7 @@ const MobileFirstLayout = ({ children }: MobileFirstLayoutProps) => {
   const showTabBar = TAB_BAR_PATHS.includes(pathname);
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} id="mobile-layout-container">
       <Flex
         direction="column"
         align="center"

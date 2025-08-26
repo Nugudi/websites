@@ -1,12 +1,14 @@
 import { Flex } from "@nugudi/react-components-layout";
 import { MenuCard } from "@nugudi/react-components-menu-card";
 import Link from "next/link";
+import { BottomSheetContainer } from "@/src/shared/ui/components/bottom-sheet/bottom-sheet-container";
 import TabBar from "@/src/shared/ui/components/tab-bar";
 import * as styles from "./page.css";
 
 const HomePage = () => {
   return (
     <Flex direction="column" className={styles.container}>
+      <BottomSheetContainer />
       <Link href="/auth/sign-in">로그인</Link>
       <MenuCard
         title="너구리 푸드"

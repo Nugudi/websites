@@ -1,15 +1,9 @@
-import type { HTMLAttributes, PropsWithChildren } from "react";
-
-export type BottomSheetProps = PropsWithChildren<
-  {
-    isOpen: boolean;
-    onClose: () => void;
-    snapPoints?: number[];
-    defaultSnapPoint?: number;
-    showHandle?: boolean;
-    closeOnOverlayClick?: boolean;
-    closeOnEscape?: boolean;
-    overlayClassName?: string;
-    contentClassName?: string;
-  } & HTMLAttributes<HTMLDivElement>
->;
+export interface BottomSheetProps {
+  isOpen: boolean;
+  onClose: () => void;
+  children?: React.ReactNode;
+  initialHeight?: number;
+  snapPoints?: number[];
+  defaultSnapPoint?: number;
+  containerId?: string;
+}
