@@ -3,7 +3,7 @@ import { BenefitCard } from "../../components/benefit-card";
 
 export const UserBenefitSection = () => {
   return (
-    <HStack gap="16px">
+    <HStack gap={16}>
       <BenefitCard />
       <BenefitCard />
     </HStack>

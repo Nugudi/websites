@@ -12,6 +12,15 @@ This is a **Turbo-powered pnpm workspace monorepo** with a **Design System-first
 nugudi/
 ├── apps/                    # Applications
 │   └── web/                # Next.js 15 + React 19 (Main Web App)
+│       └── app/           # Next.js App Router
+│           ├── (auth)/    # 🔒 Protected routes - Require authentication
+│           │   ├── benefits/     # Benefits page (authenticated users only)
+│           │   └── my/          # My page/profile (authenticated users only)
+│           └── (public)/  # 🌍 Public routes - No authentication required
+│               ├── auth/        # Auth-related public pages
+│               │   ├── sign-in/ # Sign in page
+│               │   └── sign-up/ # Sign up page
+│               └── home/        # Public home page
 ├── packages/               # Shared packages (ALWAYS use these!)
 │   ├── ui/                # Aggregated UI library with Storybook
 │   ├── api/               # OpenAPI client + MSW mocks
@@ -22,6 +31,19 @@ nugudi/
 │       └── hooks/         # React hooks
 └── turbo.json             # Monorepo task orchestration
 ```
+
+### 🔐 Route Groups: Authentication Structure
+
+Next.js 15 route groups organize pages by authentication requirements:
+
+- **(auth)**: Protected pages requiring user authentication
+  - All pages inside this group require a logged-in user
+  - Examples: `/benefits`, `/my`, user dashboard, etc.
+- **(public)**: Public pages accessible without authentication
+  - All pages inside this group are accessible to everyone
+  - Examples: `/auth/sign-in`, `/auth/sign-up`, `/home`, etc.
+
+**Note**: Route groups (parentheses folders) don't affect the URL structure - they're purely for organization.
 
 ---
 
@@ -125,7 +147,7 @@ import Button from '@nugudi/react-components-button';
 import Input from '@nugudi/react-components-input';
 import { Box, Flex, VStack, HStack } from '@nugudi/react-components-layout';
 import Chip from '@nugudi/react-components-chip';
-import NavigationItem from '@nugudi/react-components-navigation-item';
+import { NavigationItem } from '@nugudi/react-components-navigation-item';  // Named export
 import Switch from '@nugudi/react-components-switch';
 import Tab from '@nugudi/react-components-tab';
 import Textarea from '@nugudi/react-components-textarea';
@@ -134,6 +156,15 @@ import StepIndicator from '@nugudi/react-components-step-indicator';
 import MenuCard from '@nugudi/react-components-menu-card';
 import BottomSheet from '@nugudi/react-components-bottom-sheet';
 import Backdrop from '@nugudi/react-components-backdrop';
+
+// NavigationItem usage example
+<NavigationItem
+  leftIcon={<CoinIcon />}
+  rightIcon={<ArrowRightIcon />}
+  onClick={() => console.log('clicked')}
+>
+  <div>Content with title and description</div>
+</NavigationItem>
 ```
 
 ### React Hooks (`@nugudi/react-hooks-*`)
@@ -167,25 +198,85 @@ import { handlers } from '@nugudi/api/index.msw';
 
 ### Themes (`@nugudi/themes`)
 
-```typescript
-// Design tokens and theme configuration
-import { variables } from '@nugudi/themes';
-import { classes } from '@nugudi/themes';
+#### Design Foundation Structure
 
-// Use CSS custom properties through Vanilla Extract
-const { colors, typography, box } = variables;
+**vars** - Design tokens available:
+
+```typescript
+// Colors
+vars.colors.$static       // Static colors
+vars.colors.$scale        // Color scales
+  - whiteAlpha[100, 200, 300, 400, 500, 600, 700, 800, 900]
+  - blackAlpha[100, 200, 300, 400, 500, 600, 700, 800, 900]
+  - gray[50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]
+  - red, yellow, green, blue, etc. (same scale)
+
+// Spacing
+vars.box.spacing[0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64]
+
+// Border Radius
+vars.box.radii
+  - none, sm, md, lg, xl, 2xl, 3xl, full
+
+// Shadows
+vars.box.shadows
+  - xs, sm, md, lg, xl, 2xl, inner
+
+// Typography
+vars.typography.fontSize
+vars.typography.fontWeight
+vars.typography.lineHeight
+```
+
+**classes** - Pre-defined utility classes:
+
+```typescript
+// Common classes available
+classes.container;
+classes.flexCenter;
+classes.stack;
+// Check the actual theme package for full list
+```
+
+#### Usage Example
+
+```typescript
+import { vars, classes } from '@nugudi/themes';
+import { style } from '@vanilla-extract/css';
+
+// Use pre-defined classes when available
+export const container = classes.container;
+
+// Use design tokens for custom styles
+export const customCard = style({
+  backgroundColor: vars.colors.$scale.whiteAlpha[100],
+  borderRadius: vars.box.radii.lg,
+  padding: vars.box.spacing[16],
+  boxShadow: vars.box.shadows.sm,
+});
 ```
 
 ### Assets (`@nugudi/assets-icons`)
 
 ```typescript
-// Icon components
-import { Icons } from '@nugudi/assets-icons';
+// Icon components - Import individual icons directly
+import { AppleIcon, HeartIcon, CalendarIcon } from '@nugudi/assets-icons';
+import { ChevronRightIcon, ArrowRightIcon } from '@nugudi/assets-icons';
+import { CoinIcon } from '@nugudi/assets-icons';
 
-// Use icons
-<Icons.Apple />
-<Icons.Heart />
-<Icons.Calendar />
+// Use icons as components
+<AppleIcon />
+<HeartIcon />
+<CalendarIcon />
+<ChevronRightIcon />
+
+// Example usage in NavigationItem
+<NavigationItem
+  leftIcon={<CoinIcon />}
+  rightIcon={<ArrowRightIcon />}
+>
+  Content
+</NavigationItem>
 ```
 
 ---
@@ -197,27 +288,33 @@ import { Icons } from '@nugudi/assets-icons';
 ```
 apps/web/
 ├── app/                    # Next.js App Router
-│   ├── auth/              # Auth routes
-│   │   ├── sign-in/       # Sign in pages
-│   │   ├── sign-up/       # Sign up pages
-│   │   └── my/            # User profile
-│   ├── benefits/          # Benefits page
-│   └── layout.tsx         # Root layout
+│   ├── (auth)/            # Protected routes
+│   │   ├── benefits/
+│   │   └── my/
+│   └── (public)/          # Public routes
+│       └── auth/
+│           ├── sign-in/
+│           └── sign-up/
 ├── src/
 │   ├── domains/           # Domain logic
-│   │   └── auth/          # Authentication domain
-│   │       ├── sign-in/
-│   │       ├── sign-up/
-│   │       ├── my/
-│   │       └── password-forgot/
-│   │           ├── constants/
-│   │           ├── schemas/
-│   │           ├── stores/
-│   │           ├── types/
-│   │           └── ui/
-│   │               ├── components/
-│   │               ├── sections/
-│   │               └── views/
+│   │   ├── auth/          # Complex domain with multiple features
+│   │   │   ├── sign-in/
+│   │   │   ├── sign-up/
+│   │   │   ├── my/
+│   │   │   └── password-forgot/
+│   │   │       ├── constants/
+│   │   │       ├── schemas/
+│   │   │       ├── stores/
+│   │   │       ├── types/
+│   │   │       └── ui/
+│   │   │           ├── components/
+│   │   │           ├── sections/
+│   │   │           └── views/
+│   │   └── benefit/       # Simple domain without sub-features
+│   │       └── ui/        # UI directly under domain
+│   │           ├── components/
+│   │           ├── sections/
+│   │           └── views/
 │   └── shared/            # Shared utilities
 │       ├── configs/       # Configuration
 │       ├── providers/     # React providers
@@ -289,24 +386,49 @@ export const useSignUpStore = create<SignUpStore>((set) => ({
 
 ## 🎨 Styling Guidelines
 
+### 🚨 CRITICAL: Style Priority Rules
+
+**YOU MUST check and use existing styles in this EXACT order:**
+
+1. **FIRST - Check `classes`**: Always check if a pre-defined class exists
+   - `classes.container`, `classes.flexCenter`, etc.
+2. **SECOND - Use `vars`**: Use design tokens for all style properties
+   - Colors: `vars.colors.$scale.gray[500]` NOT `#6B7280`
+   - Spacing: `vars.box.spacing[16]` NOT `16px`
+   - Radius: `vars.box.radii.lg` NOT `12px`
+   - Shadows: `vars.box.shadows.sm` NOT custom shadows
+3. **LAST - Custom values**: Only for specific requirements
+   - Specific widths/heights: `width: "149px"` (when design requires exact size)
+
+**❌ NEVER use hard-coded values when vars exist!**
+
 ### Vanilla Extract Usage
 
 ```typescript
-// ✅ CORRECT - Use Vanilla Extract for component styles
-// style.css.ts
+// ✅ CORRECT - Always prioritize existing theme values
+// index.css.ts
 import { style } from '@vanilla-extract/css';
-import { variables } from '@nugudi/themes';
+import { vars, classes } from '@nugudi/themes';
 
-export const button = style({
-  padding: variables.box.spacing.md,
-  borderRadius: variables.box.radii.md,
-  backgroundColor: variables.colors.primary,
+// FIRST: Check if there's a pre-defined class
+export const container = classes.container; // If exists
+
+// SECOND: Use design tokens from vars
+export const customCard = style({
+  // Always use vars for consistent design
+  padding: vars.box.spacing[16],  // NOT: padding: '16px'
+  borderRadius: vars.box.radii.lg,  // NOT: borderRadius: '12px'
+  backgroundColor: vars.colors.$scale.whiteAlpha[100],  // NOT: backgroundColor: 'white'
+  boxShadow: vars.box.shadows.sm,  // NOT: boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+
+  // Only use custom values when absolutely necessary
+  width: "149px",  // OK if specific requirement
 });
 
 // Component file
-import * as styles from './style.css';
+import * as styles from './index.css';
 
-<button className={styles.button}>Click me</button>
+<div className={styles.customCard}>Content</div>
 ```
 
 ### CSS Modules for App-specific Styles
@@ -568,8 +690,8 @@ import { api } from '@nugudi/api';
 // Theme usage
 import { variables } from '@nugudi/themes';
 
-// Icon usage
-import { Icons } from '@nugudi/assets-icons';
+// Icon usage - Import individual icons
+import { AppleIcon, HeartIcon, ArrowRightIcon } from '@nugudi/assets-icons';
 ```
 
 ---
@@ -635,9 +757,13 @@ import * as styles from './index.css';
 // From: src/domains/menu/...
 import { useAuth } from '@/domains/auth/hooks/use-auth';
 
-// ✅ CORRECT - From app pages
-// From: app/auth/sign-up/page.tsx
+// ✅ CORRECT - From app pages (public routes)
+// From: app/(public)/auth/sign-up/page.tsx
 import { SignUpView } from '@/domains/auth/sign-up/ui/views/sign-up-view';
+
+// ✅ CORRECT - From app pages (protected routes)
+// From: app/(auth)/benefits/page.tsx
+import { BenefitPageView } from '@/domains/benefit/ui/views/benefit-page-view';
 ```
 
 #### Package Imports - Always Use Package Path

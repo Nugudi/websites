@@ -5,32 +5,43 @@
 ```
 apps/web/
 ├── app/                       # Next.js App Router pages
-│   ├── auth/                 # Public auth routes
-│   │   ├── sign-in/
-│   │   │   ├── page.tsx
-│   │   │   └── email/
-│   │   │       └── page.tsx
-│   │   ├── sign-up/
+│   ├── (auth)/               # 🔒 Protected routes (require authentication)
+│   │   ├── benefits/         # Benefits page for logged-in users
 │   │   │   └── page.tsx
-│   │   ├── my/
-│   │   │   └── page.tsx
-│   │   └── password/
-│   │       └── forgot/
-│   │           └── page.tsx
-│   └── benefits/
-│       └── page.tsx          # Server Component - Entry Point
+│   │   └── my/               # My page/profile for logged-in users
+│   │       └── page.tsx
+│   └── (public)/             # 🌍 Public routes (no authentication required)
+│       ├── auth/             # Authentication-related public pages
+│       │   ├── sign-in/
+│       │   │   ├── page.tsx
+│       │   │   └── email/
+│       │   │       └── page.tsx
+│       │   ├── sign-up/
+│       │   │   └── page.tsx
+│       │   └── password/
+│       │       └── forgot/
+│       │           └── page.tsx
+│       └── home/             # Public home page
+│           └── page.tsx
 └── src/
     └── domains/              # Domain-based architecture
-        └── [domain]/         # e.g., auth, menu, benefits
-            └── [feature]/    # e.g., sign-in, sign-up, password-forgot
-                ├── constants/    # Feature constants
-                ├── schemas/      # Validation schemas (Zod)
-                ├── stores/       # State management (Zustand)
-                ├── types/        # TypeScript types
+        └── [domain]/         # e.g., auth, menu, benefit
+            # Option 1: Complex domains with multiple features
+            └── [feature]/    # e.g., auth/sign-in, auth/sign-up, auth/my
+                ├── constants/
+                ├── schemas/
+                ├── stores/
+                ├── types/
                 └── ui/
                     ├── views/
                     ├── sections/
                     └── components/
+
+            # Option 2: Simple domains without sub-features
+            └── ui/           # e.g., benefit/ui (directly under domain)
+                ├── views/
+                ├── sections/
+                └── components/
 ```
 
 ## Layer-by-Layer Rules
@@ -257,8 +268,13 @@ import { PasswordForm } from './steps/password-form';
 ### From Page to View
 
 ```typescript
-// In: app/auth/sign-up/page.tsx
+// Public route example
+// In: app/(public)/auth/sign-up/page.tsx
 import { SignUpView } from '@/domains/auth/sign-up/ui/views/sign-up-view';
+
+// Protected route example
+// In: app/(auth)/benefits/page.tsx
+import { BenefitPageView } from '@/domains/benefit/ui/views/benefit-page-view';
 ```
 
 ### Cross-Domain Imports
@@ -356,21 +372,23 @@ const SectionContent = ({ param }) => {
 
 ## Best Practices Summary
 
-1. **Page**: Server-side data prefetching only (`app/auth/[feature]/page.tsx`)
-2. **View**: Layout composition only (`domains/[domain]/[feature]/ui/views/`)
-3. **Section**: Business logic + Error/Loading boundaries (`ui/sections/`)
-4. **Component**: Pure UI components (`ui/components/`)
-5. **Always use** Suspense + ErrorBoundary in Sections
-6. **Never skip** the hierarchy (Page → View → Section → Component)
-7. **Keep components** pure and reusable
-8. **Colocate** related files within domains
-9. **Name consistently** following the patterns above
-10. **Separate concerns** strictly between layers
-11. **Each component** must be in its own folder with `index.tsx` and `index.css.ts`
-12. **Domain logic** (stores, schemas, types) stays outside the `ui/` folder
-13. **Use Vanilla Extract** for styling (NOT CSS Modules, NOT inline styles)
-14. **Always prefer** existing packages from `@nugudi/*` namespace
-15. **Follow monorepo** import conventions from packages.md
+1. **Route Groups**: Use `(auth)` for protected pages, `(public)` for public pages
+2. **Page**: Server-side data prefetching only (`app/(auth|public)/[domain]/page.tsx`)
+3. **View**: Layout composition only (`domains/[domain]/[feature?]/ui/views/`)
+4. **Section**: Business logic + Error/Loading boundaries (`ui/sections/`)
+5. **Component**: Pure UI components (`ui/components/`)
+6. **Always use** Suspense + ErrorBoundary in Sections
+7. **Never skip** the hierarchy (Page → View → Section → Component)
+8. **Keep components** pure and reusable
+9. **Domain Structure**: Use sub-features for complex domains (auth), direct UI for simple domains (benefit)
+10. **Name consistently** following the patterns above
+11. **Separate concerns** strictly between layers
+12. **Each component** must be in its own folder with `index.tsx` and `index.css.ts`
+13. **Domain logic** (stores, schemas, types) stays outside the `ui/` folder
+14. **Use Vanilla Extract** with `vars` and `classes` from `@nugudi/themes`
+15. **Always prefer** existing packages from `@nugudi/*` namespace
+16. **Client Components**: Add `"use client"` when using event handlers or hooks
+17. **Follow monorepo** import conventions from packages.md
 
 ## TypeScript Interface Rules
 

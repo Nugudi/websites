@@ -3,6 +3,14 @@
 This document summarizes key frontend design principles and rules, showcasing
 recommended patterns. Follow these guidelines when writing frontend code.
 
+## 🎨 IMPORTANT: Always Use Design Tokens
+
+**MUST use `vars` and `classes` from `@nugudi/themes`:**
+- Colors: Use `vars.colors.$scale.gray[500]` NOT hard-coded colors
+- Spacing: Use `vars.box.spacing[16]` NOT `16px`
+- Radius: Use `vars.box.radii.lg` NOT `12px`
+- Shadows: Use `vars.box.shadows.sm` NOT custom shadows
+
 # Readability
 
 Improving the clarity and ease of understanding code.
