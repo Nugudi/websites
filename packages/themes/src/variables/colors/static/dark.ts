@@ -24,7 +24,7 @@ export const color = {
   black: "#121212",
   white: "#FFFFFF",
   red: "#F44336",
-  backdrop: "rgba(0, 0, 0, 0.5)",
+  backdrop: "rgba(0, 0, 0, 0.6)",
 };
 
 export const gradient = {
