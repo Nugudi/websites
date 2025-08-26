@@ -143,28 +143,28 @@ Co-Authored-By: Claude <noreply@anthropic.com>"  # NO!
 
 ```typescript
 // Individual component imports
-import Button from "@nugudi/react-components-button";
-import Input from "@nugudi/react-components-input";
-import { Box, Flex, VStack, HStack } from "@nugudi/react-components-layout";
-import Chip from "@nugudi/react-components-chip";
-import { NavigationItem } from "@nugudi/react-components-navigation-item"; // Named export
-import Switch from "@nugudi/react-components-switch";
-import Tab from "@nugudi/react-components-tab";
-import Textarea from "@nugudi/react-components-textarea";
-import InputOTP from "@nugudi/react-components-input-otp";
-import StepIndicator from "@nugudi/react-components-step-indicator";
-import MenuCard from "@nugudi/react-components-menu-card";
-import BottomSheet from "@nugudi/react-components-bottom-sheet";
-import Backdrop from "@nugudi/react-components-backdrop";
+import Button from '@nugudi/react-components-button';
+import Input from '@nugudi/react-components-input';
+import { Box, Flex, VStack, HStack } from '@nugudi/react-components-layout';
+import Chip from '@nugudi/react-components-chip';
+import { NavigationItem } from '@nugudi/react-components-navigation-item';  // Named export
+import Switch from '@nugudi/react-components-switch';
+import Tab from '@nugudi/react-components-tab';
+import Textarea from '@nugudi/react-components-textarea';
+import InputOTP from '@nugudi/react-components-input-otp';
+import StepIndicator from '@nugudi/react-components-step-indicator';
+import MenuCard from '@nugudi/react-components-menu-card';
+import BottomSheet from '@nugudi/react-components-bottom-sheet';
+import Backdrop from '@nugudi/react-components-backdrop';
 
 // NavigationItem usage example
 <NavigationItem
   leftIcon={<CoinIcon />}
   rightIcon={<ArrowRightIcon />}
-  onClick={() => console.log("clicked")}
+  onClick={() => console.log('clicked')}
 >
   <div>Content with title and description</div>
-</NavigationItem>;
+</NavigationItem>
 ```
 
 ### React Hooks (`@nugudi/react-hooks-*`)
@@ -407,8 +407,8 @@ export const useSignUpStore = create<SignUpStore>((set) => ({
 ```typescript
 // ✅ CORRECT - Always prioritize existing theme values
 // index.css.ts
-import { style } from "@vanilla-extract/css";
-import { vars, classes } from "@nugudi/themes";
+import { style } from '@vanilla-extract/css';
+import { vars, classes } from '@nugudi/themes';
 
 // FIRST: Check if there's a pre-defined class
 export const container = classes.container; // If exists
@@ -416,19 +416,19 @@ export const container = classes.container; // If exists
 // SECOND: Use design tokens from vars
 export const customCard = style({
   // Always use vars for consistent design
-  padding: vars.box.spacing[16], // NOT: padding: '16px'
-  borderRadius: vars.box.radii.lg, // NOT: borderRadius: '12px'
-  backgroundColor: vars.colors.$scale.whiteAlpha[100], // NOT: backgroundColor: 'white'
-  boxShadow: vars.box.shadows.sm, // NOT: boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+  padding: vars.box.spacing[16],  // NOT: padding: '16px'
+  borderRadius: vars.box.radii.lg,  // NOT: borderRadius: '12px'
+  backgroundColor: vars.colors.$scale.whiteAlpha[100],  // NOT: backgroundColor: 'white'
+  boxShadow: vars.box.shadows.sm,  // NOT: boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
 
   // Only use custom values when absolutely necessary
-  width: "149px", // OK if specific requirement
+  width: "149px",  // OK if specific requirement
 });
 
 // Component file
-import * as styles from "./index.css";
+import * as styles from './index.css';
 
-<div className={styles.customCard}>Content</div>;
+<div className={styles.customCard}>Content</div>
 ```
 
 ### CSS Modules for App-specific Styles

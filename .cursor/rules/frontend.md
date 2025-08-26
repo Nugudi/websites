@@ -2,53 +2,30 @@
 
 ## Component Hierarchy Overview
 
-```
-apps/web/
-├── app/                       # Next.js App Router pages
-│   ├── (auth)/               # 🔒 Protected routes (require authentication)
-│   │   ├── benefits/         # Benefits page for logged-in users
-│   │   │   └── page.tsx
-│   │   └── my/               # My page/profile for logged-in users
-│   │       └── page.tsx
-│   └── (public)/             # 🌍 Public routes (no authentication required)
-│       ├── auth/             # Authentication-related public pages
-│       │   ├── sign-in/
-│       │   │   ├── page.tsx
-│       │   │   └── email/
-│       │   │       └── page.tsx
-│       │   ├── sign-up/
-│       │   │   └── page.tsx
-│       │   └── password/
-│       │       └── forgot/
-│       │           └── page.tsx
-│       └── home/             # Public home page
-│           └── page.tsx
-└── src/
-    └── domains/              # Domain-based architecture
-        └── [domain]/         # e.g., auth, menu, benefit
-            # Option 1: Complex domains with multiple features
-            └── [feature]/    # e.g., auth/sign-in, auth/sign-up, auth/my
-                ├── constants/
-                ├── schemas/
-                ├── stores/
-                ├── types/
-                └── ui/
-                    ├── views/
-                    ├── sections/
-                    └── components/
+## 🎨 IMPORTANT: Always Use Design Tokens
+
+**MUST use `vars` and `classes` from `@nugudi/themes`:**
+
+- Colors: Use `vars.colors.$scale.gray[500]` NOT hard-coded colors
+- Spacing: Use `vars.box.spacing[16]` NOT `16px`
+- Radius: Use `vars.box.radii.lg` NOT `12px`
+- Shadows: Use `vars.box.shadows.sm` NOT custom shadows
+
+# Readability
 
             # Option 2: Simple domains without sub-features
             └── ui/           # e.g., benefit/ui (directly under domain)
                 ├── views/
                 ├── sections/
                 └── components/
-```
+
+````
 
 ## Layer-by-Layer Rules
 
 ### 1. Page Layer (`app/[domain]/[feature]/page.tsx`)
 
-**Type**: Server Component  
+**Type**: Server Component
 **Purpose**: Route entry point, data prefetching, metadata setup
 
 ```typescript
@@ -65,7 +42,7 @@ const Page = async ({ params, searchParams }) => {
   // 2. Prefetch data on server
   // 3. Return View wrapped in HydrationBoundary
 };
-```
+````
 
 ### 2. View Layer (`ui/views/`)
 
