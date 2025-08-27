@@ -980,6 +980,7 @@ vars.typography; // Typography tokens
 ```
 
 Remember: **Component-first, Hook-first development** - Always create in `packages/react` first, then document in `packages/ui`!
+<<<<<<< HEAD
 
 ---
 
@@ -1109,4 +1110,6 @@ The user should NEVER have to remind you about:
 - Adding to `packages/ui/package.json`
 - Matching the visual design exactly
 
-**NO EXCUSES - GET IT RIGHT ON FIRST ATTEMPT!**
+# **NO EXCUSES - GET IT RIGHT ON FIRST ATTEMPT!**
+
+> > > > > > > 8ddf8b3 ([NUGUDI-108] docs(root): 프로젝트 문서 업데이트 및 가이드라인 개선)
