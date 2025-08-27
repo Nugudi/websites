@@ -2,7 +2,6 @@ import { vars } from "@nugudi/themes";
 import { clsx } from "clsx";
 import * as React from "react";
 import { BaseStyle, StyleSprinkles } from "../core/style.css";
-import { extractSprinkleProps } from "../utils/properties";
 import type { BoxProps } from "./types";
 
 const Box = (props: BoxProps, ref: React.Ref<HTMLElement>) => {
@@ -10,32 +9,113 @@ const Box = (props: BoxProps, ref: React.Ref<HTMLElement>) => {
     as = "div",
     color,
     background,
+    // Width and height properties with shorthands
+    width,
+    w,
+    height,
+    h,
+    maxWidth,
+    maxW,
+    minWidth,
+    minW,
+    maxHeight,
+    maxH,
+    minHeight,
+    minH,
+    size,
+    maxSize,
+    minSize,
+    sizeX,
+    sizeY,
+    // Margin and padding properties with shorthands
+    m,
+    marginTop,
+    marginRight,
+    marginBottom,
+    marginLeft,
+    mt,
+    mr,
+    mb,
+    ml,
+    mX,
+    mY,
+    p,
+    paddingTop,
+    paddingRight,
+    paddingBottom,
+    paddingLeft,
+    pt,
+    pr,
+    pb,
+    pl,
+    pX,
+    pY,
+    // Other style properties
     borderRadius,
-    padding,
     boxShadow,
     children,
+    className,
+    style,
     ...restProps
   } = props;
+
+  const sprinkleProps = {
+    // Width and height properties
+    width,
+    w,
+    height,
+    h,
+    maxWidth,
+    maxW,
+    minWidth,
+    minW,
+    maxHeight,
+    maxH,
+    minHeight,
+    minH,
+    size,
+    maxSize,
+    minSize,
+    sizeX,
+    sizeY,
+    // Margin and padding properties
+    m,
+    marginTop,
+    marginRight,
+    marginBottom,
+    marginLeft,
+    mt,
+    mr,
+    mb,
+    ml,
+    mX,
+    mY,
+    p,
+    paddingTop,
+    paddingRight,
+    paddingBottom,
+    paddingLeft,
+    pt,
+    pr,
+    pb,
+    pl,
+    pX,
+    pY,
+    // Other style properties
+    borderRadius,
+    boxShadow,
+  };
 
   return React.createElement(
     as,
     {
       ...restProps,
       ref,
-      className: clsx([
-        BaseStyle,
-        StyleSprinkles(
-          extractSprinkleProps(props, Array.from(StyleSprinkles.properties)),
-        ),
-        props.className,
-      ]),
+      className: clsx([BaseStyle, StyleSprinkles(sprinkleProps), className]),
       style: {
         color: color && vars.colors.$scale?.[color]?.[500],
         background: background && vars.colors.$scale?.[background]?.[500],
-        borderRadius: borderRadius && vars.box.radii?.[borderRadius],
-        padding: padding && vars.box.spacing?.[padding],
-        boxShadow: boxShadow && vars.box.shadows?.[boxShadow],
-        ...props.style,
+        ...style,
       },
     },
     children,

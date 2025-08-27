@@ -20,7 +20,7 @@ type Story = StoryObj<typeof meta>;
 
 export const OrderedListStory: Story = {
   render: () => (
-    <OrderedList spacing={3}>
+    <OrderedList spacing="3">
       <ListItem fontSize="b1">1번</ListItem>
       <ListItem fontSize="b2">2번</ListItem>
       <ListItem fontSize="b3">3번</ListItem>
@@ -30,7 +30,7 @@ export const OrderedListStory: Story = {
 
 export const UnorderedListStory: Story = {
   render: () => (
-    <UnorderedList spacing={3}>
+    <UnorderedList spacing="3">
       <ListItem fontSize="b1">1번</ListItem>
       <ListItem fontSize="b2">2번</ListItem>
       <ListItem fontSize="b3">3번</ListItem>
@@ -40,7 +40,7 @@ export const UnorderedListStory: Story = {
 
 export const ListStory: Story = {
   render: () => (
-    <_List variant="ordered" spacing={3}>
+    <_List variant="ordered" spacing="3">
       <ListItem fontSize="b1">1번</ListItem>
       <ListItem fontSize="b2">2번</ListItem>
       <ListItem fontSize="b3">3번</ListItem>

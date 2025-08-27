@@ -47,7 +47,7 @@ export const EmailVerificationCodeForm = ({
     <form onSubmit={form.handleSubmit(onSubmit)} className={styles.form}>
       <Box className={styles.titleContainer}>
         <Flex direction="column" justify="start" align="start">
-          <VStack gap={5}>
+          <VStack gap="5">
             <Title fontSize="t1" color="zinc">
               인증 번호를 입력해주세요
             </Title>
@@ -67,7 +67,7 @@ export const EmailVerificationCodeForm = ({
         />
       </Box>
 
-      <HStack gap={5}>
+      <HStack gap="5">
         <Button
           type="button"
           color="zinc"

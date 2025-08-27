@@ -1,7 +1,3 @@
-# CLAUDE.md
-
----
-
 ## 🏗️ Monorepo Architecture Overview
 
 This is a **Turbo-powered pnpm workspace monorepo** with a **Design System-first approach** and **domain-driven architecture**.
@@ -53,13 +49,13 @@ Next.js 15 route groups organize pages by authentication requirements:
 
 ```typescript
 // ✅ CORRECT - Use packages
-import Button from "@nugudi/react-components-button";
-import { useToggle } from "@nugudi/react-hooks-toggle";
-import { variables } from "@nugudi/themes";
-import { Icons } from "@nugudi/assets-icons";
+import Button from '@nugudi/react-components-button';
+import { useToggle } from '@nugudi/react-hooks-toggle';
+import { variables } from '@nugudi/themes';
+import { Icons } from '@nugudi/assets-icons';
 
 // ❌ WRONG - Don't create new implementations
-import Button from "./components/button"; // NO!
+import Button from './components/button'; // NO!
 ```
 
 ### Package Import Priority
@@ -139,61 +135,241 @@ Co-Authored-By: Claude <noreply@anthropic.com>"  # NO!
 
 ## 📦 Package Usage Guidelines
 
+### 🎯 PRIORITY: Layout & Typography Components
+
+#### 🚨 MUST USE: Layout Components First (`@nugudi/react-components-layout`)
+
+**ALWAYS use these layout components BEFORE creating custom styles:**
+
+```typescript
+// ✅ CORRECT - Use layout components for structure
+import {
+  Box,
+  Flex,
+  VStack,
+  HStack,
+  Stack,
+  Grid,
+  GridItem,
+  Divider,
+} from '@nugudi/react-components-layout';
+
+// ❌ WRONG - Don't create custom layouts with vanilla extract
+const customLayout = style({ display: 'flex' }); // NO! Use Flex instead
+```
+
+##### Layout Component Usage Guide
+
+| Component    | Use Case                | Props                                  | Example                                              |
+| ------------ | ----------------------- | -------------------------------------- | ---------------------------------------------------- |
+| **Box**      | Basic container/wrapper | All style props                        | `<Box padding={16} margin={8}>`                      |
+| **Flex**     | Flexbox layouts         | `direction`, `justify`, `align`, `gap` | `<Flex justify="space-between" align="center">`      |
+| **VStack**   | Vertical stacking       | `spacing`, `align`                     | `<VStack spacing={16}>` (children stack vertically)  |
+| **HStack**   | Horizontal stacking     | `spacing`, `align`                     | `<HStack spacing={8}>` (children stack horizontally) |
+| **Stack**    | Generic stacking        | `direction`, `spacing`                 | `<Stack direction="row" spacing={12}>`               |
+| **Grid**     | CSS Grid layouts        | `templateColumns`, `gap`               | `<Grid templateColumns="1fr 2fr" gap={16}>`          |
+| **GridItem** | Grid children           | `colSpan`, `rowSpan`                   | `<GridItem colSpan={2}>`                             |
+| **Divider**  | Visual separator        | `orientation`, `color`                 | `<Divider orientation="horizontal" />`               |
+
+##### Common Layout Patterns
+
+```typescript
+// Page wrapper
+<Box padding={24}>
+  <VStack spacing={32}>
+    {/* Page content */}
+  </VStack>
+</Box>
+
+// Card layout
+<Box padding={16} borderRadius="lg" backgroundColor="white">
+  <VStack spacing={12}>
+    {/* Card content */}
+  </VStack>
+</Box>
+
+// Header with actions
+<Flex justify="space-between" align="center" padding={16}>
+  <Title fontSize="t1">Page Title</Title>
+  <HStack spacing={8}>
+    <Button>Action 1</Button>
+    <Button>Action 2</Button>
+  </HStack>
+</Flex>
+
+// Responsive grid
+<Grid
+  templateColumns={{ base: "1fr", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" }}
+  gap={16}
+>
+  <GridItem>{/* Item 1 */}</GridItem>
+  <GridItem>{/* Item 2 */}</GridItem>
+  <GridItem>{/* Item 3 */}</GridItem>
+</Grid>
+```
+
+#### 🚨 MUST USE: Typography Components (`@nugudi/react-components-layout`)
+
+**NEVER use HTML heading tags directly. ALWAYS use typography components:**
+
+```typescript
+// ✅ CORRECT - Use typography components
+import { Heading, Title, Body, Emphasis, Logo } from '@nugudi/react-components-layout';
+
+// ❌ WRONG - Don't use HTML tags directly
+<h1>Title</h1>  // NO! Use <Heading fontSize="h1">
+<p>Text</p>     // NO! Use <Body fontSize="b1">
+<span>Note</span> // NO! Use <Emphasis fontSize="e1">
+```
+
+##### Typography Component Usage Guide
+
+| Component    | Use Case            | fontSize Options                                                                         | Semantic HTML             | Example                                          |
+| ------------ | ------------------- | ---------------------------------------------------------------------------------------- | ------------------------- | ------------------------------------------------ |
+| **Logo**     | Brand/App name      | `l1` (34px), `l2` (20px)                                                                 | `as="h1"` or `as="span"`  | `<Logo fontSize="l1">너구디</Logo>`              |
+| **Heading**  | Page titles         | `h1` (30px)                                                                              | `as="h1"` (default)       | `<Heading fontSize="h1">페이지 제목</Heading>`   |
+| **Title**    | Section titles      | `t1` (28px), `t2` (22px), `t3` (20px)                                                    | `as="h2"`, `as="h3"`      | `<Title fontSize="t2" as="h2">섹션 제목</Title>` |
+| **Body**     | Body text           | `b1` (17px), `b2` (16px), `b3` (15px), `b3b` (15px bold), `b4` (13px), `b4b` (13px bold) | `as="p"`, `as="span"`     | `<Body fontSize="b2">본문 텍스트</Body>`         |
+| **Emphasis** | Small text/captions | `e1` (12px), `e2` (11px)                                                                 | `as="span"`, `as="small"` | `<Emphasis fontSize="e1">캡션</Emphasis>`        |
+
+##### Typography Usage by Context
+
+```typescript
+// App header/brand
+<Logo fontSize="l1" as="h1">너구디</Logo>
+<Logo fontSize="l2" as="span">NUGUDI</Logo>
+
+// Page structure
+<Heading fontSize="h1">마이페이지</Heading>  // Main page title
+
+// Section titles
+<Title fontSize="t1" as="h2">프로필 정보</Title>  // Major section
+<Title fontSize="t2" as="h3">기본 정보</Title>    // Subsection
+<Title fontSize="t3" as="h4">연락처</Title>       // Minor subsection
+
+// Content
+<Body fontSize="b1">중요한 본문 내용입니다.</Body>           // Primary body text
+<Body fontSize="b2">일반적인 설명 텍스트입니다.</Body>       // Regular body text
+<Body fontSize="b3">추가 정보나 부가 설명입니다.</Body>       // Secondary text
+<Body fontSize="b3b">강조된 작은 텍스트입니다.</Body>        // Bold small text
+<Body fontSize="b4">작은 안내 텍스트입니다.</Body>           // Small text
+<Body fontSize="b4b">작고 강조된 레이블입니다.</Body>        // Bold label
+
+// Captions and metadata
+<Emphasis fontSize="e1">2024년 1월 15일</Emphasis>  // Date, time
+<Emphasis fontSize="e2">© 2024 Nugudi</Emphasis>    // Copyright, fine print
+```
+
+##### Complete Example: Combining Layout & Typography
+
+```typescript
+import {
+  Box, Flex, VStack, HStack, Divider
+} from '@nugudi/react-components-layout';
+import {
+  Heading, Title, Body, Emphasis
+} from '@nugudi/react-components-layout';
+
+// Example: User profile card
+export const ProfileCard = () => {
+  return (
+    <Box padding={24} borderRadius="lg">
+      <VStack spacing={20}>
+        {/* Header */}
+        <Heading fontSize="h1">사용자 프로필</Heading>
+
+        <Divider />
+
+        {/* Content sections */}
+        <VStack spacing={16}>
+          <Box>
+            <Title fontSize="t2" as="h2">기본 정보</Title>
+            <VStack spacing={8} marginTop={8}>
+              <Body fontSize="b2">홍길동</Body>
+              <Body fontSize="b3" color="gray">소프트웨어 엔지니어</Body>
+            </VStack>
+          </Box>
+
+          <Box>
+            <Title fontSize="t3" as="h3">연락처</Title>
+            <VStack spacing={4} marginTop={8}>
+              <Body fontSize="b3">email@example.com</Body>
+              <Body fontSize="b3">010-1234-5678</Body>
+            </VStack>
+          </Box>
+        </VStack>
+
+        {/* Footer */}
+        <Emphasis fontSize="e1" color="gray">
+          마지막 업데이트: 2024년 1월 15일
+        </Emphasis>
+      </VStack>
+    </Box>
+  );
+};
+```
+
+#### Priority Order for Layout Development
+
+1. **FIRST**: Check if `@nugudi/react-components-layout` has the component you need
+2. **SECOND**: Use layout components (Box, Flex, VStack, etc.) for structure
+3. **THIRD**: Use typography components (Heading, Title, Body, etc.) for text
+4. **LAST RESORT**: Only create custom styles with vanilla extract if no existing component works
+
 ### React Components (`@nugudi/react-components-*`)
 
 ```typescript
 // Individual component imports
-import Button from "@nugudi/react-components-button";
-import Input from "@nugudi/react-components-input";
-import { Box, Flex, VStack, HStack } from "@nugudi/react-components-layout";
-import Chip from "@nugudi/react-components-chip";
-import { NavigationItem } from "@nugudi/react-components-navigation-item"; // Named export
-import Switch from "@nugudi/react-components-switch";
-import Tab from "@nugudi/react-components-tab";
-import Textarea from "@nugudi/react-components-textarea";
-import InputOTP from "@nugudi/react-components-input-otp";
-import StepIndicator from "@nugudi/react-components-step-indicator";
-import MenuCard from "@nugudi/react-components-menu-card";
-import BottomSheet from "@nugudi/react-components-bottom-sheet";
-import Backdrop from "@nugudi/react-components-backdrop";
+import Button from '@nugudi/react-components-button';
+import Input from '@nugudi/react-components-input';
+import Chip from '@nugudi/react-components-chip';
+import { NavigationItem } from '@nugudi/react-components-navigation-item';  // Named export
+import Switch from '@nugudi/react-components-switch';
+import Tab from '@nugudi/react-components-tab';
+import Textarea from '@nugudi/react-components-textarea';
+import InputOTP from '@nugudi/react-components-input-otp';
+import StepIndicator from '@nugudi/react-components-step-indicator';
+import MenuCard from '@nugudi/react-components-menu-card';
+import BottomSheet from '@nugudi/react-components-bottom-sheet';
+import Backdrop from '@nugudi/react-components-backdrop';
 
 // NavigationItem usage example
 <NavigationItem
   leftIcon={<CoinIcon />}
   rightIcon={<ArrowRightIcon />}
-  onClick={() => console.log("clicked")}
+  onClick={() => console.log('clicked')}
 >
   <div>Content with title and description</div>
-</NavigationItem>;
+</NavigationItem>
 ```
 
 ### React Hooks (`@nugudi/react-hooks-*`)
 
 ```typescript
 // Individual hook imports
-import { useButton, useToggleButton } from "@nugudi/react-hooks-button";
-import { useSwitch, useToggleSwitch } from "@nugudi/react-hooks-switch";
-import { useToggle } from "@nugudi/react-hooks-toggle";
-import { useStepper } from "@nugudi/react-hooks-use-stepper";
+import { useButton, useToggleButton } from '@nugudi/react-hooks-button';
+import { useSwitch, useToggleSwitch } from '@nugudi/react-hooks-switch';
+import { useToggle } from '@nugudi/react-hooks-toggle';
+import { useStepper } from '@nugudi/react-hooks-use-stepper';
 ```
 
 ### API Client (`@nugudi/api`)
 
 ```typescript
 // Use auto-generated API client from OpenAPI spec
-import { api } from "@nugudi/api";
-import { useQuery } from "@tanstack/react-query";
+import { api } from '@nugudi/api';
+import { useQuery } from '@tanstack/react-query';
 
 // API hooks with TanStack Query
 export function useUserProfile(userId: string) {
   return useQuery({
-    queryKey: ["user", userId],
+    queryKey: ['user', userId],
     queryFn: () => api.users.getProfile(userId),
   });
 }
 
 // MSW mocks available for testing
-import { handlers } from "@nugudi/api/index.msw";
+import { handlers } from '@nugudi/api/index.msw';
 ```
 
 ### Themes (`@nugudi/themes`)
@@ -241,8 +417,8 @@ classes.stack;
 #### Usage Example
 
 ```typescript
-import { vars, classes } from "@nugudi/themes";
-import { style } from "@vanilla-extract/css";
+import { vars, classes } from '@nugudi/themes';
+import { style } from '@vanilla-extract/css';
 
 // Use pre-defined classes when available
 export const container = classes.container;
@@ -356,12 +532,12 @@ export const SignUpForm: React.FC<SignUpFormProps> = (props) => {
 };
 
 // src/domains/auth/sign-up/ui/components/sign-up-form/index.css.ts
-import { style } from "@vanilla-extract/css";
-import { variables } from "@nugudi/themes";
+import { style } from '@vanilla-extract/css';
+import { variables } from '@nugudi/themes';
 
 export const formContainer = style({
-  display: "flex",
-  flexDirection: "column",
+  display: 'flex',
+  flexDirection: 'column',
   gap: variables.box.spacing.md,
 });
 ```
@@ -407,8 +583,8 @@ export const useSignUpStore = create<SignUpStore>((set) => ({
 ```typescript
 // ✅ CORRECT - Always prioritize existing theme values
 // index.css.ts
-import { style } from "@vanilla-extract/css";
-import { vars, classes } from "@nugudi/themes";
+import { style } from '@vanilla-extract/css';
+import { vars, classes } from '@nugudi/themes';
 
 // FIRST: Check if there's a pre-defined class
 export const container = classes.container; // If exists
@@ -416,19 +592,19 @@ export const container = classes.container; // If exists
 // SECOND: Use design tokens from vars
 export const customCard = style({
   // Always use vars for consistent design
-  padding: vars.box.spacing[16], // NOT: padding: '16px'
-  borderRadius: vars.box.radii.lg, // NOT: borderRadius: '12px'
-  backgroundColor: vars.colors.$scale.whiteAlpha[100], // NOT: backgroundColor: 'white'
-  boxShadow: vars.box.shadows.sm, // NOT: boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+  padding: vars.box.spacing[16],  // NOT: padding: '16px'
+  borderRadius: vars.box.radii.lg,  // NOT: borderRadius: '12px'
+  backgroundColor: vars.colors.$scale.whiteAlpha[100],  // NOT: backgroundColor: 'white'
+  boxShadow: vars.box.shadows.sm,  // NOT: boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
 
   // Only use custom values when absolutely necessary
-  width: "149px", // OK if specific requirement
+  width: "149px",  // OK if specific requirement
 });
 
 // Component file
-import * as styles from "./index.css";
+import * as styles from './index.css';
 
-<div className={styles.customCard}>Content</div>;
+<div className={styles.customCard}>Content</div>
 ```
 
 ### CSS Modules for App-specific Styles
@@ -450,14 +626,14 @@ import * as styles from "./index.css";
 
 ```typescript
 // Use @nugudi/api for all backend communication
-import { api } from "@nugudi/api";
+import { api } from '@nugudi/api';
 
 // TanStack Query for data fetching
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query';
 
 export function useMenuData(date: string) {
   return useQuery({
-    queryKey: ["menu", date],
+    queryKey: ['menu', date],
     queryFn: () => api.menu.getByDate(date),
   });
 }
@@ -466,15 +642,15 @@ export function useMenuData(date: string) {
 ### Form Handling with React Hook Form
 
 ```typescript
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { signUpSchema } from "../schemas/sign-up-schema";
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { signUpSchema } from '../schemas/sign-up-schema';
 
 const form = useForm({
   resolver: zodResolver(signUpSchema),
   defaultValues: {
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   },
 });
 ```
@@ -677,21 +853,21 @@ pnpm storybook --filter=ui
 
 ```typescript
 // Component usage
-import Button from "@nugudi/react-components-button";
-import { Box, Flex } from "@nugudi/react-components-layout";
+import Button from '@nugudi/react-components-button';
+import { Box, Flex } from '@nugudi/react-components-layout';
 
 // Hook usage
-import { useToggle } from "@nugudi/react-hooks-toggle";
-import { useStepper } from "@nugudi/react-hooks-use-stepper";
+import { useToggle } from '@nugudi/react-hooks-toggle';
+import { useStepper } from '@nugudi/react-hooks-use-stepper';
 
 // API usage
-import { api } from "@nugudi/api";
+import { api } from '@nugudi/api';
 
 // Theme usage
-import { variables } from "@nugudi/themes";
+import { variables } from '@nugudi/themes';
 
 // Icon usage - Import individual icons
-import { AppleIcon, HeartIcon, ArrowRightIcon } from "@nugudi/assets-icons";
+import { AppleIcon, HeartIcon, ArrowRightIcon } from '@nugudi/assets-icons';
 ```
 
 ---
@@ -735,19 +911,19 @@ pnpm commit                 # Commit with commitizen
 ```typescript
 // ✅ CORRECT - Within same domain (e.g., auth/sign-up)
 // From: src/domains/auth/sign-up/ui/views/sign-up-view/index.tsx
-import { SignUpForm } from "../../components/sign-up-form";
-import { useSignUpStore } from "../../../stores/use-sign-up-store";
-import { signUpSchema } from "../../../schemas/sign-up-schema";
-import type { SignUpFormData } from "../../../types/sign-up";
+import { SignUpForm } from '../../components/sign-up-form';
+import { useSignUpStore } from '../../../stores/use-sign-up-store';
+import { signUpSchema } from '../../../schemas/sign-up-schema';
+import type { SignUpFormData } from '../../../types/sign-up';
 
 // ✅ CORRECT - From section to component in same domain
 // From: src/domains/auth/sign-up/ui/sections/sign-up-section/index.tsx
-import { EmailForm } from "../../components/sign-up-form/steps/email-form";
-import { PasswordForm } from "../../components/sign-up-form/steps/password-form";
+import { EmailForm } from '../../components/sign-up-form/steps/email-form';
+import { PasswordForm } from '../../components/sign-up-form/steps/password-form';
 
 // ✅ CORRECT - Within same folder
 // From: src/domains/auth/sign-up/ui/components/sign-up-form/steps/email-form/index.tsx
-import * as styles from "./index.css";
+import * as styles from './index.css';
 ```
 
 #### Cross-Domain or from App - Use Absolute Imports
@@ -755,29 +931,132 @@ import * as styles from "./index.css";
 ```typescript
 // ✅ CORRECT - Cross-domain imports
 // From: src/domains/menu/...
-import { useAuth } from "@/domains/auth/hooks/use-auth";
+import { useAuth } from '@/domains/auth/hooks/use-auth';
 
 // ✅ CORRECT - From app pages (public routes)
 // From: app/(public)/auth/sign-up/page.tsx
-import { SignUpView } from "@/domains/auth/sign-up/ui/views/sign-up-view";
+import { SignUpView } from '@/domains/auth/sign-up/ui/views/sign-up-view';
 
 // ✅ CORRECT - From app pages (protected routes)
 // From: app/(auth)/benefits/page.tsx
-import { BenefitPageView } from "@/domains/benefit/ui/views/benefit-page-view";
+import { BenefitPageView } from '@/domains/benefit/ui/views/benefit-page-view';
 ```
 
 #### Package Imports - Always Use Package Path
 
 ```typescript
 // ✅ CORRECT - Always use package imports for packages
-import Button from "@nugudi/react-components-button";
-import { variables } from "@nugudi/themes";
+import Button from '@nugudi/react-components-button';
+import { variables } from '@nugudi/themes';
 
 // ❌ WRONG - Never use relative imports for packages
-import Button from "../../../../../packages/react/components/button"; // NO!
+import Button from '../../../../../packages/react/components/button'; // NO!
 ```
 
 ---
+
+## 📋 Package Setup Requirements
+
+### When Using Any `@nugudi` Package Component
+
+When you import any component from `@nugudi` packages, you MUST complete TWO setup steps:
+
+#### Step 1: Add Package to package.json
+
+```json
+// In apps/web/package.json
+{
+  "dependencies": {
+    "@nugudi/react-components-layout": "workspace:*",
+    "@nugudi/react-components-button": "workspace:*",
+    "@nugudi/react-components-input": "workspace:*"
+    // Add any other packages you use
+  }
+}
+```
+
+#### Step 2: Import Package Styles in FDS Module
+
+```css
+/* In apps/web/src/shared/styles/fds.module.css */
+@import '@nugudi/themes/themes.css';
+@import '@nugudi/react-components-layout/style.css';
+@import '@nugudi/react-components-button/style.css';
+@import '@nugudi/react-components-input/style.css';
+/* Add style.css for EVERY package component you use */
+```
+
+### ⚠️ CRITICAL: Complete Setup Checklist
+
+When using ANY `@nugudi/react-components-*` package:
+
+1. ✅ **Check package.json**: Ensure the package is listed in dependencies
+2. ✅ **Check fds.module.css**: Ensure the package's `style.css` is imported
+3. ✅ **Run `pnpm install`**: After adding new packages to package.json
+4. ✅ **Verify styles load**: Component should render with proper styles
+
+### Example: Adding a New Component
+
+If you want to use `@nugudi/react-components-textarea`:
+
+```typescript
+// 1. First, add to package.json dependencies:
+"@nugudi/react-components-textarea": "workspace:*",
+
+// 2. Then, add to fds.module.css:
+@import '@nugudi/react-components-textarea/style.css';
+
+// 3. Run pnpm install:
+pnpm install
+
+// 4. Now you can use it:
+import Textarea from '@nugudi/react-components-textarea';
+```
+
+### Package Style Import Pattern
+
+```css
+/* In apps/web/src/shared/styles/fds.module.css */
+
+/* 1. ALWAYS import themes first (required) */
+@import '@nugudi/themes/themes.css';
+
+/* 2. Import layout package (contains layout AND typography components) */
+@import '@nugudi/react-components-layout/style.css';
+/* Layout includes: Box, Flex, VStack, HStack, Stack, Grid, GridItem, Divider */
+/* Typography includes: Heading, Title, Body, Emphasis, Logo */
+
+/* 3. Import individual component packages as needed */
+@import '@nugudi/react-components-[component-name]/style.css';
+/* Examples: button, input, chip, tab, switch, textarea, etc. */
+```
+
+### Import Rule Pattern
+
+For ANY `@nugudi/react-components-*` package:
+
+```
+Package name: @nugudi/react-components-[name]
+Style import: @import '@nugudi/react-components-[name]/style.css';
+```
+
+**The pattern is consistent:**
+
+- Package: `@nugudi/react-components-button`
+- Style: `@import '@nugudi/react-components-button/style.css';`
+
+- Package: `@nugudi/react-components-input`
+- Style: `@import '@nugudi/react-components-input/style.css';`
+
+- Package: `@nugudi/react-components-bottom-sheet`
+- Style: `@import '@nugudi/react-components-bottom-sheet/style.css';`
+
+### ❌ Common Mistakes to Avoid
+
+- **Forgetting to import style.css**: Component renders without styles
+- **Not adding to package.json**: Import fails with "module not found"
+- **Not running pnpm install**: Package not available in node_modules
+- **Importing wrong path**: Use `workspace:*` for local packages
 
 ## 💡 Tips for Claude Code
 
@@ -790,6 +1069,7 @@ When working in this repository:
 5. **Test with MSW mocks** from `@nugudi/api`
 6. **Use Vanilla Extract** for component styles
 7. **Follow the established patterns** in existing domains
+8. **Complete package setup** when using any `@nugudi` components
 
 Remember: This is a **package-first monorepo** - maximize reuse of existing packages!
 

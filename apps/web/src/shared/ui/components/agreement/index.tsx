@@ -5,7 +5,7 @@ import * as styles from "./index.css";
 
 const Agreement = ({ children }: PropsWithChildren) => {
   return (
-    <Flex as="ul" direction="column" gap={16}>
+    <Flex as="ul" direction="column" gap="16">
       {children}
     </Flex>
   );
@@ -23,7 +23,7 @@ const AgreementTitle = ({
     <Flex
       as="li"
       onClick={(e) => onChange(e, !checked)}
-      gap={8}
+      gap="8"
       align="center"
       className={styles.agreementItem}
     >
@@ -56,7 +56,7 @@ const AgreementDescription = ({
         onClick={(e) => {
           onChange(e, !checked);
         }}
-        gap={8}
+        gap="8"
         align="center"
         style={{ flex: 1 }}
       >

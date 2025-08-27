@@ -2,53 +2,30 @@
 
 ## Component Hierarchy Overview
 
-```
-apps/web/
-├── app/                       # Next.js App Router pages
-│   ├── (auth)/               # 🔒 Protected routes (require authentication)
-│   │   ├── benefits/         # Benefits page for logged-in users
-│   │   │   └── page.tsx
-│   │   └── my/               # My page/profile for logged-in users
-│   │       └── page.tsx
-│   └── (public)/             # 🌍 Public routes (no authentication required)
-│       ├── auth/             # Authentication-related public pages
-│       │   ├── sign-in/
-│       │   │   ├── page.tsx
-│       │   │   └── email/
-│       │   │       └── page.tsx
-│       │   ├── sign-up/
-│       │   │   └── page.tsx
-│       │   └── password/
-│       │       └── forgot/
-│       │           └── page.tsx
-│       └── home/             # Public home page
-│           └── page.tsx
-└── src/
-    └── domains/              # Domain-based architecture
-        └── [domain]/         # e.g., auth, menu, benefit
-            # Option 1: Complex domains with multiple features
-            └── [feature]/    # e.g., auth/sign-in, auth/sign-up, auth/my
-                ├── constants/
-                ├── schemas/
-                ├── stores/
-                ├── types/
-                └── ui/
-                    ├── views/
-                    ├── sections/
-                    └── components/
+## 🎨 IMPORTANT: Always Use Design Tokens
+
+**MUST use `vars` and `classes` from `@nugudi/themes`:**
+
+- Colors: Use `vars.colors.$scale.gray[500]` NOT hard-coded colors
+- Spacing: Use `vars.box.spacing[16]` NOT `16px`
+- Radius: Use `vars.box.radii.lg` NOT `12px`
+- Shadows: Use `vars.box.shadows.sm` NOT custom shadows
+
+# Readability
 
             # Option 2: Simple domains without sub-features
             └── ui/           # e.g., benefit/ui (directly under domain)
                 ├── views/
                 ├── sections/
                 └── components/
-```
+
+````
 
 ## Layer-by-Layer Rules
 
 ### 1. Page Layer (`app/[domain]/[feature]/page.tsx`)
 
-**Type**: Server Component  
+**Type**: Server Component
 **Purpose**: Route entry point, data prefetching, metadata setup
 
 ```typescript
@@ -65,7 +42,7 @@ const Page = async ({ params, searchParams }) => {
   // 2. Prefetch data on server
   // 3. Return View wrapped in HydrationBoundary
 };
-```
+````
 
 ### 2. View Layer (`ui/views/`)
 
@@ -253,16 +230,16 @@ export const SocialSignInButtonList = () => {};
 
 ```typescript
 // In: apps/web/src/domains/auth/sign-up/ui/views/sign-up-view/index.tsx
-import { SignUpSection } from "../../sections/sign-up-section";
+import { SignUpSection } from '../../sections/sign-up-section';
 
 // In: apps/web/src/domains/auth/sign-up/ui/sections/sign-up-section/index.tsx
-import { SignUpForm } from "../../components/sign-up-form";
-import { useSignUpStore } from "../../../stores/use-sign-up-store";
-import type { SignUpFormData } from "../../../types/sign-up";
+import { SignUpForm } from '../../components/sign-up-form';
+import { useSignUpStore } from '../../../stores/use-sign-up-store';
+import type { SignUpFormData } from '../../../types/sign-up';
 
 // In: apps/web/src/domains/auth/sign-up/ui/components/sign-up-form/index.tsx
-import { EmailForm } from "./steps/email-form";
-import { PasswordForm } from "./steps/password-form";
+import { EmailForm } from './steps/email-form';
+import { PasswordForm } from './steps/password-form';
 ```
 
 ### From Page to View
@@ -270,11 +247,11 @@ import { PasswordForm } from "./steps/password-form";
 ```typescript
 // Public route example
 // In: app/(public)/auth/sign-up/page.tsx
-import { SignUpView } from "@/domains/auth/sign-up/ui/views/sign-up-view";
+import { SignUpView } from '@/domains/auth/sign-up/ui/views/sign-up-view';
 
 // Protected route example
 // In: app/(auth)/benefits/page.tsx
-import { BenefitPageView } from "@/domains/benefit/ui/views/benefit-page-view";
+import { BenefitPageView } from '@/domains/benefit/ui/views/benefit-page-view';
 ```
 
 ### Cross-Domain Imports
@@ -289,13 +266,13 @@ import { BenefitPageView } from "@/domains/benefit/ui/views/benefit-page-view";
 
 ```typescript
 // Always use existing packages from monorepo
-import Button from "@nugudi/react-components-button";
-import Input from "@nugudi/react-components-input";
-import { Box, Flex, VStack } from "@nugudi/react-components-layout";
-import { useToggle } from "@nugudi/react-hooks-toggle";
-import { variables } from "@nugudi/themes";
-import { Icons } from "@nugudi/assets-icons";
-import { api } from "@nugudi/api";
+import Button from '@nugudi/react-components-button';
+import Input from '@nugudi/react-components-input';
+import { Box, Flex, VStack } from '@nugudi/react-components-layout';
+import { useToggle } from '@nugudi/react-hooks-toggle';
+import { variables } from '@nugudi/themes';
+import { Icons } from '@nugudi/assets-icons';
+import { api } from '@nugudi/api';
 ```
 
 ## Data Flow Rules

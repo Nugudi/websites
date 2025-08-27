@@ -55,7 +55,7 @@ const EmailVerificationCodeForm = () => {
         />
       </Box>
 
-      <HStack gap={5}>
+      <HStack gap="5">
         <Button
           type="button"
           color="zinc"

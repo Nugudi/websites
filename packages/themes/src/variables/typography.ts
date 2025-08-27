@@ -10,14 +10,14 @@ export const fontSize = {
   13: "0.8125rem",
   12: "0.75rem",
   11: "0.6875rem",
-};
+} as const;
 
 export const fontWeight = {
   700: "700",
   600: "600",
   500: "500",
   400: "400",
-};
+} as const;
 
 export const lineHeight = {
   140: "140%",
@@ -30,7 +30,7 @@ export const lineHeight = {
   119: "119%",
   117: "117%",
   116: "116%",
-};
+} as const;
 
 export const letterSpacing = {
   30: "-0.3px",
@@ -43,4 +43,4 @@ export const letterSpacing = {
   13: "-0.3px",
   12: "-0.3px",
   11: "-0.3px",
-};
+} as const;

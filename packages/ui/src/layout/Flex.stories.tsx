@@ -59,13 +59,13 @@ export const Default: Story = {
   },
   render: (args) => (
     <_Flex {...args}>
-      <Box background="main" padding={3} borderRadius="md">
+      <Box background="main" p="3" borderRadius="md">
         Item 1
       </Box>
-      <Box background="blackAlpha" padding={3} borderRadius="md">
+      <Box background="blackAlpha" p="3" borderRadius="md">
         Item 2
       </Box>
-      <Box background="main" padding={3} borderRadius="md">
+      <Box background="main" p="3" borderRadius="md">
         Item 3
       </Box>
     </_Flex>
@@ -84,13 +84,13 @@ export const Directions: Story = {
       <div>
         <h4>Row (기본값)</h4>
         <_Flex {...args} direction="row">
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             1
           </Box>
-          <Box background="blackAlpha" padding={2}>
+          <Box background="blackAlpha" p="2">
             2
           </Box>
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             3
           </Box>
         </_Flex>
@@ -98,13 +98,13 @@ export const Directions: Story = {
       <div>
         <h4>Column</h4>
         <_Flex {...args} direction="column">
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             1
           </Box>
-          <Box background="blackAlpha" padding={2}>
+          <Box background="blackAlpha" p="2">
             2
           </Box>
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             3
           </Box>
         </_Flex>
@@ -112,13 +112,13 @@ export const Directions: Story = {
       <div>
         <h4>Row Reverse</h4>
         <_Flex {...args} direction="row-reverse">
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             1
           </Box>
-          <Box background="blackAlpha" padding={2}>
+          <Box background="blackAlpha" p="2">
             2
           </Box>
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             3
           </Box>
         </_Flex>
@@ -140,13 +140,13 @@ export const JustifyContent: Story = {
       <div>
         <h4>Start (기본값)</h4>
         <_Flex {...args} justify="start">
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             1
           </Box>
-          <Box background="blackAlpha" padding={2}>
+          <Box background="blackAlpha" p="2">
             2
           </Box>
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             3
           </Box>
         </_Flex>
@@ -154,13 +154,13 @@ export const JustifyContent: Story = {
       <div>
         <h4>Center</h4>
         <_Flex {...args} justify="center">
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             1
           </Box>
-          <Box background="blackAlpha" padding={2}>
+          <Box background="blackAlpha" p="2">
             2
           </Box>
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             3
           </Box>
         </_Flex>
@@ -168,13 +168,13 @@ export const JustifyContent: Story = {
       <div>
         <h4>Space Between</h4>
         <_Flex {...args} justify="between">
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             1
           </Box>
-          <Box background="blackAlpha" padding={2}>
+          <Box background="blackAlpha" p="2">
             2
           </Box>
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             3
           </Box>
         </_Flex>
@@ -182,13 +182,13 @@ export const JustifyContent: Story = {
       <div>
         <h4>Space Around</h4>
         <_Flex {...args} justify="around">
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             1
           </Box>
-          <Box background="blackAlpha" padding={2}>
+          <Box background="blackAlpha" p="2">
             2
           </Box>
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             3
           </Box>
         </_Flex>
@@ -210,13 +210,13 @@ export const AlignItems: Story = {
       <div>
         <h4>Stretch (기본값)</h4>
         <_Flex {...args} align="stretch">
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             Short
           </Box>
-          <Box background="blackAlpha" padding={2}>
+          <Box background="blackAlpha" p="2">
             Medium Height
           </Box>
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             Long
             <br />
             Content
@@ -228,13 +228,13 @@ export const AlignItems: Story = {
       <div>
         <h4>Center</h4>
         <_Flex {...args} align="center">
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             Short
           </Box>
-          <Box background="blackAlpha" padding={2}>
+          <Box background="blackAlpha" p="2">
             Medium Height
           </Box>
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             Long
             <br />
             Content
@@ -246,13 +246,13 @@ export const AlignItems: Story = {
       <div>
         <h4>Start</h4>
         <_Flex {...args} align="start">
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             Short
           </Box>
-          <Box background="blackAlpha" padding={2}>
+          <Box background="blackAlpha" p="2">
             Medium Height
           </Box>
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             Long
             <br />
             Content
@@ -278,16 +278,16 @@ export const FlexWrap: Story = {
       <div>
         <h4>No Wrap (기본값)</h4>
         <_Flex {...args} wrap="nowrap">
-          <Box background="main" padding={2} style={{ minWidth: "80px" }}>
+          <Box background="main" p="2" style={{ minWidth: "80px" }}>
             Item 1
           </Box>
-          <Box background="blackAlpha" padding={2} style={{ minWidth: "80px" }}>
+          <Box background="blackAlpha" p="2" style={{ minWidth: "80px" }}>
             Item 2
           </Box>
-          <Box background="main" padding={2} style={{ minWidth: "80px" }}>
+          <Box background="main" p="2" style={{ minWidth: "80px" }}>
             Item 3
           </Box>
-          <Box background="blackAlpha" padding={2} style={{ minWidth: "80px" }}>
+          <Box background="blackAlpha" p="2" style={{ minWidth: "80px" }}>
             Item 4
           </Box>
         </_Flex>
@@ -295,16 +295,16 @@ export const FlexWrap: Story = {
       <div>
         <h4>Wrap</h4>
         <_Flex {...args} wrap="wrap">
-          <Box background="main" padding={2} style={{ minWidth: "80px" }}>
+          <Box background="main" p="2" style={{ minWidth: "80px" }}>
             Item 1
           </Box>
-          <Box background="blackAlpha" padding={2} style={{ minWidth: "80px" }}>
+          <Box background="blackAlpha" p="2" style={{ minWidth: "80px" }}>
             Item 2
           </Box>
-          <Box background="main" padding={2} style={{ minWidth: "80px" }}>
+          <Box background="main" p="2" style={{ minWidth: "80px" }}>
             Item 3
           </Box>
-          <Box background="blackAlpha" padding={2} style={{ minWidth: "80px" }}>
+          <Box background="blackAlpha" p="2" style={{ minWidth: "80px" }}>
             Item 4
           </Box>
         </_Flex>
@@ -326,13 +326,13 @@ export const FlexGrowShrink: Story = {
       <div>
         <h4>Flex Grow</h4>
         <_Flex {...args}>
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             고정
           </Box>
-          <Box background="blackAlpha" padding={2} style={{ flexGrow: 1 }}>
+          <Box background="blackAlpha" p="2" style={{ flexGrow: 1 }}>
             확장됨 (grow: 1)
           </Box>
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             고정
           </Box>
         </_Flex>
@@ -340,17 +340,17 @@ export const FlexGrowShrink: Story = {
       <div>
         <h4>Flex Shrink</h4>
         <_Flex {...args}>
-          <Box background="main" padding={2} style={{ minWidth: "150px" }}>
+          <Box background="main" p="2" style={{ minWidth: "150px" }}>
             축소 안됨
           </Box>
           <Box
             background="blackAlpha"
-            padding={2}
+            p="2"
             style={{ minWidth: "150px", flexShrink: 1 }}
           >
             축소됨
           </Box>
-          <Box background="main" padding={2} style={{ minWidth: "150px" }}>
+          <Box background="main" p="2" style={{ minWidth: "150px" }}>
             축소 안됨
           </Box>
         </_Flex>
@@ -369,24 +369,24 @@ export const GapVariations: Story = {
     <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
       <div>
         <h4>Gap: 0 (간격 없음)</h4>
-        <_Flex {...args} gap={0}>
-          <Box background="main" padding={3} borderRadius="md">
+        <_Flex {...args} gap="0">
+          <Box background="main" p="3" borderRadius="md">
             Item 1
           </Box>
           <Box
             background="blackAlpha"
-            padding={3}
+            p="3"
             borderRadius="md"
             color="whiteAlpha"
           >
             Item 2
           </Box>
-          <Box background="main" padding={3} borderRadius="md">
+          <Box background="main" p="3" borderRadius="md">
             Item 3
           </Box>
           <Box
             background="blackAlpha"
-            padding={3}
+            p="3"
             borderRadius="md"
             color="whiteAlpha"
           >
@@ -396,24 +396,24 @@ export const GapVariations: Story = {
       </div>
       <div>
         <h4>Gap: 1 (매우 작은 간격)</h4>
-        <_Flex {...args} gap={1}>
-          <Box background="main" padding={3} borderRadius="md">
+        <_Flex {...args} gap="1">
+          <Box background="main" p="3" borderRadius="md">
             Item 1
           </Box>
           <Box
             background="blackAlpha"
-            padding={3}
+            p="3"
             borderRadius="md"
             color="whiteAlpha"
           >
             Item 2
           </Box>
-          <Box background="main" padding={3} borderRadius="md">
+          <Box background="main" p="3" borderRadius="md">
             Item 3
           </Box>
           <Box
             background="blackAlpha"
-            padding={3}
+            p="3"
             borderRadius="md"
             color="whiteAlpha"
           >
@@ -423,24 +423,24 @@ export const GapVariations: Story = {
       </div>
       <div>
         <h4>Gap: 2 (작은 간격)</h4>
-        <_Flex {...args} gap={2}>
-          <Box background="main" padding={3} borderRadius="md">
+        <_Flex {...args} gap="2">
+          <Box background="main" p="3" borderRadius="md">
             Item 1
           </Box>
           <Box
             background="blackAlpha"
-            padding={3}
+            p="3"
             borderRadius="md"
             color="whiteAlpha"
           >
             Item 2
           </Box>
-          <Box background="main" padding={3} borderRadius="md">
+          <Box background="main" p="3" borderRadius="md">
             Item 3
           </Box>
           <Box
             background="blackAlpha"
-            padding={3}
+            p="3"
             borderRadius="md"
             color="whiteAlpha"
           >
@@ -450,24 +450,24 @@ export const GapVariations: Story = {
       </div>
       <div>
         <h4>Gap: 4 (중간 간격)</h4>
-        <_Flex {...args} gap={4}>
-          <Box background="main" padding={3} borderRadius="md">
+        <_Flex {...args} gap="4">
+          <Box background="main" p="3" borderRadius="md">
             Item 1
           </Box>
           <Box
             background="blackAlpha"
-            padding={3}
+            p="3"
             borderRadius="md"
             color="whiteAlpha"
           >
             Item 2
           </Box>
-          <Box background="main" padding={3} borderRadius="md">
+          <Box background="main" p="3" borderRadius="md">
             Item 3
           </Box>
           <Box
             background="blackAlpha"
-            padding={3}
+            p="3"
             borderRadius="md"
             color="whiteAlpha"
           >
@@ -477,24 +477,24 @@ export const GapVariations: Story = {
       </div>
       <div>
         <h4>Gap: 6 (큰 간격)</h4>
-        <_Flex {...args} gap={6}>
-          <Box background="main" padding={3} borderRadius="md">
+        <_Flex {...args} gap="6">
+          <Box background="main" p="3" borderRadius="md">
             Item 1
           </Box>
           <Box
             background="blackAlpha"
-            padding={3}
+            p="3"
             borderRadius="md"
             color="whiteAlpha"
           >
             Item 2
           </Box>
-          <Box background="main" padding={3} borderRadius="md">
+          <Box background="main" p="3" borderRadius="md">
             Item 3
           </Box>
           <Box
             background="blackAlpha"
-            padding={3}
+            p="3"
             borderRadius="md"
             color="whiteAlpha"
           >
@@ -504,24 +504,24 @@ export const GapVariations: Story = {
       </div>
       <div>
         <h4>Gap: 8 (매우 큰 간격)</h4>
-        <_Flex {...args} gap={8}>
-          <Box background="main" padding={3} borderRadius="md">
+        <_Flex {...args} gap="8">
+          <Box background="main" p="3" borderRadius="md">
             Item 1
           </Box>
           <Box
             background="blackAlpha"
-            padding={3}
+            p="3"
             borderRadius="md"
             color="whiteAlpha"
           >
             Item 2
           </Box>
-          <Box background="main" padding={3} borderRadius="md">
+          <Box background="main" p="3" borderRadius="md">
             Item 3
           </Box>
           <Box
             background="blackAlpha"
-            padding={3}
+            p="3"
             borderRadius="md"
             color="whiteAlpha"
           >
@@ -531,24 +531,24 @@ export const GapVariations: Story = {
       </div>
       <div>
         <h4>Gap: 12 (매우 큰 간격)</h4>
-        <_Flex {...args} gap={12}>
-          <Box background="main" padding={3} borderRadius="md">
+        <_Flex {...args} gap="12">
+          <Box background="main" p="3" borderRadius="md">
             Item 1
           </Box>
           <Box
             background="blackAlpha"
-            padding={3}
+            p="3"
             borderRadius="md"
             color="whiteAlpha"
           >
             Item 2
           </Box>
-          <Box background="main" padding={3} borderRadius="md">
+          <Box background="main" p="3" borderRadius="md">
             Item 3
           </Box>
           <Box
             background="blackAlpha"
-            padding={3}
+            p="3"
             borderRadius="md"
             color="whiteAlpha"
           >
@@ -558,24 +558,24 @@ export const GapVariations: Story = {
       </div>
       <div>
         <h4>Gap: 16 (엄청 큰 간격)</h4>
-        <_Flex {...args} gap={16}>
-          <Box background="main" padding={3} borderRadius="md">
+        <_Flex {...args} gap="16">
+          <Box background="main" p="3" borderRadius="md">
             Item 1
           </Box>
           <Box
             background="blackAlpha"
-            padding={3}
+            p="3"
             borderRadius="md"
             color="whiteAlpha"
           >
             Item 2
           </Box>
-          <Box background="main" padding={3} borderRadius="md">
+          <Box background="main" p="3" borderRadius="md">
             Item 3
           </Box>
           <Box
             background="blackAlpha"
-            padding={3}
+            p="3"
             borderRadius="md"
             color="whiteAlpha"
           >
@@ -585,10 +585,10 @@ export const GapVariations: Story = {
       </div>
       <div>
         <h4>세로 방향에서의 Gap</h4>
-        <_Flex {...args} direction="column" gap={4} style={{ width: "200px" }}>
+        <_Flex {...args} direction="column" gap="4" style={{ width: "200px" }}>
           <Box
             background="main"
-            padding={3}
+            p="3"
             borderRadius="md"
             style={{ textAlign: "center" }}
           >
@@ -596,7 +596,7 @@ export const GapVariations: Story = {
           </Box>
           <Box
             background="blackAlpha"
-            padding={3}
+            p="3"
             borderRadius="md"
             color="whiteAlpha"
             style={{ textAlign: "center" }}
@@ -605,7 +605,7 @@ export const GapVariations: Story = {
           </Box>
           <Box
             background="main"
-            padding={3}
+            p="3"
             borderRadius="md"
             style={{ textAlign: "center" }}
           >
@@ -615,10 +615,10 @@ export const GapVariations: Story = {
       </div>
       <div>
         <h4>반응형 Gap 활용 (Wrap과 함께)</h4>
-        <_Flex {...args} gap={3} wrap="wrap" style={{ width: "300px" }}>
+        <_Flex {...args} gap="3" wrap="wrap" style={{ width: "300px" }}>
           <Box
             background="main"
-            padding={3}
+            p="3"
             borderRadius="md"
             style={{ minWidth: "80px" }}
           >
@@ -626,7 +626,7 @@ export const GapVariations: Story = {
           </Box>
           <Box
             background="blackAlpha"
-            padding={3}
+            p="3"
             borderRadius="md"
             color="whiteAlpha"
             style={{ minWidth: "80px" }}
@@ -635,7 +635,7 @@ export const GapVariations: Story = {
           </Box>
           <Box
             background="main"
-            padding={3}
+            p="3"
             borderRadius="md"
             style={{ minWidth: "80px" }}
           >
@@ -643,7 +643,7 @@ export const GapVariations: Story = {
           </Box>
           <Box
             background="blackAlpha"
-            padding={3}
+            p="3"
             borderRadius="md"
             color="whiteAlpha"
             style={{ minWidth: "80px" }}
@@ -652,7 +652,7 @@ export const GapVariations: Story = {
           </Box>
           <Box
             background="main"
-            padding={3}
+            p="3"
             borderRadius="md"
             style={{ minWidth: "80px" }}
           >
@@ -660,7 +660,7 @@ export const GapVariations: Story = {
           </Box>
           <Box
             background="blackAlpha"
-            padding={3}
+            p="3"
             borderRadius="md"
             color="whiteAlpha"
             style={{ minWidth: "80px" }}
@@ -681,31 +681,26 @@ export const RealWorldExamples: Story = {
         <_Flex
           justify="between"
           align="center"
-          padding={4}
+          p="4"
           background="whiteAlpha"
           borderRadius="lg"
           boxShadow="md"
         >
-          <Box background="main" padding={2} borderRadius="md">
+          <Box background="main" p="2" borderRadius="md">
             로고
           </Box>
-          <_Flex gap={4}>
-            <Box background="blackAlpha" padding={2} borderRadius="md">
+          <_Flex gap="4">
+            <Box background="blackAlpha" p="2" borderRadius="md">
               메뉴1
             </Box>
-            <Box background="blackAlpha" padding={2} borderRadius="md">
+            <Box background="blackAlpha" p="2" borderRadius="md">
               메뉴2
             </Box>
-            <Box background="blackAlpha" padding={2} borderRadius="md">
+            <Box background="blackAlpha" p="2" borderRadius="md">
               메뉴3
             </Box>
           </_Flex>
-          <Box
-            background="main"
-            padding={2}
-            borderRadius="md"
-            color="whiteAlpha"
-          >
+          <Box background="main" p="2" borderRadius="md" color="whiteAlpha">
             로그인
           </Box>
         </_Flex>
@@ -715,28 +710,28 @@ export const RealWorldExamples: Story = {
         <h4>카드 레이아웃</h4>
         <_Flex
           direction="column"
-          gap={3}
-          padding={4}
+          gap="3"
+          p="4"
           background="whiteAlpha"
           borderRadius="lg"
           boxShadow="md"
         >
           <_Flex justify="between" align="center">
-            <Box background="main" padding={2} borderRadius="md">
+            <Box background="main" p="2" borderRadius="md">
               제목
             </Box>
-            <Box background="blackAlpha" padding={1} borderRadius="sm">
+            <Box background="blackAlpha" p="1" borderRadius="sm">
               •••
             </Box>
           </_Flex>
-          <Box padding={3}>
+          <Box p="3">
             카드 컨텐츠 영역입니다. 여기에 다양한 내용이 들어갈 수 있습니다.
           </Box>
-          <_Flex justify="end" gap={2}>
-            <Box background="blackAlpha" padding={2} borderRadius="md">
+          <_Flex justify="end" gap="2">
+            <Box background="blackAlpha" p="2" borderRadius="md">
               취소
             </Box>
-            <Box background="main" padding={2} borderRadius="md">
+            <Box background="main" p="2" borderRadius="md">
               확인
             </Box>
           </_Flex>

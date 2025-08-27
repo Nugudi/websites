@@ -10,12 +10,12 @@ const SignInSection = () => {
       <Flex
         className={styles.content}
         direction="column"
-        gap={32}
+        gap="32"
         align="center"
       >
         <SocialLoginButtonList />
         <DividerWithText />
-        <Flex gap={4} align="center">
+        <Flex gap="4" align="center">
           <Link href="/auth/sign-in/email" className={styles.authLink}>
             이메일로 로그인
           </Link>
