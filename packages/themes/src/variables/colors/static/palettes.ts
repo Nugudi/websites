@@ -76,11 +76,11 @@ export const redPalette: StaticColorPalette = {
   200: "#fed4d2",
   300: "#feb7b3",
   400: "#fe928d",
-  500: "#fe6600",
-  600: "#fc6a66",
-  700: "#fa342c",
-  800: "#ca1d13",
-  900: "#921708",
+  500: "#fc6a66",
+  600: "#fa342c",
+  700: "#ca1d13",
+  800: "#921708",
+  900: "#4a1209",
 };
 
 export const whiteAlphaPalette: StaticColorPalette = {

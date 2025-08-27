@@ -1,6 +1,6 @@
 import { Body, Grid, Title, VStack } from "@nugudi/react-components-layout";
 import "@nugudi/react-components-layout/style.css";
-import { COLOR_SHADES, vars } from "@nugudi/themes";
+import { COLOR_SHADES, type ColorShade, vars } from "@nugudi/themes";
 
 const colorGroups = Object.keys(vars.colors.$scale);
 
@@ -91,11 +91,7 @@ export const Color = () => {
   );
 };
 
-const ShadeHeader = ({
-  shades,
-}: {
-  shades: (typeof COLOR_SHADES)[number][];
-}) => (
+const ShadeHeader = ({ shades }: { shades: ColorShade[] }) => (
   <Grid templateColumns="100px repeat(10, 1fr)">
     <div />
     {shades.map((shade) => (
