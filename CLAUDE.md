@@ -9,8 +9,13 @@
 1. **FIRST**: Read [claude/packages.md](./claude/packages.md) — Contains commit rules, import conventions, and monorepo structure (HIGHEST PRIORITY)
 2. **SECOND**: Read [claude/frontend.md](./claude/frontend.md) — Frontend development patterns and code style
 3. **THIRD**: Read [claude/testing.md](./claude/testing.md) — Testing requirements and patterns
-4. **FOURTH**: Read [claude/nextjs-component-structure-guideline.md](./claude/nextjs-component-structure-guideline.md) — Next.js App Router component hierarchy (Page → View → Section → Component)
-5. **FIFTH**: Read [claude/storybook-guideline.md](./claude/storybook-guideline.md) — Component development workflow, export patterns, and Storybook story guidelines
+
+### Context-Specific Guidelines:
+
+#### When Working with Next.js Components:
+
+- **IF** creating or modifying pages in `app/(auth)/` or `app/(public)/` or components in `src/domains/*/ui/`
+- **THEN** read [claude/nextjs-component-structure-guideline.md](./claude/nextjs-component-structure-guideline.md) — Next.js App Router component hierarchy (Page → View → Section → Component)
 
 ## ⚠️ CRITICAL REMINDERS
 
@@ -27,15 +32,6 @@ When creating Next.js components:
 - **NEVER** skip layers (e.g., Page directly importing Components)
 - **ALWAYS** implement Suspense and ErrorBoundary in Section components
 - **NEVER** fetch data in View or Component layers
-
-When creating shared components & Storybook:
-
-- **ALWAYS** develop components in `packages/react/components/` first
-- **ALWAYS** create hooks in `packages/react/hooks/` first
-- **ALWAYS** document components with Storybook in `packages/ui/src/`
-- **ALWAYS** follow the correct import patterns (Layout/Icons: multiple, Individual components: single)
-- **NEVER** skip CSS imports for main components in stories
-- **NEVER** create components directly in `packages/ui/`
 
 ## Why This Matters
 

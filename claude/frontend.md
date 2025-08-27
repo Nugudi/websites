@@ -1,702 +1,801 @@
-# Frontend Design Guideline
+# CLAUDE.md
 
-This document summarizes key frontend design principles and rules, showcasing
-recommended patterns. Follow these guidelines when writing frontend code.
+---
 
-## 🎨 IMPORTANT: Always Use Design Tokens
+## 🏗️ Monorepo Architecture Overview
 
-**MUST use `vars` and `classes` from `@nugudi/themes`:**
-- Colors: Use `vars.colors.$scale.gray[500]` NOT hard-coded colors
-- Spacing: Use `vars.box.spacing[16]` NOT `16px`
-- Radius: Use `vars.box.radii.lg` NOT `12px`
-- Shadows: Use `vars.box.shadows.sm` NOT custom shadows
+This is a **Turbo-powered pnpm workspace monorepo** with a **Design System-first approach** and **domain-driven architecture**.
 
-# Readability
+### Repository Structure
 
-Improving the clarity and ease of understanding code.
+```
+nugudi/
+├── apps/                    # Applications
+│   └── web/                # Next.js 15 + React 19 (Main Web App)
+│       └── app/           # Next.js App Router
+│           ├── (auth)/    # 🔒 Protected routes - Require authentication
+│           │   ├── benefits/     # Benefits page (authenticated users only)
+│           │   └── my/          # My page/profile (authenticated users only)
+│           └── (public)/  # 🌍 Public routes - No authentication required
+│               ├── auth/        # Auth-related public pages
+│               │   ├── sign-in/ # Sign in page
+│               │   └── sign-up/ # Sign up page
+│               └── home/        # Public home page
+├── packages/               # Shared packages (ALWAYS use these!)
+│   ├── ui/                # Aggregated UI library with Storybook
+│   ├── api/               # OpenAPI client + MSW mocks
+│   ├── themes/            # Design tokens system
+│   ├── assets/            # Icons and static assets
+│   └── react/             # Component packages (button, input, etc.)
+│       ├── components/    # React components
+│       └── hooks/         # React hooks
+└── turbo.json             # Monorepo task orchestration
+```
 
-## Naming Magic Numbers
+### 🔐 Route Groups: Authentication Structure
 
-**Rule:** Replace magic numbers with named constants for clarity.
+Next.js 15 route groups organize pages by authentication requirements:
 
-**Reasoning:**
+- **(auth)**: Protected pages requiring user authentication
+  - All pages inside this group require a logged-in user
+  - Examples: `/benefits`, `/my`, user dashboard, etc.
+- **(public)**: Public pages accessible without authentication
+  - All pages inside this group are accessible to everyone
+  - Examples: `/auth/sign-in`, `/auth/sign-up`, `/home`, etc.
 
-- Improves clarity by giving semantic meaning to unexplained values.
-- Enhances maintainability.
+**Note**: Route groups (parentheses folders) don't affect the URL structure - they're purely for organization.
 
-#### Recommended Pattern:
+---
+
+## 🎯 Core Development Rules
+
+### MANDATORY: Always Use Existing Packages
 
 ```typescript
-const ANIMATION_DELAY_MS = 300;
+// ✅ CORRECT - Use packages
+import Button from '@nugudi/react-components-button';
+import { useToggle } from '@nugudi/react-hooks-toggle';
+import { variables } from '@nugudi/themes';
+import { Icons } from '@nugudi/assets-icons';
 
-const onLikeClick = async () => {
-  await postLike(url);
-  await delay(ANIMATION_DELAY_MS); // Clearly indicates waiting for animation
-  await refetchPostLike();
-};
+// ❌ WRONG - Don't create new implementations
+import Button from './components/button'; // NO!
 ```
 
-## Abstracting Implementation Details
+### Package Import Priority
 
-**Rule:** Abstract complex logic/interactions into dedicated components/HOCs.
+1. **FIRST**: Check if functionality exists in `packages/`
+2. **SECOND**: Import from the appropriate package
+3. **LAST RESORT**: Only create new code if absolutely necessary
 
-**Reasoning:**
+---
 
-- Reduces cognitive load by separating concerns.
-- Improves readability, testability, and maintainability of components.
+## 📝 Commit Convention
 
-#### Recommended Pattern 1: Auth Guard
+### Commit Message Format
 
-(Login check abstracted to a wrapper/guard component)
+커밋 메시지는 `commitlint.config.ts`의 규칙을 따릅니다:
 
-```tsx
-// App structure
-const App = () => {
-  return (
-    <AuthGuard>
-      {' '}
-      {/* Wrapper handles auth check */}
-      <LoginStartPage />
-    </AuthGuard>
-  );
-};
+```
+[NUGUDI-{번호}] {type}({scope}): {subject}
 
-// AuthGuard component encapsulates the check/redirect logic
-const AuthGuard = ({ children }) => {
-  const status = useCheckLoginStatus();
-  useEffect(() => {
-    if (status === 'LOGGED_IN') {
-      location.href = '/home';
-    }
-  }, [status]);
-
-  // Render children only if not logged in, otherwise render null (or loading)
-  return status !== 'LOGGED_IN' ? children : null;
-};
-
-// LoginStartPage is now simpler, focused only on login UI/logic
-const LoginStartPage = () => {
-  // ... login related logic ONLY ...
-  return <>{/* ... login related components ... */}</>;
-};
+{body}
 ```
 
-#### Recommended Pattern 2: Dedicated Interaction Component
+### Commit Types
 
-(Dialog logic abstracted into a dedicated `InviteButton` component)
+- **feat**: 신규 기능 추가
+- **fix**: 버그 수정
+- **docs**: 문서 수정 (README, 문서 추가 등)
+- **style**: 코드 스타일 수정 (세미콜론, 공백 등)
+- **refactor**: 코드 리팩토링 (기능 변화는 없음)
+- **test**: 테스트 코드 추가/수정
+- **chore**: 빌드, 설정, 패키지 등 기타 작업
+- **perf**: 성능 개선
+- **ci**: CI 관련 변경
 
-```tsx
-export const FriendInvitation = () => {
-  const { data } = useQuery(/* ... */);
+### Commit Rules
 
-  return (
-    <>
-      {/* Use the dedicated button component */}
-      <InviteButton name={data.name} />
-      {/* ... other UI ... */}
-    </>
-  );
-};
+- 제목은 최대 72자
+- 본문은 한 줄당 최대 100자
+- 티켓 번호는 브랜치명에서 추출 (예: `feature/NUGUDI-105-bottomsheet` → `[NUGUDI-105]`)
+- **중요**: Co-Author 라인을 절대 추가하지 마세요 (Claude, GitHub Copilot 등)
 
-// InviteButton handles the confirmation flow internally
-const InviteButton = ({ name }) => {
-  const handleClick = async () => {
-    const canInvite = await overlay.openAsync(({ isOpen, close }) => (
-      <ConfirmDialog
-        title={`Share with ${name}`}
-        // ... dialog setup ...
-      />
-    ));
+### Example
 
-    if (canInvite) {
-      await sendPush();
-    }
-  };
+```bash
+# ✅ CORRECT
+git commit -m "[NUGUDI-105] feat(react): BottomSheet 컴포넌트 구현
 
-  return <Button onClick={handleClick}>Invite</Button>;
-};
+- Backdrop과 함께 동작하는 BottomSheet 컴포넌트 추가
+- 스와이프 제스처 지원"
+
+# ❌ WRONG - Co-Author 라인 포함
+git commit -m "[NUGUDI-105] feat(react): BottomSheet 구현
+
+Co-Authored-By: Claude <noreply@anthropic.com>"  # NO!
 ```
 
-## Separating Code Paths for Conditional Rendering
+---
 
-**Rule:** Separate significantly different conditional UI/logic into distinct
-components.
+## 🔧 Technology Stack
 
-**Reasoning:**
+### Core Technologies
 
-- Improves readability by avoiding complex conditionals within one component.
-- Ensures each specialized component has a clear, single responsibility.
+- **Framework**: Next.js 15 (App Router)
+- **React Version**: 19.x
+- **TypeScript**: 5.8.3 with strict configuration
+- **Package Manager**: pnpm with workspaces
+- **Build Tool**: Turborepo
+- **Backend**: External API server
+- **Linting/Formatting**: Biome (NOT ESLint/Prettier)
+- **Styling**: Vanilla Extract + CSS Modules
+- **State Management**: TanStack Query
+- **Forms**: React Hook Form + Zod validation
+- **Testing**: Vitest + Playwright + MSW
+- **Documentation**: Storybook
 
-#### Recommended Pattern:
+---
 
-(Separate components for each role)
+## 📦 Package Usage Guidelines
 
-```tsx
-const SubmitButton = () => {
-  const isViewer = useRole() === 'viewer';
-
-  // Delegate rendering to specialized components
-  return isViewer ? <ViewerSubmitButton /> : <AdminSubmitButton />;
-};
-
-// Component specifically for the 'viewer' role
-const ViewerSubmitButton = () => {
-  return <TextButton disabled>Submit</TextButton>;
-};
-
-// Component specifically for the 'admin' (or non-viewer) role
-const AdminSubmitButton = () => {
-  useEffect(() => {
-    showAnimation(); // Animation logic isolated here
-  }, []);
-
-  return <Button type='submit'>Submit</Button>;
-};
-```
-
-## Simplifying Complex Ternary Operators
-
-**Rule:** Replace complex/nested ternaries with `if`/`else` or IIFEs for
-readability.
-
-**Reasoning:**
-
-- Makes conditional logic easier to follow quickly.
-- Improves overall code maintainability.
-
-#### Recommended Pattern:
-
-(Using an IIFE with `if` statements)
+### React Components (`@nugudi/react-components-*`)
 
 ```typescript
-const status = (() => {
-  if (ACondition && BCondition) return 'BOTH';
-  if (ACondition) return 'A';
-  if (BCondition) return 'B';
-  return 'NONE';
-})();
+// Individual component imports
+import Button from "@nugudi/react-components-button";
+import Input from "@nugudi/react-components-input";
+import { Box, Flex, VStack, HStack } from "@nugudi/react-components-layout";
+import Chip from "@nugudi/react-components-chip";
+import { NavigationItem } from "@nugudi/react-components-navigation-item"; // Named export
+import Switch from "@nugudi/react-components-switch";
+import Tab from "@nugudi/react-components-tab";
+import Textarea from "@nugudi/react-components-textarea";
+import InputOTP from "@nugudi/react-components-input-otp";
+import StepIndicator from "@nugudi/react-components-step-indicator";
+import MenuCard from "@nugudi/react-components-menu-card";
+import BottomSheet from "@nugudi/react-components-bottom-sheet";
+import Backdrop from "@nugudi/react-components-backdrop";
+
+// NavigationItem usage example
+<NavigationItem
+  leftIcon={<CoinIcon />}
+  rightIcon={<ArrowRightIcon />}
+  onClick={() => console.log("clicked")}
+>
+  <div>Content with title and description</div>
+</NavigationItem>;
 ```
 
-## Reducing Eye Movement (Colocating Simple Logic)
-
-**Rule:** Colocate simple, localized logic or use inline definitions to reduce
-context switching.
-
-**Reasoning:**
-
-- Allows top-to-bottom reading and faster comprehension.
-- Reduces cognitive load from context switching (eye movement).
-
-#### Recommended Pattern A: Inline `switch`
-
-```tsx
-const Page = () => {
-  const user = useUser();
-
-  // Logic is directly visible here
-  switch (user.role) {
-    case 'admin':
-      return (
-        <div>
-          <Button disabled={false}>Invite</Button>
-          <Button disabled={false}>View</Button>
-        </div>
-      );
-    case 'viewer':
-      return (
-        <div>
-          <Button disabled={true}>Invite</Button> {/* Example for viewer */}
-          <Button disabled={false}>View</Button>
-        </div>
-      );
-    default:
-      return null;
-  }
-};
-```
-
-#### Recommended Pattern B: Colocated simple policy object
-
-```tsx
-const Page = () => {
-  const user = useUser();
-  // Simple policy defined right here, easy to see
-  const policy = {
-    admin: { canInvite: true, canView: true },
-    viewer: { canInvite: false, canView: true },
-  }[user.role];
-
-  // Ensure policy exists before accessing properties if role might not match
-  if (!policy) return null;
-
-  return (
-    <div>
-      <Button disabled={!policy.canInvite}>Invite</Button>
-      <Button disabled={!policy.canView}>View</Button>
-    </div>
-  );
-};
-```
-
-## Naming Complex Conditions
-
-**Rule:** Assign complex boolean conditions to named variables.
-
-**Reasoning:**
-
-- Makes the _meaning_ of the condition explicit.
-- Improves readability and self-documentation by reducing cognitive load.
-
-#### Recommended Pattern:
-
-(Conditions assigned to named variables)
+### React Hooks (`@nugudi/react-hooks-*`)
 
 ```typescript
-const matchedProducts = products.filter((product) => {
-  // Check if product belongs to the target category
-  const isSameCategory = product.categories.some(
-    (category) => category.id === targetCategory.id
-  );
+// Individual hook imports
+import { useButton, useToggleButton } from '@nugudi/react-hooks-button';
+import { useSwitch, useToggleSwitch } from '@nugudi/react-hooks-switch';
+import { useToggle } from '@nugudi/react-hooks-toggle';
+import { useStepper } from '@nugudi/react-hooks-use-stepper';
+```
 
-  // Check if any product price falls within the desired range
-  const isPriceInRange = product.prices.some(
-    (price) => price >= minPrice && price <= maxPrice
-  );
+### API Client (`@nugudi/api`)
 
-  // The overall condition is now much clearer
-  return isSameCategory && isPriceInRange;
+```typescript
+// Use auto-generated API client from OpenAPI spec
+import { api } from '@nugudi/api';
+import { useQuery } from '@tanstack/react-query';
+
+// API hooks with TanStack Query
+export function useUserProfile(userId: string) {
+  return useQuery({
+    queryKey: ['user', userId],
+    queryFn: () => api.users.getProfile(userId),
+  });
+}
+
+// MSW mocks available for testing
+import { handlers } from '@nugudi/api/index.msw';
+```
+
+### Themes (`@nugudi/themes`)
+
+#### Design Foundation Structure
+
+**vars** - Design tokens available:
+
+```typescript
+// Colors
+vars.colors.$static       // Static colors
+vars.colors.$scale        // Color scales
+  - whiteAlpha[100, 200, 300, 400, 500, 600, 700, 800, 900]
+  - blackAlpha[100, 200, 300, 400, 500, 600, 700, 800, 900]
+  - gray[50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]
+  - red, yellow, green, blue, etc. (same scale)
+
+// Spacing
+vars.box.spacing[0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64]
+
+// Border Radius
+vars.box.radii
+  - none, sm, md, lg, xl, 2xl, 3xl, full
+
+// Shadows
+vars.box.shadows
+  - xs, sm, md, lg, xl, 2xl, inner
+
+// Typography
+vars.typography.fontSize
+vars.typography.fontWeight
+vars.typography.lineHeight
+```
+
+**classes** - Pre-defined utility classes:
+
+```typescript
+// Common classes available
+classes.container;
+classes.flexCenter;
+classes.stack;
+// Check the actual theme package for full list
+```
+
+#### Usage Example
+
+```typescript
+import { vars, classes } from '@nugudi/themes';
+import { style } from '@vanilla-extract/css';
+
+// Use pre-defined classes when available
+export const container = classes.container;
+
+// Use design tokens for custom styles
+export const customCard = style({
+  backgroundColor: vars.colors.$scale.whiteAlpha[100],
+  borderRadius: vars.box.radii.lg,
+  padding: vars.box.spacing[16],
+  boxShadow: vars.box.shadows.sm,
 });
 ```
 
-**Guidance:** Name conditions when the logic is complex, reused, or needs unit
-testing. Avoid naming very simple, single-use conditions.
-
-# Predictability
-
-Ensuring code behaves as expected based on its name, parameters, and context.
-
-## Standardizing Return Types
-
-**Rule:** Use consistent return types for similar functions/hooks.
-
-**Reasoning:**
-
-- Improves code predictability; developers can anticipate return value shapes.
-- Reduces confusion and potential errors from inconsistent types.
-
-#### Recommended Pattern 1: API Hooks (React Query)
+### Assets (`@nugudi/assets-icons`)
 
 ```typescript
-// Always return the Query object
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+// Icon components - Import individual icons directly
+import { AppleIcon, HeartIcon, CalendarIcon } from '@nugudi/assets-icons';
+import { ChevronRightIcon, ArrowRightIcon } from '@nugudi/assets-icons';
+import { CoinIcon } from '@nugudi/assets-icons';
 
-// Assuming fetchUser returns Promise<UserType>
-const useUser = (): UseQueryResult<UserType, Error> => {
-  const query = useQuery({ queryKey: ['user'], queryFn: fetchUser });
-  return query;
-};
+// Use icons as components
+<AppleIcon />
+<HeartIcon />
+<CalendarIcon />
+<ChevronRightIcon />
 
-// Assuming fetchServerTime returns Promise<Date>
-const useServerTime = (): UseQueryResult<Date, Error> => {
-  const query = useQuery({
-    queryKey: ['serverTime'],
-    queryFn: fetchServerTime,
-  });
-  return query;
-};
+// Example usage in NavigationItem
+<NavigationItem
+  leftIcon={<CoinIcon />}
+  rightIcon={<ArrowRightIcon />}
+>
+  Content
+</NavigationItem>
 ```
 
-#### Recommended Pattern 2: Validation Functions
+---
 
-(Using a consistent type, ideally a Discriminated Union)
+## 🏛️ Architecture Patterns
+
+### Domain-Based Structure in Next.js App
+
+```
+apps/web/
+├── app/                    # Next.js App Router
+│   ├── (auth)/            # Protected routes
+│   │   ├── benefits/
+│   │   └── my/
+│   └── (public)/          # Public routes
+│       └── auth/
+│           ├── sign-in/
+│           └── sign-up/
+├── src/
+│   ├── domains/           # Domain logic
+│   │   ├── auth/          # Complex domain with multiple features
+│   │   │   ├── sign-in/
+│   │   │   ├── sign-up/
+│   │   │   ├── my/
+│   │   │   └── password-forgot/
+│   │   │       ├── constants/
+│   │   │       ├── schemas/
+│   │   │       ├── stores/
+│   │   │       ├── types/
+│   │   │       └── ui/
+│   │   │           ├── components/
+│   │   │           ├── sections/
+│   │   │           └── views/
+│   │   └── benefit/       # Simple domain without sub-features
+│   │       └── ui/        # UI directly under domain
+│   │           ├── components/
+│   │           ├── sections/
+│   │           └── views/
+│   └── shared/            # Shared utilities
+│       ├── configs/       # Configuration
+│       ├── providers/     # React providers
+│       ├── styles/        # Global styles
+│       ├── ui/            # App-specific shared components
+│       ├── utils/         # Utility functions
+│       └── types/         # Global type definitions
+└── tests/                 # Test files
+```
+
+### Component Organization Pattern
+
+Each domain follows this structure:
+
+- **components/**: Smallest reusable UI pieces
+- **sections/**: Composed components forming page sections
+- **views/**: Complete page views
+
+#### Component Folder Structure
+
+Each component MUST follow this folder structure:
+
+```
+component-name/
+├── index.tsx        # Component implementation
+├── index.css.ts     # Vanilla Extract styles
+└── types.ts         # Type definitions (optional)
+```
 
 ```typescript
-type ValidationResult = { ok: true } | { ok: false; reason: string };
+// Domain component structure example
+// src/domains/auth/sign-up/ui/components/sign-up-form/index.tsx
+interface SignUpFormProps {
+  // Props interface
+}
 
-const checkIsNameValid = (name: string): ValidationResult => {
-  if (name.length === 0) return { ok: false, reason: 'Name cannot be empty.' };
-  if (name.length >= 20)
-    return { ok: false, reason: 'Name cannot be longer than 20 characters.' };
-  return { ok: true };
+export const SignUpForm: React.FC<SignUpFormProps> = (props) => {
+  // Component implementation
 };
 
-const checkIsAgeValid = (age: number): ValidationResult => {
-  if (!Number.isInteger(age))
-    return { ok: false, reason: 'Age must be an integer.' };
-  if (age < 18) return { ok: false, reason: 'Age must be 18 or older.' };
-  if (age > 99) return { ok: false, reason: 'Age must be 99 or younger.' };
-  return { ok: true };
-};
+// src/domains/auth/sign-up/ui/components/sign-up-form/index.css.ts
+import { style } from '@vanilla-extract/css';
+import { variables } from '@nugudi/themes';
 
-// Usage allows safe access to 'reason' only when ok is false
-const nameValidation = checkIsNameValid(name);
-if (!nameValidation.ok) {
-  console.error(nameValidation.reason);
+export const formContainer = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: variables.box.spacing.md,
+});
+```
+
+### Store Pattern with Zustand
+
+```typescript
+// domains/auth/sign-up/stores/use-sign-up-store.ts
+interface SignUpStore {
+  step: number;
+  formData: SignUpFormData;
+  setStep: (step: number) => void;
+  setFormData: (data: Partial<SignUpFormData>) => void;
+}
+
+export const useSignUpStore = create<SignUpStore>((set) => ({
+  // Store implementation
+}));
+```
+
+---
+
+## 🎨 Styling Guidelines
+
+### 🚨 CRITICAL: Style Priority Rules
+
+**YOU MUST check and use existing styles in this EXACT order:**
+
+1. **FIRST - Check `classes`**: Always check if a pre-defined class exists
+   - `classes.container`, `classes.flexCenter`, etc.
+2. **SECOND - Use `vars`**: Use design tokens for all style properties
+   - Colors: `vars.colors.$scale.gray[500]` NOT `#6B7280`
+   - Spacing: `vars.box.spacing[16]` NOT `16px`
+   - Radius: `vars.box.radii.lg` NOT `12px`
+   - Shadows: `vars.box.shadows.sm` NOT custom shadows
+3. **LAST - Custom values**: Only for specific requirements
+   - Specific widths/heights: `width: "149px"` (when design requires exact size)
+
+**❌ NEVER use hard-coded values when vars exist!**
+
+### Vanilla Extract Usage
+
+```typescript
+// ✅ CORRECT - Always prioritize existing theme values
+// index.css.ts
+import { style } from "@vanilla-extract/css";
+import { vars, classes } from "@nugudi/themes";
+
+// FIRST: Check if there's a pre-defined class
+export const container = classes.container; // If exists
+
+// SECOND: Use design tokens from vars
+export const customCard = style({
+  // Always use vars for consistent design
+  padding: vars.box.spacing[16], // NOT: padding: '16px'
+  borderRadius: vars.box.radii.lg, // NOT: borderRadius: '12px'
+  backgroundColor: vars.colors.$scale.whiteAlpha[100], // NOT: backgroundColor: 'white'
+  boxShadow: vars.box.shadows.sm, // NOT: boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+
+  // Only use custom values when absolutely necessary
+  width: "149px", // OK if specific requirement
+});
+
+// Component file
+import * as styles from "./index.css";
+
+<div className={styles.customCard}>Content</div>;
+```
+
+### CSS Modules for App-specific Styles
+
+```css
+/* page.module.css */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 ```
 
-## Revealing Hidden Logic (Single Responsibility)
+---
 
-**Rule:** Avoid hidden side effects; functions should only perform actions
-implied by their signature (SRP).
+## 🔌 Backend Integration
 
-**Reasoning:**
-
-- Leads to predictable behavior without unintended side effects.
-- Creates more robust, testable code through separation of concerns (SRP).
-
-#### Recommended Pattern:
+### API Connection
 
 ```typescript
-// Function *only* fetches balance
-const fetchBalance = async (): Promise<number> => {
-  const balance = await http.get<number>('...');
-  return balance;
-};
+// Use @nugudi/api for all backend communication
+import { api } from '@nugudi/api';
 
-// Caller explicitly performs logging where needed
-const handleUpdateClick = async () => {
-  const balance = await fetchBalance(); // Fetch
-  logging.log('balance_fetched'); // Log (explicit action)
-  await syncBalance(balance); // Another action
-};
+// TanStack Query for data fetching
+import { useQuery } from '@tanstack/react-query';
+
+export function useMenuData(date: string) {
+  return useQuery({
+    queryKey: ['menu', date],
+    queryFn: () => api.menu.getByDate(date),
+  });
+}
 ```
 
-## Using Unique and Descriptive Names (Avoiding Ambiguity)
-
-**Rule:** Use unique, descriptive names for custom wrappers/functions to avoid
-ambiguity.
-
-**Reasoning:**
-
-- Avoids ambiguity and enhances predictability.
-- Allows developers to understand specific actions (e.g., adding auth) directly
-  from the name.
-
-#### Recommended Pattern:
+### Form Handling with React Hook Form
 
 ```typescript
-// In httpService.ts - Clearer module name
-import { http as httpLibrary } from '@some-library/http';
-
-export const httpService = {
-  // Unique module name
-  getWithAuth: async (url: string) => {
-    // Descriptive function name
-    const token = await fetchToken();
-    return httpLibrary.get(url, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-  },
-};
-
-// In fetchUser.ts - Usage clearly indicates auth
-import { httpService } from './httpService';
-export const fetchUser = async () => {
-  // Name 'getWithAuth' makes the behavior explicit
-  return await httpService.getWithAuth('...');
-};
-```
-
-# Cohesion
-
-Keeping related code together and ensuring modules have a well-defined, single
-purpose.
-
-## Considering Form Cohesion
-
-**Rule:** Choose field-level or form-level cohesion based on form requirements.
-
-**Reasoning:**
-
-- Balances field independence (field-level) vs. form unity (form-level).
-- Ensures related form logic is appropriately grouped based on requirements.
-
-#### Recommended Pattern (Field-Level Example):
-
-```tsx
-// Each field uses its own `validate` function
-import { useForm } from 'react-hook-form';
-
-export const Form = () => {
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-  } = useForm({
-    /* defaultValues etc. */
-  });
-
-  const onSubmit = handleSubmit((formData) => {
-    console.log('Form submitted:', formData);
-  });
-
-  return (
-    <form onSubmit={onSubmit}>
-      <div>
-        <input
-          {...register('name', {
-            validate: (value) =>
-              value.trim() === '' ? 'Please enter your name.' : true, // Example validation
-          })}
-          placeholder='Name'
-        />
-        {errors.name && <p>{errors.name.message}</p>}
-      </div>
-      <div>
-        <input
-          {...register('email', {
-            validate: (value) =>
-              /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)
-                ? true
-                : 'Invalid email address.', // Example validation
-          })}
-          placeholder='Email'
-        />
-        {errors.email && <p>{errors.email.message}</p>}
-      </div>
-      <button type='submit'>Submit</button>
-    </form>
-  );
-};
-```
-
-#### Recommended Pattern (Form-Level Example):
-
-```tsx
-// A single schema defines validation for the whole form
-import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { signUpSchema } from '../schemas/sign-up-schema';
 
-const schema = z.object({
-  name: z.string().min(1, 'Please enter your name.'),
-  email: z.string().min(1, 'Please enter your email.').email('Invalid email.'),
+const form = useForm({
+  resolver: zodResolver(signUpSchema),
+  defaultValues: {
+    email: '',
+    password: '',
+  },
 });
-
-export const Form = () => {
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-  } = useForm({
-    resolver: zodResolver(schema),
-    defaultValues: { name: '', email: '' },
-  });
-
-  const onSubmit = handleSubmit((formData) => {
-    console.log('Form submitted:', formData);
-  });
-
-  return (
-    <form onSubmit={onSubmit}>
-      <div>
-        <input {...register('name')} placeholder='Name' />
-        {errors.name && <p>{errors.name.message}</p>}
-      </div>
-      <div>
-        <input {...register('email')} placeholder='Email' />
-        {errors.email && <p>{errors.email.message}</p>}
-      </div>
-      <button type='submit'>Submit</button>
-    </form>
-  );
-};
 ```
 
-**Guidance:** Choose **field-level** for independent validation, async checks,
-or reusable fields. Choose **form-level** for related fields, wizard forms, or
-interdependent validation.
+---
 
-## Organizing Code by Feature/Domain
+## 🧹 Code Quality with Biome
 
-**Rule:** Organize directories by feature/domain, not just by code type.
+### Biome Configuration
 
-**Reasoning:**
+```bash
+# Format code
+pnpm biome format --write .
 
-- Increases cohesion by keeping related files together.
-- Simplifies feature understanding, development, maintenance, and deletion.
+# Lint code
+pnpm biome lint --write .
 
-#### Recommended Pattern:
-
-(Organized by feature/domain)
-
-```
-src/
-├── components/ # Shared/common components
-├── hooks/      # Shared/common hooks
-├── utils/      # Shared/common utils
-├── domains/
-│   ├── user/
-│   │   ├── components/
-│   │   │   └── UserProfileCard.tsx
-│   │   ├── hooks/
-│   │   │   └── useUser.ts
-│   │   └── index.ts # Optional barrel file
-│   ├── product/
-│   │   ├── components/
-│   │   │   └── ProductList.tsx
-│   │   ├── hooks/
-│   │   │   └── useProducts.ts
-│   │   └── ...
-│   └── order/
-│       ├── components/
-│       │   └── OrderSummary.tsx
-│       ├── hooks/
-│       │   └── useOrder.ts
-│       └── ...
-└── App.tsx
+# Check everything
+pnpm biome check --write .
 ```
 
-## Relating Magic Numbers to Logic
+### Biome Rules
 
-**Rule:** Define constants near related logic or ensure names link them clearly.
+- **Import sorting**: Automatic with Biome
+- **Formatting**: Consistent across monorepo
+- **Linting**: Strict TypeScript rules
+- **NO ESLint/Prettier**: Biome handles everything
 
-**Reasoning:**
+---
 
-- Improves cohesion by linking constants to the logic they represent.
-- Prevents silent failures caused by updating logic without updating related
-  constants.
+## 📝 Naming Conventions
 
-#### Recommended Pattern:
+### File & Folder Naming
+
+#### Folder Structure Rules
+
+```
+✅ CORRECT Component Structure:
+button/                  # Component folder (kebab-case)
+├── index.tsx           # Main component file
+├── index.css.ts        # Vanilla Extract styles
+└── types.ts            # Type definitions (optional)
+
+sign-up-form/           # Multi-word component folder
+├── index.tsx
+├── index.css.ts
+└── steps/              # Sub-components folder
+    ├── email-form/
+    │   ├── index.tsx
+    │   └── index.css.ts
+    └── password-form/
+        ├── index.tsx
+        └── index.css.ts
+```
+
+#### File Naming Rules
+
+```
+✅ CORRECT:
+- kebab-case/            # All folders use kebab-case
+- index.tsx              # Main component/export files
+- index.css.ts           # Vanilla Extract style files
+- use-auth.ts            # Hook files (kebab-case)
+- types.ts               # Type definition files
+
+❌ WRONG:
+- MyComponent.tsx        # NO PascalCase files
+- myComponent.tsx        # NO camelCase files
+- my_component.tsx       # NO snake_case
+- Button.tsx             # NO component name as filename (use index.tsx)
+- styles.css.ts          # NO other names for styles (use index.css.ts)
+```
+
+### Code Naming
 
 ```typescript
-// Constant clearly named and potentially defined near animation logic
-const ANIMATION_DELAY_MS = 300;
+// Components: PascalCase
+export const MyComponent: React.FC = () => {};
 
-const onLikeClick = async () => {
-  await postLike(url);
-  // Delay uses the constant, maintaining the link to the animation
-  await delay(ANIMATION_DELAY_MS);
-  await refetchPostLike();
-};
+// Props: ComponentName + Props
+interface MyComponentProps {}
+
+// Hooks: camelCase with 'use' prefix
+export function useMyCustomHook() {}
+
+// Event handlers: on + Action + Target
+const onClickSubmit = () => {};
+const onChangeInput = () => {};
+
+// Stores: use + Feature + Store
+export const useSignUpStore = () => {};
 ```
 
-_Ensure constants are maintained alongside the logic they depend on or clearly
-named to show the relationship._
+---
 
-# Coupling
+## 🚀 Development Workflow
 
-Minimizing dependencies between different parts of the codebase.
+### Starting Development
 
-## Balancing Abstraction and Coupling (Avoiding Premature Abstraction)
+```bash
+# Install dependencies
+pnpm install
 
-**Rule:** Avoid premature abstraction of duplicates if use cases might diverge;
-prefer lower coupling.
+# Start development (all apps)
+pnpm dev
 
-**Reasoning:**
+# Start specific app
+pnpm dev --filter=web
 
-- Avoids tight coupling from forcing potentially diverging logic into one
-  abstraction.
-- Allowing some duplication can improve decoupling and maintainability when
-  future needs are uncertain.
+# Build packages first, then apps
+pnpm build
+```
 
-#### Guidance:
+### Adding New Features
 
-Before abstracting, consider if the logic is truly identical and likely to
-_stay_ identical across all use cases. If divergence is possible (e.g.,
-different pages needing slightly different behavior from a shared hook like
-`useOpenMaintenanceBottomSheet`), keeping the logic separate initially (allowing
-duplication) can lead to more maintainable, decoupled code. Discuss trade-offs
-with the team. _[No specific 'good' code example here, as the recommendation is
-situational awareness rather than a single pattern]._
+1. **Check packages first**: Can you use existing components/hooks?
+2. **Follow domain structure**: Place code in appropriate domain
+3. **Use TypeScript strictly**: No any types
+4. **Apply Biome**: Format and lint before committing
+5. **Write tests**: Unit tests for logic, integration tests for features
 
-## Scoping State Management (Avoiding Overly Broad Hooks)
+### Testing Strategy
 
-**Rule:** Break down broad state management into smaller, focused
-hooks/contexts.
+```bash
+# Unit tests
+pnpm test
 
-**Reasoning:**
+# Type checking
+pnpm check-types
 
-- Reduces coupling by ensuring components only depend on necessary state slices.
-- Improves performance by preventing unnecessary re-renders from unrelated state
-  changes.
+# Linting
+pnpm lint
 
-#### Recommended Pattern:
+# Component testing in Storybook
+pnpm storybook --filter=ui
+```
 
-(Focused hooks, low coupling)
+---
+
+## ⚠️ Critical Rules
+
+### DO's ✅
+
+- **ALWAYS** use packages from `packages/` folder
+- **ALWAYS** use Biome for formatting/linting
+- **ALWAYS** use kebab-case for folders, index.tsx for main files
+- **ALWAYS** use TanStack Query for data fetching
+- **ALWAYS** use existing components from packages
+- **ALWAYS** follow domain-based architecture
+- **ALWAYS** write tests for new features
+- **ALWAYS** use TypeScript strict mode
+
+### DON'Ts ❌
+
+- **NEVER** use ESLint or Prettier (use Biome)
+- **NEVER** create new API clients (use @nugudi/api)
+- **NEVER** create components that exist in packages
+- **NEVER** use PascalCase for file/folder names (except index.tsx)
+- **NEVER** use inline styles (use Vanilla Extract)
+- **NEVER** add Co-Author lines in commits
+- **NEVER** use any type in TypeScript
+- **NEVER** skip tests for new features
+
+---
+
+## 📚 Package Documentation
+
+### Available Packages
 
 ```typescript
-// Hook specifically for cardId query param
-import { useQueryParam, NumberParam } from 'use-query-params';
-import { useCallback } from 'react';
+// Component Packages
+@nugudi/react-components-button
+@nugudi/react-components-input
+@nugudi/react-components-chip
+@nugudi/react-components-layout
+@nugudi/react-components-navigation-item
+@nugudi/react-components-switch
+@nugudi/react-components-tab
+@nugudi/react-components-textarea
+@nugudi/react-components-input-otp
+@nugudi/react-components-step-indicator
+@nugudi/react-components-menu-card
+@nugudi/react-components-bottom-sheet
+@nugudi/react-components-backdrop
 
-export const useCardIdQueryParam = () => {
-  // Assuming 'query' provides the raw param value
-  const [cardIdParam, setCardIdParam] = useQueryParam('cardId', NumberParam);
+// Hook Packages
+@nugudi/react-hooks-button
+@nugudi/react-hooks-switch
+@nugudi/react-hooks-toggle
+@nugudi/react-hooks-use-stepper
 
-  const setCardId = useCallback(
-    (newCardId: number | undefined) => {
-      setCardIdParam(newCardId, 'replaceIn'); // Or 'push' depending on desired history behavior
-    },
-    [setCardIdParam]
-  );
-
-  // Provide a stable return tuple
-  return [cardIdParam ?? undefined, setCardId] as const;
-};
-
-// Separate hook for date range, etc.
-// export const useDateRangeQueryParam = () => { /* ... */ }
+// Core Packages
+@nugudi/api                  // API client + mocks
+@nugudi/themes               // Design tokens
+@nugudi/assets-icons         // Icon components
+@nugudi/ui                   // Storybook UI documentation
 ```
 
-Components now only import and use `useCardIdQueryParam` if they need `cardId`,
-decoupling them from date range state, etc.
+### Import Examples
 
-## Eliminating Props Drilling with Composition
+```typescript
+// Component usage
+import Button from '@nugudi/react-components-button';
+import { Box, Flex } from '@nugudi/react-components-layout';
 
-**Rule:** Use Component Composition instead of Props Drilling.
+// Hook usage
+import { useToggle } from '@nugudi/react-hooks-toggle';
+import { useStepper } from '@nugudi/react-hooks-use-stepper';
 
-**Reasoning:**
+// API usage
+import { api } from '@nugudi/api';
 
-- Significantly reduces coupling by eliminating unnecessary intermediate
-  dependencies.
-- Makes refactoring easier and clarifies data flow in flatter component trees.
+// Theme usage
+import { variables } from '@nugudi/themes';
 
-#### Recommended Pattern:
-
-```tsx
-import React, { useState } from 'react';
-
-// Assume Modal, Input, Button, ItemEditList components exist
-
-const ItemEditModal = ({
-  open,
-  items,
-  recommendedItems,
-  onConfirm,
-  onClose,
-}) => {
-  const [keyword, setKeyword] = useState('');
-
-  // Render children directly within Modal, passing props only where needed
-  return (
-    <Modal open={open} onClose={onClose}>
-      {/* Input and Button rendered directly */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          marginBottom: '1rem',
-        }}
-      >
-        <Input
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)} // State managed here
-          placeholder='Search items...'
-        />
-        <Button onClick={onClose}>Close</Button>
-      </div>
-      {/* ItemEditList rendered directly, gets props it needs */}
-      <ItemEditList
-        keyword={keyword} // Passed directly
-        items={items} // Passed directly
-        recommendedItems={recommendedItems} // Passed directly
-        onConfirm={onConfirm} // Passed directly
-      />
-    </Modal>
-  );
-};
-
-// The intermediate ItemEditBody component is eliminated, reducing coupling.
+// Icon usage - Import individual icons
+import { AppleIcon, HeartIcon, ArrowRightIcon } from '@nugudi/assets-icons';
 ```
+
+---
+
+## 🔍 Quick Reference
+
+### Project Structure
+
+- **Apps**: `web` (Next.js 15)
+- **Architecture**: Domain-based
+- **Styling**: Vanilla Extract + CSS Modules
+- **State**: TanStack Query + Zustand
+- **Backend**: External API
+- **Linting**: Biome (NOT ESLint/Prettier)
+
+### Common Commands
+
+```bash
+pnpm dev                     # Start development
+pnpm build                   # Build all
+pnpm biome check --write .   # Format & lint
+pnpm test                    # Run tests
+pnpm check-types            # Type checking
+pnpm commit                 # Commit with commitizen
+```
+
+### Import Priority
+
+1. `@nugudi/react-components-*` - React components
+2. `@nugudi/react-hooks-*` - React hooks
+3. `@nugudi/api` - API client & mocks
+4. `@nugudi/themes` - Design tokens
+5. `@nugudi/assets-icons` - Icons
+6. Domain-specific code
+7. Shared utilities
+
+### Import Rules
+
+#### Within Same Domain - Use Relative Imports
+
+```typescript
+// ✅ CORRECT - Within same domain (e.g., auth/sign-up)
+// From: src/domains/auth/sign-up/ui/views/sign-up-view/index.tsx
+import { SignUpForm } from '../../components/sign-up-form';
+import { useSignUpStore } from '../../../stores/use-sign-up-store';
+import { signUpSchema } from '../../../schemas/sign-up-schema';
+import type { SignUpFormData } from '../../../types/sign-up';
+
+// ✅ CORRECT - From section to component in same domain
+// From: src/domains/auth/sign-up/ui/sections/sign-up-section/index.tsx
+import { EmailForm } from '../../components/sign-up-form/steps/email-form';
+import { PasswordForm } from '../../components/sign-up-form/steps/password-form';
+
+// ✅ CORRECT - Within same folder
+// From: src/domains/auth/sign-up/ui/components/sign-up-form/steps/email-form/index.tsx
+import * as styles from './index.css';
+```
+
+#### Cross-Domain or from App - Use Absolute Imports
+
+```typescript
+// ✅ CORRECT - Cross-domain imports
+// From: src/domains/menu/...
+import { useAuth } from '@/domains/auth/hooks/use-auth';
+
+// ✅ CORRECT - From app pages (public routes)
+// From: app/(public)/auth/sign-up/page.tsx
+import { SignUpView } from '@/domains/auth/sign-up/ui/views/sign-up-view';
+
+// ✅ CORRECT - From app pages (protected routes)
+// From: app/(auth)/benefits/page.tsx
+import { BenefitPageView } from '@/domains/benefit/ui/views/benefit-page-view';
+```
+
+#### Package Imports - Always Use Package Path
+
+```typescript
+// ✅ CORRECT - Always use package imports for packages
+import Button from '@nugudi/react-components-button';
+import { variables } from '@nugudi/themes';
+
+// ❌ WRONG - Never use relative imports for packages
+import Button from '../../../../../packages/react/components/button'; // NO!
+```
+
+---
+
+## 💡 Tips for Claude Code
+
+When working in this repository:
+
+1. **Always check `packages/` first** before creating new code
+2. **Use Biome commands** for formatting and linting
+3. **Follow domain structure** for organizing code
+4. **Leverage TypeScript** strict mode for type safety
+5. **Test with MSW mocks** from `@nugudi/api`
+6. **Use Vanilla Extract** for component styles
+7. **Follow the established patterns** in existing domains
+
+Remember: This is a **package-first monorepo** - maximize reuse of existing packages!
+
+# important-instruction-reminders
+
+Do what has been asked; nothing more, nothing less.
+NEVER create files unless they're absolutely necessary for achieving your goal.
+ALWAYS prefer editing an existing file to creating a new one.
+NEVER proactively create documentation files (\*.md) or README files. Only create documentation files if explicitly requested by the User.

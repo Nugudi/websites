@@ -49,13 +49,20 @@ Next.js 15 route groups organize pages by authentication requirements:
 
 ```typescript
 // ✅ CORRECT - Use packages
+<<<<<<< HEAD
 import { Button } from '@nugudi/react-components-button';
 import { useToggle } from '@nugudi/react-hooks-toggle';
 import { vars } from '@nugudi/themes';
 import { AppleIcon, HeartIcon } from '@nugudi/assets-icons';
+=======
+import Button from "@nugudi/react-components-button";
+import { useToggle } from "@nugudi/react-hooks-toggle";
+import { variables } from "@nugudi/themes";
+import { Icons } from "@nugudi/assets-icons";
+>>>>>>> fdd39e4 ([NUGUDI-113] docs(root): Next.js App Router 컴포넌트 아키텍처 규칙 및 폴더 구조 업데이트)
 
 // ❌ WRONG - Don't create new implementations
-import Button from './components/button'; // NO!
+import Button from "./components/button"; // NO!
 ```
 
 ### Package Import Priority
@@ -373,6 +380,7 @@ This pattern ensures:
 ### React Components (`@nugudi/react-components-*`)
 
 ```typescript
+<<<<<<< HEAD
 // All components use NAMED exports following the pattern
 import { Button } from '@nugudi/react-components-button';
 import { Input } from '@nugudi/react-components-input';
@@ -386,44 +394,67 @@ import { StepIndicator } from '@nugudi/react-components-step-indicator';
 import { MenuCard } from '@nugudi/react-components-menu-card';
 import { BottomSheet } from '@nugudi/react-components-bottom-sheet';
 import { Backdrop } from '@nugudi/react-components-backdrop';
+=======
+// Individual component imports
+import Button from "@nugudi/react-components-button";
+import Input from "@nugudi/react-components-input";
+import { Box, Flex, VStack, HStack } from "@nugudi/react-components-layout";
+import Chip from "@nugudi/react-components-chip";
+import { NavigationItem } from "@nugudi/react-components-navigation-item"; // Named export
+import Switch from "@nugudi/react-components-switch";
+import Tab from "@nugudi/react-components-tab";
+import Textarea from "@nugudi/react-components-textarea";
+import InputOTP from "@nugudi/react-components-input-otp";
+import StepIndicator from "@nugudi/react-components-step-indicator";
+import MenuCard from "@nugudi/react-components-menu-card";
+import BottomSheet from "@nugudi/react-components-bottom-sheet";
+import Backdrop from "@nugudi/react-components-backdrop";
+>>>>>>> fdd39e4 ([NUGUDI-113] docs(root): Next.js App Router 컴포넌트 아키텍처 규칙 및 폴더 구조 업데이트)
 
 // NavigationItem usage example
 <NavigationItem
   leftIcon={<CoinIcon />}
   rightIcon={<ArrowRightIcon />}
+<<<<<<< HEAD
   onClick={() => console.log('clicked')}
 >
   <div>Content with title and description</div>
 </NavigationItem>
+=======
+  onClick={() => console.log("clicked")}
+>
+  <div>Content with title and description</div>
+</NavigationItem>;
+>>>>>>> fdd39e4 ([NUGUDI-113] docs(root): Next.js App Router 컴포넌트 아키텍처 규칙 및 폴더 구조 업데이트)
 ```
 
 ### React Hooks (`@nugudi/react-hooks-*`)
 
 ```typescript
 // Individual hook imports
-import { useButton, useToggleButton } from '@nugudi/react-hooks-button';
-import { useSwitch, useToggleSwitch } from '@nugudi/react-hooks-switch';
-import { useToggle } from '@nugudi/react-hooks-toggle';
-import { useStepper } from '@nugudi/react-hooks-use-stepper';
+import { useButton, useToggleButton } from "@nugudi/react-hooks-button";
+import { useSwitch, useToggleSwitch } from "@nugudi/react-hooks-switch";
+import { useToggle } from "@nugudi/react-hooks-toggle";
+import { useStepper } from "@nugudi/react-hooks-use-stepper";
 ```
 
 ### API Client (`@nugudi/api`)
 
 ```typescript
 // Use auto-generated API client from OpenAPI spec
-import { api } from '@nugudi/api';
-import { useQuery } from '@tanstack/react-query';
+import { api } from "@nugudi/api";
+import { useQuery } from "@tanstack/react-query";
 
 // API hooks with TanStack Query
 export function useUserProfile(userId: string) {
   return useQuery({
-    queryKey: ['user', userId],
+    queryKey: ["user", userId],
     queryFn: () => api.users.getProfile(userId),
   });
 }
 
 // MSW mocks available for testing
-import { handlers } from '@nugudi/api/index.msw';
+import { handlers } from "@nugudi/api/index.msw";
 ```
 
 ### Themes (`@nugudi/themes`)
@@ -471,8 +502,13 @@ classes.stack;
 #### Usage Example
 
 ```typescript
+<<<<<<< HEAD
 import { vars, classes } from '@nugudi/themes';
 import { style } from '@vanilla-extract/css';
+=======
+import { vars, classes } from "@nugudi/themes";
+import { style } from "@vanilla-extract/css";
+>>>>>>> fdd39e4 ([NUGUDI-113] docs(root): Next.js App Router 컴포넌트 아키텍처 규칙 및 폴더 구조 업데이트)
 
 // Use pre-defined classes when available
 export const container = classes.container;
@@ -586,12 +622,17 @@ export const SignUpForm: React.FC<SignUpFormProps> = (props) => {
 };
 
 // src/domains/auth/sign-up/ui/components/sign-up-form/index.css.ts
+<<<<<<< HEAD
 import { style } from '@vanilla-extract/css';
 import { vars } from '@nugudi/themes';
+=======
+import { style } from "@vanilla-extract/css";
+import { variables } from "@nugudi/themes";
+>>>>>>> fdd39e4 ([NUGUDI-113] docs(root): Next.js App Router 컴포넌트 아키텍처 규칙 및 폴더 구조 업데이트)
 
 export const formContainer = style({
-  display: 'flex',
-  flexDirection: 'column',
+  display: "flex",
+  flexDirection: "column",
   gap: variables.box.spacing.md,
 });
 ```
@@ -637,8 +678,13 @@ export const useSignUpStore = create<SignUpStore>((set) => ({
 ```typescript
 // ✅ CORRECT - Always prioritize existing theme values
 // index.css.ts
+<<<<<<< HEAD
 import { style } from '@vanilla-extract/css';
 import { vars, classes } from '@nugudi/themes';
+=======
+import { style } from "@vanilla-extract/css";
+import { vars, classes } from "@nugudi/themes";
+>>>>>>> fdd39e4 ([NUGUDI-113] docs(root): Next.js App Router 컴포넌트 아키텍처 규칙 및 폴더 구조 업데이트)
 
 // FIRST: Check if there's a pre-defined class
 export const container = classes.container; // If exists
@@ -646,6 +692,7 @@ export const container = classes.container; // If exists
 // SECOND: Use design tokens from vars
 export const customCard = style({
   // Always use vars for consistent design
+<<<<<<< HEAD
   padding: vars.box.spacing[16],  // NOT: padding: '16px'
   borderRadius: vars.box.radii.lg,  // NOT: borderRadius: '12px'
   backgroundColor: vars.colors.$scale.whiteAlpha[100],  // NOT: backgroundColor: 'white'
@@ -659,6 +706,21 @@ export const customCard = style({
 import * as styles from './index.css';
 
 <div className={styles.customCard}>Content</div>
+=======
+  padding: vars.box.spacing[16], // NOT: padding: '16px'
+  borderRadius: vars.box.radii.lg, // NOT: borderRadius: '12px'
+  backgroundColor: vars.colors.$scale.whiteAlpha[100], // NOT: backgroundColor: 'white'
+  boxShadow: vars.box.shadows.sm, // NOT: boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+
+  // Only use custom values when absolutely necessary
+  width: "149px", // OK if specific requirement
+});
+
+// Component file
+import * as styles from "./index.css";
+
+<div className={styles.customCard}>Content</div>;
+>>>>>>> fdd39e4 ([NUGUDI-113] docs(root): Next.js App Router 컴포넌트 아키텍처 규칙 및 폴더 구조 업데이트)
 ```
 
 ### CSS Modules for App-specific Styles
@@ -680,14 +742,14 @@ import * as styles from './index.css';
 
 ```typescript
 // Use @nugudi/api for all backend communication
-import { api } from '@nugudi/api';
+import { api } from "@nugudi/api";
 
 // TanStack Query for data fetching
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 
 export function useMenuData(date: string) {
   return useQuery({
-    queryKey: ['menu', date],
+    queryKey: ["menu", date],
     queryFn: () => api.menu.getByDate(date),
   });
 }
@@ -696,15 +758,15 @@ export function useMenuData(date: string) {
 ### Form Handling with React Hook Form
 
 ```typescript
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { signUpSchema } from '../schemas/sign-up-schema';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signUpSchema } from "../schemas/sign-up-schema";
 
 const form = useForm({
   resolver: zodResolver(signUpSchema),
   defaultValues: {
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   },
 });
 ```
@@ -907,21 +969,33 @@ pnpm storybook --filter=ui
 
 ```typescript
 // Component usage
+<<<<<<< HEAD
 import { Button } from '@nugudi/react-components-button';
 import { Box, Flex } from '@nugudi/react-components-layout';
+=======
+import Button from "@nugudi/react-components-button";
+import { Box, Flex } from "@nugudi/react-components-layout";
+>>>>>>> fdd39e4 ([NUGUDI-113] docs(root): Next.js App Router 컴포넌트 아키텍처 규칙 및 폴더 구조 업데이트)
 
 // Hook usage
-import { useToggle } from '@nugudi/react-hooks-toggle';
-import { useStepper } from '@nugudi/react-hooks-use-stepper';
+import { useToggle } from "@nugudi/react-hooks-toggle";
+import { useStepper } from "@nugudi/react-hooks-use-stepper";
 
 // API usage
-import { api } from '@nugudi/api';
+import { api } from "@nugudi/api";
 
 // Theme usage
+<<<<<<< HEAD
 import { vars } from '@nugudi/themes';
 
 // Icon usage - Import individual icons
 import { AppleIcon, HeartIcon, ArrowRightIcon } from '@nugudi/assets-icons';
+=======
+import { variables } from "@nugudi/themes";
+
+// Icon usage - Import individual icons
+import { AppleIcon, HeartIcon, ArrowRightIcon } from "@nugudi/assets-icons";
+>>>>>>> fdd39e4 ([NUGUDI-113] docs(root): Next.js App Router 컴포넌트 아키텍처 규칙 및 폴더 구조 업데이트)
 ```
 
 ---
@@ -965,19 +1039,19 @@ pnpm commit                 # Commit with commitizen
 ```typescript
 // ✅ CORRECT - Within same domain (e.g., auth/sign-up)
 // From: src/domains/auth/sign-up/ui/views/sign-up-view/index.tsx
-import { SignUpForm } from '../../components/sign-up-form';
-import { useSignUpStore } from '../../../stores/use-sign-up-store';
-import { signUpSchema } from '../../../schemas/sign-up-schema';
-import type { SignUpFormData } from '../../../types/sign-up';
+import { SignUpForm } from "../../components/sign-up-form";
+import { useSignUpStore } from "../../../stores/use-sign-up-store";
+import { signUpSchema } from "../../../schemas/sign-up-schema";
+import type { SignUpFormData } from "../../../types/sign-up";
 
 // ✅ CORRECT - From section to component in same domain
 // From: src/domains/auth/sign-up/ui/sections/sign-up-section/index.tsx
-import { EmailForm } from '../../components/sign-up-form/steps/email-form';
-import { PasswordForm } from '../../components/sign-up-form/steps/password-form';
+import { EmailForm } from "../../components/sign-up-form/steps/email-form";
+import { PasswordForm } from "../../components/sign-up-form/steps/password-form";
 
 // ✅ CORRECT - Within same folder
 // From: src/domains/auth/sign-up/ui/components/sign-up-form/steps/email-form/index.tsx
-import * as styles from './index.css';
+import * as styles from "./index.css";
 ```
 
 #### Cross-Domain or from App - Use Absolute Imports
@@ -985,26 +1059,42 @@ import * as styles from './index.css';
 ```typescript
 // ✅ CORRECT - Cross-domain imports
 // From: src/domains/menu/...
-import { useAuth } from '@/domains/auth/hooks/use-auth';
+import { useAuth } from "@/domains/auth/hooks/use-auth";
 
 // ✅ CORRECT - From app pages (public routes)
 // From: app/(public)/auth/sign-up/page.tsx
+<<<<<<< HEAD
 import { SignUpView } from '@/domains/auth/sign-up/ui/views/sign-up-view';
 
 // ✅ CORRECT - From app pages (protected routes)
 // From: app/(auth)/benefits/page.tsx
 import { BenefitPageView } from '@/domains/benefit/ui/views/benefit-page-view';
+=======
+import { SignUpView } from "@/domains/auth/sign-up/ui/views/sign-up-view";
+
+// ✅ CORRECT - From app pages (protected routes)
+// From: app/(auth)/benefits/page.tsx
+import { BenefitPageView } from "@/domains/benefit/ui/views/benefit-page-view";
+>>>>>>> fdd39e4 ([NUGUDI-113] docs(root): Next.js App Router 컴포넌트 아키텍처 규칙 및 폴더 구조 업데이트)
 ```
 
 #### Package Imports - Always Use Package Path
 
 ```typescript
 // ✅ CORRECT - Always use package imports for packages
+<<<<<<< HEAD
 import { Button } from '@nugudi/react-components-button';
 import { vars } from '@nugudi/themes';
 
 // ❌ WRONG - Never use relative imports for packages
 import { Button } from '../../../../../packages/react/components/button'; // NO!
+=======
+import Button from "@nugudi/react-components-button";
+import { variables } from "@nugudi/themes";
+
+// ❌ WRONG - Never use relative imports for packages
+import Button from "../../../../../packages/react/components/button"; // NO!
+>>>>>>> fdd39e4 ([NUGUDI-113] docs(root): Next.js App Router 컴포넌트 아키텍처 규칙 및 폴더 구조 업데이트)
 ```
 
 ---
