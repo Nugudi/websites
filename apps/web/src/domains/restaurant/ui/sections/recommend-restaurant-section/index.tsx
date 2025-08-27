@@ -1,4 +1,4 @@
-import { Flex } from "@nugudi/react-components-layout";
+import { Body, Emphasis, Flex } from "@nugudi/react-components-layout";
 import RecommendRestaurant from "@/src/domains/restaurant/ui/components/recommend-restaurant";
 import * as styles from "./index.css";
 
@@ -15,10 +15,12 @@ const RecommendRestaurantSection = () => {
   return (
     <Flex direction="column" gap="12px" align="start">
       <Flex direction="column" gap="2px" className={styles.titleContainer}>
-        <span className={styles.title}>추천 식당</span>
-        <p className={styles.description}>
+        <Body fontSize="b1" colorShade={700}>
+          추천 식당
+        </Body>
+        <Emphasis fontSize="e1" colorShade={400}>
           현재 위치에서 가장 가까운 식당을 추천해요 !
-        </p>
+        </Emphasis>
       </Flex>
       <RecommendRestaurant {...recommendRestaurantData} />
     </Flex>

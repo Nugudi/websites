@@ -14,12 +14,15 @@ const Title = (props: TitleProps, ref: Ref<HTMLElement>) => {
     color = "zinc",
     colorShade = 700,
     children,
+    className,
+    style,
+    ...domProps
   } = props;
 
   return React.createElement(
     as,
     {
-      ...props,
+      ...domProps,
       ref,
       className: clsx([
         BaseStyle,
@@ -29,11 +32,11 @@ const Title = (props: TitleProps, ref: Ref<HTMLElement>) => {
         titleStyle({
           fontSize,
         }),
-        props.className,
+        className,
       ]),
       style: {
         color: color && vars.colors.$scale?.[color]?.[colorShade],
-        ...props.style,
+        ...style,
       },
     },
     children,
