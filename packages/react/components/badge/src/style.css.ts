@@ -56,18 +56,19 @@ export const badgeToneVariant = styleVariants({
 
   // Informative tone (blue-like)
   "informative-solid": {
-    backgroundColor: "#007bff",
+    backgroundColor: vars.colors.$static.light.color.blue,
     color: vars.colors.$static.light.color.white,
     fontWeight: vars.typography.fontWeight[600],
   },
   "informative-weak": {
-    backgroundColor: "#edf7fb",
-    color: "#007bff",
+    backgroundColor: vars.colors.$static.light.color.lightBlue,
+    color: vars.colors.$static.light.color.blue,
+    border: "1px solid transparent",
   },
   "informative-outline": {
     backgroundColor: "transparent",
-    color: "#007bff",
-    border: `1px solid #007bff`,
+    color: vars.colors.$static.light.color.blue,
+    border: `1px solid ${vars.colors.$static.light.color.lightBlue}`,
     fontWeight: vars.typography.fontWeight[600],
   },
 
@@ -85,7 +86,7 @@ export const badgeToneVariant = styleVariants({
     backgroundColor: "transparent",
     color: vars.colors.$scale.main[600],
     fontWeight: vars.typography.fontWeight[600],
-    border: `1px solid ${vars.colors.$scale.main[400]}`,
+    border: `1px solid ${vars.colors.$scale.main[100]}`,
   },
 
   // Negative tone (red-like, using static red)
@@ -96,7 +97,7 @@ export const badgeToneVariant = styleVariants({
     border: "1px solid transparent",
   },
   "negative-weak": {
-    backgroundColor: "#fed4d4",
+    backgroundColor: vars.colors.$static.light.color.lightRed,
     color: vars.colors.$static.light.color.red,
     border: "1px solid transparent",
   },
@@ -104,6 +105,6 @@ export const badgeToneVariant = styleVariants({
     backgroundColor: vars.colors.$static.light.color.white,
     color: vars.colors.$static.light.color.red,
     fontWeight: vars.typography.fontWeight[600],
-    border: `1px solid #fed4d4`,
+    border: `1px solid ${vars.colors.$static.light.color.lightRed}`,
   },
 });
