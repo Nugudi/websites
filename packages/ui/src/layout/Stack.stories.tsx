@@ -64,13 +64,13 @@ export const Default: Story = {
   },
   render: (args) => (
     <_Stack {...args}>
-      <Box background="main" padding={3}>
+      <Box background="main" p="3">
         Default Stack Item 1
       </Box>
-      <Box background="blackAlpha" padding={3}>
+      <Box background="blackAlpha" p="3">
         Default Stack Item 2
       </Box>
-      <Box background="main" padding={3}>
+      <Box background="main" p="3">
         Default Stack Item 3
       </Box>
     </_Stack>
@@ -84,10 +84,10 @@ export const WithColor: Story = {
   render: (args) => (
     <>
       <_Stack {...args}>
-        <Box background="main" padding={2}>
+        <Box background="main" p="2">
           Item 1
         </Box>
-        <Box background="blackAlpha" padding={2}>
+        <Box background="blackAlpha" p="2">
           Item 2
         </Box>
       </_Stack>
@@ -102,13 +102,13 @@ export const WithGap: Story = {
   },
   render: (args) => (
     <_Stack {...args}>
-      <Box background="main" padding={2}>
+      <Box background="main" p="2">
         Item 1
       </Box>
-      <Box background="blackAlpha" padding={2}>
+      <Box background="blackAlpha" p="2">
         Item 2
       </Box>
-      <Box background="main" padding={2}>
+      <Box background="main" p="2">
         Item 3
       </Box>
     </_Stack>
@@ -125,13 +125,13 @@ export const RowDirection: Story = {
   render: (args) => (
     <div style={{ width: "100%", minWidth: "400px" }}>
       <_Stack {...args} style={{ background: "#f0f0f0", padding: "10px" }}>
-        <Box background="main" padding={3}>
+        <Box background="main" p="3">
           Row Item 1
         </Box>
-        <Box background="main" padding={4}>
+        <Box background="main" p="4">
           Row Item 2
         </Box>
-        <Box background="main" padding={2}>
+        <Box background="main" p="2">
           Row Item 3
         </Box>
       </_Stack>
@@ -148,13 +148,13 @@ export const ColumnDirection: Story = {
   render: (args) => (
     <div style={{ width: "300px" }}>
       <_Stack {...args} style={{ background: "#f0f0f0", padding: "10px" }}>
-        <Box background="main" padding={3}>
+        <Box background="main" p="3">
           Column Item 1
         </Box>
-        <Box background="main" padding={3}>
+        <Box background="main" p="3">
           Column Item 2
         </Box>
-        <Box background="main" padding={3}>
+        <Box background="main" p="3">
           Column Item 3
         </Box>
       </_Stack>
@@ -175,13 +175,13 @@ export const DirectionComparison: Story = {
           direction="row"
           style={{ background: "#f0f0f0", padding: "10px" }}
         >
-          <Box background="main" padding={3}>
+          <Box background="main" p="3">
             1
           </Box>
-          <Box background="main" padding={3}>
+          <Box background="main" p="3">
             2
           </Box>
-          <Box background="main" padding={3}>
+          <Box background="main" p="3">
             3
           </Box>
         </_Stack>
@@ -193,13 +193,13 @@ export const DirectionComparison: Story = {
           direction="column"
           style={{ background: "#f0f0f0", padding: "10px" }}
         >
-          <Box background="main" padding={3}>
+          <Box background="main" p="3">
             1
           </Box>
-          <Box background="main" padding={3}>
+          <Box background="main" p="3">
             2
           </Box>
-          <Box background="main" padding={3}>
+          <Box background="main" p="3">
             3
           </Box>
         </_Stack>
@@ -223,15 +223,15 @@ export const RowWithAlignment: Story = {
           align="center"
           style={{ background: "#f0f0f0", padding: "10px", minHeight: "100px" }}
         >
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             Small
           </Box>
-          <Box background="main" padding={4}>
+          <Box background="main" p="4">
             Medium
             <br />
             Height
           </Box>
-          <Box background="main" padding={6}>
+          <Box background="main" p="6">
             Large
             <br />
             Content
@@ -249,15 +249,15 @@ export const RowWithAlignment: Story = {
           align="start"
           style={{ background: "#f0f0f0", padding: "10px", minHeight: "100px" }}
         >
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             Small
           </Box>
-          <Box background="main" padding={4}>
+          <Box background="main" p="4">
             Medium
             <br />
             Height
           </Box>
-          <Box background="main" padding={6}>
+          <Box background="main" p="6">
             Large
             <br />
             Content
@@ -275,15 +275,15 @@ export const RowWithAlignment: Story = {
           align="end"
           style={{ background: "#f0f0f0", padding: "10px", minHeight: "100px" }}
         >
-          <Box background="main" padding={2}>
+          <Box background="main" p="2">
             Small
           </Box>
-          <Box background="main" padding={4}>
+          <Box background="main" p="4">
             Medium
             <br />
             Height
           </Box>
-          <Box background="main" padding={6}>
+          <Box background="main" p="6">
             Large
             <br />
             Content
@@ -300,45 +300,45 @@ export const NestedStacks: Story = {
   render: () => (
     <_Stack
       direction="column"
-      gap={12}
+      gap="12"
       style={{ background: "#f0f0f0", padding: "20px", width: "100%" }}
     >
-      <Box background="main" padding={3}>
+      <Box background="main" p="3">
         Header
       </Box>
 
-      <_Stack direction="row" gap={8} style={{ width: "100%" }}>
-        <_Stack direction="column" gap={4} style={{ flex: "0 0 200px" }}>
-          <Box background="main" padding={3}>
+      <_Stack direction="row" gap="8" style={{ width: "100%" }}>
+        <_Stack direction="column" gap="4" style={{ flex: "0 0 200px" }}>
+          <Box background="main" p="3">
             Sidebar Item 1
           </Box>
-          <Box background="main" padding={3}>
+          <Box background="main" p="3">
             Sidebar Item 2
           </Box>
-          <Box background="main" padding={3}>
+          <Box background="main" p="3">
             Sidebar Item 3
           </Box>
         </_Stack>
 
-        <_Stack direction="column" gap={8} grow={1}>
-          <Box background="main" padding={4}>
+        <_Stack direction="column" gap="8" grow={1}>
+          <Box background="main" p="4">
             Main Content Area
           </Box>
-          <_Stack direction="row" gap={4} justify="between">
-            <Box background="main" padding={2}>
+          <_Stack direction="row" gap="4" justify="between">
+            <Box background="main" p="2">
               Action 1
             </Box>
-            <Box background="main" padding={2}>
+            <Box background="main" p="2">
               Action 2
             </Box>
-            <Box background="main" padding={2}>
+            <Box background="main" p="2">
               Action 3
             </Box>
           </_Stack>
         </_Stack>
       </_Stack>
 
-      <Box background="main" padding={3}>
+      <Box background="main" p="3">
         Footer
       </Box>
     </_Stack>
@@ -357,7 +357,7 @@ export const CardGrid: Story = {
         <_Stack
           key={i}
           direction="column"
-          gap={8}
+          gap="8"
           style={{
             border: "1px solid #ddd",
             borderRadius: "8px",
@@ -366,19 +366,19 @@ export const CardGrid: Story = {
             minWidth: "200px",
           }}
         >
-          <Box background="main" padding={4} style={{ borderRadius: "4px" }}>
+          <Box background="main" p="4" style={{ borderRadius: "4px" }}>
             Image {i}
           </Box>
-          <_Stack direction="column" gap={4}>
+          <_Stack direction="column" gap="4">
             <div style={{ fontWeight: "bold" }}>Card Title {i}</div>
             <div style={{ fontSize: "14px", color: "#666" }}>
               Card description goes here.
             </div>
           </_Stack>
-          <_Stack direction="row" gap={4} justify="between">
+          <_Stack direction="row" gap="4" justify="between">
             <Box
               background="main"
-              padding={2}
+              p="2"
               style={{ borderRadius: "4px", flex: 1, textAlign: "center" }}
             >
               Action

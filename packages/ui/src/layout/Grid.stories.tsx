@@ -58,49 +58,29 @@ export const Default: Story = {
   },
   render: (args) => (
     <_Grid {...args}>
-      <Box
-        background="main"
-        padding={3}
-        borderRadius="md"
-        style={{ color: "white" }}
-      >
+      <Box background="main" p="3" borderRadius="md" style={{ color: "white" }}>
         Item 1
       </Box>
-      <Box
-        background="zinc"
-        padding={3}
-        borderRadius="md"
-        style={{ color: "white" }}
-      >
+      <Box background="zinc" p="3" borderRadius="md" style={{ color: "white" }}>
         Item 2
       </Box>
       <Box
         background="blackAlpha"
-        padding={3}
+        p="3"
         borderRadius="md"
         style={{ color: "white" }}
       >
         Item 3
       </Box>
-      <Box
-        background="main"
-        padding={3}
-        borderRadius="md"
-        style={{ color: "white" }}
-      >
+      <Box background="main" p="3" borderRadius="md" style={{ color: "white" }}>
         Item 4
       </Box>
-      <Box
-        background="zinc"
-        padding={3}
-        borderRadius="md"
-        style={{ color: "white" }}
-      >
+      <Box background="zinc" p="3" borderRadius="md" style={{ color: "white" }}>
         Item 5
       </Box>
       <Box
         background="blackAlpha"
-        padding={3}
+        p="3"
         borderRadius="md"
         style={{ color: "white" }}
       >
@@ -137,7 +117,7 @@ export const ResponsiveColumns: Story = {
         <Box
           key={title}
           background="blackAlpha"
-          padding={3}
+          p="3"
           borderRadius="md"
           style={{ color: "white", textAlign: "center" }}
         >
@@ -171,7 +151,7 @@ export const TemplateAreas: Story = {
     <_Grid {...args}>
       <Box
         background="main"
-        padding={3}
+        p="3"
         borderRadius="md"
         style={{ gridArea: "header", color: "white" }}
       >
@@ -179,7 +159,7 @@ export const TemplateAreas: Story = {
       </Box>
       <Box
         background="zinc"
-        padding={3}
+        p="3"
         borderRadius="md"
         style={{ gridArea: "sidebar", color: "white" }}
       >
@@ -187,7 +167,7 @@ export const TemplateAreas: Story = {
       </Box>
       <Box
         background="blackAlpha"
-        padding={3}
+        p="3"
         borderRadius="md"
         style={{ gridArea: "main", color: "white" }}
       >
@@ -195,7 +175,7 @@ export const TemplateAreas: Story = {
       </Box>
       <Box
         background="whiteAlpha"
-        padding={3}
+        p="3"
         borderRadius="md"
         style={{ gridArea: "footer", color: "black" }}
       >
@@ -220,44 +200,24 @@ export const AutoFlow: Story = {
   },
   render: (args) => (
     <_Grid {...args}>
-      <Box
-        background="main"
-        padding={3}
-        borderRadius="md"
-        style={{ color: "white" }}
-      >
+      <Box background="main" p="3" borderRadius="md" style={{ color: "white" }}>
         A
       </Box>
-      <Box
-        background="zinc"
-        padding={3}
-        borderRadius="md"
-        style={{ color: "white" }}
-      >
+      <Box background="zinc" p="3" borderRadius="md" style={{ color: "white" }}>
         B
       </Box>
       <Box
         background="blackAlpha"
-        padding={3}
+        p="3"
         borderRadius="md"
         style={{ color: "white" }}
       >
         C
       </Box>
-      <Box
-        background="main"
-        padding={3}
-        borderRadius="md"
-        style={{ color: "white" }}
-      >
+      <Box background="main" p="3" borderRadius="md" style={{ color: "white" }}>
         D
       </Box>
-      <Box
-        background="zinc"
-        padding={3}
-        borderRadius="md"
-        style={{ color: "white" }}
-      >
+      <Box background="zinc" p="3" borderRadius="md" style={{ color: "white" }}>
         E
       </Box>
     </_Grid>
@@ -283,7 +243,7 @@ export const GapVariations: Story = {
         <Box
           key={num}
           background="blackAlpha"
-          padding={2}
+          p="2"
           borderRadius="sm"
           style={{ color: "white", textAlign: "center" }}
         >
@@ -319,7 +279,7 @@ export const CardLayout: Story = {
         <Box
           key={product.title}
           background={product.bg as "main" | "zinc" | "blackAlpha"}
-          padding={4}
+          p="4"
           borderRadius="lg"
           style={{
             color: "white",
@@ -356,23 +316,18 @@ export const Dashboard: Story = {
     <_Grid {...args}>
       <Box
         background="main"
-        padding={4}
+        p="4"
         borderRadius="md"
         style={{ gridColumn: "1 / -1", color: "white" }}
       >
         대시보드 헤더
       </Box>
-      <Box
-        background="zinc"
-        padding={4}
-        borderRadius="md"
-        style={{ color: "white" }}
-      >
+      <Box background="zinc" p="4" borderRadius="md" style={{ color: "white" }}>
         통계 1
       </Box>
       <Box
         background="blackAlpha"
-        padding={4}
+        p="4"
         borderRadius="md"
         style={{ color: "white" }}
       >
@@ -380,7 +335,7 @@ export const Dashboard: Story = {
       </Box>
       <Box
         background="whiteAlpha"
-        padding={4}
+        p="4"
         borderRadius="md"
         style={{ color: "black" }}
       >
@@ -388,7 +343,7 @@ export const Dashboard: Story = {
       </Box>
       <Box
         background="blackAlpha"
-        padding={4}
+        p="4"
         borderRadius="md"
         style={{ gridColumn: "1 / -1", color: "white" }}
       >

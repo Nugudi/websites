@@ -10,13 +10,8 @@ const menuItems = [
 
 const MenuSection = () => {
   return (
-    <Box
-      className={styles.container}
-      boxShadow="sm"
-      borderRadius="xl"
-      padding={2}
-    >
-      <VStack gap={4}>
+    <Box className={styles.container} boxShadow="sm" borderRadius="xl" p="2">
+      <VStack gap="4">
         {menuItems.map((item) => (
           <NavigationLink key={item.label} href={item.href}>
             {item.label}

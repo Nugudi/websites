@@ -43,7 +43,7 @@ export const EmailForm = ({ onNext }: EmailFormProps) => {
     <form onSubmit={form.handleSubmit(onSubmit)} className={styles.form}>
       <Box className={styles.titleContainer}>
         <Flex direction="column" justify="start" align="start">
-          <VStack gap={5}>
+          <VStack gap="5">
             <Title fontSize="t1" color="zinc">
               이메일을 입력해주세요
             </Title>

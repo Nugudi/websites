@@ -29,7 +29,7 @@ export const spacing = {
   72: "18rem",
   80: "20rem",
   96: "24rem",
-};
+} as const;
 
 export const radii = {
   none: "0",
@@ -41,7 +41,7 @@ export const radii = {
   "2xl": "1rem",
   "3xl": "1.5rem",
   full: "9999px",
-};
+} as const;
 
 export const shadows = {
   xs: "0 0 0 1px rgba(0, 0, 0, 0.05)",
@@ -55,4 +55,4 @@ export const shadows = {
   darkLg:
     "0px 15px 40px 0px rgba(0, 0, 0, 0.40), 0px 5px 10px 0px rgba(0, 0, 0, 0.20), 0px 0px 0px 1px rgba(0, 0, 0, 0.10)",
   outline: "0 0 0 3px rgba(66, 153, 225, 0.6)",
-};
+} as const;

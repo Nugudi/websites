@@ -77,7 +77,7 @@ export const Large: Story = {
     size: "lg",
     leftIcon: <BusIcon />,
     children: (
-      <Flex direction="column" gap={2}>
+      <Flex direction="column" gap="2">
         <span
           style={{
             ...classes.typography.body.b3b,
