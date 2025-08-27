@@ -14,12 +14,15 @@ const Emphasis = (props: EmphasisProps, ref: Ref<HTMLElement>) => {
     color = "zinc",
     colorShade = 600,
     children,
+    className,
+    style,
+    ...domProps
   } = props;
 
   return React.createElement(
     as,
     {
-      ...props,
+      ...domProps,
       ref,
       className: clsx([
         BaseStyle,
@@ -29,11 +32,11 @@ const Emphasis = (props: EmphasisProps, ref: Ref<HTMLElement>) => {
         emphasisStyle({
           fontSize,
         }),
-        props.className,
+        className,
       ]),
       style: {
         color: color && vars.colors.$scale?.[color]?.[colorShade],
-        ...props.style,
+        ...style,
       },
     },
     children,

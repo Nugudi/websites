@@ -14,12 +14,15 @@ const Logo = (props: LogoProps, ref: Ref<HTMLElement>) => {
     color = "main",
     colorShade = 500,
     children,
+    className,
+    style,
+    ...domProps
   } = props;
 
   return React.createElement(
     as,
     {
-      ...props,
+      ...domProps,
       ref,
       className: clsx([
         BaseStyle,
@@ -29,11 +32,11 @@ const Logo = (props: LogoProps, ref: Ref<HTMLElement>) => {
         logoStyle({
           fontSize,
         }),
-        props.className,
+        className,
       ]),
       style: {
         color: color && vars.colors.$scale?.[color]?.[colorShade],
-        ...props.style,
+        ...style,
       },
     },
     children,
