@@ -1,51 +1,13 @@
-export const main = {
-  50: "var(--main-50)",
-  100: "var(--main-100)",
-  200: "var(--main-200)",
-  300: "var(--main-300)",
-  400: "var(--main-400)",
-  500: "var(--main-500)",
-  600: "var(--main-600)",
-  700: "var(--main-700)",
-  800: "var(--main-800)",
-  900: "var(--main-900)",
-};
+import { createColorScale } from "../../utils/colors";
 
-export const zinc = {
-  50: "var(--zinc-50)",
-  100: "var(--zinc-100)",
-  200: "var(--zinc-200)",
-  300: "var(--zinc-300)",
-  400: "var(--zinc-400)",
-  500: "var(--zinc-500)",
-  600: "var(--zinc-600)",
-  700: "var(--zinc-700)",
-  800: "var(--zinc-800)",
-  900: "var(--zinc-900)",
-};
+export const main = createColorScale("main");
 
-export const whiteAlpha = {
-  50: "var(--white-alpha-50)",
-  100: "var(--white-alpha-100)",
-  200: "var(--white-alpha-200)",
-  300: "var(--white-alpha-300)",
-  400: "var(--white-alpha-400)",
-  500: "var(--white-alpha-500)",
-  600: "var(--white-alpha-600)",
-  700: "var(--white-alpha-700)",
-  800: "var(--white-alpha-800)",
-  900: "var(--white-alpha-900)",
-};
+export const zinc = createColorScale("zinc");
 
-export const blackAlpha = {
-  50: "var(--black-alpha-50)",
-  100: "var(--black-alpha-100)",
-  200: "var(--black-alpha-200)",
-  300: "var(--black-alpha-300)",
-  400: "var(--black-alpha-400)",
-  500: "var(--black-alpha-500)",
-  600: "var(--black-alpha-600)",
-  700: "var(--black-alpha-700)",
-  800: "var(--black-alpha-800)",
-  900: "var(--black-alpha-900)",
-};
+export const whiteAlpha = createColorScale("white-alpha");
+export const blackAlpha = createColorScale("black-alpha");
+
+export const yellow = createColorScale("yellow");
+export const blue = createColorScale("blue");
+export const purple = createColorScale("purple");
+export const red = createColorScale("red");
