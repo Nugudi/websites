@@ -9,19 +9,8 @@
 1. **FIRST**: Read [claude/packages.md](./claude/packages.md) — Contains commit rules, import conventions, and monorepo structure (HIGHEST PRIORITY)
 2. **SECOND**: Read [claude/frontend.md](./claude/frontend.md) — Frontend development patterns and code style
 3. **THIRD**: Read [claude/testing.md](./claude/testing.md) — Testing requirements and patterns
-
-### Context-Specific Guidelines:
-
-#### When Working with Next.js Components:
-
-- **IF** creating or modifying pages in `app/(auth)/` or `app/(public)/` or components in `src/domains/*/ui/`
-- **THEN** read [claude/nextjs-component-structure-guideline.md](./claude/nextjs-component-structure-guideline.md) — Next.js App Router component hierarchy (Page → View → Section → Component)
-
-#### When Creating Shared Components & Storybook:
-
-- **IF** developing shared components in `packages/react/components/` or `packages/react/hooks/`
-- **OR** adding Storybook documentation in `packages/ui/src/`
-- **THEN** read [storybook.md](./claude/storybook-guideline.md) — Component development workflow, export patterns, and Storybook story guidelines
+4. **FOURTH**: Read [claude/nextjs-component-structure-guideline.md](./claude/nextjs-component-structure-guideline.md) — Next.js App Router component hierarchy (Page → View → Section → Component)
+5. **FIFTH**: Read [claude/storybook-guideline.md](./claude/storybook-guideline.md) — Component development workflow, export patterns, and Storybook story guidelines
 
 ## ⚠️ CRITICAL REMINDERS
 

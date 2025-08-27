@@ -179,17 +179,15 @@ packages/ui/src/
 
 ```json
 {
-  "extends": "../../../tsconfig.base.json",
-  "compilerOptions": {
-    "composite": true,
-    "declaration": true,
-    "declarationMap": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "jsx": "react-jsx"
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.stories.tsx", "**/*.test.*"]
+  "extends": "@tsconfig/vite-react/tsconfig.json",
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "./global.d.ts",
+    "vite.config.mts",
+    "vitest.config.mts"
+  ],
+  "exclude": ["node_modules"]
 }
 ```
 
@@ -982,3 +980,133 @@ vars.typography; // Typography tokens
 ```
 
 Remember: **Component-first, Hook-first development** - Always create in `packages/react` first, then document in `packages/ui`!
+
+---
+
+## 🚨 MANDATORY: Component Development Rules
+
+**CRITICAL**: When user asks to create a public component in packages, IMMEDIATELY apply ALL these rules without being told:
+
+#### 1. Structure & Files
+
+- ✅ **MUST** create proper file structure: `types.ts`, `style.css.ts`, `index.ts`, `[ComponentName].tsx`
+- ✅ **MUST** add `vitest.config.ts` for testing configuration
+- ✅ **MUST** follow exact export patterns (see section above)
+
+#### 2. Styling with @nugudi/themes
+
+- ✅ **MUST** use `@nugudi/themes` for ALL design tokens
+- ✅ **MUST** check if colors exist in theme before using (e.g., `vars.colors.$scale.main`, `vars.colors.$scale.zinc`)
+- ❌ **NEVER** use non-existent colors like `purple`, `blue`, `gray` - use `main`, `zinc` instead
+- ✅ **MUST** use `// @ts-ignore` for pseudo-selectors in vanilla-extract recipes base styles
+
+#### 3. Layout Components Usage
+
+- ✅ **MUST** use `@nugudi/react-components-layout` components (Box, VStack, HStack, Title, Body)
+- ❌ **NEVER** use raw HTML elements like `<div>`, `<span>`, `<h1>` when layout components exist
+- ✅ **MUST** use correct prop names:
+  - Body component: `color="zinc"` (NOT `color="zinc.600"` or `color="gray"`)
+  - Title component: `fontSize="t3"` (NOT `fontWeight="semibold"` - Title doesn't have fontWeight prop)
+
+#### 4. TypeScript & Props
+
+- ✅ **MUST** handle conditional rendering properly (button vs div based on onClick)
+- ✅ **MUST** use `Omit<ComponentPropsWithoutRef<'div'>, 'onClick'>` for proper type safety
+- ❌ **NEVER** spread props (`{...restProps}`) on button elements when they come from div props
+
+#### 5. Storybook Integration
+
+- ✅ **MUST** use `@storybook/react-vite` (NOT `@storybook/react`)
+- ✅ **MUST** add component dependency to `packages/ui/package.json`
+- ✅ **MUST** use correct story title format: `"Components/[ComponentName]"`
+- ✅ **MUST** only use existing icons from `@nugudi/assets-icons`
+
+#### 6. Visual Design Accuracy
+
+- ✅ **MUST** carefully match the provided design screenshots
+- ✅ **MUST** pay attention to:
+  - Background colors and opacity
+  - Padding and spacing
+  - Border presence/absence
+  - Icon styles and backgrounds
+  - Typography sizes and weights
+
+### Common Mistakes to Avoid
+
+```typescript
+// ❌ WRONG - Using non-existent colors
+backgroundColor: vars.colors.$scale.purple[200]  // purple doesn't exist!
+
+// ✅ CORRECT - Using existing theme colors
+backgroundColor: vars.colors.$scale.main[200]
+
+// ❌ WRONG - Using color with number in Body
+<Body color="zinc.600">text</Body>
+
+// ✅ CORRECT - Using just color name
+<Body color="zinc">text</Body>
+
+// ❌ WRONG - Using fontWeight on Title
+<Title fontSize="t3" fontWeight="semibold">text</Title>
+
+// ✅ CORRECT - Title without fontWeight
+<Title fontSize="t3">text</Title>
+
+// ❌ WRONG - Wrong Storybook import
+import type { Meta } from "@storybook/react";
+
+// ✅ CORRECT - Correct Storybook import
+import type { Meta } from "@storybook/react-vite";
+
+// ❌ WRONG - Using raw HTML
+<div className={styles}>
+  <h3>{title}</h3>
+  <p>{description}</p>
+</div>
+
+// ✅ CORRECT - Using layout components
+<Box className={styles}>
+  <Title fontSize="t3" as="h3">{title}</Title>
+  <Body fontSize="b3" color="zinc">{description}</Body>
+</Box>
+```
+
+### Build & Test Commands
+
+```bash
+# Always run these before saying "done":
+pnpm build                    # Build the component
+pnpm --filter=@nugudi/ui build  # Build UI package with stories
+pnpm build                    # Build entire monorepo to verify
+```
+
+### 🎯 IMMEDIATE ACTION REQUIRED
+
+When user requests in any of these ways:
+
+- "공용 컴포넌트로 만들어줘" (create as public component)
+- "패키지에 만들어줘" (create in packages)
+- "packages/react/components에 만들어줘"
+- "컴포넌트 패키지로 만들어줘"
+- "shared component로 만들어줘"
+- "재사용 가능한 컴포넌트로 만들어줘"
+- Shows a design screenshot and asks to create a component
+
+**IMMEDIATELY**:
+
+1. **APPLY ALL RULES ABOVE** without being told
+2. **GET IT RIGHT THE FIRST TIME** - no corrections needed
+3. **NEVER** wait for user to point out these basics
+4. **If shown a design** - match it EXACTLY
+
+The user should NEVER have to remind you about:
+
+- Using `@nugudi/themes` for styling
+- Using layout components from `@nugudi/react-components-layout`
+- Creating proper file structure (`types.ts`, `style.css.ts`, etc.)
+- Using correct prop names (e.g., `color="zinc"` not `color="zinc.600"`)
+- Using correct imports (`@storybook/react-vite` not `@storybook/react`)
+- Adding to `packages/ui/package.json`
+- Matching the visual design exactly
+
+**NO EXCUSES - GET IT RIGHT ON FIRST ATTEMPT!**
