@@ -1,694 +1,416 @@
-# Frontend Design Guideline
+# Next.js App Router Component Architecture Rules
 
-This document summarizes key frontend design principles and rules, showcasing
-recommended patterns. Follow these guidelines when writing frontend code.
+## Component Hierarchy Overview
 
-# Readability
+```
+apps/web/
+├── app/                       # Next.js App Router pages
+│   ├── (auth)/               # 🔒 Protected routes (require authentication)
+│   │   ├── benefits/         # Benefits page for logged-in users
+│   │   │   └── page.tsx
+│   │   └── my/               # My page/profile for logged-in users
+│   │       └── page.tsx
+│   └── (public)/             # 🌍 Public routes (no authentication required)
+│       ├── auth/             # Authentication-related public pages
+│       │   ├── sign-in/
+│       │   │   ├── page.tsx
+│       │   │   └── email/
+│       │   │       └── page.tsx
+│       │   ├── sign-up/
+│       │   │   └── page.tsx
+│       │   └── password/
+│       │       └── forgot/
+│       │           └── page.tsx
+│       └── home/             # Public home page
+│           └── page.tsx
+└── src/
+    └── domains/              # Domain-based architecture
+        └── [domain]/         # e.g., auth, menu, benefit
+            # Option 1: Complex domains with multiple features
+            └── [feature]/    # e.g., auth/sign-in, auth/sign-up, auth/my
+                ├── constants/
+                ├── schemas/
+                ├── stores/
+                ├── types/
+                └── ui/
+                    ├── views/
+                    ├── sections/
+                    └── components/
 
-Improving the clarity and ease of understanding code.
+            # Option 2: Simple domains without sub-features
+            └── ui/           # e.g., benefit/ui (directly under domain)
+                ├── views/
+                ├── sections/
+                └── components/
+```
 
-## Naming Magic Numbers
+## Layer-by-Layer Rules
 
-**Rule:** Replace magic numbers with named constants for clarity.
+### 1. Page Layer (`app/[domain]/[feature]/page.tsx`)
 
-**Reasoning:**
-
-- Improves clarity by giving semantic meaning to unexplained values.
-- Enhances maintainability.
-
-#### Recommended Pattern:
+**Type**: Server Component  
+**Purpose**: Route entry point, data prefetching, metadata setup
 
 ```typescript
-const ANIMATION_DELAY_MS = 300;
+// MUST: Server Component
+// MUST: Handle URL/search params
+// MUST: Prefetch data for SSR
+// MUST: Wrap with HydrationBoundary
+// MAY: Set metadata for SEO
+// NEVER: Contain UI logic directly
+// NEVER: Use hooks or browser APIs
 
-const onLikeClick = async () => {
-  await postLike(url);
-  await delay(ANIMATION_DELAY_MS); // Clearly indicates waiting for animation
-  await refetchPostLike();
+const Page = async ({ params, searchParams }) => {
+  // 1. Extract parameters
+  // 2. Prefetch data on server
+  // 3. Return View wrapped in HydrationBoundary
 };
 ```
 
-## Abstracting Implementation Details
+### 2. View Layer (`ui/views/`)
 
-**Rule:** Abstract complex logic/interactions into dedicated components/HOCs.
-
-**Reasoning:**
-
-- Reduces cognitive load by separating concerns.
-- Improves readability, testability, and maintainability of components.
-
-#### Recommended Pattern 1: Auth Guard
-
-(Login check abstracted to a wrapper/guard component)
-
-```tsx
-// App structure
-const App = () => {
-  return (
-    <AuthGuard>
-      {' '}
-      {/* Wrapper handles auth check */}
-      <LoginStartPage />
-    </AuthGuard>
-  );
-};
-
-// AuthGuard component encapsulates the check/redirect logic
-const AuthGuard = ({ children }) => {
-  const status = useCheckLoginStatus();
-  useEffect(() => {
-    if (status === 'LOGGED_IN') {
-      location.href = '/home';
-    }
-  }, [status]);
-
-  // Render children only if not logged in, otherwise render null (or loading)
-  return status !== 'LOGGED_IN' ? children : null;
-};
-
-// LoginStartPage is now simpler, focused only on login UI/logic
-const LoginStartPage = () => {
-  // ... login related logic ONLY ...
-  return <>{/* ... login related components ... */}</>;
-};
-```
-
-#### Recommended Pattern 2: Dedicated Interaction Component
-
-(Dialog logic abstracted into a dedicated `InviteButton` component)
-
-```tsx
-export const FriendInvitation = () => {
-  const { data } = useQuery(/* ... */);
-
-  return (
-    <>
-      {/* Use the dedicated button component */}
-      <InviteButton name={data.name} />
-      {/* ... other UI ... */}
-    </>
-  );
-};
-
-// InviteButton handles the confirmation flow internally
-const InviteButton = ({ name }) => {
-  const handleClick = async () => {
-    const canInvite = await overlay.openAsync(({ isOpen, close }) => (
-      <ConfirmDialog
-        title={`Share with ${name}`}
-        // ... dialog setup ...
-      />
-    ));
-
-    if (canInvite) {
-      await sendPush();
-    }
-  };
-
-  return <Button onClick={handleClick}>Invite</Button>;
-};
-```
-
-## Separating Code Paths for Conditional Rendering
-
-**Rule:** Separate significantly different conditional UI/logic into distinct
-components.
-
-**Reasoning:**
-
-- Improves readability by avoiding complex conditionals within one component.
-- Ensures each specialized component has a clear, single responsibility.
-
-#### Recommended Pattern:
-
-(Separate components for each role)
-
-```tsx
-const SubmitButton = () => {
-  const isViewer = useRole() === 'viewer';
-
-  // Delegate rendering to specialized components
-  return isViewer ? <ViewerSubmitButton /> : <AdminSubmitButton />;
-};
-
-// Component specifically for the 'viewer' role
-const ViewerSubmitButton = () => {
-  return <TextButton disabled>Submit</TextButton>;
-};
-
-// Component specifically for the 'admin' (or non-viewer) role
-const AdminSubmitButton = () => {
-  useEffect(() => {
-    showAnimation(); // Animation logic isolated here
-  }, []);
-
-  return <Button type='submit'>Submit</Button>;
-};
-```
-
-## Simplifying Complex Ternary Operators
-
-**Rule:** Replace complex/nested ternaries with `if`/`else` or IIFEs for
-readability.
-
-**Reasoning:**
-
-- Makes conditional logic easier to follow quickly.
-- Improves overall code maintainability.
-
-#### Recommended Pattern:
-
-(Using an IIFE with `if` statements)
+**Type**: Client or Server Component  
+**Purpose**: Page layout composition and section orchestration
 
 ```typescript
-const status = (() => {
-  if (ACondition && BCondition) return 'BOTH';
-  if (ACondition) return 'A';
-  if (BCondition) return 'B';
-  return 'NONE';
-})();
-```
+// MUST: Import and compose Sections
+// MUST: Define page-level layout structure
+// MUST: Pass props to Sections
+// MAY: Manage page-level state (if client component)
+// MAY: Coordinate data flow between sections
+// NEVER: Fetch data directly
+// NEVER: Contain business logic
+// NEVER: Implement error/loading states
 
-## Reducing Eye Movement (Colocating Simple Logic)
-
-**Rule:** Colocate simple, localized logic or use inline definitions to reduce
-context switching.
-
-**Reasoning:**
-
-- Allows top-to-bottom reading and faster comprehension.
-- Reduces cognitive load from context switching (eye movement).
-
-#### Recommended Pattern A: Inline `switch`
-
-```tsx
-const Page = () => {
-  const user = useUser();
-
-  // Logic is directly visible here
-  switch (user.role) {
-    case 'admin':
-      return (
-        <div>
-          <Button disabled={false}>Invite</Button>
-          <Button disabled={false}>View</Button>
-        </div>
-      );
-    case 'viewer':
-      return (
-        <div>
-          <Button disabled={true}>Invite</Button> {/* Example for viewer */}
-          <Button disabled={false}>View</Button>
-        </div>
-      );
-    default:
-      return null;
-  }
-};
-```
-
-#### Recommended Pattern B: Colocated simple policy object
-
-```tsx
-const Page = () => {
-  const user = useUser();
-  // Simple policy defined right here, easy to see
-  const policy = {
-    admin: { canInvite: true, canView: true },
-    viewer: { canInvite: false, canView: true },
-  }[user.role];
-
-  // Ensure policy exists before accessing properties if role might not match
-  if (!policy) return null;
-
+export const [Feature]View = ({ prop1, prop2 }) => {
   return (
-    <div>
-      <Button disabled={!policy.canInvite}>Invite</Button>
-      <Button disabled={!policy.canView}>View</Button>
+    <div className="page-layout">
+      <FirstSection />
+      <SecondSection prop={prop1} />
+      <ThirdSection prop={prop2} />
     </div>
   );
 };
 ```
 
-## Naming Complex Conditions
+### 3. Section Layer (`ui/sections/`)
 
-**Rule:** Assign complex boolean conditions to named variables.
-
-**Reasoning:**
-
-- Makes the _meaning_ of the condition explicit.
-- Improves readability and self-documentation by reducing cognitive load.
-
-#### Recommended Pattern:
-
-(Conditions assigned to named variables)
+**Type**: Client Component (typically)  
+**Purpose**: Feature-specific logic encapsulation with error and loading boundaries
 
 ```typescript
-const matchedProducts = products.filter((product) => {
-  // Check if product belongs to the target category
-  const isSameCategory = product.categories.some(
-    (category) => category.id === targetCategory.id
+// MUST: Implement Suspense boundary
+// MUST: Implement ErrorBoundary
+// MUST: Provide skeleton/loading UI
+// MUST: Handle data fetching (via hooks)
+// MAY: Manage section-specific state
+// MAY: Handle user interactions
+// NEVER: Define page layout
+// NEVER: Import other sections
+
+// Pattern: Three components per section
+export const [Feature]Section = (props) => {
+  return (
+    <ErrorBoundary fallback={<[Feature]SectionError />}>
+      <Suspense fallback={<[Feature]SectionSkeleton />}>
+        <[Feature]SectionContent {...props} />
+      </Suspense>
+    </ErrorBoundary>
   );
-
-  // Check if any product price falls within the desired range
-  const isPriceInRange = product.prices.some(
-    (price) => price >= minPrice && price <= maxPrice
-  );
-
-  // The overall condition is now much clearer
-  return isSameCategory && isPriceInRange;
-});
-```
-
-**Guidance:** Name conditions when the logic is complex, reused, or needs unit
-testing. Avoid naming very simple, single-use conditions.
-
-# Predictability
-
-Ensuring code behaves as expected based on its name, parameters, and context.
-
-## Standardizing Return Types
-
-**Rule:** Use consistent return types for similar functions/hooks.
-
-**Reasoning:**
-
-- Improves code predictability; developers can anticipate return value shapes.
-- Reduces confusion and potential errors from inconsistent types.
-
-#### Recommended Pattern 1: API Hooks (React Query)
-
-```typescript
-// Always return the Query object
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
-
-// Assuming fetchUser returns Promise<UserType>
-const useUser = (): UseQueryResult<UserType, Error> => {
-  const query = useQuery({ queryKey: ['user'], queryFn: fetchUser });
-  return query;
 };
 
-// Assuming fetchServerTime returns Promise<Date>
-const useServerTime = (): UseQueryResult<Date, Error> => {
-  const query = useQuery({
-    queryKey: ['serverTime'],
-    queryFn: fetchServerTime,
+const [Feature]SectionSkeleton = () => { /* Loading UI */ };
+const [Feature]SectionError = () => { /* Error UI */ };
+const [Feature]SectionContent = (props) => { /* Actual content with data fetching */ };
+```
+
+### 4. Component Layer (`ui/components/`)
+
+**Type**: Client or Server Component  
+**Purpose**: Reusable, presentational UI components
+
+```typescript
+// MUST: Be pure/presentational
+// MUST: Accept data via props
+// MUST: Emit events via callback props
+// MAY: Have internal UI state (open/closed, etc.)
+// NEVER: Fetch data directly
+// NEVER: Have business logic
+// NEVER: Know about routes or navigation
+
+export const [Component] = ({ data, onAction }) => {
+  // Pure UI rendering
+  return <div onClick={onAction}>{data}</div>;
+};
+```
+
+## Folder Structure Rules
+
+### Each Component Must Have Its Own Folder
+
+**MANDATORY**: Every view, section, and component must be in its own folder with these files:
+
+```
+component-name/
+├── index.tsx        # Component implementation
+└── index.css.ts     # Vanilla Extract styles (NOT CSS Modules)
+```
+
+**Example Structure:**
+
+```
+views/
+└── sign-up-view/            # Folder name in kebab-case
+    ├── index.tsx            # Export: SignUpView
+    └── index.css.ts         # Vanilla Extract styles
+
+sections/
+└── password-forgot-section/ # Folder name in kebab-case
+    ├── index.tsx            # Export: PasswordForgotSection
+    └── index.css.ts         # Optional (sections may not need styles)
+
+components/
+└── email-sign-in-form/      # Folder name in kebab-case
+    ├── index.tsx            # Export: EmailSignInForm
+    └── index.css.ts         # Vanilla Extract styles
+    └── steps/               # Optional sub-components folder
+        └── email-form/
+            ├── index.tsx
+            └── index.css.ts
+```
+
+## Naming Conventions
+
+### File Structure
+
+```
+apps/web/src/
+└── domains/
+    └── auth/                              # Domain
+        ├── sign-up/                       # Feature
+        │   ├── constants/
+        │   │   └── sign-up.ts             # Feature constants
+        │   ├── schemas/
+        │   │   └── sign-up-schema.ts      # Zod validation schemas
+        │   ├── stores/
+        │   │   └── use-sign-up-store.ts   # Zustand store
+        │   ├── types/
+        │   │   └── sign-up.ts             # TypeScript types
+        │   └── ui/
+        │       ├── views/
+        │       │   └── sign-up-view/
+        │       │       ├── index.tsx
+        │       │       └── index.css.ts
+        │       ├── sections/
+        │       │   └── sign-up-section/
+        │       │       └── index.tsx
+        │       └── components/
+        │           └── sign-up-form/
+        │               ├── index.tsx
+        │               ├── index.css.ts
+        │               └── steps/
+        │                   ├── email-form/
+        │                   │   ├── index.tsx
+        │                   │   └── index.css.ts
+        │                   └── password-form/
+        │                       ├── index.tsx
+        │                       └── index.css.ts
+        └── my/                            # Another feature in same domain
+            └── ui/
+                ├── views/
+                │   └── my-page-view/
+                ├── sections/
+                │   ├── profile-section/
+                │   └── menu-section/
+                └── components/
+                    └── logout-button/
+```
+
+### Component Naming Pattern
+
+```typescript
+// Views: [Feature]View (in feature-view folder)
+// File: domains/auth/sign-up/ui/views/sign-up-view/index.tsx
+export const SignUpView = () => {};
+
+// Sections: [Feature]Section (in feature-section folder)
+// File: domains/auth/sign-up/ui/sections/sign-up-section/index.tsx
+export const SignUpSection = () => {};
+// Note: Skeleton and Error components are in the same file (not exported separately)
+
+// Components: Descriptive name (in component-name folder)
+// File: domains/auth/sign-up/ui/components/sign-up-form/index.tsx
+export const SignUpForm = () => {};
+// File: domains/auth/sign-in/ui/components/email-sign-in-form/index.tsx
+export const EmailSignInForm = () => {};
+// File: domains/auth/sign-in/ui/components/social-sign-in-button-list/index.tsx
+export const SocialSignInButtonList = () => {};
+```
+
+## Import Patterns
+
+### Within the Same Domain
+
+```typescript
+// In: apps/web/src/domains/auth/sign-up/ui/views/sign-up-view/index.tsx
+import { SignUpSection } from "../../sections/sign-up-section";
+
+// In: apps/web/src/domains/auth/sign-up/ui/sections/sign-up-section/index.tsx
+import { SignUpForm } from "../../components/sign-up-form";
+import { useSignUpStore } from "../../../stores/use-sign-up-store";
+import type { SignUpFormData } from "../../../types/sign-up";
+
+// In: apps/web/src/domains/auth/sign-up/ui/components/sign-up-form/index.tsx
+import { EmailForm } from "./steps/email-form";
+import { PasswordForm } from "./steps/password-form";
+```
+
+### From Page to View
+
+```typescript
+// Public route example
+// In: app/(public)/auth/sign-up/page.tsx
+import { SignUpView } from "@/domains/auth/sign-up/ui/views/sign-up-view";
+
+// Protected route example
+// In: app/(auth)/benefits/page.tsx
+import { BenefitPageView } from "@/domains/benefit/ui/views/benefit-page-view";
+```
+
+### Cross-Domain Imports
+
+```typescript
+// NO cross-domain imports in current structure - each domain is self-contained
+// Future example:
+// import { useAuth } from '@/domains/auth/hooks/use-auth';
+```
+
+### Using Monorepo Packages
+
+```typescript
+// Always use existing packages from monorepo
+import Button from "@nugudi/react-components-button";
+import Input from "@nugudi/react-components-input";
+import { Box, Flex, VStack } from "@nugudi/react-components-layout";
+import { useToggle } from "@nugudi/react-hooks-toggle";
+import { variables } from "@nugudi/themes";
+import { Icons } from "@nugudi/assets-icons";
+import { api } from "@nugudi/api";
+```
+
+## Data Flow Rules
+
+### Server → Client Data Flow
+
+```typescript
+// 1. Page prefetches data
+await queryClient.prefetchQuery({ queryKey: ["data"] });
+
+// 2. View receives props
+<FeatureView initialData={data} />;
+
+// 3. Section fetches/uses prefetched data
+const { data } = useSuspenseQuery({ queryKey: ["data"] });
+
+// 4. Component receives data as props
+<Component data={data} />;
+```
+
+### State Management Rules
+
+```
+- Page: URL state only (params, searchParams)
+- View: Page-level state (if needed)
+- Section: Feature-specific state
+- Component: UI-only state
+```
+
+## Error Handling Pattern
+
+```typescript
+// Each Section MUST follow this pattern:
+export const DataSection = () => {
+  return (
+    <ErrorBoundary
+      fallback={<DataSectionError />}
+      onError={(error) => console.error("DataSection error:", error)}
+    >
+      <Suspense fallback={<DataSectionSkeleton />}>
+        <DataSectionContent />
+      </Suspense>
+    </ErrorBoundary>
+  );
+};
+```
+
+## Query Hooks Pattern
+
+```typescript
+// In Section Content components:
+const SectionContent = ({ param }) => {
+  // For single data fetch
+  const { data } = useSuspenseQuery({
+    queryKey: ["resource", param],
+    queryFn: () => api.fetch(param),
   });
-  return query;
+
+  // For infinite scroll
+  const { data, fetchNextPage, hasNextPage } = useSuspenseInfiniteQuery({
+    queryKey: ["resources", param],
+    queryFn: ({ pageParam }) => api.fetchPage({ param, page: pageParam }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextPage,
+  });
+
+  return <ComponentList data={data} onLoadMore={fetchNextPage} />;
 };
 ```
 
-#### Recommended Pattern 2: Validation Functions
+## Best Practices Summary
 
-(Using a consistent type, ideally a Discriminated Union)
+1. **Route Groups**: Use `(auth)` for protected pages, `(public)` for public pages
+2. **Page**: Server-side data prefetching only (`app/(auth|public)/[domain]/page.tsx`)
+3. **View**: Layout composition only (`domains/[domain]/[feature?]/ui/views/`)
+4. **Section**: Business logic + Error/Loading boundaries (`ui/sections/`)
+5. **Component**: Pure UI components (`ui/components/`)
+6. **Always use** Suspense + ErrorBoundary in Sections
+7. **Never skip** the hierarchy (Page → View → Section → Component)
+8. **Keep components** pure and reusable
+9. **Domain Structure**: Use sub-features for complex domains (auth), direct UI for simple domains (benefit)
+10. **Name consistently** following the patterns above
+11. **Separate concerns** strictly between layers
+12. **Each component** must be in its own folder with `index.tsx` and `index.css.ts`
+13. **Domain logic** (stores, schemas, types) stays outside the `ui/` folder
+14. **Use Vanilla Extract** with `vars` and `classes` from `@nugudi/themes`
+15. **Always prefer** existing packages from `@nugudi/*` namespace
+16. **Client Components**: Add `"use client"` when using event handlers or hooks
+17. **Follow monorepo** import conventions from packages.md
+
+## TypeScript Interface Rules
 
 ```typescript
-type ValidationResult = { ok: true } | { ok: false; reason: string };
+// Views
+interface [Feature]ViewProps {
+  // Props from page params/searchParams
+}
 
-const checkIsNameValid = (name: string): ValidationResult => {
-  if (name.length === 0) return { ok: false, reason: 'Name cannot be empty.' };
-  if (name.length >= 20)
-    return { ok: false, reason: 'Name cannot be longer than 20 characters.' };
-  return { ok: true };
-};
+// Sections
+interface [Feature]SectionProps {
+  // Props from View
+}
 
-const checkIsAgeValid = (age: number): ValidationResult => {
-  if (!Number.isInteger(age))
-    return { ok: false, reason: 'Age must be an integer.' };
-  if (age < 18) return { ok: false, reason: 'Age must be 18 or older.' };
-  if (age > 99) return { ok: false, reason: 'Age must be 99 or younger.' };
-  return { ok: true };
-};
-
-// Usage allows safe access to 'reason' only when ok is false
-const nameValidation = checkIsNameValid(name);
-if (!nameValidation.ok) {
-  console.error(nameValidation.reason);
+// Components
+interface [Component]Props {
+  // Data and callback props only
+  data: DataType;
+  onAction: (value: ValueType) => void;
 }
 ```
 
-## Revealing Hidden Logic (Single Responsibility)
-
-**Rule:** Avoid hidden side effects; functions should only perform actions
-implied by their signature (SRP).
-
-**Reasoning:**
-
-- Leads to predictable behavior without unintended side effects.
-- Creates more robust, testable code through separation of concerns (SRP).
-
-#### Recommended Pattern:
-
-```typescript
-// Function *only* fetches balance
-const fetchBalance = async (): Promise<number> => {
-  const balance = await http.get<number>('...');
-  return balance;
-};
-
-// Caller explicitly performs logging where needed
-const handleUpdateClick = async () => {
-  const balance = await fetchBalance(); // Fetch
-  logging.log('balance_fetched'); // Log (explicit action)
-  await syncBalance(balance); // Another action
-};
-```
-
-## Using Unique and Descriptive Names (Avoiding Ambiguity)
-
-**Rule:** Use unique, descriptive names for custom wrappers/functions to avoid
-ambiguity.
-
-**Reasoning:**
-
-- Avoids ambiguity and enhances predictability.
-- Allows developers to understand specific actions (e.g., adding auth) directly
-  from the name.
-
-#### Recommended Pattern:
-
-```typescript
-// In httpService.ts - Clearer module name
-import { http as httpLibrary } from '@some-library/http';
-
-export const httpService = {
-  // Unique module name
-  getWithAuth: async (url: string) => {
-    // Descriptive function name
-    const token = await fetchToken();
-    return httpLibrary.get(url, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-  },
-};
-
-// In fetchUser.ts - Usage clearly indicates auth
-import { httpService } from './httpService';
-export const fetchUser = async () => {
-  // Name 'getWithAuth' makes the behavior explicit
-  return await httpService.getWithAuth('...');
-};
-```
-
-# Cohesion
-
-Keeping related code together and ensuring modules have a well-defined, single
-purpose.
-
-## Considering Form Cohesion
-
-**Rule:** Choose field-level or form-level cohesion based on form requirements.
-
-**Reasoning:**
-
-- Balances field independence (field-level) vs. form unity (form-level).
-- Ensures related form logic is appropriately grouped based on requirements.
-
-#### Recommended Pattern (Field-Level Example):
-
-```tsx
-// Each field uses its own `validate` function
-import { useForm } from 'react-hook-form';
-
-export const Form = () => {
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-  } = useForm({
-    /* defaultValues etc. */
-  });
-
-  const onSubmit = handleSubmit((formData) => {
-    console.log('Form submitted:', formData);
-  });
-
-  return (
-    <form onSubmit={onSubmit}>
-      <div>
-        <input
-          {...register('name', {
-            validate: (value) =>
-              value.trim() === '' ? 'Please enter your name.' : true, // Example validation
-          })}
-          placeholder='Name'
-        />
-        {errors.name && <p>{errors.name.message}</p>}
-      </div>
-      <div>
-        <input
-          {...register('email', {
-            validate: (value) =>
-              /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)
-                ? true
-                : 'Invalid email address.', // Example validation
-          })}
-          placeholder='Email'
-        />
-        {errors.email && <p>{errors.email.message}</p>}
-      </div>
-      <button type='submit'>Submit</button>
-    </form>
-  );
-};
-```
-
-#### Recommended Pattern (Form-Level Example):
-
-```tsx
-// A single schema defines validation for the whole form
-import * as z from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-
-const schema = z.object({
-  name: z.string().min(1, 'Please enter your name.'),
-  email: z.string().min(1, 'Please enter your email.').email('Invalid email.'),
-});
-
-export const Form = () => {
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-  } = useForm({
-    resolver: zodResolver(schema),
-    defaultValues: { name: '', email: '' },
-  });
-
-  const onSubmit = handleSubmit((formData) => {
-    console.log('Form submitted:', formData);
-  });
-
-  return (
-    <form onSubmit={onSubmit}>
-      <div>
-        <input {...register('name')} placeholder='Name' />
-        {errors.name && <p>{errors.name.message}</p>}
-      </div>
-      <div>
-        <input {...register('email')} placeholder='Email' />
-        {errors.email && <p>{errors.email.message}</p>}
-      </div>
-      <button type='submit'>Submit</button>
-    </form>
-  );
-};
-```
-
-**Guidance:** Choose **field-level** for independent validation, async checks,
-or reusable fields. Choose **form-level** for related fields, wizard forms, or
-interdependent validation.
-
-## Organizing Code by Feature/Domain
-
-**Rule:** Organize directories by feature/domain, not just by code type.
-
-**Reasoning:**
-
-- Increases cohesion by keeping related files together.
-- Simplifies feature understanding, development, maintenance, and deletion.
-
-#### Recommended Pattern:
-
-(Organized by feature/domain)
-
-```
-src/
-├── components/ # Shared/common components
-├── hooks/      # Shared/common hooks
-├── utils/      # Shared/common utils
-├── domains/
-│   ├── user/
-│   │   ├── components/
-│   │   │   └── UserProfileCard.tsx
-│   │   ├── hooks/
-│   │   │   └── useUser.ts
-│   │   └── index.ts # Optional barrel file
-│   ├── product/
-│   │   ├── components/
-│   │   │   └── ProductList.tsx
-│   │   ├── hooks/
-│   │   │   └── useProducts.ts
-│   │   └── ...
-│   └── order/
-│       ├── components/
-│       │   └── OrderSummary.tsx
-│       ├── hooks/
-│       │   └── useOrder.ts
-│       └── ...
-└── App.tsx
-```
-
-## Relating Magic Numbers to Logic
-
-**Rule:** Define constants near related logic or ensure names link them clearly.
-
-**Reasoning:**
-
-- Improves cohesion by linking constants to the logic they represent.
-- Prevents silent failures caused by updating logic without updating related
-  constants.
-
-#### Recommended Pattern:
-
-```typescript
-// Constant clearly named and potentially defined near animation logic
-const ANIMATION_DELAY_MS = 300;
-
-const onLikeClick = async () => {
-  await postLike(url);
-  // Delay uses the constant, maintaining the link to the animation
-  await delay(ANIMATION_DELAY_MS);
-  await refetchPostLike();
-};
-```
-
-_Ensure constants are maintained alongside the logic they depend on or clearly
-named to show the relationship._
-
-# Coupling
-
-Minimizing dependencies between different parts of the codebase.
-
-## Balancing Abstraction and Coupling (Avoiding Premature Abstraction)
-
-**Rule:** Avoid premature abstraction of duplicates if use cases might diverge;
-prefer lower coupling.
-
-**Reasoning:**
-
-- Avoids tight coupling from forcing potentially diverging logic into one
-  abstraction.
-- Allowing some duplication can improve decoupling and maintainability when
-  future needs are uncertain.
-
-#### Guidance:
-
-Before abstracting, consider if the logic is truly identical and likely to
-_stay_ identical across all use cases. If divergence is possible (e.g.,
-different pages needing slightly different behavior from a shared hook like
-`useOpenMaintenanceBottomSheet`), keeping the logic separate initially (allowing
-duplication) can lead to more maintainable, decoupled code. Discuss trade-offs
-with the team. _[No specific 'good' code example here, as the recommendation is
-situational awareness rather than a single pattern]._
-
-## Scoping State Management (Avoiding Overly Broad Hooks)
-
-**Rule:** Break down broad state management into smaller, focused
-hooks/contexts.
-
-**Reasoning:**
-
-- Reduces coupling by ensuring components only depend on necessary state slices.
-- Improves performance by preventing unnecessary re-renders from unrelated state
-  changes.
-
-#### Recommended Pattern:
-
-(Focused hooks, low coupling)
-
-```typescript
-// Hook specifically for cardId query param
-import { useQueryParam, NumberParam } from 'use-query-params';
-import { useCallback } from 'react';
-
-export const useCardIdQueryParam = () => {
-  // Assuming 'query' provides the raw param value
-  const [cardIdParam, setCardIdParam] = useQueryParam('cardId', NumberParam);
-
-  const setCardId = useCallback(
-    (newCardId: number | undefined) => {
-      setCardIdParam(newCardId, 'replaceIn'); // Or 'push' depending on desired history behavior
-    },
-    [setCardIdParam]
-  );
-
-  // Provide a stable return tuple
-  return [cardIdParam ?? undefined, setCardId] as const;
-};
-
-// Separate hook for date range, etc.
-// export const useDateRangeQueryParam = () => { /* ... */ }
-```
-
-Components now only import and use `useCardIdQueryParam` if they need `cardId`,
-decoupling them from date range state, etc.
-
-## Eliminating Props Drilling with Composition
-
-**Rule:** Use Component Composition instead of Props Drilling.
-
-**Reasoning:**
-
-- Significantly reduces coupling by eliminating unnecessary intermediate
-  dependencies.
-- Makes refactoring easier and clarifies data flow in flatter component trees.
-
-#### Recommended Pattern:
-
-```tsx
-import React, { useState } from 'react';
-
-// Assume Modal, Input, Button, ItemEditList components exist
-
-const ItemEditModal = ({
-  open,
-  items,
-  recommendedItems,
-  onConfirm,
-  onClose,
-}) => {
-  const [keyword, setKeyword] = useState('');
-
-  // Render children directly within Modal, passing props only where needed
-  return (
-    <Modal open={open} onClose={onClose}>
-      {/* Input and Button rendered directly */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          marginBottom: '1rem',
-        }}
-      >
-        <Input
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)} // State managed here
-          placeholder='Search items...'
-        />
-        <Button onClick={onClose}>Close</Button>
-      </div>
-      {/* ItemEditList rendered directly, gets props it needs */}
-      <ItemEditList
-        keyword={keyword} // Passed directly
-        items={items} // Passed directly
-        recommendedItems={recommendedItems} // Passed directly
-        onConfirm={onConfirm} // Passed directly
-      />
-    </Modal>
-  );
-};
-
-// The intermediate ItemEditBody component is eliminated, reducing coupling.
-```
+This architecture ensures:
+
+- **Predictable** component behavior
+- **Maintainable** codebase
+- **Testable** components
+- **Optimal** performance with SSR/streaming
+- **Clear** separation of concerns
