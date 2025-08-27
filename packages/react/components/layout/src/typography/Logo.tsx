@@ -8,12 +8,21 @@ import type { LogoProps } from "@/typography/types";
 import { extractSprinkleProps } from "@/utils/properties";
 
 const Logo = (props: LogoProps, ref: Ref<HTMLElement>) => {
-  const { as = "span", fontSize, background, color = "main", children } = props;
+  const {
+    as = "span",
+    fontSize = "l1",
+    color = "main",
+    colorShade = 500,
+    children,
+    className,
+    style,
+    ...domProps
+  } = props;
 
   return React.createElement(
     as,
     {
-      ...props,
+      ...domProps,
       ref,
       className: clsx([
         BaseStyle,
@@ -23,12 +32,11 @@ const Logo = (props: LogoProps, ref: Ref<HTMLElement>) => {
         logoStyle({
           fontSize,
         }),
-        props.className,
+        className,
       ]),
       style: {
-        color: color && vars.colors.$scale?.[color]?.[500],
-        background: background && vars.colors.$scale?.[background]?.[500],
-        ...props.style,
+        color: color && vars.colors.$scale?.[color]?.[colorShade],
+        ...style,
       },
     },
     children,
