@@ -1,8 +1,7 @@
-import type { COLOR_SHADES, classes, vars } from "@nugudi/themes";
+import type { ColorShade, classes, vars } from "@nugudi/themes";
 import type { AsElementProps, StyleProps } from "@/core/types";
 
 type ColorScale = keyof typeof vars.colors.$scale;
-type ColorShade = (typeof COLOR_SHADES)[number];
 
 export type ColorWithShade = {
   color?: ColorScale;
