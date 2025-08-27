@@ -289,12 +289,12 @@ import { BenefitPageView } from '@/domains/benefit/ui/views/benefit-page-view';
 
 ```typescript
 // Always use existing packages from monorepo
-import Button from '@nugudi/react-components-button';
-import Input from '@nugudi/react-components-input';
+import { Button } from '@nugudi/react-components-button';
+import { Input } from '@nugudi/react-components-input';
 import { Box, Flex, VStack } from '@nugudi/react-components-layout';
 import { useToggle } from '@nugudi/react-hooks-toggle';
-import { variables } from '@nugudi/themes';
-import { Icons } from '@nugudi/assets-icons';
+import { vars } from '@nugudi/themes';
+import { AppleIcon, HeartIcon } from '@nugudi/assets-icons';
 import { api } from '@nugudi/api';
 ```
 
