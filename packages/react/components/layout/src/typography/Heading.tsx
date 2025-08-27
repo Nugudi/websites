@@ -8,7 +8,13 @@ import type { HeadingProps } from "@/typography/types";
 import { extractSprinkleProps } from "@/utils/properties";
 
 const Heading = (props: HeadingProps, ref: Ref<HTMLElement>) => {
-  const { as = "h1", fontSize, background, color = "main", children } = props;
+  const {
+    as = "h1",
+    fontSize = "h1",
+    color = "zinc",
+    colorShade = 800,
+    children,
+  } = props;
 
   return React.createElement(
     as,
@@ -26,8 +32,7 @@ const Heading = (props: HeadingProps, ref: Ref<HTMLElement>) => {
         props.className,
       ]),
       style: {
-        color: color && vars.colors.$scale?.[color]?.[800],
-        background: background && vars.colors.$scale?.[background]?.[500],
+        color: color && vars.colors.$scale?.[color]?.[colorShade],
         ...props.style,
       },
     },

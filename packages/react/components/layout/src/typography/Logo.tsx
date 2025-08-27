@@ -8,7 +8,13 @@ import type { LogoProps } from "@/typography/types";
 import { extractSprinkleProps } from "@/utils/properties";
 
 const Logo = (props: LogoProps, ref: Ref<HTMLElement>) => {
-  const { as = "span", fontSize, background, color = "main", children } = props;
+  const {
+    as = "span",
+    fontSize = "l1",
+    color = "main",
+    colorShade = 500,
+    children,
+  } = props;
 
   return React.createElement(
     as,
@@ -26,8 +32,7 @@ const Logo = (props: LogoProps, ref: Ref<HTMLElement>) => {
         props.className,
       ]),
       style: {
-        color: color && vars.colors.$scale?.[color]?.[500],
-        background: background && vars.colors.$scale?.[background]?.[500],
+        color: color && vars.colors.$scale?.[color]?.[colorShade],
         ...props.style,
       },
     },
