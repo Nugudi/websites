@@ -9,10 +9,10 @@ import { extractSprinkleProps } from "@/utils/properties";
 
 const Body = (props: BodyProps, ref: Ref<HTMLElement>) => {
   const {
-    as = "p",
-    fontSize,
-    background,
-    color = "blackAlpha",
+    as = "span",
+    fontSize = "b1",
+    color = "zinc",
+    colorShade = 600,
     children,
   } = props;
 
@@ -32,8 +32,7 @@ const Body = (props: BodyProps, ref: Ref<HTMLElement>) => {
         props.className,
       ]),
       style: {
-        color: color && vars.colors.$scale?.[color]?.[500],
-        background: background && vars.colors.$scale?.[background]?.[500],
+        color: color && vars.colors.$scale?.[color]?.[colorShade],
         ...props.style,
       },
     },

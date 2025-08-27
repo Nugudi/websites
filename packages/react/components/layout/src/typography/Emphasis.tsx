@@ -8,7 +8,13 @@ import type { EmphasisProps } from "@/typography/types";
 import { extractSprinkleProps } from "@/utils/properties";
 
 const Emphasis = (props: EmphasisProps, ref: Ref<HTMLElement>) => {
-  const { as = "em", fontSize, background, color = "main", children } = props;
+  const {
+    as = "em",
+    fontSize = "e1",
+    color = "zinc",
+    colorShade = 600,
+    children,
+  } = props;
 
   return React.createElement(
     as,
@@ -26,8 +32,7 @@ const Emphasis = (props: EmphasisProps, ref: Ref<HTMLElement>) => {
         props.className,
       ]),
       style: {
-        color: color && vars.colors.$scale?.[color]?.[500],
-        background: background && vars.colors.$scale?.[background]?.[500],
+        color: color && vars.colors.$scale?.[color]?.[colorShade],
         ...props.style,
       },
     },
