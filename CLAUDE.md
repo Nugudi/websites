@@ -14,7 +14,7 @@
 
 #### When Working with Next.js Components:
 
-- **IF** creating or modifying pages in `app/` or components in `src/domains/*/ui/`
+- **IF** creating or modifying pages in `app/(auth)/` or `app/(public)/` or components in `src/domains/*/ui/`
 - **THEN** read [claude/nextjs-component-structure-guideline.md](./claude/nextjs-component-structure-guideline.md) — Next.js App Router component hierarchy (Page → View → Section → Component)
 
 ## ⚠️ CRITICAL REMINDERS

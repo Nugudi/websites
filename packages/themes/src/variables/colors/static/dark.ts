@@ -1,60 +1,30 @@
+import { reversePalette } from "../../../utils/colors";
+import {
+  blackAlphaPalette,
+  bluePalette,
+  mainPalette,
+  purplePalette,
+  redPalette,
+  whiteAlphaPalette,
+  yellowPalette,
+  zincPalette,
+} from "./palettes";
+
+export const main = reversePalette(mainPalette);
+export const zinc = reversePalette(zincPalette);
+export const yellow = reversePalette(yellowPalette);
+export const blue = reversePalette(bluePalette);
+export const purple = reversePalette(purplePalette);
+export const red = reversePalette(redPalette);
+
+export const whiteAlpha = reversePalette(whiteAlphaPalette);
+export const blackAlpha = reversePalette(blackAlphaPalette);
+
 export const color = {
-  black: "#000000",
+  black: "#121212",
   white: "#FFFFFF",
   red: "#F44336",
-  backdrop: "rgba(0, 0, 0, 0.6)",
-};
-
-export const main = {
-  50: "#E5F7EC",
-  100: "#C8F0DA",
-  200: "#A6E5C3",
-  300: "#6FD59E",
-  400: "#35C076",
-  500: "#00B140",
-  600: "#0B8A3A",
-  700: "#13572F",
-  800: "#176435",
-  900: "#0E4226",
-};
-
-export const zinc = {
-  50: "#272729",
-  100: "#403f46",
-  200: "#51525b",
-  300: "#70717a",
-  400: "#A0A1AA",
-  500: "#d4d3d8",
-  600: "#e4e3e6",
-  700: "#f4f4f4",
-  800: "#fafafa",
-  900: "#ffffff",
-};
-
-export const whiteAlpha = {
-  900: "rgba(255, 255, 255, 0.04)",
-  800: "rgba(255, 255, 255, 0.06)",
-  700: "rgba(255, 255, 255, 0.08)",
-  600: "rgba(255, 255, 255, 0.16)",
-  500: "rgba(255, 255, 255, 0.24)",
-  400: "rgba(255, 255, 255, 0.36)",
-  300: "rgba(255, 255, 255, 0.48)",
-  200: "rgba(255, 255, 255, 0.64)",
-  100: "rgba(255, 255, 255, 0.80)",
-  50: "rgba(255, 255, 255, 0.92)",
-};
-
-export const blackAlpha = {
-  900: "rgba(0, 0, 0, 0.04)",
-  800: "rgba(0, 0, 0, 0.06)",
-  700: "rgba(0, 0, 0, 0.08)",
-  600: "rgba(0, 0, 0, 0.16)",
-  500: "rgba(0, 0, 0, 0.24)",
-  400: "rgba(0, 0, 0, 0.36)",
-  300: "rgba(0, 0, 0, 0.48)",
-  200: "rgba(0, 0, 0, 0.64)",
-  100: "rgba(0, 0, 0, 0.80)",
-  50: "rgba(0, 0, 0, 0.92)",
+  backdrop: "rgba(0, 0, 0, 0.5)",
 };
 
 export const gradient = {
