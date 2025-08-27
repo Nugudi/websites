@@ -116,6 +116,9 @@ importers:
       '@nugudi/react-components-backdrop':
         specifier: workspace:*
         version: link:../../packages/react/components/backdrop
+      '@nugudi/react-components-badge':
+        specifier: workspace:*
+        version: link:../../packages/react/components/badge
       '@nugudi/react-components-bottom-sheet':
         specifier: workspace:*
         version: link:../../packages/react/components/bottom-sheet

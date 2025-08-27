@@ -16,6 +16,7 @@
     "@nugudi/api": "workspace:*",
     "@nugudi/assets-icons": "workspace:*",
     "@nugudi/react-components-backdrop": "workspace:*",
+    "@nugudi/react-components-badge": "workspace:*",
     "@nugudi/react-components-bottom-sheet": "workspace:*",
     "@nugudi/react-components-button": "workspace:*",
     "@nugudi/react-components-chip": "workspace:*",
