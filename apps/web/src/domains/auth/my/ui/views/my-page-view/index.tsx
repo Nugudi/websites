@@ -1,4 +1,4 @@
-import { Box, Flex } from "@nugudi/react-components-layout";
+import { Flex } from "@nugudi/react-components-layout";
 import LogoutButton from "../../components/logout-button";
 import MenuSection from "../../sections/menu-section";
 import PointSection from "../../sections/point-section";
@@ -12,9 +12,6 @@ const MyPageView = () => {
       <PointSection />
       <MenuSection />
       <LogoutButton />
-      <Box w="12" h="20" minW="28" m="80" background="blackAlpha">
-        Hello
-      </Box>
     </Flex>
   );
 };
