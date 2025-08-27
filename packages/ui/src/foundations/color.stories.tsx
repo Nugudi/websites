@@ -1,118 +1,114 @@
-import { vars } from "@nugudi/themes";
+import { Body, Grid, Title, VStack } from "@nugudi/react-components-layout";
+import "@nugudi/react-components-layout/style.css";
+import { COLOR_SHADES, vars } from "@nugudi/themes";
 
 const colorGroups = Object.keys(vars.colors.$scale);
-const colorOptions = ["all", ...colorGroups];
+
+const grayColors = ["zinc"];
+const chromaticColors = colorGroups.filter(
+  (color) => !grayColors.includes(color),
+);
 
 export default {
   title: "Foundations/Color",
   parameters: {
-    layout: "centered",
-  },
-  argTypes: {
-    colorGroup: {
-      options: colorOptions,
-      control: "select",
-    },
+    layout: "padded",
   },
 };
 
-export const Color = ({ colorGroup = "main" }: { colorGroup?: string }) => {
-  const groupsToShow = colorGroup === "all" ? colorGroups : [colorGroup];
+export const Color = () => {
+  const shades = [...COLOR_SHADES];
 
-  return (
+  const renderColorRow = (colorName: string) => (
     <div
+      key={colorName}
       style={{
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-        gap: "32px",
-        padding: "32px",
+        gridTemplateColumns: "100px repeat(10, 1fr)",
+        gap: "4px",
+        alignItems: "center",
       }}
     >
-      {groupsToShow.map((selectedGroup) => (
-        <div
-          key={selectedGroup}
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "16px",
-            padding: "16px",
-            border: "1px solid #e5e7eb",
-            borderRadius: "8px",
-          }}
-        >
-          <h3
-            style={{
-              margin: 0,
-              fontSize: "16px",
-              fontWeight: "600",
-              color: "#111827",
-              textTransform: "capitalize",
-            }}
-          >
-            {selectedGroup}
-          </h3>
+      <Body fontSize="b3" colorShade={500}>
+        {colorName}
+      </Body>
+
+      {shades.map((shade) => {
+        const cssVar =
+          vars.colors.$scale[colorName as keyof typeof vars.colors.$scale]?.[
+            shade
+          ];
+        return (
           <div
+            key={shade}
             style={{
-              display: "grid",
-              gap: "8px",
+              width: "100%",
+              aspectRatio: "2/1",
+              backgroundColor: cssVar || "#f3f4f6",
+              borderRadius: "4px",
             }}
-          >
-            {Object.entries(
-              vars.colors.$scale[
-                selectedGroup as keyof typeof vars.colors.$scale
-              ],
-            ).map(([shade, cssVar]) => (
-              <div
-                key={shade}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "12px",
-                  padding: "8px",
-                  borderRadius: "4px",
-                  border: "1px solid #f3f4f6",
-                }}
-              >
-                <div
-                  style={{
-                    width: "40px",
-                    height: "40px",
-                    backgroundColor: cssVar,
-                    borderRadius: "4px",
-                    border: "1px solid #e5e7eb",
-                    flexShrink: 0,
-                  }}
-                />
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "2px",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "12px",
-                      fontWeight: "500",
-                      color: "#374151",
-                    }}
-                  >
-                    {selectedGroup}-{shade}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: "10px",
-                      color: "#6b7280",
-                    }}
-                  >
-                    {cssVar}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
+            title={`${colorName}-${shade}`}
+          />
+        );
+      })}
     </div>
   );
+
+  return (
+    <VStack padding={16} gap={48}>
+      {/* Gray Section */}
+      <VStack gap={2}>
+        <Title fontSize="t1">Gray</Title>
+        <VStack gap={2}>
+          <ShadeHeader shades={shades} />
+        </VStack>
+        <VStack gap={2}>
+          {grayColors
+            .filter(
+              (color) =>
+                vars.colors.$scale[color as keyof typeof vars.colors.$scale],
+            )
+            .map(renderColorRow)}
+        </VStack>
+      </VStack>
+
+      {/* Chromatic Section */}
+      <VStack gap={2}>
+        <Title fontSize="t1">Chromatic</Title>
+        <VStack gap={2}>
+          <ShadeHeader shades={shades} />
+        </VStack>
+        <VStack gap={2}>
+          {chromaticColors
+            .filter(
+              (color) =>
+                vars.colors.$scale[color as keyof typeof vars.colors.$scale],
+            )
+            .map(renderColorRow)}
+        </VStack>
+      </VStack>
+    </VStack>
+  );
 };
+
+const ShadeHeader = ({
+  shades,
+}: {
+  shades: (typeof COLOR_SHADES)[number][];
+}) => (
+  <Grid templateColumns="100px repeat(10, 1fr)">
+    <div />
+    {shades.map((shade) => (
+      <Body
+        fontSize="b4"
+        colorShade={500}
+        key={shade}
+        style={{
+          textAlign: "center",
+        }}
+      >
+        {shade}
+      </Body>
+    ))}
+  </Grid>
+);
