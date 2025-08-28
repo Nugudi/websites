@@ -1,5 +1,6 @@
 import "@nugudi/react-components-badge/style.css";
 import { Badge as _Badge } from "@nugudi/react-components-badge";
+import { SemanticTones, SemanticVariants } from "@nugudi/themes";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof _Badge> = {
@@ -26,28 +27,21 @@ const meta: Meta<typeof _Badge> = {
     },
     tone: {
       control: "select",
-      options: [
-        "neutral",
-        "informative",
-        "positive",
-        "warning",
-        "negative",
-        "purple",
-      ],
+      options: Object.values(SemanticTones),
       description: "Badge의 톤 (색상 테마)",
       table: {
-        type: { summary: "BadgeTone" },
+        type: { summary: "SemanticTone" },
         defaultValue: { summary: "neutral" },
         category: "Appearance",
       },
     },
     variant: {
       control: "select",
-      options: ["solid", "weak", "outline"],
+      options: Object.values(SemanticVariants),
       description: "Badge 스타일 변형",
       table: {
-        type: { summary: "BadgeVariant" },
-        defaultValue: { summary: "solid" },
+        type: { summary: "SemanticVariant" },
+        defaultValue: { summary: "weak" },
         category: "Appearance",
       },
     },
@@ -229,14 +223,8 @@ export const Sizes: Story = {
 export const AllToneVariations: Story = {
   name: "All Tones & Variants",
   render: () => {
-    const tones: Array<
-      "neutral" | "informative" | "positive" | "warning" | "negative" | "purple"
-    > = ["neutral", "informative", "positive", "warning", "negative", "purple"];
-    const variants: Array<"solid" | "weak" | "outline"> = [
-      "solid",
-      "weak",
-      "outline",
-    ];
+    const tones = Object.values(SemanticTones);
+    const variants = Object.values(SemanticVariants);
 
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>

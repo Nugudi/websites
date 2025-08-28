@@ -9,6 +9,7 @@ const Badge = ({
   size = "sm",
   icon,
   className,
+  ...restProps
 }: BadgeProps) => {
   const toneVariantKey = `${tone}-${variant}` as const;
 
@@ -20,6 +21,7 @@ const Badge = ({
         styles.badgeSize[size],
         className,
       )}
+      {...restProps}
     >
       {icon && <span className={styles.badgeIcon}>{icon}</span>}
       <span className={styles.badgeText}>{children}</span>

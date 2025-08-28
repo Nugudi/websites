@@ -9,7 +9,6 @@ export const badgeBase = style({
   borderRadius: vars.box.radii.lg,
   whiteSpace: "nowrap",
   verticalAlign: "middle",
-  lineHeight: 1,
   gap: vars.box.spacing[2],
   padding: `${vars.box.spacing[2]} ${vars.box.spacing[4]}`,
 });
@@ -37,7 +36,6 @@ export const badgeSize = styleVariants({
   },
 });
 
-// ColorScale 타입 정의 - 실제 vars.colors.$scale의 타입과 매칭
 type ColorScale = Record<ColorShade, string>;
 
 interface ToneVariantOptions {
@@ -125,7 +123,6 @@ const toneVariants = {
   }),
 };
 
-// 모든 tone-variant 조합을 자동으로 생성
 type BadgeToneVariantKey = `${keyof typeof toneVariants}-${keyof ToneVariants}`;
 
 export const badgeToneVariant = styleVariants(

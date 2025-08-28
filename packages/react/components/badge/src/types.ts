@@ -1,18 +1,12 @@
-export type BadgeTone =
-  | "neutral"
-  | "informative"
-  | "positive"
-  | "warning"
-  | "negative"
-  | "purple";
-export type BadgeVariant = "solid" | "weak" | "outline";
+import type { SemanticTone, SemanticVariant } from "@nugudi/themes";
+import type { ComponentPropsWithoutRef, ReactElement, ReactNode } from "react";
+
 export type BadgeSize = "sm" | "md" | "lg";
 
-export interface BadgeProps {
-  children: React.ReactNode;
-  tone?: BadgeTone;
-  variant?: BadgeVariant;
+export interface BadgeProps extends ComponentPropsWithoutRef<"span"> {
+  children: ReactNode;
+  tone?: SemanticTone;
+  variant?: SemanticVariant;
   size?: BadgeSize;
-  icon?: React.ReactNode;
-  className?: string;
+  icon?: ReactElement;
 }
