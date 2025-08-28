@@ -59,10 +59,10 @@ export const Color = () => {
       {/* Gray Section */}
       <VStack gap="2">
         <Title fontSize="t1">Gray</Title>
-        <VStack gap="2">
+        <VStack gap={2}>
           <ShadeHeader shades={shades} />
         </VStack>
-        <VStack gap="2">
+        <VStack gap={2}>
           {grayColors
             .filter(
               (color) =>
@@ -75,10 +75,10 @@ export const Color = () => {
       {/* Chromatic Section */}
       <VStack gap="2">
         <Title fontSize="t1">Chromatic</Title>
-        <VStack gap="2">
+        <VStack gap={2}>
           <ShadeHeader shades={shades} />
         </VStack>
-        <VStack gap="2">
+        <VStack gap={2}>
           {chromaticColors
             .filter(
               (color) =>

@@ -1,4 +1,5 @@
-import { classes, vars } from "@nugudi/themes";
+import { type ColorShade, classes, vars } from "@nugudi/themes";
+import type { ComplexStyleRule } from "@vanilla-extract/css";
 import { style, styleVariants } from "@vanilla-extract/css";
 
 export const badgeBase = style({
@@ -36,75 +37,108 @@ export const badgeSize = styleVariants({
   },
 });
 
-export const badgeToneVariant = styleVariants({
-  // Neutral tone
-  "neutral-solid": {
-    backgroundColor: vars.colors.$scale.zinc[700],
-    color: vars.colors.$static.light.color.white,
-    fontWeight: vars.typography.fontWeight[600],
-  },
-  "neutral-weak": {
-    backgroundColor: vars.colors.$scale.zinc[100],
-    color: vars.colors.$scale.zinc[700],
-  },
-  "neutral-outline": {
-    backgroundColor: "transparent",
-    color: vars.colors.$scale.zinc[700],
-    border: `1px solid ${vars.colors.$scale.zinc[300]}`,
-    fontWeight: vars.typography.fontWeight[600],
-  },
+// ColorScale 타입 정의 - 실제 vars.colors.$scale의 타입과 매칭
+type ColorScale = Record<ColorShade, string>;
 
-  // Informative tone (blue-like)
-  "informative-solid": {
-    backgroundColor: vars.colors.$static.light.color.blue,
-    color: vars.colors.$static.light.color.white,
-    fontWeight: vars.typography.fontWeight[600],
-  },
-  "informative-weak": {
-    backgroundColor: vars.colors.$static.light.color.lightBlue,
-    color: vars.colors.$static.light.color.blue,
-    border: "1px solid transparent",
-  },
-  "informative-outline": {
-    backgroundColor: "transparent",
-    color: vars.colors.$static.light.color.blue,
-    border: `1px solid ${vars.colors.$static.light.color.lightBlue}`,
-    fontWeight: vars.typography.fontWeight[600],
-  },
+interface ToneVariantOptions {
+  solidBg?: ColorShade;
+  solidColor?: string;
+  weakBg?: ColorShade;
+  weakColor?: ColorShade;
+  outlineBorder?: ColorShade;
+  outlineColor?: ColorShade;
+}
 
-  // Positive tone (green-like, using main colors)
-  "positive-solid": {
-    backgroundColor: vars.colors.$scale.main[700],
-    color: vars.colors.$static.light.color.white,
-    fontWeight: vars.typography.fontWeight[600],
-  },
-  "positive-weak": {
-    backgroundColor: vars.colors.$scale.main[100],
-    color: vars.colors.$scale.main[700],
-  },
-  "positive-outline": {
-    backgroundColor: "transparent",
-    color: vars.colors.$scale.main[600],
-    fontWeight: vars.typography.fontWeight[600],
-    border: `1px solid ${vars.colors.$scale.main[100]}`,
-  },
+interface ToneVariants {
+  solid: ComplexStyleRule;
+  weak: ComplexStyleRule;
+  outline: ComplexStyleRule;
+}
 
-  // Negative tone (red-like, using static red)
-  "negative-solid": {
-    backgroundColor: vars.colors.$static.light.color.red,
-    color: vars.colors.$static.light.color.white,
-    fontWeight: vars.typography.fontWeight[600],
-    border: "1px solid transparent",
-  },
-  "negative-weak": {
-    backgroundColor: vars.colors.$static.light.color.lightRed,
-    color: vars.colors.$static.light.color.red,
-    border: "1px solid transparent",
-  },
-  "negative-outline": {
-    backgroundColor: vars.colors.$static.light.color.white,
-    color: vars.colors.$static.light.color.red,
-    fontWeight: vars.typography.fontWeight[600],
-    border: `1px solid ${vars.colors.$static.light.color.lightRed}`,
-  },
-});
+const createToneVariants = (
+  colorScale: ColorScale,
+  options?: ToneVariantOptions,
+): ToneVariants => {
+  const {
+    solidBg = 600,
+    solidColor = vars.colors.$static.light.color.white,
+    weakBg = 100,
+    weakColor = 700,
+    outlineBorder = 300,
+    outlineColor = 600,
+  } = options || {};
+
+  return {
+    solid: {
+      backgroundColor: colorScale[solidBg],
+      color: solidColor,
+      fontWeight: vars.typography.fontWeight[600],
+    },
+    weak: {
+      backgroundColor: colorScale[weakBg],
+      color: colorScale[weakColor],
+    },
+    outline: {
+      backgroundColor: "transparent",
+      color: colorScale[outlineColor],
+      border: `1px solid ${colorScale[outlineBorder]}`,
+      fontWeight: vars.typography.fontWeight[600],
+    },
+  };
+};
+
+const toneVariants = {
+  neutral: createToneVariants(vars.colors.$scale.zinc, {
+    solidBg: 700,
+    weakColor: 700,
+    outlineColor: 700,
+  }),
+  informative: createToneVariants(vars.colors.$scale.blue, {
+    solidBg: 600,
+    weakBg: 100,
+    weakColor: 600,
+    outlineBorder: 200,
+  }),
+  positive: createToneVariants(vars.colors.$scale.main, {
+    solidBg: 600,
+    weakBg: 100,
+    weakColor: 700,
+    outlineBorder: 200,
+  }),
+  warning: createToneVariants(vars.colors.$scale.yellow, {
+    solidBg: 600,
+    weakBg: 100,
+    weakColor: 700,
+    outlineBorder: 200,
+  }),
+  negative: createToneVariants(vars.colors.$scale.red, {
+    solidBg: 600,
+    weakBg: 100,
+    weakColor: 600,
+    outlineBorder: 200,
+  }),
+  purple: createToneVariants(vars.colors.$scale.purple, {
+    solidBg: 600,
+    weakBg: 100,
+    weakColor: 600,
+    outlineBorder: 200,
+  }),
+};
+
+// 모든 tone-variant 조합을 자동으로 생성
+type BadgeToneVariantKey = `${keyof typeof toneVariants}-${keyof ToneVariants}`;
+
+export const badgeToneVariant = styleVariants(
+  Object.entries(toneVariants).reduce<
+    Record<BadgeToneVariantKey, ComplexStyleRule>
+  >(
+    (acc, [tone, variants]) => {
+      Object.entries(variants).forEach(([variant, styles]) => {
+        const key = `${tone}-${variant}` as BadgeToneVariantKey;
+        acc[key] = styles;
+      });
+      return acc;
+    },
+    {} as Record<BadgeToneVariantKey, ComplexStyleRule>,
+  ),
+);

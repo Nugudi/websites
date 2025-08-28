@@ -26,7 +26,14 @@ const meta: Meta<typeof _Badge> = {
     },
     tone: {
       control: "select",
-      options: ["neutral", "informative", "positive", "negative"],
+      options: [
+        "neutral",
+        "informative",
+        "positive",
+        "warning",
+        "negative",
+        "purple",
+      ],
       description: "Badge의 톤 (색상 테마)",
       table: {
         type: { summary: "BadgeTone" },
@@ -171,6 +178,38 @@ export const NegativeTone: Story = {
   ),
 };
 
+export const WarningTone: Story = {
+  render: () => (
+    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+      <_Badge tone="warning" variant="solid">
+        경고
+      </_Badge>
+      <_Badge tone="warning" variant="weak">
+        경고
+      </_Badge>
+      <_Badge tone="warning" variant="outline">
+        경고
+      </_Badge>
+    </div>
+  ),
+};
+
+export const PurpleTone: Story = {
+  render: () => (
+    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+      <_Badge tone="purple" variant="solid">
+        라벨
+      </_Badge>
+      <_Badge tone="purple" variant="weak">
+        라벨
+      </_Badge>
+      <_Badge tone="purple" variant="outline">
+        라벨
+      </_Badge>
+    </div>
+  ),
+};
+
 export const Sizes: Story = {
   render: () => (
     <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
@@ -187,12 +226,35 @@ export const Sizes: Story = {
   ),
 };
 
-export const InformativeToneVariations: Story = {
-  render: () => (
-    <div style={{ display: "flex", gap: "8px" }}>
-      <_Badge variant="solid">Solid</_Badge>
-      <_Badge variant="weak">Weak</_Badge>
-      <_Badge variant="outline">Outline</_Badge>
-    </div>
-  ),
+export const AllToneVariations: Story = {
+  name: "All Tones & Variants",
+  render: () => {
+    const tones: Array<
+      "neutral" | "informative" | "positive" | "warning" | "negative" | "purple"
+    > = ["neutral", "informative", "positive", "warning", "negative", "purple"];
+    const variants: Array<"solid" | "weak" | "outline"> = [
+      "solid",
+      "weak",
+      "outline",
+    ];
+
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        {tones.map((tone) => (
+          <div key={tone}>
+            <h4 style={{ margin: "0 0 8px 0", textTransform: "capitalize" }}>
+              {tone}
+            </h4>
+            <div style={{ display: "flex", gap: "8px" }}>
+              {variants.map((variant) => (
+                <_Badge key={variant} tone={tone} variant={variant}>
+                  {variant}
+                </_Badge>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  },
 };

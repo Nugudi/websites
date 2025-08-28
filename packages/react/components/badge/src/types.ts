@@ -1,4 +1,10 @@
-export type BadgeTone = "neutral" | "informative" | "positive" | "negative";
+export type BadgeTone =
+  | "neutral"
+  | "informative"
+  | "positive"
+  | "warning"
+  | "negative"
+  | "purple";
 export type BadgeVariant = "solid" | "weak" | "outline";
 export type BadgeSize = "sm" | "md" | "lg";
 
