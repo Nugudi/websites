@@ -22,9 +22,6 @@ export const color = {
   black: "#121212",
   white: "#FFFFFF",
   red: "#F44336",
-  lightRed: "#fcf0ef",
-  blue: "#207cfa",
-  lightBlue: "#eef6ff",
   backdrop: "rgba(0, 0, 0, 0.6)",
 };
 
