@@ -12,7 +12,7 @@ import {
 import { useSignUpStore } from "../../../../../stores/use-sign-up-store";
 import * as styles from "./index.css";
 
-const EmailForm = () => {
+export const EmailForm = () => {
   const { setStep, setData, data } = useSignUpStore();
 
   const form = useForm<SignUpEmailSchema>({
@@ -54,5 +54,3 @@ const EmailForm = () => {
     </form>
   );
 };
-
-export default EmailForm;

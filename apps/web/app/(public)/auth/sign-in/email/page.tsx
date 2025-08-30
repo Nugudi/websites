@@ -1,7 +1,7 @@
-import EmailSignInView from "@/src/domains/auth/sign-in/ui/views/email-sign-in-view";
+import { SignInEmailView } from "@/src/domains/auth/sign-in/ui/views/sign-in-email-view";
 
-const EmailSignInPage = () => {
-  return <EmailSignInView />;
+const SignInEmailPage = () => {
+  return <SignInEmailView />;
 };
 
-export default EmailSignInPage;
+export default SignInEmailPage;

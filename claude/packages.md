@@ -10,13 +10,14 @@ nugudi/
 │   └── web/                # Next.js 15 + React 19 (Main Web App)
 │       └── app/           # Next.js App Router
 │           ├── (auth)/    # 🔒 Protected routes - Require authentication
-│           │   ├── benefits/     # Benefits page (authenticated users only)
-│           │   └── my/          # My page/profile (authenticated users only)
+│           │   └── profile/      # Profile page (authenticated users only)
 │           └── (public)/  # 🌍 Public routes - No authentication required
-│               ├── auth/        # Auth-related public pages
-│               │   ├── sign-in/ # Sign in page
-│               │   └── sign-up/ # Sign up page
-│               └── home/        # Public home page
+│               └── auth/        # Auth-related public pages
+│                   ├── login/    # Login page (social login options)
+│                   ├── sign-in/  # Sign in with email page
+│                   │   └── email/ # Email sign in page
+│                   ├── sign-up/  # Sign up page
+│                   └── forgot-password/ # Forgot password page
 ├── packages/               # Shared packages (ALWAYS use these!)
 │   ├── ui/                # Aggregated UI library with Storybook
 │   ├── api/               # OpenAPI client + MSW mocks
@@ -34,10 +35,10 @@ Next.js 15 route groups organize pages by authentication requirements:
 
 - **(auth)**: Protected pages requiring user authentication
   - All pages inside this group require a logged-in user
-  - Examples: `/benefits`, `/my`, user dashboard, etc.
+  - Examples: `/profile`, user dashboard, etc.
 - **(public)**: Public pages accessible without authentication
   - All pages inside this group are accessible to everyone
-  - Examples: `/auth/sign-in`, `/auth/sign-up`, `/home`, etc.
+  - Examples: `/auth/login`, `/auth/sign-in/email`, `/auth/sign-up`, etc.
 
 **Note**: Route groups (parentheses folders) don't affect the URL structure - they're purely for organization.
 
@@ -49,10 +50,10 @@ Next.js 15 route groups organize pages by authentication requirements:
 
 ```typescript
 // ✅ CORRECT - Use packages
-import Button from '@nugudi/react-components-button';
+import { Button } from '@nugudi/react-components-button';  // Named export
 import { useToggle } from '@nugudi/react-hooks-toggle';
-import { variables } from '@nugudi/themes';
-import { Icons } from '@nugudi/assets-icons';
+import { vars } from '@nugudi/themes';  // Use 'vars' not 'variables'
+import { AppleIcon, HeartIcon } from '@nugudi/assets-icons';  // Import individual icons
 
 // ❌ WRONG - Don't create new implementations
 import Button from './components/button'; // NO!
@@ -319,19 +320,19 @@ export const ProfileCard = () => {
 ### React Components (`@nugudi/react-components-*`)
 
 ```typescript
-// Individual component imports
-import Button from '@nugudi/react-components-button';
-import Input from '@nugudi/react-components-input';
-import Chip from '@nugudi/react-components-chip';
-import { NavigationItem } from '@nugudi/react-components-navigation-item';  // Named export
-import Switch from '@nugudi/react-components-switch';
-import Tab from '@nugudi/react-components-tab';
-import Textarea from '@nugudi/react-components-textarea';
-import InputOTP from '@nugudi/react-components-input-otp';
-import StepIndicator from '@nugudi/react-components-step-indicator';
-import MenuCard from '@nugudi/react-components-menu-card';
-import BottomSheet from '@nugudi/react-components-bottom-sheet';
-import Backdrop from '@nugudi/react-components-backdrop';
+// Individual component imports - All use named exports
+import { Button } from '@nugudi/react-components-button';
+import { Input } from '@nugudi/react-components-input';
+import { Chip } from '@nugudi/react-components-chip';
+import { NavigationItem } from '@nugudi/react-components-navigation-item';
+import { Switch } from '@nugudi/react-components-switch';
+import { Tab } from '@nugudi/react-components-tab';
+import { Textarea } from '@nugudi/react-components-textarea';
+import { InputOTP } from '@nugudi/react-components-input-otp';
+import { StepIndicator } from '@nugudi/react-components-step-indicator';
+import { MenuCard } from '@nugudi/react-components-menu-card';
+import { BottomSheet } from '@nugudi/react-components-bottom-sheet';
+import { Backdrop } from '@nugudi/react-components-backdrop';
 
 // NavigationItem usage example
 <NavigationItem
@@ -465,19 +466,20 @@ import { CoinIcon } from '@nugudi/assets-icons';
 apps/web/
 ├── app/                    # Next.js App Router
 │   ├── (auth)/            # Protected routes
-│   │   ├── benefits/
-│   │   └── my/
+│   │   └── profile/      # Profile page (authenticated users only)
 │   └── (public)/          # Public routes
 │       └── auth/
-│           ├── sign-in/
-│           └── sign-up/
+│           ├── login/     # Login page
+│           ├── sign-in/   # Sign in with email page
+│           └── sign-up/   # Sign up page
 ├── src/
 │   ├── domains/           # Domain logic
 │   │   ├── auth/          # Complex domain with multiple features
-│   │   │   ├── sign-in/
-│   │   │   ├── sign-up/
-│   │   │   ├── my/
-│   │   │   └── password-forgot/
+│   │   │   ├── login/     # Social login
+│   │   │   ├── sign-in/   # Email sign in
+│   │   │   ├── sign-up/   # Sign up
+│   │   │   ├── profile/   # User profile
+│   │   │   └── forgot-password/ # Password recovery
 │   │   │       ├── constants/
 │   │   │       ├── schemas/
 │   │   │       ├── stores/
@@ -486,8 +488,13 @@ apps/web/
 │   │   │           ├── components/
 │   │   │           ├── sections/
 │   │   │           └── views/
-│   │   └── benefit/       # Simple domain without sub-features
-│   │       └── ui/        # UI directly under domain
+│   │   ├── benefit/       # Simple domain without sub-features
+│   │   │   └── ui/        # UI directly under domain
+│   │   │       ├── components/
+│   │   │       ├── sections/
+│   │   │       └── views/
+│   │   └── cafeteria/     # Cafeteria domain
+│   │       └── ui/
 │   │           ├── components/
 │   │           ├── sections/
 │   │           └── views/
@@ -527,13 +534,13 @@ interface SignUpFormProps {
   // Props interface
 }
 
-export const SignUpForm: React.FC<SignUpFormProps> = (props) => {
-  // Component implementation
+export const SignUpForm = (props: SignUpFormProps) => {
+  // Component implementation  
 };
 
 // src/domains/auth/sign-up/ui/components/sign-up-form/index.css.ts
 import { style } from '@vanilla-extract/css';
-import { variables } from '@nugudi/themes';
+import { vars } from '@nugudi/themes';
 
 export const formContainer = style({
   display: 'flex',
@@ -852,8 +859,8 @@ pnpm storybook --filter=ui
 ### Import Examples
 
 ```typescript
-// Component usage
-import Button from '@nugudi/react-components-button';
+// Component usage - All named exports
+import { Button } from '@nugudi/react-components-button';
 import { Box, Flex } from '@nugudi/react-components-layout';
 
 // Hook usage
@@ -864,7 +871,7 @@ import { useStepper } from '@nugudi/react-hooks-use-stepper';
 import { api } from '@nugudi/api';
 
 // Theme usage
-import { variables } from '@nugudi/themes';
+import { vars } from '@nugudi/themes';
 
 // Icon usage - Import individual icons
 import { AppleIcon, HeartIcon, ArrowRightIcon } from '@nugudi/assets-icons';
@@ -930,27 +937,27 @@ import * as styles from './index.css';
 
 ```typescript
 // ✅ CORRECT - Cross-domain imports
-// From: src/domains/menu/...
-import { useAuth } from '@/domains/auth/hooks/use-auth';
+// From: src/domains/cafeteria/...
+import { useAuth } from '@/src/domains/auth/hooks/use-auth';
 
 // ✅ CORRECT - From app pages (public routes)
 // From: app/(public)/auth/sign-up/page.tsx
-import { SignUpView } from '@/domains/auth/sign-up/ui/views/sign-up-view';
+import { SignUpView } from '@/src/domains/auth/sign-up/ui/views/sign-up-view';
 
 // ✅ CORRECT - From app pages (protected routes)
-// From: app/(auth)/benefits/page.tsx
-import { BenefitPageView } from '@/domains/benefit/ui/views/benefit-page-view';
+// From: app/(auth)/profile/page.tsx  
+import { ProfilePageView } from '@/src/domains/auth/profile/ui/views/profile-page-view';
 ```
 
 #### Package Imports - Always Use Package Path
 
 ```typescript
 // ✅ CORRECT - Always use package imports for packages
-import Button from '@nugudi/react-components-button';
-import { variables } from '@nugudi/themes';
+import { Button } from '@nugudi/react-components-button';
+import { vars } from '@nugudi/themes';
 
 // ❌ WRONG - Never use relative imports for packages
-import Button from '../../../../../packages/react/components/button'; // NO!
+import { Button } from '../../../../../packages/react/components/button'; // NO!
 ```
 
 ---
@@ -1010,7 +1017,7 @@ If you want to use `@nugudi/react-components-textarea`:
 pnpm install
 
 // 4. Now you can use it:
-import Textarea from '@nugudi/react-components-textarea';
+import { Textarea } from '@nugudi/react-components-textarea';
 ```
 
 ### Package Style Import Pattern
@@ -1058,6 +1065,77 @@ Style import: @import '@nugudi/react-components-[name]/style.css';
 - **Not running pnpm install**: Package not available in node_modules
 - **Importing wrong path**: Use `workspace:*` for local packages
 
+## 🏷️ Naming Conventions - Real World Examples
+
+### Domain Entity Naming Consistency
+
+When working with domain entities, maintain consistent naming throughout the codebase:
+
+#### Example: Cafeteria Domain
+```typescript
+// ✅ CORRECT - Consistent "cafeteria" naming
+interface CafeteriaRecommendCardProps {
+  cafeteriaId: string;
+  cafeteriaName: string;
+  cafeteriaAddress: string;
+  cafeteriaTime: string;
+}
+
+export interface Cafeteria {
+  id: string;
+  name: string;
+  // ...
+}
+
+const MOCK_CAFETERIA_LIST: Cafeteria[] = [];
+
+// Link routing
+<Link href={`/cafeterias/${cafeteriaId}`}>
+
+// ❌ WRONG - Mixed naming (restaurant/cafeteria)
+interface CafeteriaRecommendCardProps {
+  restaurantId: string;  // NO! Use cafeteriaId
+  restaurantName: string;  // NO! Use cafeteriaName
+}
+```
+
+#### Example: Benefit Domain
+```typescript
+// ✅ CORRECT - Consistent "benefit" naming
+export const BenefitPageView = () => {};
+export const BenefitHighlightSection = () => {};
+export const BenefitCard = () => {};
+
+// Routes should match
+// app/(auth)/benefits/page.tsx
+```
+
+### Import/Export Consistency
+
+```typescript
+// ✅ CORRECT - Named exports for ALL components/sections/views
+// domains/cafeteria/ui/components/cafeteria-menu-list/index.tsx
+export const CafeteriaMenuList = () => {};
+
+// domains/cafeteria/ui/sections/cafeteria-recommend-section/index.tsx
+export const CafeteriaRecommendSection = () => {};
+
+// domains/cafeteria/ui/views/cafeteria-home-view/index.tsx
+export const CafeteriaHomeView = () => {};
+
+// ✅ CORRECT - Default export ONLY for page.tsx files
+// app/page.tsx
+import { CafeteriaHomeView } from '@/src/domains/cafeteria/ui/views/cafeteria-home-view';
+const HomePage = () => {
+  return <CafeteriaHomeView />;
+};
+export default HomePage;
+
+// ✅ CORRECT - Named exports for hooks and utilities
+export const useCafeteriaList = () => {};
+export type CafeteriaData = {};
+```
+
 ## 💡 Tips for Claude Code
 
 When working in this repository:
@@ -1070,6 +1148,8 @@ When working in this repository:
 6. **Use Vanilla Extract** for component styles
 7. **Follow the established patterns** in existing domains
 8. **Complete package setup** when using any `@nugudi` components
+9. **Maintain naming consistency** within each domain
+10. **Use relative imports** within same domain, absolute for cross-domain
 
 Remember: This is a **package-first monorepo** - maximize reuse of existing packages!
 

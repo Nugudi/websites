@@ -1,7 +1,7 @@
 import { VStack } from "@nugudi/react-components-layout";
 import { AppHeader } from "@/src/shared/ui/components/app-header";
-import { BenefitListSection } from "../../sections/benefit-list-section";
-import { UserBenefitSection } from "../../sections/user-benefit-section";
+import { BenefitHighlightSection } from "../../sections/benefit-highlight-section";
+import { BenefitMenuSection } from "../../sections/benefit-menu-section";
 import * as styles from "./index.css";
 
 export const BenefitPageView = () => {
@@ -9,8 +9,8 @@ export const BenefitPageView = () => {
     <div className={styles.container}>
       <VStack gap="16px">
         <AppHeader />
-        <UserBenefitSection />
-        <BenefitListSection />
+        <BenefitHighlightSection />
+        <BenefitMenuSection />
       </VStack>
     </div>
   );
