@@ -6,13 +6,13 @@ import { Body, Box, Heading } from "@nugudi/react-components-layout";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { 약관목록 } from "../../../../../constants/sign-up";
+import { TERMS_AND_CONDITIONS_LIST } from "../../../../../constants/sign-up";
 import {
   type SignUpAgreementSchema,
   signUpAgreementSchema,
 } from "../../../../../schemas/sign-up-schema";
 import { useSignUpStore } from "../../../../../stores/use-sign-up-store";
-import type { TermsAgreements } from "../../../../../types/sign-up";
+import type { TermsAgreementState } from "../../../../../types/sign-up";
 import * as styles from "./index.css";
 import Terms from "./terms";
 
@@ -20,9 +20,9 @@ const AgreementForm = () => {
   const { setData, resetAll } = useSignUpStore();
   const router = useRouter();
 
-  const [termsAgreements, setTermsAgreements] = useState<TermsAgreements>(
+  const [termsAgreements, setTermsAgreements] = useState<TermsAgreementState>(
     () => {
-      return 약관목록.reduce<TermsAgreements>(
+      return TERMS_AND_CONDITIONS_LIST.reduce<TermsAgreementState>(
         (prev, term) => ({
           // biome-ignore lint/performance/noAccumulatingSpread: 임시
           ...prev,
@@ -89,9 +89,11 @@ const AgreementForm = () => {
     [termsAgreements, form],
   );
 
-  const 필수약관동의여부 = useMemo(() => {
-    const 필수약관 = 약관목록.filter((term) => term.mandatory);
-    return 필수약관.every((term) => termsAgreements[String(term.id)]);
+  const isMandatoryTermsAgreed = useMemo(() => {
+    const mandatoryTerms = TERMS_AND_CONDITIONS_LIST.filter(
+      (term) => term.mandatory,
+    );
+    return mandatoryTerms.every((term) => termsAgreements[String(term.id)]);
   }, [termsAgreements]);
 
   const onSubmit = (data: SignUpAgreementSchema) => {
@@ -125,7 +127,7 @@ const AgreementForm = () => {
       </Box>
 
       <Button
-        disabled={!필수약관동의여부}
+        disabled={!isMandatoryTermsAgreed}
         type="submit"
         color="main"
         variant="brand"

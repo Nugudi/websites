@@ -3,7 +3,7 @@
 import { Button } from "@nugudi/react-components-button";
 import * as styles from "./index.css";
 
-const LogoutButton = () => {
+const ProfileLogoutButton = () => {
   return (
     <Button
       variant="neutral"
@@ -19,4 +19,4 @@ const LogoutButton = () => {
   );
 };
 
-export default LogoutButton;
+export default ProfileLogoutButton;

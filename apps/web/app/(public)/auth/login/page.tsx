@@ -1,5 +1,7 @@
-const AuthLoginPage = () => {
-  return <div>AuthLoginPage</div>;
+import LoginView from "@/src/domains/auth/login/ui/views/login-view";
+
+const LoginPage = () => {
+  return <LoginView />;
 };
 
-export default AuthLoginPage;
+export default LoginPage;

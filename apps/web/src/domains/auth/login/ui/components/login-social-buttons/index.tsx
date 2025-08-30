@@ -3,7 +3,7 @@ import { Flex } from "@nugudi/react-components-layout";
 import { vars } from "@nugudi/themes";
 import Link from "next/link";
 
-const SocialLoginButtonList = () => {
+const LoginSocialButtons = () => {
   return (
     <Flex gap={vars.box.spacing[4]}>
       <Link href="/login/google" aria-label="Google 계정으로 로그인">
@@ -19,4 +19,4 @@ const SocialLoginButtonList = () => {
   );
 };
 
-export default SocialLoginButtonList;
+export default LoginSocialButtons;

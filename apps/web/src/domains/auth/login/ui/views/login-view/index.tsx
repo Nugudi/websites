@@ -1,10 +1,10 @@
 import { Flex } from "@nugudi/react-components-layout";
 import Image from "next/image";
-import WelcomeText from "../../components/welcome-text";
-import SignInSection from "../../sections/sign-in-section";
+import LoginWelcome from "../../components/login-welcome";
+import LoginSection from "../../sections/login-section";
 import * as styles from "./index.css";
 
-const SignInView = () => {
+const LoginView = () => {
   return (
     <Flex
       className={styles.container}
@@ -12,7 +12,7 @@ const SignInView = () => {
       justify={"space-around"}
       align={"center"}
     >
-      <WelcomeText />
+      <LoginWelcome />
       <div className={styles.logo}>
         <Image
           className={styles.logoImage}
@@ -24,9 +24,9 @@ const SignInView = () => {
         />
       </div>
 
-      <SignInSection />
+      <LoginSection />
     </Flex>
   );
 };
 
-export default SignInView;
+export default LoginView;

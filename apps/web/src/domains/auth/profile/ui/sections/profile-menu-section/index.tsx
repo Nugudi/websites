@@ -1,5 +1,5 @@
 import { Box, VStack } from "@nugudi/react-components-layout";
-import NavigationLink from "../../components/navigation-link";
+import ProfileNavigationLink from "../../components/profile-navigation-link";
 import * as styles from "./index.css";
 
 const menuItems = [
@@ -7,18 +7,18 @@ const menuItems = [
   { href: "/profile/settings/privacy", label: "개인정보 약관" },
 ];
 
-const MenuSection = () => {
+const ProfileMenuSection = () => {
   return (
     <Box className={styles.container} boxShadow="sm" borderRadius="xl" p="2">
-      <VStack gap="4">
+      <VStack gap={4}>
         {menuItems.map((item) => (
-          <NavigationLink key={item.label} href={item.href}>
+          <ProfileNavigationLink key={item.label} href={item.href}>
             {item.label}
-          </NavigationLink>
+          </ProfileNavigationLink>
         ))}
       </VStack>
     </Box>
   );
 };
 
-export default MenuSection;
+export default ProfileMenuSection;

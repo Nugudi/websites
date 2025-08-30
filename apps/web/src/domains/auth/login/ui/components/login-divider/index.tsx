@@ -1,14 +1,11 @@
 import * as styles from "./index.css";
 
-interface DividerWithTextProps {
+interface LoginDividerProps {
   text?: string;
   className?: string;
 }
 
-export const DividerWithText = ({
-  text = "OR",
-  className,
-}: DividerWithTextProps) => {
+export const LoginDivider = ({ text = "OR", className }: LoginDividerProps) => {
   return (
     <div
       className={`${styles.container} ${className || ""}`}

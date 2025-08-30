@@ -18,7 +18,7 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-const EmailLoginForm = () => {
+const SignInEmailForm = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -44,7 +44,7 @@ const EmailLoginForm = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-      <Flex direction="column" gap="16" className={styles.inputContainer}>
+      <Flex direction="column" gap={16} className={styles.inputContainer}>
         <Input
           label="이메일"
           placeholder="이메일을 입력하세요"
@@ -77,7 +77,7 @@ const EmailLoginForm = () => {
           }
         />
         <Flex
-          gap="4"
+          gap={4}
           align="center"
           justify="center"
           className={styles.linksContainer}
@@ -99,4 +99,4 @@ const EmailLoginForm = () => {
   );
 };
 
-export default EmailLoginForm;
+export default SignInEmailForm;

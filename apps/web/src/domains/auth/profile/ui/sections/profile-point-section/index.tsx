@@ -4,7 +4,7 @@ import { NavigationItem } from "@nugudi/react-components-navigation-item";
 import Link from "next/link";
 import * as styles from "./index.css";
 
-const PointSection = () => {
+const ProfilePointSection = () => {
   const point = "3,000";
 
   return (
@@ -25,4 +25,4 @@ const PointSection = () => {
   );
 };
 
-export default PointSection;
+export default ProfilePointSection;

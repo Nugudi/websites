@@ -1,16 +1,19 @@
-export interface Term {
+// 약관 항목 타입
+export interface TermsAgreement {
   id: number;
   title: string;
   link: string;
   mandatory: boolean;
 }
 
-export interface TermsAgreements {
+// 약관 동의 상태를 저장하는 객체 타입
+export interface TermsAgreementState {
   [key: string]: boolean;
 }
 
-export interface TermsProps {
-  agreements: TermsAgreements;
+// 약관 컴포넌트 Props 타입
+export interface TermsComponentProps {
+  agreements: TermsAgreementState;
   onAgreementChange: (termId: string, checked: boolean) => void;
   onAllAgreementChange: (checked: boolean) => void;
 }
