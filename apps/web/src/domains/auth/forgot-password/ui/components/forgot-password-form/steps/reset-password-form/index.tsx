@@ -6,10 +6,10 @@ import { Body, Box, HStack, Title } from "@nugudi/react-components-layout";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
-  type PasswordForgotPasswordSchema,
-  passwordForgotPasswordSchema,
-} from "../../../../../schemas/password-forgot-schema";
-import { usePasswordForgotStore } from "../../../../../stores/use-password-forgot-store";
+  type ForgotPasswordPasswordSchema,
+  forgotPasswordPasswordSchema,
+} from "../../../../../schemas/forgot-password-schema";
+import { useForgotPasswordStore } from "../../../../../stores/use-forgot-password-store";
 import * as styles from "./index.css";
 
 interface ResetPasswordFormProps {
@@ -21,7 +21,7 @@ export const ResetPasswordForm = ({
   onPrevious,
   onSubmit,
 }: ResetPasswordFormProps) => {
-  const { setData, data } = usePasswordForgotStore();
+  const { setData, data } = useForgotPasswordStore();
 
   const [visibilityState, setVisibilityState] = useState({
     password: false,
@@ -29,7 +29,7 @@ export const ResetPasswordForm = ({
   });
 
   const form = useForm({
-    resolver: zodResolver(passwordForgotPasswordSchema),
+    resolver: zodResolver(forgotPasswordPasswordSchema),
     defaultValues: {
       password: data.password ?? "",
       passwordConfirm: data.passwordConfirm ?? "",
@@ -37,7 +37,7 @@ export const ResetPasswordForm = ({
     mode: "onTouched",
   });
 
-  const onNext = (data: PasswordForgotPasswordSchema) => {
+  const onNext = (data: ForgotPasswordPasswordSchema) => {
     setData({
       ...data,
       password: data.password,
@@ -126,7 +126,7 @@ export const ResetPasswordForm = ({
         />
       </Box>
 
-      <HStack gap="5">
+      <HStack gap={5}>
         <Button
           type="button"
           color="zinc"

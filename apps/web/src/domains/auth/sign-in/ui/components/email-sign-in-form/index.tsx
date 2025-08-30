@@ -82,7 +82,7 @@ const EmailLoginForm = () => {
           justify="center"
           className={styles.linksContainer}
         >
-          <Link href="/auth/password/forgot" className={styles.authLink}>
+          <Link href="/auth/forgot-password" className={styles.authLink}>
             비밀번호 찾기
           </Link>
           <span className={styles.divider}>|</span>

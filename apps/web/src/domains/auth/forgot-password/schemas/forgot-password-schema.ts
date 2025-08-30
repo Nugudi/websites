@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const passwordForgotSchema = z.object({
+export const forgotPasswordSchema = z.object({
   email: z.email("올바른 이메일 주소를 입력해주세요"),
   code: z.string().min(6, "올바른 인증 코드를 입력해주세요"),
   password: z
@@ -17,16 +17,16 @@ export const passwordForgotSchema = z.object({
     .max(20, "최대 20자 이하로 입력해주세요"),
 });
 
-export const passwordForgotEmailSchema = passwordForgotSchema.pick({
+export const forgotPasswordEmailSchema = forgotPasswordSchema.pick({
   email: true,
 });
 
-export const passwordForgotEmailVerificationCodeSchema =
-  passwordForgotSchema.pick({
+export const forgotPasswordEmailVerificationCodeSchema =
+  forgotPasswordSchema.pick({
     code: true,
   });
 
-export const passwordForgotPasswordSchema = passwordForgotSchema
+export const forgotPasswordPasswordSchema = forgotPasswordSchema
   .pick({
     password: true,
     passwordConfirm: true,
@@ -36,16 +36,16 @@ export const passwordForgotPasswordSchema = passwordForgotSchema
     path: ["passwordConfirm"],
   });
 
-export type PasswordForgotSchema = z.infer<typeof passwordForgotSchema>;
+export type ForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
 
-export type PasswordForgotEmailSchema = z.infer<
-  typeof passwordForgotEmailSchema
+export type ForgotPasswordEmailSchema = z.infer<
+  typeof forgotPasswordEmailSchema
 >;
 
-export type PasswordForgotEmailVerificationCodeSchema = z.infer<
-  typeof passwordForgotEmailVerificationCodeSchema
+export type ForgotPasswordEmailVerificationCodeSchema = z.infer<
+  typeof forgotPasswordEmailVerificationCodeSchema
 >;
 
-export type PasswordForgotPasswordSchema = z.infer<
-  typeof passwordForgotPasswordSchema
+export type ForgotPasswordPasswordSchema = z.infer<
+  typeof forgotPasswordPasswordSchema
 >;

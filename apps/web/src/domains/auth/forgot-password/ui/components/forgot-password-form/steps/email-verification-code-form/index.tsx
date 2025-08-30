@@ -10,10 +10,10 @@ import {
 } from "@nugudi/react-components-layout";
 import { useForm } from "react-hook-form";
 import {
-  type PasswordForgotEmailVerificationCodeSchema,
-  passwordForgotEmailVerificationCodeSchema,
-} from "../../../../../schemas/password-forgot-schema";
-import { usePasswordForgotStore } from "../../../../../stores/use-password-forgot-store";
+  type ForgotPasswordEmailVerificationCodeSchema,
+  forgotPasswordEmailVerificationCodeSchema,
+} from "../../../../../schemas/forgot-password-schema";
+import { useForgotPasswordStore } from "../../../../../stores/use-forgot-password-store";
 import * as styles from "./index.css";
 
 interface EmailVerificationCodeFormProps {
@@ -25,17 +25,17 @@ export const EmailVerificationCodeForm = ({
   onPrevious,
   onNext,
 }: EmailVerificationCodeFormProps) => {
-  const { setData, data } = usePasswordForgotStore();
+  const { setData, data } = useForgotPasswordStore();
 
-  const form = useForm<PasswordForgotEmailVerificationCodeSchema>({
-    resolver: zodResolver(passwordForgotEmailVerificationCodeSchema),
+  const form = useForm<ForgotPasswordEmailVerificationCodeSchema>({
+    resolver: zodResolver(forgotPasswordEmailVerificationCodeSchema),
     defaultValues: {
       code: data.code ?? "",
     },
     mode: "onTouched",
   });
 
-  const onSubmit = (data: PasswordForgotEmailVerificationCodeSchema) => {
+  const onSubmit = (data: ForgotPasswordEmailVerificationCodeSchema) => {
     setData({
       ...data,
       code: data.code,
@@ -47,7 +47,7 @@ export const EmailVerificationCodeForm = ({
     <form onSubmit={form.handleSubmit(onSubmit)} className={styles.form}>
       <Box className={styles.titleContainer}>
         <Flex direction="column" justify="start" align="start">
-          <VStack gap="5">
+          <VStack gap={5}>
             <Title fontSize="t1" color="zinc">
               인증 번호를 입력해주세요
             </Title>
@@ -67,7 +67,7 @@ export const EmailVerificationCodeForm = ({
         />
       </Box>
 
-      <HStack gap="5">
+      <HStack gap={5}>
         <Button
           type="button"
           color="zinc"

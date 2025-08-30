@@ -9,23 +9,23 @@ import { EmailForm } from "./steps/email-form";
 import { EmailVerificationCodeForm } from "./steps/email-verification-code-form";
 import { ResetPasswordForm } from "./steps/reset-password-form";
 
-type PasswordForgotStep = typeof PASSWORD_FORGOT_STEPS;
+type ForgotPasswordStep = typeof FORGOT_PASSWORD_STEPS;
 
-const PASSWORD_FORGOT_STEPS = [
+const FORGOT_PASSWORD_STEPS = [
   "이메일_입력",
   "인증번호_입력",
   "새_비밀번호_입력",
 ] as const;
 
-const PasswordForgotForm = () => {
+const ForgotPasswordForm = () => {
   const router = useRouter();
 
-  const { setStep, Step, Stepper, step } = useStepper<PasswordForgotStep>(
-    PASSWORD_FORGOT_STEPS,
+  const { setStep, Step, Stepper, step } = useStepper<ForgotPasswordStep>(
+    FORGOT_PASSWORD_STEPS,
   );
 
   const onChangeStep = (step: 0 | 1 | 2) => {
-    setStep(PASSWORD_FORGOT_STEPS[step]);
+    setStep(FORGOT_PASSWORD_STEPS[step]);
   };
 
   return (
@@ -36,8 +36,8 @@ const PasswordForgotForm = () => {
       className={styles.container}
     >
       <StepIndicator
-        currentStep={PASSWORD_FORGOT_STEPS.indexOf(step) + 1}
-        totalSteps={PASSWORD_FORGOT_STEPS.length}
+        currentStep={FORGOT_PASSWORD_STEPS.indexOf(step) + 1}
+        totalSteps={FORGOT_PASSWORD_STEPS.length}
       />
       <Stepper>
         <Step name="이메일_입력">
@@ -63,4 +63,4 @@ const PasswordForgotForm = () => {
   );
 };
 
-export default PasswordForgotForm;
+export default ForgotPasswordForm;
