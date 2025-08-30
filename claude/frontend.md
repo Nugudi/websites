@@ -2,6 +2,10 @@
 
 ## Component Hierarchy Overview
 
+```
+Page (Server Component) → View → Section (with Suspense/ErrorBoundary) → Component
+```
+
 ## 🎨 IMPORTANT: Always Use Design Tokens
 
 **MUST use `vars` and `classes` from `@nugudi/themes`:**
@@ -11,15 +15,21 @@
 - Radius: Use `vars.box.radii.lg` NOT `12px`
 - Shadows: Use `vars.box.shadows.sm` NOT custom shadows
 
-# Readability
+## Domain Structure Patterns
 
-            # Option 2: Simple domains without sub-features
-            └── ui/           # e.g., benefit/ui (directly under domain)
-                ├── views/
-                ├── sections/
-                └── components/
-
-````
+```
+domains/
+├── auth/                    # Complex domain with sub-features
+│   ├── sign-up/
+│   ├── sign-in/
+│   ├── login/
+│   ├── profile/
+│   └── forgot-password/
+├── benefit/                 # Simple domain without sub-features
+│   └── ui/
+└── cafeteria/               # Simple domain without sub-features
+    └── ui/
+```
 
 ## Layer-by-Layer Rules
 
@@ -37,12 +47,30 @@
 // NEVER: Contain UI logic directly
 // NEVER: Use hooks or browser APIs
 
+// Example: app/page.tsx (home page shows cafeteria)
+import { HydrationBoundary } from '@tanstack/react-query';
+import { CafeteriaHomeView } from '@/src/domains/cafeteria/ui/views/cafeteria-home-view';
+
 const Page = async ({ params, searchParams }) => {
   // 1. Extract parameters
+  const { filter } = searchParams;
+  
   // 2. Prefetch data on server
+  await queryClient.prefetchQuery({
+    queryKey: ['cafeterias', filter],
+    queryFn: () => api.cafeterias.getList({ filter }),
+  });
+  
   // 3. Return View wrapped in HydrationBoundary
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <CafeteriaHomeView filter={filter} />
+    </HydrationBoundary>
+  );
 };
-````
+
+export default Page;  // Pages MUST use default export
+```
 
 ### 2. View Layer (`ui/views/`)
 
@@ -59,15 +87,26 @@ const Page = async ({ params, searchParams }) => {
 // NEVER: Contain business logic
 // NEVER: Implement error/loading states
 
-export const [Feature]View = ({ prop1, prop2 }) => {
+// Example: domains/cafeteria/ui/views/cafeteria-home-view/index.tsx
+import { Flex } from "@nugudi/react-components-layout";
+import { AppHeader } from "@/src/shared/ui/components/app-header";
+import { CafeteriaBrowseMenuSection } from "../../sections/cafeteria-browse-menu-section";
+import { CafeteriaRecommendSection } from "../../sections/cafeteria-recommend-section";
+import * as styles from "./index.css";
+
+export const CafeteriaHomeView = ({ filter }) => {
   return (
-    <div className="page-layout">
-      <FirstSection />
-      <SecondSection prop={prop1} />
-      <ThirdSection prop={prop2} />
-    </div>
+    <Flex direction="column" className={styles.container} gap="16px">
+      <AppHeader />
+      <CafeteriaBrowseMenuSection filter={filter} />
+      <CafeteriaRecommendSection />
+    </Flex>
   );
 };
+
+};
+
+// Views use named export
 ```
 
 ### 3. Section Layer (`ui/sections/`)
@@ -85,20 +124,53 @@ export const [Feature]View = ({ prop1, prop2 }) => {
 // NEVER: Define page layout
 // NEVER: Import other sections
 
-// Pattern: Three components per section
-export const [Feature]Section = (props) => {
+// Example: domains/cafeteria/ui/sections/cafeteria-browse-menu-section/index.tsx
+import { ErrorBoundary } from 'react-error-boundary';
+import { Suspense } from 'react';
+import { CafeteriaMenuList } from "../../components/cafeteria-menu-list";
+
+// Main Section Component (handles boundaries)
+export const CafeteriaBrowseMenuSection = ({ filter }) => {
   return (
-    <ErrorBoundary fallback={<[Feature]SectionError />}>
-      <Suspense fallback={<[Feature]SectionSkeleton />}>
-        <[Feature]SectionContent {...props} />
+    <ErrorBoundary fallback={<CafeteriaBrowseMenuSectionError />}>
+      <Suspense fallback={<CafeteriaBrowseMenuSectionSkeleton />}>
+        <CafeteriaBrowseMenuSectionContent filter={filter} />
       </Suspense>
     </ErrorBoundary>
   );
 };
 
-const [Feature]SectionSkeleton = () => { /* Loading UI */ };
-const [Feature]SectionError = () => { /* Error UI */ };
-const [Feature]SectionContent = (props) => { /* Actual content with data fetching */ };
+// Skeleton Component (shown during loading)
+const CafeteriaBrowseMenuSectionSkeleton = () => {
+  return (
+    <div className="animate-pulse">
+      <div className="h-32 bg-gray-200 rounded" />
+    </div>
+  );
+};
+
+// Error Component (shown on error)
+const CafeteriaBrowseMenuSectionError = ({ error }) => {
+  return (
+    <div className="error-container">
+      <p>메뉴를 불러오는 중 오류가 발생했습니다.</p>
+    </div>
+  );
+};
+
+// Content Component (actual data fetching and rendering)
+const CafeteriaBrowseMenuSectionContent = ({ filter }) => {
+  const { data } = useSuspenseQuery({
+    queryKey: ['cafeterias', filter],
+    queryFn: () => api.cafeterias.getList({ filter }),
+  });
+  
+  return <CafeteriaMenuList cafeteriaList={data} />;
+};
+
+};
+
+// Sections use named export
 ```
 
 ### 4. Component Layer (`ui/components/`)
@@ -209,70 +281,102 @@ apps/web/src/
 // Views: [Feature]View (in feature-view folder)
 // File: domains/auth/sign-up/ui/views/sign-up-view/index.tsx
 export const SignUpView = () => {};
+// ✅ Views use named export
 
 // Sections: [Feature]Section (in feature-section folder)
 // File: domains/auth/sign-up/ui/sections/sign-up-section/index.tsx
 export const SignUpSection = () => {};
-// Note: Skeleton and Error components are in the same file (not exported separately)
+// ✅ Sections use named export
+// Note: Skeleton and Error components are in the same file (not exported)
 
 // Components: Descriptive name (in component-name folder)
 // File: domains/auth/sign-up/ui/components/sign-up-form/index.tsx
 export const SignUpForm = () => {};
-// File: domains/auth/sign-in/ui/components/email-sign-in-form/index.tsx
-export const EmailSignInForm = () => {};
-// File: domains/auth/sign-in/ui/components/social-sign-in-button-list/index.tsx
-export const SocialSignInButtonList = () => {};
+// ✅ Components use named export
+
+// Sub-components in steps folder
+// File: domains/auth/sign-up/ui/components/sign-up-form/steps/email-form/index.tsx
+export const EmailForm = () => {};
+// ✅ Sub-components also use named export
 ```
 
 ## Import Patterns
 
-### Within the Same Domain
+### Within the Same Domain - MUST Use Relative Imports
 
 ```typescript
+// ✅ CORRECT - Use relative imports + named exports within same domain
 // In: apps/web/src/domains/auth/sign-up/ui/views/sign-up-view/index.tsx
 import { SignUpSection } from '../../sections/sign-up-section';
 
 // In: apps/web/src/domains/auth/sign-up/ui/sections/sign-up-section/index.tsx
 import { SignUpForm } from '../../components/sign-up-form';
-import { useSignUpStore } from '../../../stores/use-sign-up-store';
+import { useSignUpStore } from '../../../stores/use-sign-up-store';  // Named export for hooks
 import type { SignUpFormData } from '../../../types/sign-up';
 
 // In: apps/web/src/domains/auth/sign-up/ui/components/sign-up-form/index.tsx
 import { EmailForm } from './steps/email-form';
 import { PasswordForm } from './steps/password-form';
+
+// ❌ WRONG - Don't use absolute imports within same domain
+import { SignUpSection } from '@/src/domains/auth/sign-up/ui/sections/sign-up-section'; // NO!
 ```
 
-### From Page to View
+### From Page to View - MUST Use Absolute Imports
 
 ```typescript
+// ✅ CORRECT - Pages use absolute imports for views
 // Public route example
 // In: app/(public)/auth/sign-up/page.tsx
-import { SignUpView } from '@/domains/auth/sign-up/ui/views/sign-up-view';
+import { SignUpView } from '@/src/domains/auth/sign-up/ui/views/sign-up-view';
 
 // Protected route example
-// In: app/(auth)/benefits/page.tsx
-import { BenefitPageView } from '@/domains/benefit/ui/views/benefit-page-view';
+// In: app/(auth)/profile/page.tsx
+import { ProfilePageView } from '@/src/domains/auth/profile/ui/views/profile-page-view';
+
+// In: app/page.tsx (home page shows cafeteria)
+import { CafeteriaHomeView } from '@/src/domains/cafeteria/ui/views/cafeteria-home-view';
 ```
 
-### Cross-Domain Imports
+### Cross-Domain Imports - MUST Use Absolute Imports
 
 ```typescript
-// NO cross-domain imports in current structure - each domain is self-contained
-// Future example:
-// import { useAuth } from '@/domains/auth/hooks/use-auth';
+// ✅ CORRECT - Use absolute imports for cross-domain
+// In: apps/web/src/domains/cafeteria/...
+import { useAuth } from '@/src/domains/auth/hooks/use-auth';
+import { LoginWelcome } from '@/src/domains/auth/login/ui/components/login-welcome';
+
+// In: apps/web/src/shared/ui/components/...
+import { ProfileSection } from '@/src/domains/auth/profile/ui/sections/profile-section';
+
+// ❌ WRONG - Don't use relative imports for cross-domain
+import { useAuth } from '../../../auth/hooks/use-auth'; // NO!
 ```
 
-### Using Monorepo Packages
+### Using Monorepo Packages - Package Import Rules
 
 ```typescript
-// Always use existing packages from monorepo
-import Button from '@nugudi/react-components-button';
-import Input from '@nugudi/react-components-input';
-import { Box, Flex, VStack } from '@nugudi/react-components-layout';
-import { useToggle } from '@nugudi/react-hooks-toggle';
-import { variables } from '@nugudi/themes';
-import { Icons } from '@nugudi/assets-icons';
-import { api } from '@nugudi/api';
+// Individual component packages - Named exports
+import { Button } from '@nugudi/react-components-button';  // ✅ Named
+import { Input } from '@nugudi/react-components-input';    // ✅ Named
+import { Switch } from '@nugudi/react-components-switch';  // ✅ Named
+
+// Layout package - Named exports
+import { Box, Flex, VStack, HStack } from '@nugudi/react-components-layout';  // ✅ Named
+import { Heading, Title, Body, Emphasis } from '@nugudi/react-components-layout';  // ✅ Named
+
+// Hooks - Named exports
+import { useToggle } from '@nugudi/react-hooks-toggle';  // ✅ Named
+import { useStepper } from '@nugudi/react-hooks-use-stepper';  // ✅ Named
+
+// Themes - Named exports
+import { vars, classes } from '@nugudi/themes';  // ✅ Named
+
+// Icons - Named exports
+import { AppleIcon, HeartIcon, ArrowRightIcon } from '@nugudi/assets-icons';  // ✅ Named
+
+// API - Named export
+import { api } from '@nugudi/api';  // ✅ Named
 ```
 
 ## Data Flow Rules
@@ -318,6 +422,22 @@ export const DataSection = () => {
     </ErrorBoundary>
   );
 };
+
+// Internal components - NOT exported
+const DataSectionSkeleton = () => {
+  return <div className="animate-pulse">Loading...</div>;
+};
+
+const DataSectionError = ({ error }) => {
+  return <div>오류가 발생했습니다: {error.message}</div>;
+};
+
+const DataSectionContent = () => {
+  const { data } = useSuspenseQuery(/* ... */);
+  return <div>{/* Actual content */}</div>;
+};
+
+// Only export the main section with named export
 ```
 
 ## Query Hooks Pattern
@@ -382,6 +502,61 @@ interface [Component]Props {
   data: DataType;
   onAction: (value: ValueType) => void;
 }
+```
+
+## Quick Reference: Import/Export Rules
+
+### Export Rules by File Type
+
+| File Type | Export Pattern | Example |
+|-----------|---------------|---------|
+| **Pages** | `export default` | `export default Page` |
+| **Views** | `export const` | `export const SignUpView` |
+| **Sections** | `export const` | `export const SignUpSection` |
+| **Components** | `export const` | `export const SignUpForm` |
+| **Hooks** | `export const` or `export function` | `export const useSignUpStore` |
+| **Types** | `export type` or `export interface` | `export type SignUpFormData` |
+| **Constants** | `export const` | `export const TOTAL_SIGN_UP_STEPS` |
+| **Utils** | `export const` or `export function` | `export const validateEmail` |
+
+### Import Rules by Context
+
+| From → To | Same Domain | Cross Domain | Shared/App | Packages |
+|-----------|-------------|--------------|------------|----------|
+| **Pattern** | Relative | Absolute | Absolute | Package |
+| **Example** | `../../sections/` | `@/domains/auth/` | `@/src/shared/` | `@nugudi/themes` |
+| **View → Section** | `import { SignUpSection } from '../../sections/sign-up-section'` | N/A | N/A | N/A |
+| **Section → Component** | `import { SignUpForm } from '../../components/sign-up-form'` | N/A | N/A | N/A |
+| **Component → Store** | `import { useSignUpStore } from '../../../stores/use-sign-up-store'` | `import { useAuth } from '@/src/domains/auth/hooks/use-auth'` | N/A | N/A |
+| **Any → Package** | N/A | N/A | N/A | `import { Button } from '@nugudi/react-components-button'` |
+
+### Common Import Patterns
+
+```typescript
+// ✅ CORRECT Examples
+// Within same domain (auth/sign-up)
+import { SignUpSection } from '../../sections/sign-up-section';
+import { useSignUpStore } from '../../../stores/use-sign-up-store';
+
+// Cross-domain
+import { LoginWelcome } from '@/src/domains/auth/login/ui/components/login-welcome';
+
+// Shared components
+import { AppHeader } from '@/src/shared/ui/components/app-header';
+
+// Packages
+import { Button } from '@nugudi/react-components-button';
+import { Box, Flex } from '@nugudi/react-components-layout';
+
+// ❌ WRONG Examples
+// Using absolute path within same domain
+import { SignUpSection } from '@/src/domains/auth/sign-up/ui/sections/sign-up-section';
+
+// Using relative path for cross-domain
+import { LoginWelcome } from '../../../auth/login/ui/components/login-welcome';
+
+// Wrong export pattern for packages
+import Button from '@nugudi/react-components-button';  // Should be named export
 ```
 
 This architecture ensures:
