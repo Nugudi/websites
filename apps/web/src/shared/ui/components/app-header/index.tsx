@@ -14,7 +14,7 @@ export const AppHeader = () => {
           <LogoTextIcon width={59} height={40} />
         </Link>
 
-        <Link href="/notification" aria-label="알림 페이지로 이동">
+        <Link href="/notifications" aria-label="알림 페이지로 이동">
           <NotiIcon
             width={24}
             height={24}
