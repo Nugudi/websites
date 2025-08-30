@@ -675,7 +675,7 @@ export const handlers = [
 
 ```typescript
 // Mock external dependencies
-vi.mock('@/domains/auth/hooks/use-auth', () => ({
+vi.mock('@/src/domains/auth/hooks/use-auth', () => ({
   useAuth: () => ({
     user: mockUser,
     isAuthenticated: true,
@@ -845,7 +845,7 @@ Mock libraries only when:
 
 ```typescript
 // Mock a custom hook that uses TanStack Query internally
-vi.mock('@/hooks/use-user', () => ({
+vi.mock('@/src/hooks/use-user', () => ({
   useUser: () => ({
     user: { id: '1', name: 'Test User' },
     isLoading: false,
@@ -930,7 +930,7 @@ await waitFor(() => {
 
 ```typescript
 // Use path aliases consistently
-import { useAuth } from '@/domains/auth/hooks/use-auth';
+import { useAuth } from '@/src/domains/auth/hooks/use-auth';
 // Not: import { useAuth } from '../../../auth/hooks/use-auth';
 ```
 

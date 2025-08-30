@@ -179,17 +179,15 @@ packages/ui/src/
 
 ```json
 {
-  "extends": "../../../tsconfig.base.json",
-  "compilerOptions": {
-    "composite": true,
-    "declaration": true,
-    "declarationMap": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "jsx": "react-jsx"
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.stories.tsx", "**/*.test.*"]
+  "extends": "@tsconfig/vite-react/tsconfig.json",
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "./global.d.ts",
+    "vite.config.mts",
+    "vitest.config.mts"
+  ],
+  "exclude": ["node_modules"]
 }
 ```
 
@@ -368,13 +366,15 @@ export type { UseHookNameProps, UseHookNameReturn } from './types';
 
 ### Import Pattern Rules
 
-**CRITICAL**: Different packages have different import patterns:
+**CRITICAL**: ALL packages use named exports:
 
 | Package Type              | Import Pattern                       | Example                                                               |
 | ------------------------- | ------------------------------------ | --------------------------------------------------------------------- |
-| **Layout**                | Multiple imports from single package | `import { Box, Flex, VStack } from '@nugudi/react-components-layout'` |
-| **Icons**                 | Multiple imports from single package | `import { AppleIcon, GoogleIcon } from '@nugudi/assets-icons'`        |
-| **Individual Components** | Single import per package            | `import { Button } from '@nugudi/react-components-button'`            |
+| **Layout**                | Multiple named exports from single package | `import { Box, Flex, VStack } from '@nugudi/react-components-layout'` |
+| **Icons**                 | Multiple named exports from single package | `import { AppleIcon, GoogleIcon } from '@nugudi/assets-icons'`        |
+| **Individual Components** | Named export from each package      | `import { Button } from '@nugudi/react-components-button'`            |
+| **Themes**                | Namespace exports                    | `import { vars, classes } from '@nugudi/themes'`                      |
+| **API**                   | Named exports                        | `import { useSignUpLocal } from '@nugudi/api'`                         |
 
 ---
 
@@ -474,17 +474,17 @@ Icons package contains **MANY icons** in one package:
 
 ```typescript
 // packages/assets/icons/src/index.ts
-export { AppleIcon } from './AppleIcon';
-export { GoogleIcon } from './GoogleIcon';
-export { KakaoIcon } from './KakaoIcon';
-export { NaverIcon } from './NaverIcon';
-export { ArrowLeftIcon } from './ArrowLeftIcon';
-export { ArrowRightIcon } from './ArrowRightIcon';
-export { ChevronLeftIcon } from './ChevronLeftIcon';
-export { ChevronRightIcon } from './ChevronRightIcon';
-export { EyeIcon } from './EyeIcon';
-export { EyeOffIcon } from './EyeOffIcon';
-// ... many more icons
+export { default as AppleIcon } from './svg/apple.svg?react';
+export { default as GoogleIcon } from './svg/google.svg?react';
+export { default as KakaoIcon } from './svg/kakao.svg?react';
+export { default as NaverIcon } from './svg/naver.svg?react';
+export { default as ArrowLeftIcon } from './svg/arrow-left.svg?react';
+export { default as ArrowRightIcon } from './svg/arrow-right.svg?react';
+export { default as ChevronLeftIcon } from './svg/chevron-left.svg?react';
+export { default as ChevronRightIcon } from './svg/chevron-right.svg?react';
+export { default as EyeIcon } from './svg/eye.svg?react';
+export { default as EyeOffIcon } from './svg/eye_off.svg?react';
+// ... many more icons - all using named exports of default imports
 ```
 
 #### Import Pattern - MULTIPLE icons from one package
@@ -580,17 +580,20 @@ The UI package re-exports for convenience:
 ```typescript
 // packages/ui/src/index.ts
 
-// Re-export individual components
+// Re-export individual components (all named exports)
 export { Button } from '@nugudi/react-components-button';
 export { Input } from '@nugudi/react-components-input';
 export { Chip } from '@nugudi/react-components-chip';
 export { Switch } from '@nugudi/react-components-switch';
 
-// Re-export layout & typography (already multiple exports)
+// Re-export layout & typography (already multiple named exports)
 export * from '@nugudi/react-components-layout';
 
-// Usage in apps
-import { Button, Input, Box, VStack, Title } from '@nugudi/ui';
+// Re-export icons (named exports)
+export * from '@nugudi/assets-icons';
+
+// Usage in apps - all named imports
+import { Button, Input, Box, VStack, Title, AppleIcon } from '@nugudi/ui';
 ```
 
 ---
@@ -957,8 +960,8 @@ import { IconName } from '@nugudi/assets-icons';
 // 5. Hooks
 import { useHook } from '@nugudi/react-hooks-[name]';
 
-// 6. Themes
-import { vars } from '@nugudi/themes';
+// 6. Themes (namespace exports)
+import { vars, classes } from '@nugudi/themes';
 
 // 7. Storybook types
 import type { Meta, StoryObj } from '@storybook/react-vite';
@@ -982,3 +985,135 @@ vars.typography; // Typography tokens
 ```
 
 Remember: **Component-first, Hook-first development** - Always create in `packages/react` first, then document in `packages/ui`!
+<<<<<<< HEAD
+
+---
+
+## 🚨 MANDATORY: Component Development Rules
+
+**CRITICAL**: When user asks to create a public component in packages, IMMEDIATELY apply ALL these rules without being told:
+
+#### 1. Structure & Files
+
+- ✅ **MUST** create proper file structure: `types.ts`, `style.css.ts`, `index.ts`, `[ComponentName].tsx`
+- ✅ **MUST** add `vitest.config.ts` for testing configuration
+- ✅ **MUST** follow exact export patterns (see section above)
+
+#### 2. Styling with @nugudi/themes
+
+- ✅ **MUST** use `@nugudi/themes` for ALL design tokens
+- ✅ **MUST** check if colors exist in theme before using (e.g., `vars.colors.$scale.main`, `vars.colors.$scale.zinc`)
+- ❌ **NEVER** use non-existent colors like `purple`, `blue`, `gray` - use `main`, `zinc` instead
+- ✅ **MUST** use `// @ts-ignore` for pseudo-selectors in vanilla-extract recipes base styles
+
+#### 3. Layout Components Usage
+
+- ✅ **MUST** use `@nugudi/react-components-layout` components (Box, VStack, HStack, Title, Body)
+- ❌ **NEVER** use raw HTML elements like `<div>`, `<span>`, `<h1>` when layout components exist
+- ✅ **MUST** use correct prop names:
+  - Body component: `color="zinc"` (NOT `color="zinc.600"` or `color="gray"`)
+  - Title component: `fontSize="t3"` (NOT `fontWeight="semibold"` - Title doesn't have fontWeight prop)
+
+#### 4. TypeScript & Props
+
+- ✅ **MUST** handle conditional rendering properly (button vs div based on onClick)
+- ✅ **MUST** use `Omit<ComponentPropsWithoutRef<'div'>, 'onClick'>` for proper type safety
+- ❌ **NEVER** spread props (`{...restProps}`) on button elements when they come from div props
+
+#### 5. Storybook Integration
+
+- ✅ **MUST** use `@storybook/react-vite` (NOT `@storybook/react`)
+- ✅ **MUST** add component dependency to `packages/ui/package.json`
+- ✅ **MUST** use correct story title format: `"Components/[ComponentName]"`
+- ✅ **MUST** only use existing icons from `@nugudi/assets-icons`
+
+#### 6. Visual Design Accuracy
+
+- ✅ **MUST** carefully match the provided design screenshots
+- ✅ **MUST** pay attention to:
+  - Background colors and opacity
+  - Padding and spacing
+  - Border presence/absence
+  - Icon styles and backgrounds
+  - Typography sizes and weights
+
+### Common Mistakes to Avoid
+
+```typescript
+// ❌ WRONG - Using non-existent colors
+backgroundColor: vars.colors.$scale.purple[200]  // purple doesn't exist!
+
+// ✅ CORRECT - Using existing theme colors
+backgroundColor: vars.colors.$scale.main[200]
+
+// ❌ WRONG - Using color with number in Body
+<Body color="zinc.600">text</Body>
+
+// ✅ CORRECT - Using just color name
+<Body color="zinc">text</Body>
+
+// ❌ WRONG - Using fontWeight on Title
+<Title fontSize="t3" fontWeight="semibold">text</Title>
+
+// ✅ CORRECT - Title without fontWeight
+<Title fontSize="t3">text</Title>
+
+// ❌ WRONG - Wrong Storybook import
+import type { Meta } from "@storybook/react";
+
+// ✅ CORRECT - Correct Storybook import
+import type { Meta } from "@storybook/react-vite";
+
+// ❌ WRONG - Using raw HTML
+<div className={styles}>
+  <h3>{title}</h3>
+  <p>{description}</p>
+</div>
+
+// ✅ CORRECT - Using layout components
+<Box className={styles}>
+  <Title fontSize="t3" as="h3">{title}</Title>
+  <Body fontSize="b3" color="zinc">{description}</Body>
+</Box>
+```
+
+### Build & Test Commands
+
+```bash
+# Always run these before saying "done":
+pnpm build                    # Build the component
+pnpm --filter=@nugudi/ui build  # Build UI package with stories
+pnpm build                    # Build entire monorepo to verify
+```
+
+### 🎯 IMMEDIATE ACTION REQUIRED
+
+When user requests in any of these ways:
+
+- "공용 컴포넌트로 만들어줘" (create as public component)
+- "패키지에 만들어줘" (create in packages)
+- "packages/react/components에 만들어줘"
+- "컴포넌트 패키지로 만들어줘"
+- "shared component로 만들어줘"
+- "재사용 가능한 컴포넌트로 만들어줘"
+- Shows a design screenshot and asks to create a component
+
+**IMMEDIATELY**:
+
+1. **APPLY ALL RULES ABOVE** without being told
+2. **GET IT RIGHT THE FIRST TIME** - no corrections needed
+3. **NEVER** wait for user to point out these basics
+4. **If shown a design** - match it EXACTLY
+
+The user should NEVER have to remind you about:
+
+- Using `@nugudi/themes` for styling
+- Using layout components from `@nugudi/react-components-layout`
+- Creating proper file structure (`types.ts`, `style.css.ts`, etc.)
+- Using correct prop names (e.g., `color="zinc"` not `color="zinc.600"`)
+- Using correct imports (`@storybook/react-vite` not `@storybook/react`)
+- Adding to `packages/ui/package.json`
+- Matching the visual design exactly
+
+# **NO EXCUSES - GET IT RIGHT ON FIRST ATTEMPT!**
+

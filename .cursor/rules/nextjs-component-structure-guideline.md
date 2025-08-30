@@ -8,6 +8,14 @@ apps/web/
 │   ├── (auth)/               # 🔒 Protected routes (require authentication)
 │   │   ├── benefits/         # Benefits page for logged-in users
 │   │   │   └── page.tsx
+│   │   ├── cafeterias/       # Cafeteria management pages
+│   │   │   ├── page.tsx
+│   │   │   ├── [cafeteriaId]/
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── menu-upload/
+│   │   │   │   └── reviews/
+│   │   │   ├── stamps/
+│   │   │   └── request-register/
 │   │   └── my/               # My page/profile for logged-in users
 │   │       └── page.tsx
 │   └── (public)/             # 🌍 Public routes (no authentication required)
@@ -25,9 +33,9 @@ apps/web/
 │           └── page.tsx
 └── src/
     └── domains/              # Domain-based architecture
-        └── [domain]/         # e.g., auth, menu, benefit
+        └── [domain]/         # e.g., auth, cafeteria, benefit
             # Option 1: Complex domains with multiple features
-            └── [feature]/    # e.g., auth/sign-in, auth/sign-up, auth/my
+            └── [feature]/    # e.g., auth/sign-in, auth/sign-up, auth/profile
                 ├── constants/
                 ├── schemas/
                 ├── stores/
@@ -36,9 +44,9 @@ apps/web/
                     ├── views/
                     ├── sections/
                     └── components/
-
+            
             # Option 2: Simple domains without sub-features
-            └── ui/           # e.g., benefit/ui (directly under domain)
+            └── ui/           # e.g., benefit/ui, cafeteria/ui (directly under domain)
                 ├── views/
                 ├── sections/
                 └── components/
@@ -249,11 +257,12 @@ export const SocialSignInButtonList = () => {};
 
 ## Import Patterns
 
-### Within the Same Domain
+### Within the Same Domain - MUST Use Relative Imports
 
 ```typescript
+// ✅ CORRECT - Use relative imports within same domain
 // In: apps/web/src/domains/auth/sign-up/ui/views/sign-up-view/index.tsx
-import { SignUpSection } from '../../sections/sign-up-section';
+import { SignUpSection } from '../../sections/sign-up-section';  // Same domain = relative
 
 // In: apps/web/src/domains/auth/sign-up/ui/sections/sign-up-section/index.tsx
 import { SignUpForm } from '../../components/sign-up-form';
@@ -263,6 +272,9 @@ import type { SignUpFormData } from '../../../types/sign-up';
 // In: apps/web/src/domains/auth/sign-up/ui/components/sign-up-form/index.tsx
 import { EmailForm } from './steps/email-form';
 import { PasswordForm } from './steps/password-form';
+
+// ❌ WRONG - Don't use absolute imports within same domain
+import { SignUpSection } from '@/src/domains/auth/sign-up/ui/sections/sign-up-section'; // NO!
 ```
 
 ### From Page to View
@@ -272,30 +284,37 @@ import { PasswordForm } from './steps/password-form';
 // In: app/(public)/auth/sign-up/page.tsx
 import { SignUpView } from '@/domains/auth/sign-up/ui/views/sign-up-view';
 
-// Protected route example
+// Protected route example  
 // In: app/(auth)/benefits/page.tsx
 import { BenefitPageView } from '@/domains/benefit/ui/views/benefit-page-view';
 ```
 
-### Cross-Domain Imports
+### Cross-Domain Imports - MUST Use Absolute Imports
 
 ```typescript
-// NO cross-domain imports in current structure - each domain is self-contained
-// Future example:
-// import { useAuth } from '@/domains/auth/hooks/use-auth';
+// ✅ CORRECT - Use absolute imports for cross-domain
+// In: apps/web/src/domains/cafeteria/...
+import { useAuth } from '@/src/domains/auth/hooks/use-auth';
+import { ProfileSection } from '@/src/domains/auth/profile/ui/sections/profile-section';
+
+// In: apps/web/src/shared/ui/components/...
+import { LoginWelcome } from '@/src/domains/auth/login/ui/components/login-welcome';
+
+// ❌ WRONG - Don't use relative imports for cross-domain
+import { useAuth } from '../../../auth/hooks/use-auth'; // NO!
 ```
 
 ### Using Monorepo Packages
 
 ```typescript
-// Always use existing packages from monorepo
-import { Button } from '@nugudi/react-components-button';
-import { Input } from '@nugudi/react-components-input';
-import { Box, Flex, VStack } from '@nugudi/react-components-layout';
-import { useToggle } from '@nugudi/react-hooks-toggle';
-import { vars } from '@nugudi/themes';
-import { AppleIcon, HeartIcon } from '@nugudi/assets-icons';
-import { api } from '@nugudi/api';
+// Always use existing packages from monorepo - ALL use named exports
+import { Button } from '@nugudi/react-components-button';  // Named export
+import { Input } from '@nugudi/react-components-input';    // Named export
+import { Box, Flex, VStack } from '@nugudi/react-components-layout';  // Named exports
+import { useToggle } from '@nugudi/react-hooks-toggle';    // Named export
+import { vars, classes } from '@nugudi/themes';            // Named exports
+import { AppleIcon, HeartIcon } from '@nugudi/assets-icons';  // Named exports
+import { api } from '@nugudi/api';                          // Named export
 ```
 
 ## Data Flow Rules
@@ -370,6 +389,32 @@ const SectionContent = ({ param }) => {
 };
 ```
 
+## Export/Import Pattern Rules
+
+### Export Patterns by Component Type
+
+```typescript
+// Views, Sections, Components: Use named export
+export const SignUpView = () => {};        // views - named export
+export const SignUpSection = () => {};     // sections - named export
+export const SignUpForm = () => {};        // components - named export
+
+// Page files: Use default export (ONLY exception)
+export default function Page() {}          // pages only
+
+// Hooks, Utils, Types: Use named export
+export const useSignUpStore = () => {};    // hooks
+export type SignUpFormData = {};           // types
+export const validateEmail = () => {};     // utils
+```
+
+### Import Rules Summary
+
+| From → To | Same Domain | Cross Domain | Shared/App | Packages |
+|-----------|-------------|--------------|------------|----------|
+| **Pattern** | Relative (`../`) | Absolute (`@/domains/`) | Absolute (`@/src/shared/`) | Package (`@nugudi/`) |
+| **Example** | `../../sections/` | `@/domains/auth/` | `@/src/shared/ui/` | `@nugudi/themes` |
+
 ## Best Practices Summary
 
 1. **Route Groups**: Use `(auth)` for protected pages, `(public)` for public pages
@@ -386,9 +431,10 @@ const SectionContent = ({ param }) => {
 12. **Each component** must be in its own folder with `index.tsx` and `index.css.ts`
 13. **Domain logic** (stores, schemas, types) stays outside the `ui/` folder
 14. **Use Vanilla Extract** with `vars` and `classes` from `@nugudi/themes`
-15. **Always prefer** existing packages from `@nugudi/*` namespace
+15. **Always prefer** existing packages from `@nugudi/*` namespace (all use named exports)
 16. **Client Components**: Add `"use client"` when using event handlers or hooks
 17. **Follow monorepo** import conventions from packages.md
+18. **Named exports** for all components, sections, views (default export ONLY for page.tsx)
 
 ## TypeScript Interface Rules
 
