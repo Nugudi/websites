@@ -1,5 +1,5 @@
 import { BenefitMenuList } from "../../components/benefit-menu-list";
 
-export const BenefitListSection = () => {
+export const BenefitMenuSection = () => {
   return <BenefitMenuList />;
 };

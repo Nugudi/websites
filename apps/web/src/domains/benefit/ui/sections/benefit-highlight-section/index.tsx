@@ -2,7 +2,7 @@ import { BusIcon, CameraIcon } from "@nugudi/assets-icons";
 import { Body, Emphasis, Grid } from "@nugudi/react-components-layout";
 import { BenefitCard } from "../../components/benefit-card";
 
-export const UserBenefitSection = () => {
+export const BenefitHighlightSection = () => {
   return (
     <Grid gap={48} templateColumns="repeat(2, 1fr)" templateRows="auto">
       <BenefitCard
