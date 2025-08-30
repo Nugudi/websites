@@ -5,7 +5,7 @@ export const card = style({
   height: "152px",
   backgroundColor: vars.colors.$scale.whiteAlpha[100],
   border: `1px solid ${vars.colors.$scale.zinc[50]}`,
-  borderRadius: "10px",
+  borderRadius: vars.box.radii.xl,
   padding: vars.box.spacing[16],
   display: "flex",
   position: "relative",
@@ -22,8 +22,8 @@ export const contentWrapper = style({
   flexDirection: "column",
   position: "absolute",
   textAlign: "left",
-  top: 20,
-  left: 20,
+  top: vars.box.spacing[4],
+  left: vars.box.spacing[4],
   gap: vars.box.spacing[4],
 });
 
