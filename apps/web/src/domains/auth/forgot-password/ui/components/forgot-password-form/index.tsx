@@ -11,7 +11,7 @@ import { ResetPasswordForm } from "./steps/reset-password-form";
 
 type ForgotPasswordStep = typeof FORGOT_PASSWORD_STEPS;
 
-const FORGOT_PASSWORD_STEPS = [
+export const FORGOT_PASSWORD_STEPS = [
   "이메일_입력",
   "인증번호_입력",
   "새_비밀번호_입력",
