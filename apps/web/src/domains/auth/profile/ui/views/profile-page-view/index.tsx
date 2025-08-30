@@ -6,7 +6,7 @@ import PointSection from "../../sections/point-section";
 import ProfileSection from "../../sections/profile-section";
 import * as styles from "./index.css";
 
-const MyPageView = () => {
+const ProfilePageView = () => {
   return (
     <Flex direction="column" className={styles.container}>
       <AppHeader />
@@ -18,4 +18,4 @@ const MyPageView = () => {
   );
 };
 
-export default MyPageView;
+export default ProfilePageView;
