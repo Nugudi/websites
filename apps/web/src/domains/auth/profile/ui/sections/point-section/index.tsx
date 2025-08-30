@@ -9,7 +9,7 @@ const PointSection = () => {
 
   return (
     <Box className={styles.container} boxShadow="sm" borderRadius="xl">
-      <Link href="/" className={styles.link}>
+      <Link href="/profile/points" className={styles.link}>
         <NavigationItem
           rightIcon={<ArrowRightIcon />}
           size="lg"

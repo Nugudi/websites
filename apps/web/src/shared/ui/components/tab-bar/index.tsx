@@ -16,7 +16,7 @@ interface TabItem {
 const tabs: TabItem[] = [
   { id: "benefits", label: "혜택", icon: GiftIcon, path: "/benefits" },
   { id: "home", label: "홈", icon: HomeIcon, path: "/" },
-  { id: "profile", label: "마이", icon: PersonIcon, path: "/auth/profile" },
+  { id: "profile", label: "마이", icon: PersonIcon, path: "/profile" },
 ];
 
 const TabBar = () => {
