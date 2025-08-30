@@ -366,13 +366,15 @@ export type { UseHookNameProps, UseHookNameReturn } from './types';
 
 ### Import Pattern Rules
 
-**CRITICAL**: Different packages have different import patterns:
+**CRITICAL**: ALL packages use named exports:
 
 | Package Type              | Import Pattern                       | Example                                                               |
 | ------------------------- | ------------------------------------ | --------------------------------------------------------------------- |
-| **Layout**                | Multiple imports from single package | `import { Box, Flex, VStack } from '@nugudi/react-components-layout'` |
-| **Icons**                 | Multiple imports from single package | `import { AppleIcon, GoogleIcon } from '@nugudi/assets-icons'`        |
-| **Individual Components** | Single import per package            | `import { Button } from '@nugudi/react-components-button'`            |
+| **Layout**                | Multiple named exports from single package | `import { Box, Flex, VStack } from '@nugudi/react-components-layout'` |
+| **Icons**                 | Multiple named exports from single package | `import { AppleIcon, GoogleIcon } from '@nugudi/assets-icons'`        |
+| **Individual Components** | Named export from each package      | `import { Button } from '@nugudi/react-components-button'`            |
+| **Themes**                | Namespace exports                    | `import { vars, classes } from '@nugudi/themes'`                      |
+| **API**                   | Named exports                        | `import { useSignUpLocal } from '@nugudi/api'`                         |
 
 ---
 
@@ -472,17 +474,17 @@ Icons package contains **MANY icons** in one package:
 
 ```typescript
 // packages/assets/icons/src/index.ts
-export { AppleIcon } from './AppleIcon';
-export { GoogleIcon } from './GoogleIcon';
-export { KakaoIcon } from './KakaoIcon';
-export { NaverIcon } from './NaverIcon';
-export { ArrowLeftIcon } from './ArrowLeftIcon';
-export { ArrowRightIcon } from './ArrowRightIcon';
-export { ChevronLeftIcon } from './ChevronLeftIcon';
-export { ChevronRightIcon } from './ChevronRightIcon';
-export { EyeIcon } from './EyeIcon';
-export { EyeOffIcon } from './EyeOffIcon';
-// ... many more icons
+export { default as AppleIcon } from './svg/apple.svg?react';
+export { default as GoogleIcon } from './svg/google.svg?react';
+export { default as KakaoIcon } from './svg/kakao.svg?react';
+export { default as NaverIcon } from './svg/naver.svg?react';
+export { default as ArrowLeftIcon } from './svg/arrow-left.svg?react';
+export { default as ArrowRightIcon } from './svg/arrow-right.svg?react';
+export { default as ChevronLeftIcon } from './svg/chevron-left.svg?react';
+export { default as ChevronRightIcon } from './svg/chevron-right.svg?react';
+export { default as EyeIcon } from './svg/eye.svg?react';
+export { default as EyeOffIcon } from './svg/eye_off.svg?react';
+// ... many more icons - all using named exports of default imports
 ```
 
 #### Import Pattern - MULTIPLE icons from one package
@@ -578,17 +580,20 @@ The UI package re-exports for convenience:
 ```typescript
 // packages/ui/src/index.ts
 
-// Re-export individual components
+// Re-export individual components (all named exports)
 export { Button } from '@nugudi/react-components-button';
 export { Input } from '@nugudi/react-components-input';
 export { Chip } from '@nugudi/react-components-chip';
 export { Switch } from '@nugudi/react-components-switch';
 
-// Re-export layout & typography (already multiple exports)
+// Re-export layout & typography (already multiple named exports)
 export * from '@nugudi/react-components-layout';
 
-// Usage in apps
-import { Button, Input, Box, VStack, Title } from '@nugudi/ui';
+// Re-export icons (named exports)
+export * from '@nugudi/assets-icons';
+
+// Usage in apps - all named imports
+import { Button, Input, Box, VStack, Title, AppleIcon } from '@nugudi/ui';
 ```
 
 ---
@@ -955,8 +960,8 @@ import { IconName } from '@nugudi/assets-icons';
 // 5. Hooks
 import { useHook } from '@nugudi/react-hooks-[name]';
 
-// 6. Themes
-import { vars } from '@nugudi/themes';
+// 6. Themes (namespace exports)
+import { vars, classes } from '@nugudi/themes';
 
 // 7. Storybook types
 import type { Meta, StoryObj } from '@storybook/react-vite';
@@ -1112,4 +1117,3 @@ The user should NEVER have to remind you about:
 
 # **NO EXCUSES - GET IT RIGHT ON FIRST ATTEMPT!**
 
-> > > > > > > 8ddf8b3 ([NUGUDI-108] docs(root): 프로젝트 문서 업데이트 및 가이드라인 개선)
