@@ -11,7 +11,11 @@ interface NavBarProps {
   onBackClick?: () => void;
 }
 
-const NavBar = ({ title, showBackButton = true, onBackClick }: NavBarProps) => {
+export const NavBar = ({
+  title,
+  showBackButton = true,
+  onBackClick,
+}: NavBarProps) => {
   const router = useRouter();
 
   const handleBackClick = () => {
@@ -38,5 +42,3 @@ const NavBar = ({ title, showBackButton = true, onBackClick }: NavBarProps) => {
     </header>
   );
 };
-
-export default NavBar;
