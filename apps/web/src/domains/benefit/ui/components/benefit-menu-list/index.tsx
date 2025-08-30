@@ -6,7 +6,7 @@ import {
   FolderIcon,
   PenIcon,
 } from "@nugudi/assets-icons";
-import { VStack } from "@nugudi/react-components-layout";
+import { Body, VStack } from "@nugudi/react-components-layout";
 import { NavigationItem } from "@nugudi/react-components-navigation-item";
 
 export const BenefitMenuList = () => {
@@ -32,20 +32,23 @@ export const BenefitMenuList = () => {
   ];
 
   return (
-    <VStack gap="0">
+    <VStack gap={12}>
       {menuItems.map((item) => (
         <NavigationItem
+          size="md"
           key={item.id}
           leftIcon={<span>{item.icon}</span>}
           rightIcon={<ArrowRightIcon />}
           onClick={() => console.log(`Clicked ${item.id}`)}
         >
-          <div>
-            <div style={{ fontWeight: 500 }}>{item.title}</div>
-            <div style={{ fontSize: "14px", color: "#666", marginTop: "4px" }}>
+          <VStack gap={4}>
+            <Body fontSize="b3b" color="zinc" colorShade={500}>
+              {item.title}
+            </Body>
+            <Body fontSize="b4" color="zinc" colorShade={400}>
               {item.description}
-            </div>
-          </div>
+            </Body>
+          </VStack>
         </NavigationItem>
       ))}
     </VStack>
