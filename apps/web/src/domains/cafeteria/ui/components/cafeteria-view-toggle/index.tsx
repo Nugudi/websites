@@ -5,7 +5,7 @@ import { HStack } from "@nugudi/react-components-layout";
 import { useRouter, useSearchParams } from "next/navigation";
 import * as styles from "./index.css";
 
-const ViewToggleButtons = () => {
+const CafeteriaViewToggle = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const view = searchParams.get("view") || "favorites";
@@ -36,4 +36,4 @@ const ViewToggleButtons = () => {
   );
 };
 
-export default ViewToggleButtons;
+export default CafeteriaViewToggle;

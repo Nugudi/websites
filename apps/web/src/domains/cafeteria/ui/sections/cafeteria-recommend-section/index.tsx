@@ -1,8 +1,8 @@
 import { Body, Emphasis, Flex } from "@nugudi/react-components-layout";
-import RecommendRestaurant from "@/src/domains/restaurant/ui/components/recommend-restaurant";
+import CafeteriaRecommendCard from "../../components/cafeteria-recommend-card";
 import * as styles from "./index.css";
 
-const RecommendRestaurantSection = () => {
+const CafeteriaRecommendSection = () => {
   // api 연결 후 mock data 삭제
   const recommendRestaurantData = {
     restaurantId: "1",
@@ -22,9 +22,9 @@ const RecommendRestaurantSection = () => {
           현재 위치에서 가장 가까운 식당을 추천해요 !
         </Emphasis>
       </Flex>
-      <RecommendRestaurant {...recommendRestaurantData} />
+      <CafeteriaRecommendCard {...recommendRestaurantData} />
     </Flex>
   );
 };
 
-export default RecommendRestaurantSection;
+export default CafeteriaRecommendSection;

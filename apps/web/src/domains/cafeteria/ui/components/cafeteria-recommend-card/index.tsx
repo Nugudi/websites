@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import * as styles from "./index.css";
 
-interface RecommendRestaurantProps {
+interface CafeteriaRecommendCardProps {
   restaurantId: string;
   restaurantName: string;
   restaurantAddress: string;
@@ -12,15 +12,15 @@ interface RecommendRestaurantProps {
   availablePackaging: boolean;
 }
 
-const RecommendRestaurant = ({
+const CafeteriaRecommendCard = ({
   restaurantId,
   restaurantName,
   restaurantAddress,
   restaurantTime,
   availablePackaging,
-}: RecommendRestaurantProps) => {
+}: CafeteriaRecommendCardProps) => {
   return (
-    <Link href={`/restaurant/${restaurantId}`} className={styles.container}>
+    <Link href={`/cafeteria/${restaurantId}`} className={styles.container}>
       <VStack gap="3px" align="start">
         {availablePackaging && (
           <span className={styles.availablePackagingText}>
@@ -49,4 +49,4 @@ const RecommendRestaurant = ({
   );
 };
 
-export default RecommendRestaurant;
+export default CafeteriaRecommendCard;
