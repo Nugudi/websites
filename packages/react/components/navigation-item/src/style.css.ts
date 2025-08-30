@@ -17,6 +17,8 @@ export const navigationItemStyle = recipe({
       border: "none",
       backgroundColor: "transparent",
       padding: "8px 16px",
+      cursor: "pointer",
+      userSelect: "none",
 
       ":hover": {
         backgroundColor: vars.colors.$scale.zinc[50],

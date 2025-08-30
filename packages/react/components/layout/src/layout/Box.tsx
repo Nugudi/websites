@@ -29,6 +29,7 @@ const Box = (props: BoxProps, ref: React.Ref<HTMLElement>) => {
     sizeY,
     // Margin and padding properties with shorthands
     m,
+    margin,
     marginTop,
     marginRight,
     marginBottom,
@@ -40,6 +41,7 @@ const Box = (props: BoxProps, ref: React.Ref<HTMLElement>) => {
     mX,
     mY,
     p,
+    padding,
     paddingTop,
     paddingRight,
     paddingBottom,

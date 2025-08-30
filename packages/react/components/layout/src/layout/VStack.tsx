@@ -3,7 +3,6 @@ import clsx from "clsx";
 import React from "react";
 import { BaseStyle, StyleSprinkles } from "@/core/style.css";
 import type { FlexProps as VStackProps } from "@/layout/types";
-import { extractSprinkleProps } from "@/utils/properties";
 
 const VStack = (props: VStackProps, ref: React.Ref<HTMLElement>) => {
   const {
@@ -17,20 +16,113 @@ const VStack = (props: VStackProps, ref: React.Ref<HTMLElement>) => {
     shrink,
     wrap,
     gap,
+    // Width and height properties with shorthands
+    width,
+    w,
+    height,
+    h,
+    maxWidth,
+    maxW,
+    minWidth,
+    minW,
+    maxHeight,
+    maxH,
+    minHeight,
+    minH,
+    size,
+    maxSize,
+    minSize,
+    sizeX,
+    sizeY,
+    // Margin and padding properties with shorthands
+    m,
+    margin,
+    marginTop,
+    marginRight,
+    marginBottom,
+    marginLeft,
+    mt,
+    mr,
+    mb,
+    ml,
+    mX,
+    mY,
+    p,
+    padding,
+    paddingTop,
+    paddingRight,
+    paddingBottom,
+    paddingLeft,
+    pt,
+    pr,
+    pb,
+    pl,
+    pX,
+    pY,
+    // Other style properties
+    borderRadius,
+    boxShadow,
     children,
+    className,
+    style,
+    ...restProps
   } = props;
+
+  const sprinkleProps = {
+    // Width and height properties
+    width,
+    w,
+    height,
+    h,
+    maxWidth,
+    maxW,
+    minWidth,
+    minW,
+    maxHeight,
+    maxH,
+    minHeight,
+    minH,
+    size,
+    maxSize,
+    minSize,
+    sizeX,
+    sizeY,
+    // Margin and padding properties
+    m,
+    margin,
+    marginTop,
+    marginRight,
+    marginBottom,
+    marginLeft,
+    mt,
+    mr,
+    mb,
+    ml,
+    mX,
+    mY,
+    p,
+    padding,
+    paddingTop,
+    paddingRight,
+    paddingBottom,
+    paddingLeft,
+    pt,
+    pr,
+    pb,
+    pl,
+    pX,
+    pY,
+    // Other style properties
+    borderRadius,
+    boxShadow,
+  };
 
   return React.createElement(
     as,
     {
-      ...props,
+      ...restProps,
       ref,
-      className: clsx([
-        BaseStyle,
-        StyleSprinkles(
-          extractSprinkleProps(props, Array.from(StyleSprinkles.properties)),
-        ),
-      ]),
+      className: clsx([BaseStyle, StyleSprinkles(sprinkleProps), className]),
       style: {
         display: "flex",
         alignItems: align,
@@ -43,7 +135,7 @@ const VStack = (props: VStackProps, ref: React.Ref<HTMLElement>) => {
         gap,
         color: color && vars.colors.$scale?.[color]?.[700],
         background: background && vars.colors.$scale?.[background]?.[100],
-        ...props.style,
+        ...style,
       },
     },
     children,
