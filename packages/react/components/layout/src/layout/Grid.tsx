@@ -2,7 +2,6 @@ import { vars } from "@nugudi/themes";
 import { clsx } from "clsx";
 import * as React from "react";
 import { BaseStyle, StyleSprinkles } from "../core/style.css";
-import { extractSprinkleProps } from "../utils/properties";
 import type { GridProps } from "./types";
 
 const Grid = (props: GridProps, ref: React.Ref<HTMLElement>) => {
@@ -22,20 +21,112 @@ const Grid = (props: GridProps, ref: React.Ref<HTMLElement>) => {
     templateColumns,
     templateRows,
     templateAreas,
+    // Width and height properties with shorthands
+    width,
+    w,
+    height,
+    h,
+    maxWidth,
+    maxW,
+    minWidth,
+    minW,
+    maxHeight,
+    maxH,
+    minHeight,
+    minH,
+    size,
+    maxSize,
+    minSize,
+    sizeX,
+    sizeY,
+    // Margin and padding properties with shorthands
+    m,
+    margin,
+    marginTop,
+    marginRight,
+    marginBottom,
+    marginLeft,
+    mt,
+    mr,
+    mb,
+    ml,
+    mX,
+    mY,
+    p,
+    padding,
+    paddingTop,
+    paddingRight,
+    paddingBottom,
+    paddingLeft,
+    pt,
+    pr,
+    pb,
+    pl,
+    pX,
+    pY,
+    // Other style properties
+    borderRadius,
+    boxShadow,
+    className,
+    style,
+    ...restProps
   } = props;
+
+  const sprinkleProps = {
+    // Width and height properties
+    width,
+    w,
+    height,
+    h,
+    maxWidth,
+    maxW,
+    minWidth,
+    minW,
+    maxHeight,
+    maxH,
+    minHeight,
+    minH,
+    size,
+    maxSize,
+    minSize,
+    sizeX,
+    sizeY,
+    // Margin and padding properties
+    m,
+    margin,
+    marginTop,
+    marginRight,
+    marginBottom,
+    marginLeft,
+    mt,
+    mr,
+    mb,
+    ml,
+    mX,
+    mY,
+    p,
+    padding,
+    paddingTop,
+    paddingRight,
+    paddingBottom,
+    paddingLeft,
+    pt,
+    pr,
+    pb,
+    pl,
+    pX,
+    pY,
+    // Other style properties
+    borderRadius,
+    boxShadow,
+  };
 
   return React.createElement(
     as,
     {
-      ...props,
+      ...restProps,
       ref,
-      className: clsx([
-        BaseStyle,
-        StyleSprinkles(
-          extractSprinkleProps(props, Array.from(StyleSprinkles.properties)),
-        ),
-        props.className,
-      ]),
+      className: clsx([BaseStyle, StyleSprinkles(sprinkleProps), className]),
       style: {
         display: "grid",
         gridAutoColumns: autoColumns,
@@ -51,7 +142,7 @@ const Grid = (props: GridProps, ref: React.Ref<HTMLElement>) => {
         gridRow: row,
         color: color && vars.colors.$scale?.[color]?.[500],
         background: background && vars.colors.$scale?.[background]?.[100],
-        ...props.style,
+        ...style,
       },
     },
     children,
