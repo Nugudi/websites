@@ -24,7 +24,7 @@ export const container = style({
   },
 });
 
-export const restaurantName = style({
+export const cafeteriaName = style({
   ...classes.typography.body.b1,
   fontWeight: vars.typography.fontWeight[600],
   color: vars.colors.$scale.zinc[800],
@@ -34,7 +34,7 @@ export const availablePackagingText = style({
   color: vars.colors.$scale.main[600],
 });
 
-export const restaurantTime = style({
+export const cafeteriaTime = style({
   display: "flex",
   alignItems: "center",
   gap: "4px",

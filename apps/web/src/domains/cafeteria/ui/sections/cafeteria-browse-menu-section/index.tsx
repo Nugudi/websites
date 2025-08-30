@@ -4,9 +4,9 @@ import { Suspense } from "react";
 import CafeteriaMenuList from "../../components/cafeteria-menu-list";
 import CafeteriaViewToggle from "../../components/cafeteria-view-toggle";
 import * as styles from "./index.css";
-import { MOCK_RESTAURANT_LIST } from "./mock-data";
+import { MOCK_CAFETERIA_LIST } from "./mock-data";
 
-export interface Restaurant {
+export interface Cafeteria {
   id: string;
   name: string;
   subtitle: string;
@@ -21,7 +21,7 @@ const CafeteriaBrowseMenuSection = () => {
       <Suspense fallback={<Loading />}>
         <CafeteriaViewToggle />
       </Suspense>
-      <CafeteriaMenuList restaurantList={MOCK_RESTAURANT_LIST} />
+      <CafeteriaMenuList cafeteriaList={MOCK_CAFETERIA_LIST} />
     </Flex>
   );
 };

@@ -1,20 +1,20 @@
 import { MenuCard } from "@nugudi/react-components-menu-card";
 import SwiperWithCounter from "@/src/shared/ui/components/swiper-with-counter";
-import type { Restaurant } from "../../sections/cafeteria-browse-menu-section";
+import type { Cafeteria } from "../../sections/cafeteria-browse-menu-section";
 
 interface CafeteriaMenuListProps {
-  restaurantList: Restaurant[];
+  cafeteriaList: Cafeteria[];
 }
 
-const CafeteriaMenuList = ({ restaurantList }: CafeteriaMenuListProps) => {
-  const menuCards = restaurantList.map((restaurant) => (
+const CafeteriaMenuList = ({ cafeteriaList }: CafeteriaMenuListProps) => {
+  const menuCards = cafeteriaList.map((cafeteria) => (
     <MenuCard
-      key={restaurant.id}
-      title={restaurant.name}
-      subtitle={restaurant.subtitle}
-      timeRange={restaurant.timeRange}
-      isPackagingAvailable={restaurant.isPackagingAvailable}
-      items={restaurant.items}
+      key={cafeteria.id}
+      title={cafeteria.name}
+      subtitle={cafeteria.subtitle}
+      timeRange={cafeteria.timeRange}
+      isPackagingAvailable={cafeteria.isPackagingAvailable}
+      items={cafeteria.items}
     />
   ));
 

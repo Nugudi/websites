@@ -1,5 +1,5 @@
 import type { MenuItem } from "@nugudi/react-components-menu-card";
-import type { Restaurant } from "./index";
+import type { Cafeteria } from "./index";
 
 // api 연결 후 삭제
 export const MOCK_MENU_ITEMS: MenuItem[] = [
@@ -51,7 +51,7 @@ export const MOCK_MENU_ITEMS: MenuItem[] = [
   { name: "견과류", category: "OTHER" },
 ];
 
-export const MOCK_RESTAURANT_LIST: Restaurant[] = [
+export const MOCK_CAFETERIA_LIST: Cafeteria[] = [
   {
     id: "nuguri-food-1",
     name: "너구리 푸드",

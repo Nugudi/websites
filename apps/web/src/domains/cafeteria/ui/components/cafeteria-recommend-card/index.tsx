@@ -5,33 +5,33 @@ import Link from "next/link";
 import * as styles from "./index.css";
 
 interface CafeteriaRecommendCardProps {
-  restaurantId: string;
-  restaurantName: string;
-  restaurantAddress: string;
-  restaurantTime: string;
+  cafeteriaId: string;
+  cafeteriaName: string;
+  cafeteriaAddress: string;
+  cafeteriaTime: string;
   availablePackaging: boolean;
 }
 
 const CafeteriaRecommendCard = ({
-  restaurantId,
-  restaurantName,
-  restaurantAddress,
-  restaurantTime,
+  cafeteriaId,
+  cafeteriaName,
+  cafeteriaAddress,
+  cafeteriaTime,
   availablePackaging,
 }: CafeteriaRecommendCardProps) => {
   return (
-    <Link href={`/cafeteria/${restaurantId}`} className={styles.container}>
+    <Link href={`/cafeterias/${cafeteriaId}`} className={styles.container}>
       <VStack gap="3px" align="start">
         {availablePackaging && (
           <span className={styles.availablePackagingText}>
             포장 도시락 판매
           </span>
         )}
-        <h1 className={styles.restaurantName}>{restaurantName}</h1>
-        <span>{restaurantAddress}</span>
-        <span className={styles.restaurantTime}>
+        <h1 className={styles.cafeteriaName}>{cafeteriaName}</h1>
+        <span>{cafeteriaAddress}</span>
+        <span className={styles.cafeteriaTime}>
           <ClockIcon />
-          {restaurantTime}
+          {cafeteriaTime}
         </span>
       </VStack>
 
