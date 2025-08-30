@@ -11,7 +11,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import * as styles from "./index.css";
 
-const formSchema = z.object({
+export const formSchema = z.object({
   email: z.email("올바른 이메일 주소를 입력해주세요"),
   password: z.string().min(8, "최소 8자 이상 입력해주세요"),
 });

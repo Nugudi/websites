@@ -1,8 +1,8 @@
 import { Flex } from "@nugudi/react-components-layout";
 import type { MenuItem } from "@nugudi/react-components-menu-card";
 import { Suspense } from "react";
-import CafeteriaMenuList from "../../components/cafeteria-menu-list";
-import CafeteriaViewToggle from "../../components/cafeteria-view-toggle";
+import { CafeteriaMenuList } from "../../components/cafeteria-menu-list";
+import { CafeteriaViewToggle } from "../../components/cafeteria-view-toggle";
 import * as styles from "./index.css";
 import { MOCK_CAFETERIA_LIST } from "./mock-data";
 
@@ -15,7 +15,7 @@ export interface Cafeteria {
   items: MenuItem[];
 }
 
-const CafeteriaBrowseMenuSection = () => {
+export const CafeteriaBrowseMenuSection = () => {
   return (
     <Flex direction="column" gap="12px" align="start">
       <Suspense fallback={<Loading />}>
@@ -25,8 +25,6 @@ const CafeteriaBrowseMenuSection = () => {
     </Flex>
   );
 };
-
-export default CafeteriaBrowseMenuSection;
 
 const Loading = () => {
   return (

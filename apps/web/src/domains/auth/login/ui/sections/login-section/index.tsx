@@ -1,10 +1,10 @@
 import { Flex } from "@nugudi/react-components-layout";
 import Link from "next/link";
 import { LoginDivider } from "../../components/login-divider";
-import LoginSocialButtons from "../../components/login-social-buttons";
+import { LoginSocialButtons } from "../../components/login-social-buttons";
 import * as styles from "./index.css";
 
-const LoginSection = () => {
+export const LoginSection = () => {
   return (
     <Flex className={styles.container} direction="column" align="center">
       <Flex
@@ -28,5 +28,3 @@ const LoginSection = () => {
     </Flex>
   );
 };
-
-export default LoginSection;

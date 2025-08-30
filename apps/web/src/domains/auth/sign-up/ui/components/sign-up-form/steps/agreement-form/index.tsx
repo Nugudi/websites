@@ -14,9 +14,9 @@ import {
 import { useSignUpStore } from "../../../../../stores/use-sign-up-store";
 import type { TermsAgreementState } from "../../../../../types/sign-up";
 import * as styles from "./index.css";
-import Terms from "./terms";
+import { Terms } from "./terms";
 
-const AgreementForm = () => {
+export const AgreementForm = () => {
   const { setData, resetAll } = useSignUpStore();
   const router = useRouter();
 
@@ -139,5 +139,3 @@ const AgreementForm = () => {
     </form>
   );
 };
-
-export default AgreementForm;

@@ -1,8 +1,8 @@
 import { Body, Emphasis, Flex } from "@nugudi/react-components-layout";
-import CafeteriaRecommendCard from "../../components/cafeteria-recommend-card";
+import { CafeteriaRecommendCard } from "../../components/cafeteria-recommend-card";
 import * as styles from "./index.css";
 
-const CafeteriaRecommendSection = () => {
+export const CafeteriaRecommendSection = () => {
   // api 연결 후 mock data 삭제
   const recommendCafeteriaData = {
     cafeteriaId: "1",
@@ -26,5 +26,3 @@ const CafeteriaRecommendSection = () => {
     </Flex>
   );
 };
-
-export default CafeteriaRecommendSection;

@@ -6,7 +6,9 @@ interface CafeteriaMenuListProps {
   cafeteriaList: Cafeteria[];
 }
 
-const CafeteriaMenuList = ({ cafeteriaList }: CafeteriaMenuListProps) => {
+export const CafeteriaMenuList = ({
+  cafeteriaList,
+}: CafeteriaMenuListProps) => {
   const menuCards = cafeteriaList.map((cafeteria) => (
     <MenuCard
       key={cafeteria.id}
@@ -20,5 +22,3 @@ const CafeteriaMenuList = ({ cafeteriaList }: CafeteriaMenuListProps) => {
 
   return <SwiperWithCounter>{menuCards}</SwiperWithCounter>;
 };
-
-export default CafeteriaMenuList;

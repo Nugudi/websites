@@ -12,7 +12,7 @@ import {
 import { useSignUpStore } from "../../../../../stores/use-sign-up-store";
 import * as styles from "./index.css";
 
-const EmailVerificationCodeForm = () => {
+export const EmailVerificationCodeForm = () => {
   const { setStep, setData, data } = useSignUpStore();
 
   const form = useForm<SignUpEmailVerificationCodeSchema>({
@@ -79,5 +79,3 @@ const EmailVerificationCodeForm = () => {
     </form>
   );
 };
-
-export default EmailVerificationCodeForm;

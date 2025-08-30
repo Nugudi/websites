@@ -15,7 +15,7 @@ import {
 import { useSignUpStore } from "../../../../../stores/use-sign-up-store";
 import * as styles from "./index.css";
 
-const NicknameForm = () => {
+export const NicknameForm = () => {
   const { setData, setStep } = useSignUpStore();
   const [isDuplicateChecked, setIsDuplicateChecked] = useState(false);
   const [isDuplicateLoading, setIsDuplicateLoading] = useState(false);
@@ -141,5 +141,3 @@ const NicknameForm = () => {
     </form>
   );
 };
-
-export default NicknameForm;

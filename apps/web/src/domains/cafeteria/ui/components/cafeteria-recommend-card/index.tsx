@@ -12,7 +12,7 @@ interface CafeteriaRecommendCardProps {
   availablePackaging: boolean;
 }
 
-const CafeteriaRecommendCard = ({
+export const CafeteriaRecommendCard = ({
   cafeteriaId,
   cafeteriaName,
   cafeteriaAddress,
@@ -48,5 +48,3 @@ const CafeteriaRecommendCard = ({
     </Link>
   );
 };
-
-export default CafeteriaRecommendCard;

@@ -14,7 +14,7 @@ import {
 import { useSignUpStore } from "../../../../../stores/use-sign-up-store";
 import * as styles from "./index.css";
 
-const PasswordForm = () => {
+export const PasswordForm = () => {
   const { setStep, setData, data } = useSignUpStore();
   const [visibilityState, setVisibilityState] = useState({
     password: false,
@@ -146,5 +146,3 @@ const PasswordForm = () => {
     </form>
   );
 };
-
-export default PasswordForm;

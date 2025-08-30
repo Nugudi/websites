@@ -7,10 +7,10 @@ interface LoginWelcomeProps {
   marginTop?: string | number;
 }
 
-export default function LoginWelcome({
+export const LoginWelcome = ({
   paddingLeft = "2rem",
   marginTop = "10%",
-}: LoginWelcomeProps) {
+}: LoginWelcomeProps) => {
   return (
     <Flex
       className={styles.textSection}
@@ -30,4 +30,4 @@ export default function LoginWelcome({
       <span className={styles.title}>오신 것을 환영해요!</span>
     </Flex>
   );
-}
+};

@@ -6,13 +6,13 @@ import { useEffect } from "react";
 import { TOTAL_SIGN_UP_STEPS } from "../../../constants/sign-up";
 import { useSignUpStore } from "../../../stores/use-sign-up-store";
 import * as styles from "./index.css";
-import AgreementForm from "./steps/agreement-form";
-import EmailForm from "./steps/email-form";
-import EmailVerificationCodeForm from "./steps/email-verification-code-form";
-import NicknameForm from "./steps/nickname-form";
-import PasswordForm from "./steps/password-form";
+import { AgreementForm } from "./steps/agreement-form";
+import { EmailForm } from "./steps/email-form";
+import { EmailVerificationCodeForm } from "./steps/email-verification-code-form";
+import { NicknameForm } from "./steps/nickname-form";
+import { PasswordForm } from "./steps/password-form";
 
-const SignUpForm = () => {
+export const SignUpForm = () => {
   const { step } = useSignUpStore();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: Zustand Persist의 동작 방식(zustand persist는 비동기) - https://zustand.docs.pmnd.rs/integrations/persisting-store-data
@@ -36,5 +36,3 @@ const SignUpForm = () => {
     </Flex>
   );
 };
-
-export default SignUpForm;

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import * as styles from "./index.css";
 
-const ProfileSection = () => {
+export const ProfileSection = () => {
   const username = "안애옹";
 
   return (
@@ -31,5 +31,3 @@ const ProfileSection = () => {
     </Flex>
   );
 };
-
-export default ProfileSection;

@@ -3,7 +3,7 @@ import Agreement from "@/src/shared/ui/components/agreement";
 import { TERMS_AND_CONDITIONS_LIST } from "../../../../../../constants/sign-up";
 import type { TermsComponentProps } from "../../../../../../types/sign-up";
 
-const Terms = ({
+export const Terms = ({
   agreements,
   onAgreementChange,
   onAllAgreementChange,
@@ -39,5 +39,3 @@ const Terms = ({
     </Agreement>
   );
 };
-
-export default Terms;

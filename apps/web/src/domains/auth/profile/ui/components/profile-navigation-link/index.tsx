@@ -10,7 +10,7 @@ interface ProfileNavigationLinkProps {
   rightIcon?: ReactNode;
 }
 
-const ProfileNavigationLink = ({
+export const ProfileNavigationLink = ({
   href,
   children,
   rightIcon = <ArrowRightIcon />,
@@ -21,5 +21,3 @@ const ProfileNavigationLink = ({
     </Link>
   );
 };
-
-export default ProfileNavigationLink;
