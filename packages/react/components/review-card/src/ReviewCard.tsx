@@ -17,6 +17,7 @@ export const ReviewCard = React.forwardRef<HTMLDivElement, ReviewCardProps>(
     const {
       imageUrl,
       imageAs,
+      imageAlt = "리뷰 이미지",
       reviewText: review,
       badges = [],
       className,
@@ -53,7 +54,7 @@ export const ReviewCard = React.forwardRef<HTMLDivElement, ReviewCardProps>(
                 className={imageStyle}
                 as={imageAs}
                 src={imageUrl}
-                alt="메뉴 사진"
+                alt={imageAlt}
               />
             )}
             <Emphasis fontSize="e1" color="zinc" colorShade={500} as="span">
@@ -68,7 +69,7 @@ export const ReviewCard = React.forwardRef<HTMLDivElement, ReviewCardProps>(
             <HStack gap={4}>
               {badges.map((badgeItem) => (
                 <Badge
-                  key={badgeItem.label}
+                  key={`${badgeItem.emoji}-${badgeItem.label}`}
                   icon={<span>{badgeItem.emoji}</span>}
                 >
                   {badgeItem.label}

@@ -10,6 +10,7 @@ export interface ReviewCardProps
   // Optional props for next Image
   imageUrl?: string;
   imageAs?: React.ElementType;
+  imageAlt?: string;
   date: string;
   reviewText: string;
   badges?: Badge[];

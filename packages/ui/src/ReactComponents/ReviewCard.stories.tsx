@@ -35,6 +35,15 @@ const meta: Meta<typeof _ReviewCard> = {
         category: "Content",
       },
     },
+    imageAlt: {
+      control: "text",
+      description: "이미지 대체 텍스트 (웹 접근성)",
+      table: {
+        type: { summary: "string" },
+        defaultValue: { summary: "리뷰 이미지" },
+        category: "Content",
+      },
+    },
     date: {
       control: "text",
       description: "리뷰 날짜",
@@ -86,9 +95,10 @@ export const Default: Story = {
   args: {
     imageUrl: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38",
     imageAs: "img",
+    imageAlt: "미트볼이 올라간 음식 사진",
     date: "2025.7.7.화",
     reviewText:
-      "고기가 아주 맛있고, 미트볼 듬뿍이었어요 그런데 .. 좀마디 미트볼이 없는 줄이 있을 수 있습니다. 랜덤핑",
+      "고기가 아주 맛있고, 미트볼 듬뿍이었어요 그런데 .. 미트볼이 없는 줄이 있을 수 있습니다. 랜덤핑",
     badges: [
       { emoji: "😋", label: "맛있거든" },
       { emoji: "🤤", label: "달달허요" },
@@ -112,6 +122,7 @@ export const LongReviewText: Story = {
   args: {
     imageUrl: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445",
     imageAs: "img",
+    imageAlt: "페퍼로니 피자 사진",
     date: "2025.7.10.금",
     reviewText:
       "오늘의 피자는 정말 특별했습니다. 도우는 얇고 바삭했으며, 토핑은 신선하고 풍부했습니다. 치즈는 쭉쭉 늘어나는 모짜렐라를 사용해서 먹는 재미가 있었고, 토마토 소스는 적당히 새콤달콤해서 느끼하지 않았습니다. 특히 페퍼로니의 매콤한 맛이 전체적인 맛의 균형을 잘 잡아주었습니다. 다음에도 꼭 다시 먹고 싶은 메뉴입니다.",
