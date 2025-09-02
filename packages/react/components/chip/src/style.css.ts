@@ -25,15 +25,13 @@ export const chipStyle = recipe({
     size: {
       sm: {
         ...classes.typography.body.b4,
-        padding: "0.375rem 0.75rem",
+        padding: "0.5rem 0.75rem",
         gap: "0.25rem",
-        height: "1.75rem",
       },
       md: {
         ...classes.typography.body.b4,
-        padding: "0.5rem 1rem",
+        padding: "0.625rem 1rem",
         gap: "0.375rem",
-        height: "2rem",
       },
     },
     variant: {
