@@ -1,4 +1,15 @@
 export type {
+  BorderRadiusValue,
+  BoxShadowValue,
+  OtherStyleProps,
+  SizeKeyword,
+  SizeProps,
+  SizeValue,
+  SpacingProps,
+  SpacingValue,
+  StyleProps,
+} from "./core/types";
+export type {
   BoxProps,
   DividerProps,
   FlexProps,

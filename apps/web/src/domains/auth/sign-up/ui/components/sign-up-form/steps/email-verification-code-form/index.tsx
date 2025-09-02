@@ -55,7 +55,7 @@ export const EmailVerificationCodeForm = () => {
         />
       </Box>
 
-      <HStack gap={5}>
+      <HStack gap={20}>
         <Button
           type="button"
           color="zinc"

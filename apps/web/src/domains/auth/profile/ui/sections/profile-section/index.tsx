@@ -19,7 +19,7 @@ export const ProfileSection = () => {
       />
       <Flex className={styles.infoWrapper}>
         <span className={styles.levelText}>Lv.1 기본 너구리</span>
-        <Flex gap={1} align="end">
+        <Flex gap={4} align="end">
           <h1 className={styles.nameText}>
             {username} <span className={styles.nameSuffix}>님</span>
           </h1>

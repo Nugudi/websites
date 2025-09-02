@@ -1,14 +1,10 @@
-import { vars } from "@nugudi/themes";
-import { clsx } from "clsx";
 import * as React from "react";
-import { BaseStyle, StyleSprinkles } from "../core/style.css";
+import { toCSSValue } from "../utils/style-helpers";
+import { Box } from "./Box";
 import type { GridProps } from "./types";
 
 const Grid = (props: GridProps, ref: React.Ref<HTMLElement>) => {
   const {
-    as = "div",
-    color,
-    background,
     children,
     autoColumns,
     autoFlow,
@@ -21,131 +17,37 @@ const Grid = (props: GridProps, ref: React.Ref<HTMLElement>) => {
     templateColumns,
     templateRows,
     templateAreas,
-    // Width and height properties with shorthands
-    width,
-    w,
-    height,
-    h,
-    maxWidth,
-    maxW,
-    minWidth,
-    minW,
-    maxHeight,
-    maxH,
-    minHeight,
-    minH,
-    size,
-    maxSize,
-    minSize,
-    sizeX,
-    sizeY,
-    // Margin and padding properties with shorthands
-    m,
-    margin,
-    marginTop,
-    marginRight,
-    marginBottom,
-    marginLeft,
-    mt,
-    mr,
-    mb,
-    ml,
-    mX,
-    mY,
-    p,
-    padding,
-    paddingTop,
-    paddingRight,
-    paddingBottom,
-    paddingLeft,
-    pt,
-    pr,
-    pb,
-    pl,
-    pX,
-    pY,
-    // Other style properties
-    borderRadius,
-    boxShadow,
-    className,
     style,
-    ...restProps
+    ...boxProps
   } = props;
 
-  const sprinkleProps = {
-    // Width and height properties
-    width,
-    w,
-    height,
-    h,
-    maxWidth,
-    maxW,
-    minWidth,
-    minW,
-    maxHeight,
-    maxH,
-    minHeight,
-    minH,
-    size,
-    maxSize,
-    minSize,
-    sizeX,
-    sizeY,
-    // Margin and padding properties
-    m,
-    margin,
-    marginTop,
-    marginRight,
-    marginBottom,
-    marginLeft,
-    mt,
-    mr,
-    mb,
-    ml,
-    mX,
-    mY,
-    p,
-    padding,
-    paddingTop,
-    paddingRight,
-    paddingBottom,
-    paddingLeft,
-    pt,
-    pr,
-    pb,
-    pl,
-    pX,
-    pY,
-    // Other style properties
-    borderRadius,
-    boxShadow,
-  };
+  // Process gap values
+  const processedGap = toCSSValue(gap, "gap");
+  const processedColumnGap = toCSSValue(columnGap, "gap");
+  const processedRowGap = toCSSValue(rowGap, "gap");
 
-  return React.createElement(
-    as,
-    {
-      ...restProps,
-      ref,
-      className: clsx([BaseStyle, StyleSprinkles(sprinkleProps), className]),
-      style: {
+  return (
+    <Box
+      {...boxProps}
+      ref={ref}
+      style={{
         display: "grid",
         gridAutoColumns: autoColumns,
         gridAutoFlow: autoFlow,
         gridAutoRows: autoRows,
-        gridColumnGap: columnGap,
-        gridGap: gap,
-        gridRowGap: rowGap,
+        gridColumn: column,
+        gridRow: row,
         gridTemplateColumns: templateColumns,
         gridTemplateRows: templateRows,
         gridTemplateAreas: templateAreas,
-        gridColumn: column,
-        gridRow: row,
-        color: color && vars.colors.$scale?.[color]?.[500],
-        background: background && vars.colors.$scale?.[background]?.[100],
+        ...(processedGap && { gap: processedGap }),
+        ...(processedColumnGap && { columnGap: processedColumnGap }),
+        ...(processedRowGap && { rowGap: processedRowGap }),
         ...style,
-      },
-    },
-    children,
+      }}
+    >
+      {children}
+    </Box>
   );
 };
 

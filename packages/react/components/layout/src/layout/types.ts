@@ -1,8 +1,7 @@
 import type { vars } from "@nugudi/themes";
 import type React from "react";
 import type { CSSProperties } from "react";
-import type { AsElementProps, StyleProps } from "@/core/types";
-import type { BodyProps } from "../typography";
+import type { AsElementProps, SpacingValue, StyleProps } from "@/core/types";
 
 export type BoxProps = AsElementProps & StyleProps;
 
@@ -21,7 +20,7 @@ export type FlexProps = {
   justify?: CSSProperties["justifyContent"];
   shrink?: CSSProperties["flexShrink"];
   wrap?: CSSProperties["flexWrap"];
-  gap?: CSSProperties["gap"];
+  gap?: SpacingValue | CSSProperties["gap"];
 } & BoxProps;
 
 export type GridProps = {
@@ -29,10 +28,10 @@ export type GridProps = {
   autoFlow?: CSSProperties["gridAutoFlow"];
   autoRows?: CSSProperties["gridAutoRows"];
   column?: CSSProperties["gridColumn"];
-  columnGap?: CSSProperties["columnGap"];
-  gap?: CSSProperties["gap"];
+  columnGap?: SpacingValue | CSSProperties["columnGap"];
+  gap?: SpacingValue | CSSProperties["gap"];
   row?: CSSProperties["gridRow"];
-  rowGap?: CSSProperties["rowGap"];
+  rowGap?: SpacingValue | CSSProperties["rowGap"];
   templateAreas?: CSSProperties["gridTemplateAreas"];
   templateColumns?: CSSProperties["gridTemplateColumns"];
   templateRows?: CSSProperties["gridTemplateRows"];
@@ -50,11 +49,11 @@ export type GridItemProps = {
 
 export type ListProps = {
   variant?: "unordered" | "ordered";
-  spacing?: keyof typeof vars.box.spacing;
+  spacing?: SpacingValue;
 } & BoxProps;
 
 export type OrderedListProps = Omit<ListProps, "variant">;
-export type ListItemProps = BodyProps;
+export type ListItemProps = BoxProps;
 
 export type UnorderedListProps = Omit<ListProps, "variant"> & {
   listStyleType?: CSSProperties["listStyleType"];
