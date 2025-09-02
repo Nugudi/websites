@@ -7,7 +7,13 @@ const UnorderedList = (
   props: UnorderedListProps,
   ref: React.Ref<HTMLUListElement>,
 ) => {
-  const { listStyleType = "disc", spacing, children, style, ...rest } = props;
+  const {
+    listStyleType = "disc",
+    spacing = 12,
+    children,
+    style,
+    ...rest
+  } = props;
 
   // Process spacing value
   const processedSpacing = toCSSValue(spacing, "gap");

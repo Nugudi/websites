@@ -137,13 +137,9 @@ const Box = (props: BoxProps, ref: React.Ref<HTMLElement>) => {
     }),
     ...(processedSizeX && {
       width: processedSizeX,
-      minWidth: processedSizeX,
-      maxWidth: processedSizeX,
     }),
     ...(processedSizeY && {
       height: processedSizeY,
-      minHeight: processedSizeY,
-      maxHeight: processedSizeY,
     }),
 
     // Margin properties

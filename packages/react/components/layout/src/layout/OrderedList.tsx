@@ -7,7 +7,7 @@ const OrderedList = (
   props: OrderedListProps,
   ref: React.Ref<HTMLOListElement>,
 ) => {
-  const { spacing, children, style, ...rest } = props;
+  const { spacing = 12, children, style, ...rest } = props;
 
   // Process spacing value
   const processedSpacing = toCSSValue(spacing, "gap");
