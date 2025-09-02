@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@nugudi/react-components-button";
 import { VStack } from "@nugudi/react-components-layout";
 import { Textarea } from "@nugudi/react-components-textarea";

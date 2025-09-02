@@ -5,4 +5,4 @@ export const RATING_OPTIONS: RatingOption[] = [
   { value: "soso" as const, label: "싱거워요", emoji: "😐" },
   { value: "bad" as const, label: "짜요", emoji: "😣" },
   { value: "angry" as const, label: "매워요", emoji: "🔥" },
-] as const;
+];

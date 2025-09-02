@@ -11,14 +11,16 @@ export const scrollContent = style({
   overflowY: "visible",
   display: "flex",
   gap: vars.box.spacing[8],
-  "::-webkit-scrollbar": {
-    display: "none",
-  },
   padding: vars.box.spacing[1],
   msOverflowStyle: "none",
   scrollbarWidth: "none",
   WebkitOverflowScrolling: "touch",
   flexWrap: "nowrap",
+  selectors: {
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
+  },
 });
 
 export const ratingChip = style({
