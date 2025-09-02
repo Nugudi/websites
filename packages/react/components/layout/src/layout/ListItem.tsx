@@ -1,8 +1,6 @@
 import * as React from "react";
 import { Box } from "./Box";
-import type { BoxProps } from "./types";
-
-export type ListItemProps = BoxProps;
+import type { ListItemProps } from "./types";
 
 const ListItem = (props: ListItemProps, ref: React.Ref<HTMLLIElement>) => {
   return <Box {...props} ref={ref as React.Ref<HTMLElement>} as="li" />;
