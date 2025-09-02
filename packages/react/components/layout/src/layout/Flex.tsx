@@ -1,14 +1,10 @@
-import { vars } from "@nugudi/themes";
-import { clsx } from "clsx";
 import * as React from "react";
-import { BaseStyle, StyleSprinkles } from "../core/style.css";
+import { toCSSValue } from "../utils/style-helpers";
+import { Box } from "./Box";
 import type { FlexProps } from "./types";
 
 const Flex = (props: FlexProps, ref: React.Ref<HTMLElement>) => {
   const {
-    as = "div",
-    color,
-    background,
     align,
     basis,
     direction,
@@ -17,129 +13,33 @@ const Flex = (props: FlexProps, ref: React.Ref<HTMLElement>) => {
     shrink,
     wrap,
     gap,
-    // Width and height properties with shorthands
-    width,
-    w,
-    height,
-    h,
-    maxWidth,
-    maxW,
-    minWidth,
-    minW,
-    maxHeight,
-    maxH,
-    minHeight,
-    minH,
-    size,
-    maxSize,
-    minSize,
-    sizeX,
-    sizeY,
-    // Margin and padding properties with shorthands
-    m,
-    margin,
-    marginTop,
-    marginRight,
-    marginBottom,
-    marginLeft,
-    mt,
-    mr,
-    mb,
-    ml,
-    mX,
-    mY,
-    p,
-    padding,
-    paddingTop,
-    paddingRight,
-    paddingBottom,
-    paddingLeft,
-    pt,
-    pr,
-    pb,
-    pl,
-    pX,
-    pY,
-    // Other style properties
-    borderRadius,
-    boxShadow,
     children,
-    className,
     style,
-    ...restProps
+    ...boxProps
   } = props;
 
-  const sprinkleProps = {
-    // Width and height properties
-    width,
-    w,
-    height,
-    h,
-    maxWidth,
-    maxW,
-    minWidth,
-    minW,
-    maxHeight,
-    maxH,
-    minHeight,
-    minH,
-    size,
-    maxSize,
-    minSize,
-    sizeX,
-    sizeY,
-    // Margin and padding properties
-    m,
-    margin,
-    marginTop,
-    marginRight,
-    marginBottom,
-    marginLeft,
-    mt,
-    mr,
-    mb,
-    ml,
-    mX,
-    mY,
-    p,
-    padding,
-    paddingTop,
-    paddingRight,
-    paddingBottom,
-    paddingLeft,
-    pt,
-    pr,
-    pb,
-    pl,
-    pX,
-    pY,
-    // Other style properties
-    borderRadius,
-    boxShadow,
-  };
+  // Process gap value
+  const processedGap = toCSSValue(gap, "gap");
 
-  return React.createElement(
-    as,
-    {
-      ...restProps,
-      ref,
-      className: clsx([BaseStyle, StyleSprinkles(sprinkleProps), className]),
-      style: {
+  return (
+    <Box
+      {...boxProps}
+      ref={ref}
+      style={{
         display: "flex",
         alignItems: align,
-        justifyContent: justify,
-        flexDirection: direction,
-        flexWrap: wrap,
-        flexGrow: grow,
-        flexShrink: shrink,
         flexBasis: basis,
-        gap,
-        color: color && vars.colors.$scale?.[color]?.[700],
-        background: background && vars.colors.$scale?.[background]?.[100],
+        flexDirection: direction,
+        flexGrow: grow,
+        justifyContent: justify,
+        flexShrink: shrink,
+        flexWrap: wrap,
+        ...(processedGap && { gap: processedGap }),
         ...style,
-      },
-    },
-    children,
+      }}
+    >
+      {children}
+    </Box>
   );
 };
 

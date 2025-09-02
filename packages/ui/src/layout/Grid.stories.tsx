@@ -47,9 +47,9 @@ type Story = StoryObj<typeof meta>;
 // 기본 그리드 레이아웃
 export const Default: Story = {
   args: {
-    gap: 4,
+    gap: 16,
     templateColumns: "repeat(3, 1fr)",
-    padding: 4,
+    padding: 16,
     background: "whiteAlpha",
     borderRadius: "lg",
     style: {
@@ -58,29 +58,49 @@ export const Default: Story = {
   },
   render: (args) => (
     <_Grid {...args}>
-      <Box background="main" p="3" borderRadius="md" style={{ color: "white" }}>
+      <Box
+        background="main"
+        p={12}
+        borderRadius="md"
+        style={{ color: "white" }}
+      >
         Item 1
       </Box>
-      <Box background="zinc" p="3" borderRadius="md" style={{ color: "white" }}>
+      <Box
+        background="zinc"
+        p={12}
+        borderRadius="md"
+        style={{ color: "white" }}
+      >
         Item 2
       </Box>
       <Box
         background="blackAlpha"
-        p="3"
+        p={12}
         borderRadius="md"
         style={{ color: "white" }}
       >
         Item 3
       </Box>
-      <Box background="main" p="3" borderRadius="md" style={{ color: "white" }}>
+      <Box
+        background="main"
+        p={12}
+        borderRadius="md"
+        style={{ color: "white" }}
+      >
         Item 4
       </Box>
-      <Box background="zinc" p="3" borderRadius="md" style={{ color: "white" }}>
+      <Box
+        background="zinc"
+        p={12}
+        borderRadius="md"
+        style={{ color: "white" }}
+      >
         Item 5
       </Box>
       <Box
         background="blackAlpha"
-        p="3"
+        p={12}
         borderRadius="md"
         style={{ color: "white" }}
       >
@@ -93,9 +113,9 @@ export const Default: Story = {
 // 반응형 컬럼 레이아웃
 export const ResponsiveColumns: Story = {
   args: {
-    gap: 6,
+    gap: 24,
     templateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
-    padding: 4,
+    padding: 16,
     background: "blackAlpha",
     borderRadius: "xl",
     style: {
@@ -117,7 +137,7 @@ export const ResponsiveColumns: Story = {
         <Box
           key={title}
           background="blackAlpha"
-          p="3"
+          p={12}
           borderRadius="md"
           style={{ color: "white", textAlign: "center" }}
         >
@@ -131,7 +151,7 @@ export const ResponsiveColumns: Story = {
 // 템플릿 영역을 사용한 레이아웃 (헤더, 사이드바, 메인, 푸터)
 export const TemplateAreas: Story = {
   args: {
-    gap: 3,
+    gap: 12,
     templateColumns: "200px 1fr",
     templateRows: "60px 1fr 40px",
     templateAreas: `
@@ -139,7 +159,7 @@ export const TemplateAreas: Story = {
       "sidebar main"
       "footer footer"
     `,
-    padding: 4,
+    padding: 16,
     background: "whiteAlpha",
     borderRadius: "lg",
     style: {
@@ -151,7 +171,7 @@ export const TemplateAreas: Story = {
     <_Grid {...args}>
       <Box
         background="main"
-        p="3"
+        p={12}
         borderRadius="md"
         style={{ gridArea: "header", color: "white" }}
       >
@@ -159,7 +179,7 @@ export const TemplateAreas: Story = {
       </Box>
       <Box
         background="zinc"
-        p="3"
+        p={12}
         borderRadius="md"
         style={{ gridArea: "sidebar", color: "white" }}
       >
@@ -167,7 +187,7 @@ export const TemplateAreas: Story = {
       </Box>
       <Box
         background="blackAlpha"
-        p="3"
+        p={12}
         borderRadius="md"
         style={{ gridArea: "main", color: "white" }}
       >
@@ -175,7 +195,7 @@ export const TemplateAreas: Story = {
       </Box>
       <Box
         background="whiteAlpha"
-        p="3"
+        p={12}
         borderRadius="md"
         style={{ gridArea: "footer", color: "black" }}
       >
@@ -188,10 +208,10 @@ export const TemplateAreas: Story = {
 // 자동 흐름 방향 설정
 export const AutoFlow: Story = {
   args: {
-    gap: 4,
+    gap: 16,
     templateColumns: "repeat(3, 100px)",
     autoFlow: "row",
-    padding: 4,
+    padding: 16,
     background: "blackAlpha",
     borderRadius: "lg",
     style: {
@@ -200,24 +220,44 @@ export const AutoFlow: Story = {
   },
   render: (args) => (
     <_Grid {...args}>
-      <Box background="main" p="3" borderRadius="md" style={{ color: "white" }}>
+      <Box
+        background="main"
+        p={12}
+        borderRadius="md"
+        style={{ color: "white" }}
+      >
         A
       </Box>
-      <Box background="zinc" p="3" borderRadius="md" style={{ color: "white" }}>
+      <Box
+        background="zinc"
+        p={12}
+        borderRadius="md"
+        style={{ color: "white" }}
+      >
         B
       </Box>
       <Box
         background="blackAlpha"
-        p="3"
+        p={12}
         borderRadius="md"
         style={{ color: "white" }}
       >
         C
       </Box>
-      <Box background="main" p="3" borderRadius="md" style={{ color: "white" }}>
+      <Box
+        background="main"
+        p={12}
+        borderRadius="md"
+        style={{ color: "white" }}
+      >
         D
       </Box>
-      <Box background="zinc" p="3" borderRadius="md" style={{ color: "white" }}>
+      <Box
+        background="zinc"
+        p={12}
+        borderRadius="md"
+        style={{ color: "white" }}
+      >
         E
       </Box>
     </_Grid>
@@ -227,10 +267,10 @@ export const AutoFlow: Story = {
 // 간격 설정 변형
 export const GapVariations: Story = {
   args: {
-    columnGap: 8,
-    rowGap: 2,
+    columnGap: 32,
+    rowGap: 8,
     templateColumns: "repeat(4, 1fr)",
-    padding: 4,
+    padding: 16,
     background: "whiteAlpha",
     borderRadius: "lg",
     style: {
@@ -243,7 +283,7 @@ export const GapVariations: Story = {
         <Box
           key={num}
           background="blackAlpha"
-          p="2"
+          p={8}
           borderRadius="sm"
           style={{ color: "white", textAlign: "center" }}
         >
@@ -257,9 +297,9 @@ export const GapVariations: Story = {
 // 카드 레이아웃
 export const CardLayout: Story = {
   args: {
-    gap: 6,
+    gap: 24,
     templateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
-    padding: 6,
+    padding: 24,
     background: "blackAlpha",
     borderRadius: "xl",
     style: {
@@ -279,7 +319,7 @@ export const CardLayout: Story = {
         <Box
           key={product.title}
           background={product.bg as "main" | "zinc" | "blackAlpha"}
-          p="4"
+          p={16}
           borderRadius="lg"
           style={{
             color: "white",
@@ -302,10 +342,10 @@ export const CardLayout: Story = {
 // 대시보드 레이아웃
 export const Dashboard: Story = {
   args: {
-    gap: 4,
+    gap: 16,
     templateColumns: "1fr 1fr 1fr",
     templateRows: "auto auto 200px",
-    padding: 4,
+    padding: 16,
     background: "whiteAlpha",
     borderRadius: "lg",
     style: {
@@ -316,18 +356,23 @@ export const Dashboard: Story = {
     <_Grid {...args}>
       <Box
         background="main"
-        p="4"
+        p={16}
         borderRadius="md"
         style={{ gridColumn: "1 / -1", color: "white" }}
       >
         대시보드 헤더
       </Box>
-      <Box background="zinc" p="4" borderRadius="md" style={{ color: "white" }}>
+      <Box
+        background="zinc"
+        p={16}
+        borderRadius="md"
+        style={{ color: "white" }}
+      >
         통계 1
       </Box>
       <Box
         background="blackAlpha"
-        p="4"
+        p={16}
         borderRadius="md"
         style={{ color: "white" }}
       >
@@ -335,7 +380,7 @@ export const Dashboard: Story = {
       </Box>
       <Box
         background="whiteAlpha"
-        p="4"
+        p={16}
         borderRadius="md"
         style={{ color: "black" }}
       >
@@ -343,7 +388,7 @@ export const Dashboard: Story = {
       </Box>
       <Box
         background="blackAlpha"
-        p="4"
+        p={16}
         borderRadius="md"
         style={{ gridColumn: "1 / -1", color: "white" }}
       >
@@ -356,10 +401,10 @@ export const Dashboard: Story = {
 // 갤러리 레이아웃
 export const Gallery: Story = {
   args: {
-    gap: 3,
+    gap: 12,
     templateColumns: "repeat(4, 1fr)",
     autoRows: "120px",
-    padding: 4,
+    padding: 16,
     background: "blackAlpha",
     borderRadius: "lg",
     style: {

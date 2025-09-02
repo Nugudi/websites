@@ -43,11 +43,11 @@ export const Horizontal: Story = {
   },
   render: (args) => (
     <Box style={{ width: "400px" }}>
-      <Box p="3">
+      <Box p={12}>
         <p>Content above divider</p>
       </Box>
       <_Divider {...args} />
-      <Box p="3">
+      <Box p={12}>
         <p>Content below divider</p>
       </Box>
     </Box>
@@ -64,11 +64,11 @@ export const Vertical: Story = {
   },
   render: (args) => (
     <Box style={{ display: "flex", height: "200px", alignItems: "stretch" }}>
-      <Box p="3" style={{ flex: 1 }}>
+      <Box p={12} style={{ flex: 1 }}>
         <p>Left content</p>
       </Box>
       <_Divider {...args} />
-      <Box p="3" style={{ flex: 1 }}>
+      <Box p={12} style={{ flex: 1 }}>
         <p>Right content</p>
       </Box>
     </Box>
@@ -79,7 +79,7 @@ export const Vertical: Story = {
 export const Variants: Story = {
   render: () => (
     <Box style={{ width: "400px" }}>
-      <Box p="2">
+      <Box p={8}>
         <p>Solid Divider</p>
         <_Divider
           color="blackAlpha"
@@ -89,7 +89,7 @@ export const Variants: Story = {
         />
       </Box>
 
-      <Box p="2">
+      <Box p={8}>
         <p>Dashed Divider</p>
         <_Divider
           color="blackAlpha"
@@ -99,7 +99,7 @@ export const Variants: Story = {
         />
       </Box>
 
-      <Box p="2">
+      <Box p={8}>
         <p>Dotted Divider</p>
         <_Divider
           color="blackAlpha"
@@ -109,7 +109,7 @@ export const Variants: Story = {
         />
       </Box>
 
-      <Box p="2">
+      <Box p={8}>
         <p>Double Divider</p>
         <_Divider
           color="blackAlpha"
@@ -126,7 +126,7 @@ export const Variants: Story = {
 export const Colors: Story = {
   render: () => (
     <Box style={{ width: "400px" }}>
-      <Box p="2">
+      <Box p={8}>
         <p>Main Color</p>
         <_Divider
           color="main"
@@ -136,7 +136,7 @@ export const Colors: Story = {
         />
       </Box>
 
-      <Box p="2">
+      <Box p={8}>
         <p>Zinc Color</p>
         <_Divider
           color="zinc"
@@ -146,7 +146,7 @@ export const Colors: Story = {
         />
       </Box>
 
-      <Box p="2">
+      <Box p={8}>
         <p>White Alpha</p>
         <_Divider
           color="whiteAlpha"
@@ -156,7 +156,7 @@ export const Colors: Story = {
         />
       </Box>
 
-      <Box p="2">
+      <Box p={8}>
         <p>Black Alpha</p>
         <_Divider
           color="blackAlpha"
@@ -173,7 +173,7 @@ export const Colors: Story = {
 export const Sizes: Story = {
   render: () => (
     <Box style={{ width: "400px" }}>
-      <Box p="2">
+      <Box p={8}>
         <p>Size 1px</p>
         <_Divider
           color="blackAlpha"
@@ -183,7 +183,7 @@ export const Sizes: Story = {
         />
       </Box>
 
-      <Box p="2">
+      <Box p={8}>
         <p>Size 2px</p>
         <_Divider
           color="blackAlpha"
@@ -193,7 +193,7 @@ export const Sizes: Story = {
         />
       </Box>
 
-      <Box p="2">
+      <Box p={8}>
         <p>Size 3px</p>
         <_Divider
           color="blackAlpha"
@@ -203,7 +203,7 @@ export const Sizes: Story = {
         />
       </Box>
 
-      <Box p="2">
+      <Box p={8}>
         <p>Size 5px</p>
         <_Divider
           color="blackAlpha"
@@ -222,7 +222,7 @@ export const InComplexLayout: Story = {
     <Box
       style={{ width: "600px", border: "1px solid #ddd", borderRadius: "8px" }}
     >
-      <Box p="4">
+      <Box p={16}>
         <h2 style={{ margin: 0 }}>Card Header</h2>
       </Box>
 
@@ -234,7 +234,7 @@ export const InComplexLayout: Story = {
       />
 
       <Box style={{ display: "flex", height: "200px" }}>
-        <Box p="4" style={{ flex: 1 }}>
+        <Box p={16} style={{ flex: 1 }}>
           <h3>Section 1</h3>
           <p>This is the first section of content.</p>
         </Box>
@@ -246,7 +246,7 @@ export const InComplexLayout: Story = {
           orientation="vertical"
         />
 
-        <Box p="4" style={{ flex: 1 }}>
+        <Box p={16} style={{ flex: 1 }}>
           <h3>Section 2</h3>
           <p>This is the second section of content.</p>
         </Box>
@@ -258,7 +258,7 @@ export const InComplexLayout: Story = {
           orientation="vertical"
         />
 
-        <Box p="4" style={{ flex: 1 }}>
+        <Box p={16} style={{ flex: 1 }}>
           <h3>Section 3</h3>
           <p>This is the third section of content.</p>
         </Box>
@@ -271,7 +271,7 @@ export const InComplexLayout: Story = {
         orientation="horizontal"
       />
 
-      <Box p="4">
+      <Box p={16}>
         <p style={{ margin: 0, fontSize: "14px", color: "#666" }}>
           Card Footer
         </p>
@@ -298,21 +298,21 @@ export const Playground: Story = {
     >
       {args.orientation === "horizontal" ? (
         <>
-          <Box p="3">
+          <Box p={12}>
             <p>Content above divider</p>
           </Box>
           <_Divider {...args} />
-          <Box p="3">
+          <Box p={12}>
             <p>Content below divider</p>
           </Box>
         </>
       ) : (
         <>
-          <Box p="3" style={{ flex: 1 }}>
+          <Box p={12} style={{ flex: 1 }}>
             <p>Left content</p>
           </Box>
           <_Divider {...args} />
-          <Box p="3" style={{ flex: 1 }}>
+          <Box p={12} style={{ flex: 1 }}>
             <p>Right content</p>
           </Box>
         </>

@@ -55,17 +55,17 @@ export default meta;
 
 export const Default: Story = {
   args: {
-    gap: 8,
+    gap: 32,
   },
   render: (args) => (
     <_HStack {...args}>
-      <Box background="main" p="3">
+      <Box background="main" p={12}>
         HStack Item 1
       </Box>
-      <Box background="blackAlpha" p="3">
+      <Box background="blackAlpha" p={12}>
         HStack Item 2
       </Box>
-      <Box background="main" p="3">
+      <Box background="main" p={12}>
         HStack Item 3
       </Box>
     </_HStack>
@@ -75,14 +75,14 @@ export const Default: Story = {
 export const WithColor: Story = {
   args: {
     color: "main",
-    gap: 8,
+    gap: 32,
   },
   render: (args) => (
     <_HStack {...args}>
-      <Box background="main" p="2">
+      <Box background="main" p={8}>
         Item 1
       </Box>
-      <Box background="blackAlpha" p="2">
+      <Box background="blackAlpha" p={8}>
         Item 2
       </Box>
     </_HStack>
@@ -91,17 +91,17 @@ export const WithColor: Story = {
 
 export const WithGap: Story = {
   args: {
-    gap: 16,
+    gap: 64,
   },
   render: (args) => (
     <_HStack {...args}>
-      <Box background="main" p="2">
+      <Box background="main" p={8}>
         Item 1
       </Box>
-      <Box background="blackAlpha" p="2">
+      <Box background="blackAlpha" p={8}>
         Item 2
       </Box>
-      <Box background="main" p="2">
+      <Box background="main" p={8}>
         Item 3
       </Box>
     </_HStack>
@@ -110,7 +110,7 @@ export const WithGap: Story = {
 
 export const AlignmentVariations: Story = {
   args: {
-    gap: 8,
+    gap: 32,
   },
   render: (args) => (
     <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
@@ -121,15 +121,15 @@ export const AlignmentVariations: Story = {
           align="center"
           style={{ background: "#f0f0f0", padding: "10px", minHeight: "100px" }}
         >
-          <Box background="main" p="2">
+          <Box background="main" p={8}>
             Small
           </Box>
-          <Box background="main" p="4">
+          <Box background="main" p={16}>
             Medium
             <br />
             Height
           </Box>
-          <Box background="main" p="6">
+          <Box background="main" p={24}>
             Large
             <br />
             Content
@@ -146,15 +146,15 @@ export const AlignmentVariations: Story = {
           align="start"
           style={{ background: "#f0f0f0", padding: "10px", minHeight: "100px" }}
         >
-          <Box background="main" p="2">
+          <Box background="main" p={8}>
             Small
           </Box>
-          <Box background="main" p="4">
+          <Box background="main" p={16}>
             Medium
             <br />
             Height
           </Box>
-          <Box background="main" p="6">
+          <Box background="main" p={24}>
             Large
             <br />
             Content
@@ -171,15 +171,15 @@ export const AlignmentVariations: Story = {
           align="end"
           style={{ background: "#f0f0f0", padding: "10px", minHeight: "100px" }}
         >
-          <Box background="main" p="2">
+          <Box background="main" p={8}>
             Small
           </Box>
-          <Box background="main" p="4">
+          <Box background="main" p={16}>
             Medium
             <br />
             Height
           </Box>
-          <Box background="main" p="6">
+          <Box background="main" p={24}>
             Large
             <br />
             Content
@@ -196,15 +196,15 @@ export const AlignmentVariations: Story = {
           align="baseline"
           style={{ background: "#f0f0f0", padding: "10px" }}
         >
-          <Box background="main" p="2">
+          <Box background="main" p={8}>
             Small
           </Box>
-          <Box background="main" p="4">
+          <Box background="main" p={16}>
             Medium
             <br />
             Height
           </Box>
-          <Box background="main" p="6">
+          <Box background="main" p={24}>
             Large
             <br />
             Content
@@ -219,7 +219,7 @@ export const AlignmentVariations: Story = {
 
 export const JustifyContent: Story = {
   args: {
-    gap: 8,
+    gap: 32,
     align: "center",
   },
   render: (args) => (
@@ -231,13 +231,13 @@ export const JustifyContent: Story = {
           justify="start"
           style={{ background: "#f0f0f0", padding: "10px", width: "400px" }}
         >
-          <Box background="main" p="3">
+          <Box background="main" p={12}>
             Item 1
           </Box>
-          <Box background="main" p="3">
+          <Box background="main" p={12}>
             Item 2
           </Box>
-          <Box background="main" p="3">
+          <Box background="main" p={12}>
             Item 3
           </Box>
         </_HStack>
@@ -250,13 +250,13 @@ export const JustifyContent: Story = {
           justify="center"
           style={{ background: "#f0f0f0", padding: "10px", width: "400px" }}
         >
-          <Box background="main" p="3">
+          <Box background="main" p={12}>
             Item 1
           </Box>
-          <Box background="main" p="3">
+          <Box background="main" p={12}>
             Item 2
           </Box>
-          <Box background="main" p="3">
+          <Box background="main" p={12}>
             Item 3
           </Box>
         </_HStack>
@@ -269,13 +269,13 @@ export const JustifyContent: Story = {
           justify="end"
           style={{ background: "#f0f0f0", padding: "10px", width: "400px" }}
         >
-          <Box background="main" p="3">
+          <Box background="main" p={12}>
             Item 1
           </Box>
-          <Box background="main" p="3">
+          <Box background="main" p={12}>
             Item 2
           </Box>
-          <Box background="main" p="3">
+          <Box background="main" p={12}>
             Item 3
           </Box>
         </_HStack>
@@ -288,13 +288,13 @@ export const JustifyContent: Story = {
           justify="between"
           style={{ background: "#f0f0f0", padding: "10px", width: "400px" }}
         >
-          <Box background="main" p="3">
+          <Box background="main" p={12}>
             Item 1
           </Box>
-          <Box background="main" p="3">
+          <Box background="main" p={12}>
             Item 2
           </Box>
-          <Box background="main" p="3">
+          <Box background="main" p={12}>
             Item 3
           </Box>
         </_HStack>
@@ -307,13 +307,13 @@ export const JustifyContent: Story = {
           justify="around"
           style={{ background: "#f0f0f0", padding: "10px", width: "400px" }}
         >
-          <Box background="main" p="3">
+          <Box background="main" p={12}>
             Item 1
           </Box>
-          <Box background="main" p="3">
+          <Box background="main" p={12}>
             Item 2
           </Box>
-          <Box background="main" p="3">
+          <Box background="main" p={12}>
             Item 3
           </Box>
         </_HStack>
@@ -326,13 +326,13 @@ export const JustifyContent: Story = {
           justify="evenly"
           style={{ background: "#f0f0f0", padding: "10px", width: "400px" }}
         >
-          <Box background="main" p="3">
+          <Box background="main" p={12}>
             Item 1
           </Box>
-          <Box background="main" p="3">
+          <Box background="main" p={12}>
             Item 2
           </Box>
-          <Box background="main" p="3">
+          <Box background="main" p={12}>
             Item 3
           </Box>
         </_HStack>
@@ -343,14 +343,14 @@ export const JustifyContent: Story = {
 
 export const WithWrap: Story = {
   args: {
-    gap: 8,
+    gap: 32,
     wrap: "wrap",
   },
   render: (args) => (
     <div style={{ width: "300px" }}>
       <_HStack {...args} style={{ background: "#f0f0f0", padding: "10px" }}>
         {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-          <Box key={i} background="main" p="3">
+          <Box key={i} background="main" p={12}>
             Item {i}
           </Box>
         ))}
@@ -373,18 +373,18 @@ export const NavigationBar: Story = {
     >
       <div style={{ fontSize: "20px", fontWeight: "bold" }}>Logo</div>
 
-      <_HStack gap="24">
+      <_HStack gap={96}>
         <div>Home</div>
         <div>About</div>
         <div>Services</div>
         <div>Contact</div>
       </_HStack>
 
-      <_HStack gap="8">
-        <Box background="main" p="2" style={{ borderRadius: "4px" }}>
+      <_HStack gap={32}>
+        <Box background="main" p={8} style={{ borderRadius: "4px" }}>
           Sign In
         </Box>
-        <Box background="blackAlpha" p="2" style={{ borderRadius: "4px" }}>
+        <Box background="blackAlpha" p={8} style={{ borderRadius: "4px" }}>
           Sign Up
         </Box>
       </_HStack>
@@ -395,7 +395,7 @@ export const NavigationBar: Story = {
 export const Toolbar: Story = {
   render: () => (
     <_HStack
-      gap="4"
+      gap={16}
       align="center"
       style={{
         background: "#f5f5f5",
@@ -404,13 +404,13 @@ export const Toolbar: Story = {
         borderRadius: "4px",
       }}
     >
-      <Box background="main" p="2" style={{ borderRadius: "4px" }}>
+      <Box background="main" p={8} style={{ borderRadius: "4px" }}>
         Bold
       </Box>
-      <Box background="main" p="2" style={{ borderRadius: "4px" }}>
+      <Box background="main" p={8} style={{ borderRadius: "4px" }}>
         Italic
       </Box>
-      <Box background="main" p="2" style={{ borderRadius: "4px" }}>
+      <Box background="main" p={8} style={{ borderRadius: "4px" }}>
         Underline
       </Box>
 
@@ -423,13 +423,13 @@ export const Toolbar: Story = {
         }}
       />
 
-      <Box background="main" p="2" style={{ borderRadius: "4px" }}>
+      <Box background="main" p={8} style={{ borderRadius: "4px" }}>
         Left
       </Box>
-      <Box background="main" p="2" style={{ borderRadius: "4px" }}>
+      <Box background="main" p={8} style={{ borderRadius: "4px" }}>
         Center
       </Box>
-      <Box background="main" p="2" style={{ borderRadius: "4px" }}>
+      <Box background="main" p={8} style={{ borderRadius: "4px" }}>
         Right
       </Box>
 
@@ -442,10 +442,10 @@ export const Toolbar: Story = {
         }}
       />
 
-      <Box background="blackAlpha" p="2" style={{ borderRadius: "4px" }}>
+      <Box background="blackAlpha" p={8} style={{ borderRadius: "4px" }}>
         Link
       </Box>
-      <Box background="blackAlpha" p="2" style={{ borderRadius: "4px" }}>
+      <Box background="blackAlpha" p={8} style={{ borderRadius: "4px" }}>
         Image
       </Box>
     </_HStack>
@@ -470,16 +470,16 @@ export const CardWithActions: Story = {
             about what's inside.
           </p>
         </div>
-        <Box background="main" p="2" style={{ borderRadius: "4px" }}>
+        <Box background="main" p={8} style={{ borderRadius: "4px" }}>
           Options
         </Box>
       </_HStack>
 
-      <_HStack justify="end" gap="8">
-        <Box background="blackAlpha" p="2" style={{ borderRadius: "4px" }}>
+      <_HStack justify="end" gap={32}>
+        <Box background="blackAlpha" p={8} style={{ borderRadius: "4px" }}>
           Cancel
         </Box>
-        <Box background="main" p="2" style={{ borderRadius: "4px" }}>
+        <Box background="main" p={8} style={{ borderRadius: "4px" }}>
           Confirm
         </Box>
       </_HStack>
@@ -489,9 +489,9 @@ export const CardWithActions: Story = {
 
 export const Badges: Story = {
   render: () => (
-    <_HStack gap="8" wrap="wrap">
+    <_HStack gap={32} wrap="wrap">
       <_HStack
-        gap="4"
+        gap={16}
         align="center"
         style={{
           background: "#e3f2fd",
@@ -512,7 +512,7 @@ export const Badges: Story = {
       </_HStack>
 
       <_HStack
-        gap="4"
+        gap={16}
         align="center"
         style={{
           background: "#fff3e0",
@@ -533,7 +533,7 @@ export const Badges: Story = {
       </_HStack>
 
       <_HStack
-        gap="4"
+        gap={16}
         align="center"
         style={{
           background: "#f3e5f5",
@@ -554,7 +554,7 @@ export const Badges: Story = {
       </_HStack>
 
       <_HStack
-        gap="4"
+        gap={16}
         align="center"
         style={{
           background: "#e8f5e9",
@@ -579,10 +579,10 @@ export const Badges: Story = {
 
 export const SocialMediaIcons: Story = {
   render: () => (
-    <_HStack gap="12">
+    <_HStack gap={48}>
       <Box
         background="main"
-        p="3"
+        p={12}
         style={{
           borderRadius: "50%",
           width: "48px",
@@ -596,7 +596,7 @@ export const SocialMediaIcons: Story = {
       </Box>
       <Box
         background="main"
-        p="3"
+        p={12}
         style={{
           borderRadius: "50%",
           width: "48px",
@@ -610,7 +610,7 @@ export const SocialMediaIcons: Story = {
       </Box>
       <Box
         background="main"
-        p="3"
+        p={12}
         style={{
           borderRadius: "50%",
           width: "48px",
@@ -624,7 +624,7 @@ export const SocialMediaIcons: Story = {
       </Box>
       <Box
         background="main"
-        p="3"
+        p={12}
         style={{
           borderRadius: "50%",
           width: "48px",

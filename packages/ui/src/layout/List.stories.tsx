@@ -1,6 +1,7 @@
 import "@nugudi/react-components-layout/style.css";
 import {
   List as _List,
+  Body,
   ListItem,
   OrderedList,
   UnorderedList,
@@ -20,30 +21,48 @@ type Story = StoryObj<typeof meta>;
 
 export const OrderedListStory: Story = {
   render: () => (
-    <OrderedList spacing="3">
-      <ListItem fontSize="b1">1번</ListItem>
-      <ListItem fontSize="b2">2번</ListItem>
-      <ListItem fontSize="b3">3번</ListItem>
+    <OrderedList spacing={12}>
+      <ListItem>
+        <Body fontSize="b1">1번</Body>
+      </ListItem>
+      <ListItem>
+        <Body fontSize="b2">2번</Body>
+      </ListItem>
+      <ListItem>
+        <Body fontSize="b3">3번</Body>
+      </ListItem>
     </OrderedList>
   ),
 };
 
 export const UnorderedListStory: Story = {
   render: () => (
-    <UnorderedList spacing="3">
-      <ListItem fontSize="b1">1번</ListItem>
-      <ListItem fontSize="b2">2번</ListItem>
-      <ListItem fontSize="b3">3번</ListItem>
+    <UnorderedList spacing={12}>
+      <ListItem>
+        <Body fontSize="b1">1번</Body>
+      </ListItem>
+      <ListItem>
+        <Body fontSize="b2">2번</Body>
+      </ListItem>
+      <ListItem>
+        <Body fontSize="b3">3번</Body>
+      </ListItem>
     </UnorderedList>
   ),
 };
 
 export const ListStory: Story = {
   render: () => (
-    <_List variant="ordered" spacing="3">
-      <ListItem fontSize="b1">1번</ListItem>
-      <ListItem fontSize="b2">2번</ListItem>
-      <ListItem fontSize="b3">3번</ListItem>
+    <_List variant="ordered" spacing={12}>
+      <ListItem>
+        <Body fontSize="b1">1번</Body>
+      </ListItem>
+      <ListItem>
+        <Body fontSize="b2">2번</Body>
+      </ListItem>
+      <ListItem>
+        <Body fontSize="b3">3번</Body>
+      </ListItem>
     </_List>
   ),
 };

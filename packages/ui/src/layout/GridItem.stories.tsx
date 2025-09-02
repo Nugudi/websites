@@ -49,8 +49,8 @@ export const Default: Story = {
   render: (args) => (
     <Grid
       templateColumns="repeat(3, 1fr)"
-      gap="4"
-      p="4"
+      gap={16}
+      p={16}
       background="whiteAlpha"
       borderRadius="lg"
       style={{ width: "400px" }}
@@ -58,7 +58,7 @@ export const Default: Story = {
       <GridItem {...args}>
         <Box
           background="main"
-          p="3"
+          p={12}
           borderRadius="md"
           style={{ color: "white" }}
         >
@@ -68,7 +68,7 @@ export const Default: Story = {
       <GridItem {...args}>
         <Box
           background="zinc"
-          p="3"
+          p={12}
           borderRadius="md"
           style={{ color: "white" }}
         >
@@ -78,7 +78,7 @@ export const Default: Story = {
       <GridItem {...args}>
         <Box
           background="blackAlpha"
-          p="3"
+          p={12}
           borderRadius="md"
           style={{ color: "white" }}
         >
@@ -94,16 +94,16 @@ export const ColumnSpan: Story = {
   render: () => (
     <Grid
       templateColumns="repeat(4, 1fr)"
-      gap="4"
-      p="4"
+      gap={16}
+      p={16}
       background="blackAlpha"
       borderRadius="lg"
       style={{ width: "500px" }}
     >
-      <GridItem colSpan="2">
+      <GridItem colSpan={2}>
         <Box
           background="main"
-          p="3"
+          p={12}
           borderRadius="md"
           style={{ color: "white" }}
         >
@@ -113,7 +113,7 @@ export const ColumnSpan: Story = {
       <GridItem>
         <Box
           background="zinc"
-          p="3"
+          p={12}
           borderRadius="md"
           style={{ color: "white" }}
         >
@@ -123,17 +123,17 @@ export const ColumnSpan: Story = {
       <GridItem>
         <Box
           background="whiteAlpha"
-          p="3"
+          p={12}
           borderRadius="md"
           style={{ color: "black" }}
         >
           1 칸
         </Box>
       </GridItem>
-      <GridItem colSpan="3">
+      <GridItem colSpan={3}>
         <Box
           background="blackAlpha"
-          p="3"
+          p={12}
           borderRadius="md"
           style={{ color: "white" }}
         >
@@ -143,7 +143,7 @@ export const ColumnSpan: Story = {
       <GridItem>
         <Box
           background="main"
-          p="3"
+          p={12}
           borderRadius="md"
           style={{ color: "white" }}
         >
@@ -160,16 +160,16 @@ export const RowSpan: Story = {
     <Grid
       templateColumns="repeat(3, 1fr)"
       templateRows="repeat(3, 100px)"
-      gap="4"
-      p="4"
+      gap={16}
+      p={16}
       background="whiteAlpha"
       borderRadius="lg"
       style={{ width: "400px" }}
     >
-      <GridItem rowSpan="2">
+      <GridItem rowSpan={2}>
         <Box
           background="main"
-          p="3"
+          p={12}
           borderRadius="md"
           style={{ color: "white", height: "100%" }}
         >
@@ -179,7 +179,7 @@ export const RowSpan: Story = {
       <GridItem>
         <Box
           background="zinc"
-          p="3"
+          p={12}
           borderRadius="md"
           style={{ color: "white" }}
         >
@@ -189,7 +189,7 @@ export const RowSpan: Story = {
       <GridItem>
         <Box
           background="blackAlpha"
-          p="3"
+          p={12}
           borderRadius="md"
           style={{ color: "white" }}
         >
@@ -199,7 +199,7 @@ export const RowSpan: Story = {
       <GridItem>
         <Box
           background="whiteAlpha"
-          p="3"
+          p={12}
           borderRadius="md"
           style={{ color: "black" }}
         >
@@ -209,17 +209,17 @@ export const RowSpan: Story = {
       <GridItem>
         <Box
           background="zinc"
-          p="3"
+          p={12}
           borderRadius="md"
           style={{ color: "white" }}
         >
           일반 아이템
         </Box>
       </GridItem>
-      <GridItem colSpan="2">
+      <GridItem colSpan={2}>
         <Box
           background="main"
-          p="3"
+          p={12}
           borderRadius="md"
           style={{ color: "white" }}
         >
@@ -229,7 +229,7 @@ export const RowSpan: Story = {
       <GridItem>
         <Box
           background="blackAlpha"
-          p="3"
+          p={12}
           borderRadius="md"
           style={{ color: "white" }}
         >
@@ -251,8 +251,8 @@ export const GridArea: Story = {
         "sidebar content aside"
         "footer footer footer"
       `}
-      gap="3"
-      p="4"
+      gap={12}
+      p={16}
       background="blackAlpha"
       borderRadius="lg"
       style={{ width: "600px", height: "400px" }}
@@ -260,7 +260,7 @@ export const GridArea: Story = {
       <GridItem area="header">
         <Box
           background="main"
-          p="3"
+          p={12}
           borderRadius="md"
           style={{ color: "white", height: "100%" }}
         >
@@ -270,7 +270,7 @@ export const GridArea: Story = {
       <GridItem area="sidebar">
         <Box
           background="zinc"
-          p="3"
+          p={12}
           borderRadius="md"
           style={{ color: "white", height: "100%" }}
         >
@@ -280,7 +280,7 @@ export const GridArea: Story = {
       <GridItem area="content">
         <Box
           background="blackAlpha"
-          p="3"
+          p={12}
           borderRadius="md"
           style={{ color: "white", height: "100%" }}
         >
@@ -290,7 +290,7 @@ export const GridArea: Story = {
       <GridItem area="aside">
         <Box
           background="whiteAlpha"
-          p="3"
+          p={12}
           borderRadius="md"
           style={{ color: "black", height: "100%" }}
         >
@@ -300,7 +300,7 @@ export const GridArea: Story = {
       <GridItem area="footer">
         <Box
           background="main"
-          p="3"
+          p={12}
           borderRadius="md"
           style={{ color: "white", height: "100%" }}
         >
@@ -317,16 +317,16 @@ export const DashboardWidgets: Story = {
     <Grid
       templateColumns="repeat(4, 1fr)"
       templateRows="repeat(3, 120px)"
-      gap="4"
-      p="4"
+      gap={16}
+      p={16}
       background="whiteAlpha"
       borderRadius="lg"
       style={{ width: "600px" }}
     >
-      <GridItem colSpan="2" rowSpan="2">
+      <GridItem colSpan={2} rowSpan={2}>
         <Box
           background="main"
-          p="4"
+          p={16}
           borderRadius="lg"
           style={{ color: "white", height: "100%" }}
         >
@@ -337,7 +337,7 @@ export const DashboardWidgets: Story = {
       <GridItem>
         <Box
           background="zinc"
-          p="3"
+          p={12}
           borderRadius="lg"
           style={{ color: "white", height: "100%" }}
         >
@@ -348,7 +348,7 @@ export const DashboardWidgets: Story = {
       <GridItem>
         <Box
           background="blackAlpha"
-          p="3"
+          p={12}
           borderRadius="lg"
           style={{ color: "white", height: "100%" }}
         >
@@ -359,7 +359,7 @@ export const DashboardWidgets: Story = {
       <GridItem>
         <Box
           background="whiteAlpha"
-          p="3"
+          p={12}
           borderRadius="lg"
           style={{ color: "black", height: "100%" }}
         >
@@ -370,7 +370,7 @@ export const DashboardWidgets: Story = {
       <GridItem>
         <Box
           background="main"
-          p="3"
+          p={12}
           borderRadius="lg"
           style={{ color: "white", height: "100%" }}
         >
@@ -378,10 +378,10 @@ export const DashboardWidgets: Story = {
           <p style={{ fontSize: "20px", marginTop: "8px" }}>89</p>
         </Box>
       </GridItem>
-      <GridItem colSpan="4">
+      <GridItem colSpan={4}>
         <Box
           background="blackAlpha"
-          p="4"
+          p={16}
           borderRadius="lg"
           style={{ color: "white", height: "100%" }}
         >
@@ -398,13 +398,13 @@ export const PhotoGallery: Story = {
     <Grid
       templateColumns="repeat(4, 1fr)"
       templateRows="repeat(4, 100px)"
-      gap="3"
-      p="4"
+      gap={12}
+      p={16}
       background="blackAlpha"
       borderRadius="lg"
       style={{ width: "500px" }}
     >
-      <GridItem colSpan="2" rowSpan="2">
+      <GridItem colSpan={2} rowSpan={2}>
         <Box
           background="main"
           borderRadius="md"
@@ -480,7 +480,7 @@ export const PhotoGallery: Story = {
           이미지 4
         </Box>
       </GridItem>
-      <GridItem colSpan="3">
+      <GridItem colSpan={3}>
         <Box
           background="zinc"
           borderRadius="md"
@@ -495,7 +495,7 @@ export const PhotoGallery: Story = {
           와이드 이미지
         </Box>
       </GridItem>
-      <GridItem rowSpan="2">
+      <GridItem rowSpan={2}>
         <Box
           background="blackAlpha"
           borderRadius="md"
@@ -565,8 +565,8 @@ export const ComplexLayout: Story = {
     <Grid
       templateColumns="repeat(6, 1fr)"
       templateRows="repeat(4, 80px)"
-      gap="3"
-      p="4"
+      gap={12}
+      p={16}
       background="whiteAlpha"
       borderRadius="lg"
       style={{ width: "600px" }}
@@ -574,7 +574,7 @@ export const ComplexLayout: Story = {
       <GridItem colStart="1" colEnd="4" rowStart="1" rowEnd="3">
         <Box
           background="main"
-          p="4"
+          p={16}
           borderRadius="lg"
           style={{ color: "white", height: "100%" }}
         >
@@ -584,7 +584,7 @@ export const ComplexLayout: Story = {
       <GridItem colStart="4" colEnd="7" rowStart="1" rowEnd="2">
         <Box
           background="zinc"
-          p="3"
+          p={12}
           borderRadius="lg"
           style={{ color: "white", height: "100%" }}
         >
@@ -594,7 +594,7 @@ export const ComplexLayout: Story = {
       <GridItem colStart="4" colEnd="6" rowStart="2" rowEnd="3">
         <Box
           background="blackAlpha"
-          p="3"
+          p={12}
           borderRadius="lg"
           style={{ color: "white", height: "100%" }}
         >
@@ -604,7 +604,7 @@ export const ComplexLayout: Story = {
       <GridItem colStart="6" colEnd="7" rowStart="2" rowEnd="4">
         <Box
           background="whiteAlpha"
-          p="3"
+          p={12}
           borderRadius="lg"
           style={{ color: "black", height: "100%" }}
         >
@@ -614,7 +614,7 @@ export const ComplexLayout: Story = {
       <GridItem colStart="1" colEnd="3" rowStart="3" rowEnd="5">
         <Box
           background="zinc"
-          p="3"
+          p={12}
           borderRadius="lg"
           style={{ color: "white", height: "100%" }}
         >
@@ -624,7 +624,7 @@ export const ComplexLayout: Story = {
       <GridItem colStart="3" colEnd="5" rowStart="3" rowEnd="4">
         <Box
           background="main"
-          p="3"
+          p={12}
           borderRadius="lg"
           style={{ color: "white", height: "100%" }}
         >
@@ -634,7 +634,7 @@ export const ComplexLayout: Story = {
       <GridItem colStart="5" colEnd="6" rowStart="3" rowEnd="4">
         <Box
           background="blackAlpha"
-          p="3"
+          p={12}
           borderRadius="lg"
           style={{ color: "white", height: "100%" }}
         >
@@ -644,7 +644,7 @@ export const ComplexLayout: Story = {
       <GridItem colStart="3" colEnd="7" rowStart="4" rowEnd="5">
         <Box
           background="whiteAlpha"
-          p="3"
+          p={12}
           borderRadius="lg"
           style={{ color: "black", height: "100%" }}
         >

@@ -172,6 +172,44 @@ const customLayout = style({ display: 'flex' }); // NO! Use Flex instead
 | **GridItem** | Grid children           | `colSpan`, `rowSpan`                   | `<GridItem colSpan={2}>`                             |
 | **Divider**  | Visual separator        | `orientation`, `color`                 | `<Divider orientation="horizontal" />`               |
 
+##### 🆕 Spacing & Size System (Direct Pixel Values)
+
+**IMPORTANT**: Layout components now accept direct pixel values instead of spacing tokens:
+
+```typescript
+// ✅ NEW SYSTEM - Direct pixel values
+<Box padding={20} margin={16}>        // 20px padding, 16px margin
+<VStack spacing={24}>                  // 24px gap between children
+<Flex gap={32}>                        // 32px gap
+
+// Numbers are treated as pixels
+<Box p={10} m={20}>                    // 10px padding, 20px margin
+<Box width={300} height={150}>         // 300px width, 150px height
+
+// Special keywords work as expected
+<Box width="full" height="auto">       // 100% width, auto height
+<Box width="screen">                   // 100vw width
+<Box width="50%" height="100vh">       // Percentage and viewport units
+
+// TypeScript autocomplete for common values
+<Box width="">  // Autocompletes: "full", "auto", "screen", "min", "max", "fit"
+<Box gap="">    // Autocompletes: "auto", template literals like "10px", "2rem"
+```
+
+**Size Keywords**:
+- `"full"` → `100%`
+- `"screen"` → `100vw`
+- `"auto"` → `auto`
+- `"min"` → `min-content`
+- `"max"` → `max-content`
+- `"fit"` → `fit-content`
+
+**All Spacing Props Accept Pixels**:
+- Margin: `m`, `margin`, `mt`, `mr`, `mb`, `ml`, `mX`, `mY`
+- Padding: `p`, `padding`, `pt`, `pr`, `pb`, `pl`, `pX`, `pY`
+- Gap: `gap`, `columnGap`, `rowGap`
+- Size: `width`, `w`, `height`, `h`, `size`, `minWidth`, `maxWidth`, etc.
+
 ##### Common Layout Patterns
 
 ```typescript

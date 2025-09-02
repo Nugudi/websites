@@ -1,5 +1,5 @@
-import { vars } from "@nugudi/themes";
 import * as React from "react";
+import { toCSSValue } from "../utils/style-helpers";
 import { Flex } from "./Flex";
 import type { UnorderedListProps } from "./types";
 
@@ -7,7 +7,10 @@ const UnorderedList = (
   props: UnorderedListProps,
   ref: React.Ref<HTMLUListElement>,
 ) => {
-  const { listStyleType = "disc", spacing = 3, children, ...rest } = props;
+  const { listStyleType = "disc", spacing, children, style, ...rest } = props;
+
+  // Process spacing value
+  const processedSpacing = toCSSValue(spacing, "gap");
 
   return (
     <Flex
@@ -16,8 +19,9 @@ const UnorderedList = (
       ref={ref}
       direction="column"
       style={{
-        gap: vars.box.spacing[spacing],
+        ...(processedSpacing && { gap: processedSpacing }),
         listStyleType: listStyleType as string,
+        ...style,
       }}
     >
       {children}
