@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description: "구내식당 메뉴에 대한 리뷰를 작성해주세요",
 };
 
-const ReviewWritePage = async ({ params }: PageProps) => {
+const CafeteriaReviewWritePage = async ({ params }: PageProps) => {
   const { cafeteriaId } = await params;
 
   // TODO: Fetch cafeteria info from API
@@ -21,4 +21,4 @@ const ReviewWritePage = async ({ params }: PageProps) => {
   );
 };
 
-export default ReviewWritePage;
+export default CafeteriaReviewWritePage;
