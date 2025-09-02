@@ -7,7 +7,7 @@ import { RatingSelector } from "../rating-selector";
 
 interface ReviewWriteFormProps {
   ratingOptions: RatingOption[];
-  selectedRatings: Array<ReviewRating>;
+  selectedRatings: ReviewRating[];
   content: string;
   isSubmitDisabled: boolean;
   isSubmitting: boolean;

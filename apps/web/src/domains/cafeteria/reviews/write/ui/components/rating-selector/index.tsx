@@ -1,17 +1,11 @@
 import { Chip } from "@nugudi/react-components-chip";
 import { Box, HStack } from "@nugudi/react-components-layout";
-import type { ReviewRating } from "../../../types/review-rating";
+import type { RatingOption, ReviewRating } from "../../../types/review-rating";
 import * as styles from "./index.css";
-
-interface RatingOption {
-  value: ReviewRating;
-  label: string;
-  emoji: string;
-}
 
 interface RatingSelectorProps {
   options: readonly RatingOption[];
-  selectedRatings: Array<ReviewRating>;
+  selectedRatings: ReviewRating[];
   onRatingToggle: (rating: ReviewRating) => void;
 }
 

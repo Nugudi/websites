@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { RATING_OPTIONS } from "../../../constants/review";
 import {
   type ReviewFormData,
@@ -18,8 +18,7 @@ export const ReviewWriteSection = ({
   cafeteriaId,
 }: ReviewWriteSectionProps) => {
   const {
-    watch,
-    setValue,
+    control,
     handleSubmit,
     formState: { isValid, isSubmitting },
   } = useForm<ReviewFormData>({
@@ -31,28 +30,14 @@ export const ReviewWriteSection = ({
     },
   });
 
-  const ratings = watch("ratings");
-  const content = watch("content");
-
-  const handleRatingToggle = (rating: ReviewRating) => {
-    const currentRatings = ratings || [];
+  const toggleRating = (
+    currentRatings: ReviewRating[],
+    rating: ReviewRating,
+  ): ReviewRating[] => {
     if (currentRatings.includes(rating)) {
-      setValue(
-        "ratings",
-        currentRatings.filter((r) => r !== rating),
-        {
-          shouldValidate: true,
-        },
-      );
-    } else {
-      setValue("ratings", [...currentRatings, rating], {
-        shouldValidate: true,
-      });
+      return currentRatings.filter((r) => r !== rating);
     }
-  };
-
-  const handleContentChange = (value: string) => {
-    setValue("content", value, { shouldValidate: true });
+    return [...currentRatings, rating];
   };
 
   const onSubmit = async (data: ReviewFormData) => {
@@ -62,15 +47,29 @@ export const ReviewWriteSection = ({
   };
 
   return (
-    <ReviewWriteForm
-      ratingOptions={RATING_OPTIONS}
-      selectedRatings={ratings}
-      content={content}
-      isSubmitDisabled={!isValid || isSubmitting}
-      isSubmitting={isSubmitting}
-      onRatingToggle={handleRatingToggle}
-      onContentChange={handleContentChange}
-      onSubmit={handleSubmit(onSubmit)}
+    <Controller
+      name="ratings"
+      control={control}
+      render={({ field: ratingsField }) => (
+        <Controller
+          name="content"
+          control={control}
+          render={({ field: contentField }) => (
+            <ReviewWriteForm
+              ratingOptions={RATING_OPTIONS}
+              selectedRatings={ratingsField.value}
+              content={contentField.value}
+              isSubmitDisabled={!isValid || isSubmitting}
+              isSubmitting={isSubmitting}
+              onRatingToggle={(rating: ReviewRating) => {
+                ratingsField.onChange(toggleRating(ratingsField.value, rating));
+              }}
+              onContentChange={contentField.onChange}
+              onSubmit={handleSubmit(onSubmit)}
+            />
+          )}
+        />
+      )}
     />
   );
 };
