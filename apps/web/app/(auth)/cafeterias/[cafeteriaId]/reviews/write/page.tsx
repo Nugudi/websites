@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { ReviewWriteView } from "@/src/domains/cafeteria/reviews/write/ui/views/review-write-view";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     cafeteriaId: string;
-  };
+  }>;
 }
 
 export const metadata: Metadata = {
