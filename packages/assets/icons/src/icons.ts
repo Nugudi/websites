@@ -33,6 +33,7 @@ import PenIcon from "./svg/pen.svg?react";
 import PencilIcon from "./svg/pencil.svg?react";
 import PersonIcon from "./svg/person.svg?react";
 import PicklesIcon from "./svg/pickles.svg?react";
+import ReplyIcon from "./svg/reply.svg?react";
 import RiceIcon from "./svg/rice.svg?react";
 import ShareIcon from "./svg/share.svg?react";
 import SoupIcon from "./svg/soup.svg?react";
@@ -202,6 +203,10 @@ export const iconRegistry: IconRegistry = {
   Packaging: {
     component: PackagingIcon,
     tags: ["packaging", "포장", "포장 가능"],
+  },
+  Reply: {
+    component: ReplyIcon,
+    tags: ["reply", "대댓글", "답글"],
   },
 };
 
