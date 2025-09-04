@@ -302,7 +302,7 @@ export const useDeviceType = () => {
 
   const isDesktop = useMediaQuery({
     query: "(min-width: 1024px)",
-    defaultMatches: true,
+    defaultMatches: false, // SSR에서 보수적인 기본값 사용으로 하이드레이션 불일치 방지
   });
 
   const deviceType = isDesktop.matches
