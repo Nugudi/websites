@@ -1,10 +1,7 @@
 {
   "extends": "@tsconfig/vite-react/tsconfig.json",
   "compilerOptions": {
-    "outDir": "./dist",
-    "declaration": true,
-    "declarationDir": "./dist",
-    "emitDeclarationOnly": true,
+    "noEmit": true,
     "paths": {
       "@/*": ["./src/*"]
     }

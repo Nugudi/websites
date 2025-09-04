@@ -161,6 +161,9 @@ importers:
       '@nugudi/react-hooks-toggle':
         specifier: workspace:*
         version: link:../../packages/react/hooks/toggle
+      '@nugudi/react-hooks-use-media-query':
+        specifier: workspace:*
+        version: link:../../packages/react/hooks/use-media-query
       '@nugudi/react-hooks-use-stepper':
         specifier: workspace:*
         version: link:../../packages/react/hooks/use-stepper
@@ -1300,6 +1303,31 @@ importers:
         version: 4.5.4(@types/node@24.1.0)(rollup@4.46.2)(typescript@5.8.3)(vite@6.3.5(@types/node@24.1.0)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))
 
   packages/react/hooks/toggle:
+    dependencies:
+      react:
+        specifier: ^19.0.0
+        version: 19.1.1
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.1.1(react@19.1.1)
+    devDependencies:
+      '@types/react':
+        specifier: ^19.1.9
+        version: 19.1.9
+      '@types/react-dom':
+        specifier: ^19.1.7
+        version: 19.1.7(@types/react@19.1.9)
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
+      vite:
+        specifier: ^6.3.5
+        version: 6.3.5(@types/node@24.1.0)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
+      vite-plugin-dts:
+        specifier: ^4.5.4
+        version: 4.5.4(@types/node@24.1.0)(rollup@4.46.2)(typescript@5.8.3)(vite@6.3.5(@types/node@24.1.0)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))
+
+  packages/react/hooks/use-media-query:
     dependencies:
       react:
         specifier: ^19.0.0
