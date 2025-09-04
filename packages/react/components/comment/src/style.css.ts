@@ -107,5 +107,4 @@ export const content = style({
 export const replies = style({
   marginTop: vars.box.spacing[4],
   borderTop: `1px solid ${vars.colors.$scale.zinc[100]}`,
-  paddingTop: vars.box.spacing[4],
 });
