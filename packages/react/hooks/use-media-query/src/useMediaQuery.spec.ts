@@ -106,10 +106,11 @@ describe("useMediaQuery", () => {
   });
 
   it("미디어 쿼리가 변경될 때 matches를 업데이트해야 한다", () => {
-    let changeHandler: ((event: MediaQueryListEvent) => void) | null = null;
+    let changeHandler: (() => void) | null = null;
+    let currentMatches = false;
 
-    matchMediaMock.mockReturnValue({
-      matches: false,
+    matchMediaMock.mockImplementation(() => ({
+      matches: currentMatches,
       media: "(min-width: 768px)",
       addEventListener: vi.fn((event, handler) => {
         if (event === "change") {
@@ -117,7 +118,7 @@ describe("useMediaQuery", () => {
         }
       }),
       removeEventListener: removeEventListenerMock,
-    });
+    }));
 
     const { result } = renderHook(() =>
       useMediaQuery({ query: "(min-width: 768px)" }),
@@ -126,8 +127,9 @@ describe("useMediaQuery", () => {
     expect(result.current.matches).toBe(false);
 
     act(() => {
+      currentMatches = true;
       if (changeHandler) {
-        changeHandler({ matches: true } as MediaQueryListEvent);
+        changeHandler();
       }
     });
 
@@ -136,10 +138,11 @@ describe("useMediaQuery", () => {
 
   it("matches가 변경될 때 onChange 콜백을 호출해야 한다", () => {
     const onChangeMock = vi.fn();
-    let changeHandler: ((event: MediaQueryListEvent) => void) | null = null;
+    let changeHandler: (() => void) | null = null;
+    let currentMatches = false;
 
-    matchMediaMock.mockReturnValue({
-      matches: false,
+    matchMediaMock.mockImplementation(() => ({
+      matches: currentMatches,
       media: "(min-width: 768px)",
       addEventListener: vi.fn((event, handler) => {
         if (event === "change") {
@@ -147,7 +150,7 @@ describe("useMediaQuery", () => {
         }
       }),
       removeEventListener: removeEventListenerMock,
-    });
+    }));
 
     renderHook(() =>
       useMediaQuery({
@@ -156,9 +159,13 @@ describe("useMediaQuery", () => {
       }),
     );
 
+    // 초기 렌더링 시에는 onChange가 호출되지 않아야 함
+    expect(onChangeMock).not.toHaveBeenCalled();
+
     act(() => {
+      currentMatches = true;
       if (changeHandler) {
-        changeHandler({ matches: true } as MediaQueryListEvent);
+        changeHandler();
       }
     });
 
@@ -367,6 +374,7 @@ describe("useDeviceType", () => {
     expect(result.current.isMobile).toBe(true);
     expect(result.current.isTablet).toBe(false);
     expect(result.current.isDesktop).toBe(false);
+    expect(result.current.deviceType).toBe("mobile");
   });
 
   it("태블릿 디바이스를 올바르게 감지해야 한다", () => {
@@ -400,6 +408,7 @@ describe("useDeviceType", () => {
     expect(result.current.isMobile).toBe(false);
     expect(result.current.isTablet).toBe(true);
     expect(result.current.isDesktop).toBe(false);
+    expect(result.current.deviceType).toBe("tablet");
   });
 
   it("데스크톱 디바이스를 올바르게 감지해야 한다", () => {
@@ -425,5 +434,78 @@ describe("useDeviceType", () => {
     expect(result.current.isMobile).toBe(false);
     expect(result.current.isTablet).toBe(false);
     expect(result.current.isDesktop).toBe(true);
+    expect(result.current.deviceType).toBe("desktop");
+  });
+
+  it("디바이스 타입이 변경될 때 deviceType 프로퍼티가 업데이트되어야 한다", () => {
+    const listeners: Record<string, ((event: any) => void)[]> = {};
+
+    matchMediaMock.mockImplementation((query: string) => {
+      const mqList = {
+        matches: query.includes("max-width: 767px"),
+        media: query,
+        addEventListener: vi.fn((_event, listener) => {
+          if (!listeners[query]) listeners[query] = [];
+          listeners[query].push(listener);
+        }),
+        removeEventListener: vi.fn(),
+      };
+      return mqList;
+    });
+
+    const { result } = renderHook(() => useDeviceType());
+
+    // 초기값: 모바일
+    expect(result.current.deviceType).toBe("mobile");
+
+    // 태블릿으로 변경
+    act(() => {
+      matchMediaMock.mockImplementation((query: string) => {
+        const matches = query.includes("768px") && query.includes("1023px");
+        return {
+          matches,
+          media: query,
+          addEventListener: vi.fn(),
+          removeEventListener: vi.fn(),
+        };
+      });
+
+      // 리스너 트리거
+      Object.values(listeners)
+        .flat()
+        .forEach((listener) => {
+          listener({ matches: true });
+        });
+    });
+
+    // 미디어 쿼리가 변경되었으므로 새로운 훅 호출 시 업데이트된 값을 반영해야 함
+
+    matchMediaMock.mockImplementation((query: string) => {
+      if (query.includes("max-width: 767px")) {
+        return {
+          matches: false,
+          media: query,
+          addEventListener: vi.fn(),
+          removeEventListener: vi.fn(),
+        };
+      }
+      if (query.includes("768px") && query.includes("1023px")) {
+        return {
+          matches: true,
+          media: query,
+          addEventListener: vi.fn(),
+          removeEventListener: vi.fn(),
+        };
+      }
+      return {
+        matches: false,
+        media: query,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      };
+    });
+
+    const { result: tabletResult } = renderHook(() => useDeviceType());
+    expect(tabletResult.current.deviceType).toBe("tablet");
   });
 });

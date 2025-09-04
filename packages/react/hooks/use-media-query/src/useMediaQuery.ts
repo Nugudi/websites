@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useSyncExternalStore } from "react";
 
 import type { UseMediaQueryProps, UseMediaQueryReturn } from "./types";
 
@@ -52,12 +52,8 @@ export function useMediaQuery({
   onChange,
   matchMedia: customMatchMedia,
 }: UseMediaQueryProps): UseMediaQueryReturn {
-  const [matches, setMatches] = useState<boolean>(defaultMatches);
-
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
-
-  const isInitializedRef = useRef(false);
 
   const getMatchMedia = useCallback(() => {
     if (customMatchMedia) return customMatchMedia;
@@ -67,44 +63,61 @@ export function useMediaQuery({
     return null;
   }, [customMatchMedia]);
 
-  const handleChange = useCallback(
-    (event: MediaQueryListEvent | MediaQueryList) => {
-      const newMatches = event.matches;
-      setMatches(newMatches);
+  const subscribe = useCallback(
+    (callback: () => void) => {
+      const matchMediaFn = getMatchMedia();
+      if (!matchMediaFn) return () => {};
+
+      const mediaQuery = matchMediaFn(query);
+
+      const handleChange = () => {
+        callback();
+      };
+
+      if (supportsModernEvents(mediaQuery)) {
+        mediaQuery.addEventListener("change", handleChange);
+        return () => {
+          mediaQuery.removeEventListener("change", handleChange);
+        };
+      } else {
+        const legacyMq = mediaQuery as LegacyMediaQueryList;
+        legacyMq.addListener?.(handleChange);
+        return () => {
+          legacyMq.removeListener?.(handleChange);
+        };
+      }
     },
-    [],
+    [query, getMatchMedia],
   );
 
-  useEffect(() => {
-    // Reset initialization flag when query changes
-    isInitializedRef.current = false;
-
+  const getSnapshot = useCallback(() => {
     const matchMediaFn = getMatchMedia();
-    if (!matchMediaFn) return;
+    if (!matchMediaFn) return defaultMatches;
 
-    const mediaQuery = matchMediaFn(query);
+    return matchMediaFn(query).matches;
+  }, [query, defaultMatches, getMatchMedia]);
 
-    setMatches(mediaQuery.matches);
-    isInitializedRef.current = true;
+  const getServerSnapshot = useCallback(() => {
+    return defaultMatches;
+  }, [defaultMatches]);
 
-    if (supportsModernEvents(mediaQuery)) {
-      mediaQuery.addEventListener("change", handleChange);
-      return () => {
-        mediaQuery.removeEventListener("change", handleChange);
-      };
-    } else {
-      const legacyMq = mediaQuery as LegacyMediaQueryList;
-      legacyMq.addListener?.(handleChange);
-      return () => {
-        legacyMq.removeListener?.(handleChange);
-      };
-    }
-  }, [query, handleChange, getMatchMedia]);
+  const matches = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
+  );
 
+  // Call onChange when matches changes
+  const prevMatchesRef = useRef<boolean | undefined>(undefined);
   useEffect(() => {
-    if (isInitializedRef.current && onChangeRef.current) {
+    if (
+      prevMatchesRef.current !== undefined &&
+      prevMatchesRef.current !== matches &&
+      onChangeRef.current
+    ) {
       onChangeRef.current(matches);
     }
+    prevMatchesRef.current = matches;
   }, [matches]);
 
   return {
@@ -292,6 +305,12 @@ export const useDeviceType = () => {
     defaultMatches: true,
   });
 
+  const deviceType = isDesktop.matches
+    ? "desktop"
+    : isTablet.matches
+      ? "tablet"
+      : "mobile";
+
   return {
     /** 767px 이하 화면 */
     isMobile: isMobile.matches,
@@ -299,5 +318,7 @@ export const useDeviceType = () => {
     isTablet: isTablet.matches,
     /** 1024px 이상 화면 */
     isDesktop: isDesktop.matches,
+    /** 현재 디바이스 타입 ('mobile' | 'tablet' | 'desktop') */
+    deviceType,
   };
 };

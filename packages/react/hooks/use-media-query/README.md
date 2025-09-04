@@ -321,9 +321,11 @@ export const useIsTabletLandscape = () =>
 
 ### Performance
 
+- ✅ React 18+ `useSyncExternalStore`를 활용한 최적화된 상태 동기화
 - ✅ 미디어 쿼리 리스너는 컴포넌트 언마운트 시 자동 정리
 - ✅ 불필요한 리렌더링 방지를 위한 최적화
 - ✅ 메모리 누수 방지
+- ✅ SSR hydration 과정에서 발생하는 불일치 방지
 
 ### TypeScript
 
