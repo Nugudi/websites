@@ -33,6 +33,7 @@ export { default as PenIcon } from "./svg/pen.svg?react";
 export { default as PencilIcon } from "./svg/pencil.svg?react";
 export { default as PersonIcon } from "./svg/person.svg?react";
 export { default as PicklesIcon } from "./svg/pickles.svg?react";
+export { default as ReplyIcon } from "./svg/reply.svg?react";
 export { default as RiceIcon } from "./svg/rice.svg?react";
 export { default as ShareIcon } from "./svg/share.svg?react";
 export { default as SoupIcon } from "./svg/soup.svg?react";
