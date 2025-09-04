@@ -1,6 +1,7 @@
 import "@nugudi/react-components-comment/style.css";
 
 import { Comment as _Comment } from "@nugudi/react-components-comment";
+import { VStack } from "@nugudi/react-components-layout";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 // Helper component for avatar in Storybook environment
@@ -139,7 +140,7 @@ export const Reply: Story = {
 
 export const CommentWithReplies: Story = {
   render: () => (
-    <div style={{ maxWidth: "600px" }}>
+    <VStack maxWidth="600px">
       <_Comment
         avatar={
           <Avatar src="https://i.pravatar.cc/150?img=5" alt="원댓글작성자" />
@@ -170,13 +171,13 @@ export const CommentWithReplies: Story = {
           isReply
         />
       </_Comment>
-    </div>
+    </VStack>
   ),
 };
 
 export const MultipleComments: Story = {
   render: () => (
-    <div style={{ maxWidth: "600px" }}>
+    <VStack maxWidth="600px">
       <_Comment
         avatar={<Avatar src="https://i.pravatar.cc/150?img=8" alt="사용자1" />}
         username="사용자1"
@@ -198,6 +199,6 @@ export const MultipleComments: Story = {
         timeAgo="30분전"
         content="세 번째 댓글입니다."
       />
-    </div>
+    </VStack>
   ),
 };
