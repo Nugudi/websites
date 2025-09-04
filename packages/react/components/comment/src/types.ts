@@ -5,8 +5,8 @@ export interface CommentProps {
   avatar?: ReactNode;
   /** Username or display name */
   username: string;
-  /** User level (e.g., "Lv.7") */
-  level: string;
+  /** User level number (will be displayed as "Lv.{number}") */
+  level: number;
   /** Time ago string (e.g., "3분전", "1시간전") */
   timeAgo: string;
   /** Comment content */

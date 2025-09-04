@@ -35,10 +35,10 @@ const meta: Meta<typeof _Comment> = {
       },
     },
     level: {
-      control: "text",
-      description: '사용자 레벨 (예: "Lv.7") - 필수',
+      control: "number",
+      description: '사용자 레벨 숫자 ("Lv." 접두사는 자동 추가됨) - 필수',
       table: {
-        type: { summary: "string" },
+        type: { summary: "number" },
         category: "콘텐츠",
       },
     },
@@ -92,7 +92,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     username: "사용자명",
-    level: "Lv.1",
+    level: 1,
     timeAgo: "방금 전",
     content: "이것은 기본 댓글입니다. 댓글 내용이 여기에 표시됩니다.",
   },
@@ -113,7 +113,7 @@ export const WithAvatar: Story = {
       />
     ),
     username: "애옹",
-    level: "Lv.3",
+    level: 3,
     timeAgo: "5분전",
     content: "아바타가 있는 댓글입니다. 사용자 프로필 이미지가 표시됩니다.",
   },
@@ -134,7 +134,7 @@ export const Reply: Story = {
       />
     ),
     username: "애옹옹옹",
-    level: "Lv.7",
+    level: 7,
     timeAgo: "3분전",
     content: "대댓글 내용이 여기에 표시됩니다.",
     isReply: true,
@@ -158,7 +158,7 @@ export const CommentWithReplies: Story = {
           />
         }
         username="원댓글작성자"
-        level="Lv.10"
+        level={10}
         timeAgo="1시간전"
         content="이것은 원댓글입니다. 아래에 대댓글들이 있습니다."
       >
@@ -176,7 +176,7 @@ export const CommentWithReplies: Story = {
             />
           }
           username="대댓글작성자1"
-          level="Lv.5"
+          level={5}
           timeAgo="30분전"
           content="첫 번째 대댓글입니다."
           isReply
@@ -195,7 +195,7 @@ export const CommentWithReplies: Story = {
             />
           }
           username="대댓글작성자2"
-          level="Lv.8"
+          level={8}
           timeAgo="15분전"
           content="두 번째 대댓글입니다."
           isReply
@@ -222,7 +222,7 @@ export const MultipleComments: Story = {
           />
         }
         username="사용자1"
-        level="Lv.12"
+        level={12}
         timeAgo="2시간전"
         content="첫 번째 댓글입니다."
       />
@@ -240,7 +240,7 @@ export const MultipleComments: Story = {
           />
         }
         username="사용자2"
-        level="Lv.3"
+        level={3}
         timeAgo="1시간전"
         content="두 번째 댓글입니다. 멋진 게시물이네요!"
       />
@@ -258,7 +258,7 @@ export const MultipleComments: Story = {
           />
         }
         username="사용자3"
-        level="Lv.1"
+        level={1}
         timeAgo="30분전"
         content="세 번째 댓글입니다."
       />

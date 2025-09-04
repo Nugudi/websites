@@ -94,7 +94,7 @@ export const timeAgo = style({
 });
 
 export const body = style({
-  paddingLeft: "52px", // 40px avatar + 12px gap
+  paddingLeft: "52px",
 });
 
 export const content = style({
