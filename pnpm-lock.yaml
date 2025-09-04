@@ -598,9 +598,6 @@ importers:
       '@nugudi/assets-icons':
         specifier: workspace:*
         version: link:../../../assets/icons
-      '@nugudi/react-components-badge':
-        specifier: workspace:*
-        version: link:../badge
       '@nugudi/themes':
         specifier: workspace:*
         version: link:../../../themes
