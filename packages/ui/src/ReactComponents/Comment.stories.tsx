@@ -3,6 +3,22 @@ import "@nugudi/react-components-comment/style.css";
 import { Comment as _Comment } from "@nugudi/react-components-comment";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
+// Helper component for avatar in Storybook environment
+//TODO: 추후 아바타 컴포넌트 구현 후 수정
+const Avatar = ({ src, alt }: { src: string; alt: string }) => (
+  // biome-ignore lint/performance/noImgElement: Storybook environment doesn't support Next.js Image
+  <img
+    src={src}
+    alt={alt}
+    style={{
+      width: "40px",
+      height: "40px",
+      borderRadius: "50%",
+      objectFit: "cover",
+    }}
+  />
+);
+
 const meta: Meta<typeof _Comment> = {
   title: "Components/Comment",
   component: _Comment,
@@ -101,16 +117,7 @@ export const Default: Story = {
 export const WithAvatar: Story = {
   args: {
     avatar: (
-      <img
-        src="https://i.pravatar.cc/150?img=1"
-        alt="애옹 프로필 이미지"
-        style={{
-          width: "40px",
-          height: "40px",
-          borderRadius: "50%",
-          objectFit: "cover",
-        }}
-      />
+      <Avatar src="https://i.pravatar.cc/150?img=1" alt="애옹 프로필 이미지" />
     ),
     username: "애옹",
     level: 3,
@@ -121,18 +128,7 @@ export const WithAvatar: Story = {
 
 export const Reply: Story = {
   args: {
-    avatar: (
-      <img
-        src="https://i.pravatar.cc/150?img=3"
-        alt="애옹옹옹"
-        style={{
-          width: "40px",
-          height: "40px",
-          borderRadius: "50%",
-          objectFit: "cover",
-        }}
-      />
-    ),
+    avatar: <Avatar src="https://i.pravatar.cc/150?img=3" alt="애옹옹옹" />,
     username: "애옹옹옹",
     level: 7,
     timeAgo: "3분전",
@@ -146,16 +142,7 @@ export const CommentWithReplies: Story = {
     <div style={{ maxWidth: "600px" }}>
       <_Comment
         avatar={
-          <img
-            src="https://i.pravatar.cc/150?img=5"
-            alt="원댓글작성자"
-            style={{
-              width: "40px",
-              height: "40px",
-              borderRadius: "50%",
-              objectFit: "cover",
-            }}
-          />
+          <Avatar src="https://i.pravatar.cc/150?img=5" alt="원댓글작성자" />
         }
         username="원댓글작성자"
         level={10}
@@ -164,16 +151,7 @@ export const CommentWithReplies: Story = {
       >
         <_Comment
           avatar={
-            <img
-              src="https://i.pravatar.cc/150?img=6"
-              alt="대댓글작성자1"
-              style={{
-                width: "40px",
-                height: "40px",
-                borderRadius: "50%",
-                objectFit: "cover",
-              }}
-            />
+            <Avatar src="https://i.pravatar.cc/150?img=6" alt="대댓글작성자1" />
           }
           username="대댓글작성자1"
           level={5}
@@ -183,16 +161,7 @@ export const CommentWithReplies: Story = {
         />
         <_Comment
           avatar={
-            <img
-              src="https://i.pravatar.cc/150?img=7"
-              alt="대댓글작성자2"
-              style={{
-                width: "40px",
-                height: "40px",
-                borderRadius: "50%",
-                objectFit: "cover",
-              }}
-            />
+            <Avatar src="https://i.pravatar.cc/150?img=7" alt="대댓글작성자2" />
           }
           username="대댓글작성자2"
           level={8}
@@ -209,54 +178,21 @@ export const MultipleComments: Story = {
   render: () => (
     <div style={{ maxWidth: "600px" }}>
       <_Comment
-        avatar={
-          <img
-            src="https://i.pravatar.cc/150?img=8"
-            alt="사용자1"
-            style={{
-              width: "40px",
-              height: "40px",
-              borderRadius: "50%",
-              objectFit: "cover",
-            }}
-          />
-        }
+        avatar={<Avatar src="https://i.pravatar.cc/150?img=8" alt="사용자1" />}
         username="사용자1"
         level={12}
         timeAgo="2시간전"
         content="첫 번째 댓글입니다."
       />
       <_Comment
-        avatar={
-          <img
-            src="https://i.pravatar.cc/150?img=9"
-            alt="사용자2"
-            style={{
-              width: "40px",
-              height: "40px",
-              borderRadius: "50%",
-              objectFit: "cover",
-            }}
-          />
-        }
+        avatar={<Avatar src="https://i.pravatar.cc/150?img=9" alt="사용자2" />}
         username="사용자2"
         level={3}
         timeAgo="1시간전"
         content="두 번째 댓글입니다. 멋진 게시물이네요!"
       />
       <_Comment
-        avatar={
-          <img
-            src="https://i.pravatar.cc/150?img=10"
-            alt="사용자3"
-            style={{
-              width: "40px",
-              height: "40px",
-              borderRadius: "50%",
-              objectFit: "cover",
-            }}
-          />
-        }
+        avatar={<Avatar src="https://i.pravatar.cc/150?img=10" alt="사용자3" />}
         username="사용자3"
         level={1}
         timeAgo="30분전"
