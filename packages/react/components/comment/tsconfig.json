@@ -1,7 +1,11 @@
 {
   "extends": "@tsconfig/vite-react/tsconfig.json",
-  "compilerOptions": {
-    "outDir": "./dist"
-  },
-  "include": ["src"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "./global.d.ts",
+    "vite.config.mts",
+    "vitest.config.ts"
+  ],
+  "exclude": ["node_modules"]
 }
