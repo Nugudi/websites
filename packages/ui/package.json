@@ -33,6 +33,7 @@
     "@nugudi/react-components-bottom-sheet": "workspace:*",
     "@nugudi/react-components-button": "workspace:*",
     "@nugudi/react-components-chip": "workspace:*",
+    "@nugudi/react-components-comment": "workspace:*",
     "@nugudi/react-components-image-card": "workspace:*",
     "@nugudi/react-components-input": "workspace:*",
     "@nugudi/react-components-input-otp": "workspace:*",
