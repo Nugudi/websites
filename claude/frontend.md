@@ -54,13 +54,13 @@ import { CafeteriaHomeView } from '@/src/domains/cafeteria/ui/views/cafeteria-ho
 const Page = async ({ params, searchParams }) => {
   // 1. Extract parameters
   const { filter } = searchParams;
-  
+
   // 2. Prefetch data on server
   await queryClient.prefetchQuery({
     queryKey: ['cafeterias', filter],
     queryFn: () => api.cafeterias.getList({ filter }),
   });
-  
+
   // 3. Return View wrapped in HydrationBoundary
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
@@ -96,7 +96,7 @@ import * as styles from "./index.css";
 
 export const CafeteriaHomeView = ({ filter }) => {
   return (
-    <Flex direction="column" className={styles.container} gap="16px">
+    <Flex direction="column" className={styles.container} gap={16}>
       <AppHeader />
       <CafeteriaBrowseMenuSection filter={filter} />
       <CafeteriaRecommendSection />
@@ -164,7 +164,7 @@ const CafeteriaBrowseMenuSectionContent = ({ filter }) => {
     queryKey: ['cafeterias', filter],
     queryFn: () => api.cafeterias.getList({ filter }),
   });
-  
+
   return <CafeteriaMenuList cafeteriaList={data} />;
 };
 
@@ -311,7 +311,7 @@ import { SignUpSection } from '../../sections/sign-up-section';
 
 // In: apps/web/src/domains/auth/sign-up/ui/sections/sign-up-section/index.tsx
 import { SignUpForm } from '../../components/sign-up-form';
-import { useSignUpStore } from '../../../stores/use-sign-up-store';  // Named export for hooks
+import { useSignUpStore } from '../../../stores/use-sign-up-store'; // Named export for hooks
 import type { SignUpFormData } from '../../../types/sign-up';
 
 // In: apps/web/src/domains/auth/sign-up/ui/components/sign-up-form/index.tsx
@@ -357,26 +357,31 @@ import { useAuth } from '../../../auth/hooks/use-auth'; // NO!
 
 ```typescript
 // Individual component packages - Named exports
-import { Button } from '@nugudi/react-components-button';  // ✅ Named
-import { Input } from '@nugudi/react-components-input';    // ✅ Named
-import { Switch } from '@nugudi/react-components-switch';  // ✅ Named
+import { Button } from '@nugudi/react-components-button'; // ✅ Named
+import { Input } from '@nugudi/react-components-input'; // ✅ Named
+import { Switch } from '@nugudi/react-components-switch'; // ✅ Named
 
 // Layout package - Named exports
-import { Box, Flex, VStack, HStack } from '@nugudi/react-components-layout';  // ✅ Named
-import { Heading, Title, Body, Emphasis } from '@nugudi/react-components-layout';  // ✅ Named
+import { Box, Flex, VStack, HStack } from '@nugudi/react-components-layout'; // ✅ Named
+import {
+  Heading,
+  Title,
+  Body,
+  Emphasis,
+} from '@nugudi/react-components-layout'; // ✅ Named
 
 // Hooks - Named exports
-import { useToggle } from '@nugudi/react-hooks-toggle';  // ✅ Named
-import { useStepper } from '@nugudi/react-hooks-use-stepper';  // ✅ Named
+import { useToggle } from '@nugudi/react-hooks-toggle'; // ✅ Named
+import { useStepper } from '@nugudi/react-hooks-use-stepper'; // ✅ Named
 
 // Themes - Named exports
-import { vars, classes } from '@nugudi/themes';  // ✅ Named
+import { vars, classes } from '@nugudi/themes'; // ✅ Named
 
 // Icons - Named exports
-import { AppleIcon, HeartIcon, ArrowRightIcon } from '@nugudi/assets-icons';  // ✅ Named
+import { AppleIcon, HeartIcon, ArrowRightIcon } from '@nugudi/assets-icons'; // ✅ Named
 
 // API - Named export
-import { api } from '@nugudi/api';  // ✅ Named
+import { api } from '@nugudi/api'; // ✅ Named
 ```
 
 ## Data Flow Rules
@@ -508,27 +513,27 @@ interface [Component]Props {
 
 ### Export Rules by File Type
 
-| File Type | Export Pattern | Example |
-|-----------|---------------|---------|
-| **Pages** | `export default` | `export default Page` |
-| **Views** | `export const` | `export const SignUpView` |
-| **Sections** | `export const` | `export const SignUpSection` |
-| **Components** | `export const` | `export const SignUpForm` |
-| **Hooks** | `export const` or `export function` | `export const useSignUpStore` |
-| **Types** | `export type` or `export interface` | `export type SignUpFormData` |
-| **Constants** | `export const` | `export const TOTAL_SIGN_UP_STEPS` |
-| **Utils** | `export const` or `export function` | `export const validateEmail` |
+| File Type      | Export Pattern                      | Example                            |
+| -------------- | ----------------------------------- | ---------------------------------- |
+| **Pages**      | `export default`                    | `export default Page`              |
+| **Views**      | `export const`                      | `export const SignUpView`          |
+| **Sections**   | `export const`                      | `export const SignUpSection`       |
+| **Components** | `export const`                      | `export const SignUpForm`          |
+| **Hooks**      | `export const` or `export function` | `export const useSignUpStore`      |
+| **Types**      | `export type` or `export interface` | `export type SignUpFormData`       |
+| **Constants**  | `export const`                      | `export const TOTAL_SIGN_UP_STEPS` |
+| **Utils**      | `export const` or `export function` | `export const validateEmail`       |
 
 ### Import Rules by Context
 
-| From → To | Same Domain | Cross Domain | Shared/App | Packages |
-|-----------|-------------|--------------|------------|----------|
-| **Pattern** | Relative | Absolute | Absolute | Package |
-| **Example** | `../../sections/` | `@/domains/auth/` | `@/src/shared/` | `@nugudi/themes` |
-| **View → Section** | `import { SignUpSection } from '../../sections/sign-up-section'` | N/A | N/A | N/A |
-| **Section → Component** | `import { SignUpForm } from '../../components/sign-up-form'` | N/A | N/A | N/A |
-| **Component → Store** | `import { useSignUpStore } from '../../../stores/use-sign-up-store'` | `import { useAuth } from '@/src/domains/auth/hooks/use-auth'` | N/A | N/A |
-| **Any → Package** | N/A | N/A | N/A | `import { Button } from '@nugudi/react-components-button'` |
+| From → To               | Same Domain                                                          | Cross Domain                                                  | Shared/App      | Packages                                                   |
+| ----------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------- | --------------- | ---------------------------------------------------------- |
+| **Pattern**             | Relative                                                             | Absolute                                                      | Absolute        | Package                                                    |
+| **Example**             | `../../sections/`                                                    | `@/domains/auth/`                                             | `@/src/shared/` | `@nugudi/themes`                                           |
+| **View → Section**      | `import { SignUpSection } from '../../sections/sign-up-section'`     | N/A                                                           | N/A             | N/A                                                        |
+| **Section → Component** | `import { SignUpForm } from '../../components/sign-up-form'`         | N/A                                                           | N/A             | N/A                                                        |
+| **Component → Store**   | `import { useSignUpStore } from '../../../stores/use-sign-up-store'` | `import { useAuth } from '@/src/domains/auth/hooks/use-auth'` | N/A             | N/A                                                        |
+| **Any → Package**       | N/A                                                                  | N/A                                                           | N/A             | `import { Button } from '@nugudi/react-components-button'` |
 
 ### Common Import Patterns
 
@@ -556,7 +561,7 @@ import { SignUpSection } from '@/src/domains/auth/sign-up/ui/sections/sign-up-se
 import { LoginWelcome } from '../../../auth/login/ui/components/login-welcome';
 
 // Wrong export pattern for packages
-import Button from '@nugudi/react-components-button';  // Should be named export
+import Button from '@nugudi/react-components-button'; // Should be named export
 ```
 
 This architecture ensures:

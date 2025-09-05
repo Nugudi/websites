@@ -1,112 +1,383 @@
 # @nugudi/react-components-textarea
 
-Textarea 컴포넌트 라이브러리입니다.
+A flexible textarea component with built-in error states, character counting, and resize options.
 
-## 설치
+## Installation
 
 ```bash
 pnpm add @nugudi/react-components-textarea
 ```
 
-## 사용법
+## Import
 
-### 기본 사용
+```tsx
+import { Textarea, useTextarea } from "@nugudi/react-components-textarea";
+import "@nugudi/react-components-textarea/style.css";
+```
+
+## Basic Usage
 
 ```tsx
 import { Textarea } from "@nugudi/react-components-textarea";
 import "@nugudi/react-components-textarea/style.css";
 
 function App() {
-  return <Textarea placeholder="오늘의 메뉴 어떠셨나요?" />;
+  return <Textarea placeholder="Share your thoughts..." />;
 }
 ```
 
-### 라벨과 함께 사용
+## Features
+
+### With Label
 
 ```tsx
-<Textarea label="의견" placeholder="오늘의 메뉴 어떠셨나요?" />
-```
+import { Textarea } from "@nugudi/react-components-textarea";
+import { VStack } from "@nugudi/react-components-layout";
 
-### 에러 상태
-
-```tsx
-<Textarea
-  label="리뷰"
-  placeholder="리뷰를 작성해주세요"
-  isError={true}
-  errorMessage="리뷰는 10자 이상 작성해주세요."
-/>
-```
-
-### 크기 조절 옵션
-
-```tsx
-// 크기 조절 불가
-<Textarea
-  placeholder="크기 조절이 불가능합니다"
-  resize="none"
-/>
-
-// 세로로만 조절 (기본값)
-<Textarea
-  placeholder="세로로만 조절 가능"
-  resize="vertical"
-/>
-
-// 가로로만 조절
-<Textarea
-  placeholder="가로로만 조절 가능"
-  resize="horizontal"
-/>
-
-// 모든 방향 조절
-<Textarea
-  placeholder="모든 방향으로 조절 가능"
-  resize="both"
-/>
-```
-
-### 문자 수 제한
-
-`maxLength` prop을 사용하여 입력 가능한 최대 문자 수를 제한할 수 있습니다. 문자 수 제한이 설정되면 우하단에 현재 글자 수와 최대 글자 수가 표시됩니다.
-
-```tsx
-// 기본 문자 수 제한
-<Textarea placeholder="최대 100자까지 입력할 수 있습니다" maxLength={100} />;
-
-// Controlled 컴포넌트로 사용
-function ControlledTextarea() {
-  const [value, setValue] = React.useState("");
-
+function FeedbackForm() {
   return (
-    <Textarea
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
-      maxLength={200}
-      placeholder="최대 200자까지 입력 가능"
-    />
+    <VStack gap={16}>
+      <Textarea 
+        label="Feedback" 
+        placeholder="Tell us what you think..." 
+      />
+      
+      <Textarea 
+        label="Comments" 
+        placeholder="Additional comments (optional)" 
+      />
+    </VStack>
   );
 }
-
-// React Hook Form과 함께 사용
-<Textarea
-  {...register("content")}
-  maxLength={150}
-  placeholder="최대 150자까지 입력 가능"
-  isError={!!errors.content}
-  errorMessage={errors.content?.message}
-/>;
 ```
 
-## React Hook Form과 함께 사용하기
+### Error States
 
-### 기본 사용법
+```tsx
+import { Textarea } from "@nugudi/react-components-textarea";
+import { VStack } from "@nugudi/react-components-layout";
+
+function ValidationExample() {
+  return (
+    <VStack gap={16}>
+      <Textarea
+        label="Review"
+        placeholder="Write your review..."
+        isError={true}
+        errorMessage="Review must be at least 10 characters long."
+      />
+      
+      <Textarea
+        label="Description"
+        placeholder="Enter description..."
+        invalid={true}
+        errorMessage="This field is required."
+      />
+    </VStack>
+  );
+}
+```
+
+### Resize Options
+
+```tsx
+import { Textarea } from "@nugudi/react-components-textarea";
+import { VStack, Title } from "@nugudi/react-components-layout";
+
+function ResizeExamples() {
+  return (
+    <VStack gap={24}>
+      <VStack gap={8}>
+        <Title level={4}>No Resize</Title>
+        <Textarea
+          placeholder="Fixed size textarea"
+          resize="none"
+        />
+      </VStack>
+
+      <VStack gap={8}>
+        <Title level={4}>Vertical Only (Default)</Title>
+        <Textarea
+          placeholder="Resize vertically only"
+          resize="vertical"
+        />
+      </VStack>
+
+      <VStack gap={8}>
+        <Title level={4}>Horizontal Only</Title>
+        <Textarea
+          placeholder="Resize horizontally only"
+          resize="horizontal"
+        />
+      </VStack>
+
+      <VStack gap={8}>
+        <Title level={4}>Both Directions</Title>
+        <Textarea
+          placeholder="Resize in any direction"
+          resize="both"
+        />
+      </VStack>
+    </VStack>
+  );
+}
+```
+
+### Character Counter
+
+The `maxLength` prop automatically displays a character counter in the bottom-right corner.
+
+```tsx
+import { Textarea } from "@nugudi/react-components-textarea";
+import { VStack, Title } from "@nugudi/react-components-layout";
+
+function CharacterLimitExamples() {
+  return (
+    <VStack gap={24}>
+      <VStack gap={8}>
+        <Title level={4}>Tweet Composer</Title>
+        <Textarea 
+          placeholder="What's happening?" 
+          maxLength={280} 
+        />
+      </VStack>
+
+      <VStack gap={8}>
+        <Title level={4}>Bio</Title>
+        <Textarea 
+          label="Bio"
+          placeholder="Tell us about yourself..." 
+          maxLength={160}
+          resize="none"
+        />
+      </VStack>
+
+      <VStack gap={8}>
+        <Title level={4}>Product Description</Title>
+        <Textarea 
+          label="Description"
+          placeholder="Describe your product in detail..." 
+          maxLength={500}
+          rows={5}
+        />
+      </VStack>
+    </VStack>
+  );
+}
+```
+
+### Controlled Component
+
+```tsx
+import React from "react";
+import { Textarea } from "@nugudi/react-components-textarea";
+import { VStack, Body } from "@nugudi/react-components-layout";
+
+function ControlledTextarea() {
+  const [value, setValue] = React.useState("");
+  const [touched, setTouched] = React.useState(false);
+  
+  const minLength = 20;
+  const hasError = touched && value.length < minLength;
+
+  return (
+    <VStack gap={16}>
+      <Textarea
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onBlur={() => setTouched(true)}
+        maxLength={200}
+        placeholder="Enter at least 20 characters..."
+        isError={hasError}
+        errorMessage={hasError ? `Please enter at least ${minLength} characters` : undefined}
+      />
+      
+      <Body size={2} tone="secondary">
+        Character count: {value.length}/200
+      </Body>
+    </VStack>
+  );
+}
+```
+
+## Real-World Examples
+
+### Comment Section
+
+```tsx
+import { Textarea } from "@nugudi/react-components-textarea";
+import { VStack, HStack, Button } from "@nugudi/react-components-layout";
+
+function CommentBox() {
+  const [comment, setComment] = React.useState("");
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  const handleSubmit = async () => {
+    if (comment.trim().length < 10) return;
+    
+    setIsSubmitting(true);
+    // Submit comment
+    await submitComment(comment);
+    setComment("");
+    setIsSubmitting(false);
+  };
+
+  return (
+    <VStack gap={12}>
+      <Textarea
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
+        placeholder="Add a comment..."
+        maxLength={500}
+        rows={3}
+        resize="vertical"
+      />
+      
+      <HStack gap={8} justify="flex-end">
+        <Button 
+          variant="secondary" 
+          onClick={() => setComment("")}
+          disabled={!comment || isSubmitting}
+        >
+          Cancel
+        </Button>
+        <Button 
+          onClick={handleSubmit}
+          disabled={comment.trim().length < 10 || isSubmitting}
+        >
+          {isSubmitting ? "Posting..." : "Post Comment"}
+        </Button>
+      </HStack>
+    </VStack>
+  );
+}
+```
+
+### Support Ticket Form
+
+```tsx
+import { Textarea } from "@nugudi/react-components-textarea";
+import { VStack, Input, Select } from "@nugudi/react-components-layout";
+
+function SupportTicket() {
+  return (
+    <VStack gap={20}>
+      <Input 
+        label="Subject"
+        placeholder="Brief description of your issue"
+        required
+      />
+      
+      <Select label="Category" required>
+        <option value="">Select category</option>
+        <option value="technical">Technical Issue</option>
+        <option value="billing">Billing</option>
+        <option value="feature">Feature Request</option>
+        <option value="other">Other</option>
+      </Select>
+      
+      <Textarea
+        label="Description"
+        placeholder="Please provide detailed information about your issue..."
+        maxLength={1000}
+        rows={6}
+        required
+        resize="vertical"
+      />
+      
+      <Textarea
+        label="Steps to Reproduce (if applicable)"
+        placeholder="1. Go to...\n2. Click on...\n3. See error..."
+        rows={4}
+        resize="vertical"
+      />
+    </VStack>
+  );
+}
+```
+
+### Product Review
+
+```tsx
+import { Textarea } from "@nugudi/react-components-textarea";
+import { VStack, HStack, Title, Body } from "@nugudi/react-components-layout";
+
+function ProductReview({ productName }) {
+  const [rating, setRating] = React.useState(0);
+  const [title, setTitle] = React.useState("");
+  const [review, setReview] = React.useState("");
+  const [pros, setPros] = React.useState("");
+  const [cons, setCons] = React.useState("");
+
+  return (
+    <VStack gap={24}>
+      <VStack gap={8}>
+        <Title level={3}>Write a Review for {productName}</Title>
+        <Body size={2} tone="secondary">
+          Share your experience with other customers
+        </Body>
+      </VStack>
+
+      <VStack gap={20}>
+        <Input
+          label="Review Title"
+          placeholder="Summarize your experience"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          maxLength={100}
+        />
+
+        <Textarea
+          label="Your Review"
+          placeholder="Tell us what you liked or disliked about this product..."
+          value={review}
+          onChange={(e) => setReview(e.target.value)}
+          maxLength={1500}
+          rows={6}
+          resize="vertical"
+        />
+
+        <HStack gap={16}>
+          <VStack gap={8} flex={1}>
+            <Textarea
+              label="Pros"
+              placeholder="What did you like?"
+              value={pros}
+              onChange={(e) => setPros(e.target.value)}
+              maxLength={300}
+              rows={3}
+              resize="none"
+            />
+          </VStack>
+
+          <VStack gap={8} flex={1}>
+            <Textarea
+              label="Cons"
+              placeholder="What could be improved?"
+              value={cons}
+              onChange={(e) => setCons(e.target.value)}
+              maxLength={300}
+              rows={3}
+              resize="none"
+            />
+          </VStack>
+        </HStack>
+      </VStack>
+    </VStack>
+  );
+}
+```
+
+## Form Integration
+
+### React Hook Form
 
 ```tsx
 import { useForm } from "react-hook-form";
 import { Textarea } from "@nugudi/react-components-textarea";
+import { VStack } from "@nugudi/react-components-layout";
 
-function MyForm() {
+function ContactForm() {
   const {
     register,
     handleSubmit,
@@ -119,54 +390,65 @@ function MyForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Textarea
-        {...register("description", {
-          required: "필수 입력 항목입니다",
-          minLength: {
-            value: 10,
-            message: "10자 이상 입력해주세요",
-          },
-        })}
-        label="설명"
-        placeholder="설명을 입력해주세요"
-        isError={!!errors.description}
-        errorMessage={errors.description?.message}
-      />
-      <button type="submit">제출</button>
+      <VStack gap={20}>
+        <Textarea
+          {...register("message", {
+            required: "Message is required",
+            minLength: {
+              value: 20,
+              message: "Message must be at least 20 characters",
+            },
+            maxLength: {
+              value: 500,
+              message: "Message cannot exceed 500 characters",
+            },
+          })}
+          label="Message"
+          placeholder="Enter your message..."
+          maxLength={500}
+          isError={!!errors.message}
+          errorMessage={errors.message?.message}
+          rows={5}
+        />
+        
+        <button type="submit">Send Message</button>
+      </VStack>
     </form>
   );
 }
 ```
 
-### Zod와 함께 사용하기
+### With Zod Validation
 
 ```tsx
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Textarea } from "@nugudi/react-components-textarea";
+import { VStack } from "@nugudi/react-components-layout";
 
 const formSchema = z.object({
-  review: z.string().min(10, "리뷰는 10자 이상 작성해주세요"),
-  feedback: z.string().min(5, "피드백은 5자 이상 작성해주세요"),
-  description: z.string().optional(),
+  feedback: z
+    .string()
+    .min(10, "Feedback must be at least 10 characters")
+    .max(500, "Feedback cannot exceed 500 characters"),
+  suggestions: z
+    .string()
+    .min(5, "Please provide at least 5 characters")
+    .optional(),
+  additionalNotes: z.string().optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
 
-function MyForm() {
+function FeedbackForm() {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      review: "",
-      feedback: "",
-      description: "",
-    },
-    mode: "onTouched",
+    mode: "onBlur",
   });
 
   const onSubmit = (data: FormData) => {
@@ -175,81 +457,96 @@ function MyForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Textarea
-        label="리뷰"
-        placeholder="오늘의 메뉴 어떠셨나요? (10자 이상)"
-        {...register("review")}
-        isError={!!errors.review}
-        errorMessage={errors.review?.message}
-      />
+      <VStack gap={20}>
+        <Textarea
+          label="Feedback *"
+          placeholder="Share your feedback (10-500 characters)"
+          {...register("feedback")}
+          maxLength={500}
+          isError={!!errors.feedback}
+          errorMessage={errors.feedback?.message}
+          rows={4}
+        />
 
-      <Textarea
-        label="피드백"
-        placeholder="개선사항을 알려주세요 (5자 이상)"
-        {...register("feedback")}
-        isError={!!errors.feedback}
-        errorMessage={errors.feedback?.message}
-      />
+        <Textarea
+          label="Suggestions"
+          placeholder="Any suggestions for improvement?"
+          {...register("suggestions")}
+          isError={!!errors.suggestions}
+          errorMessage={errors.suggestions?.message}
+          rows={3}
+        />
 
-      <Textarea
-        label="추가 설명 (선택)"
-        placeholder="추가로 하고 싶은 말씀이 있으시면 작성해주세요"
-        {...register("description")}
-        resize="none"
-      />
+        <Textarea
+          label="Additional Notes"
+          placeholder="Anything else you'd like to add?"
+          {...register("additionalNotes")}
+          resize="vertical"
+          rows={2}
+        />
 
-      <button type="submit">제출</button>
+        <button type="submit">Submit Feedback</button>
+      </VStack>
     </form>
   );
 }
 ```
 
-### Controller 사용하기
-
-더 복잡한 로직이 필요한 경우 Controller를 사용할 수 있습니다:
+### Controller Pattern
 
 ```tsx
 import { Controller, useForm } from "react-hook-form";
 import { Textarea } from "@nugudi/react-components-textarea";
+import { VStack } from "@nugudi/react-components-layout";
 
-function MyForm() {
-  const { control, handleSubmit } = useForm();
+function AdvancedForm() {
+  const { control, handleSubmit, watch } = useForm();
+  const contentValue = watch("content");
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Controller
-        name="content"
-        control={control}
-        rules={{
-          required: "필수 입력 항목입니다",
-          validate: (value) => {
-            if (value.includes("금지어")) {
-              return "금지어를 포함할 수 없습니다";
-            }
-            return true;
-          },
-        }}
-        render={({ field, fieldState }) => (
-          <Textarea
-            {...field}
-            label="내용"
-            placeholder="내용을 입력해주세요"
-            isError={!!fieldState.error}
-            errorMessage={fieldState.error?.message}
-          />
-        )}
-      />
-      <button type="submit">제출</button>
+      <VStack gap={20}>
+        <Controller
+          name="content"
+          control={control}
+          rules={{
+            required: "Content is required",
+            validate: {
+              noSpam: (value) => 
+                !value.includes("spam") || "Content contains prohibited words",
+              minWords: (value) => 
+                value.split(" ").length >= 5 || "Please write at least 5 words",
+            },
+          }}
+          render={({ field, fieldState }) => (
+            <Textarea
+              {...field}
+              label="Content"
+              placeholder="Write your content..."
+              isError={!!fieldState.error}
+              errorMessage={fieldState.error?.message}
+              maxLength={1000}
+              rows={6}
+            />
+          )}
+        />
+        
+        <Body size={2} tone="secondary">
+          Word count: {contentValue?.split(" ").filter(Boolean).length || 0}
+        </Body>
+        
+        <button type="submit">Submit</button>
+      </VStack>
     </form>
   );
 }
 ```
 
-## Hooks
+## Custom Hook
 
 ### useTextarea
 
-Textarea의 상태 관리와 접근성을 위한 커스텀 훅입니다.
+The `useTextarea` hook provides state management and accessibility features for custom textarea implementations.
 
 ```tsx
 import { useTextarea } from "@nugudi/react-components-textarea";
@@ -257,17 +554,75 @@ import { useTextarea } from "@nugudi/react-components-textarea";
 function CustomTextarea() {
   const { textareaProps, isFocused } = useTextarea({
     invalid: false,
-    errorMessage: "에러 메시지",
-    // ... 기타 props
+    errorMessage: "Error message",
+    required: true,
+    // ... other HTML textarea attributes
   });
 
-  return <textarea {...textareaProps} />;
+  return (
+    <div className={`custom-wrapper ${isFocused ? "focused" : ""}`}>
+      <textarea {...textareaProps} />
+    </div>
+  );
 }
 ```
 
-## 접근성
+## Props
 
-- `aria-invalid`: 유효하지 않은 입력 상태를 나타냅니다
-- `aria-describedby`: 에러 메시지와 연결합니다
-- `aria-required`: 필수 입력 필드를 나타냅니다
-- 라벨과 textarea는 `htmlFor`와 `id`로 연결됩니다
+### TextareaProps
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `size` | `"full"` | - | Width sizing option |
+| `label` | `string` | - | Label text for the textarea |
+| `isError` | `boolean` | `false` | Error state indicator |
+| `errorMessage` | `string` | - | Error message to display |
+| `invalid` | `boolean` | `false` | Invalid state for aria-invalid |
+| `resize` | `"none" \| "vertical" \| "horizontal" \| "both"` | `"vertical"` | Resize behavior |
+| `maxLength` | `number` | - | Maximum character limit (shows counter) |
+| `rows` | `number` | - | Number of visible text lines |
+| `placeholder` | `string` | - | Placeholder text |
+| `value` | `string` | - | Controlled value |
+| `onChange` | `(e: React.ChangeEvent<HTMLTextAreaElement>) => void` | - | Change handler |
+| `...props` | `React.TextareaHTMLAttributes<HTMLTextAreaElement>` | - | All standard HTML textarea attributes |
+
+### useTextarea Props
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `invalid` | `boolean` | Sets aria-invalid attribute |
+| `errorMessage` | `string` | Error message for aria-describedby |
+| `...props` | `React.TextareaHTMLAttributes<HTMLTextAreaElement>` | All standard HTML textarea attributes |
+
+### useTextarea Return
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `textareaProps` | `object` | Props to spread on textarea element with accessibility attributes |
+| `isFocused` | `boolean` | Current focus state |
+
+## Accessibility
+
+- **ARIA Support**: Automatic `aria-invalid`, `aria-describedby`, and `aria-required` attributes
+- **Label Association**: Proper `htmlFor` and `id` linking between label and textarea
+- **Error Announcements**: Error messages are properly announced to screen readers
+- **Keyboard Navigation**: Full keyboard support for all interactions
+- **Focus Management**: Clear focus indicators and states
+
+## Best Practices
+
+1. **Always provide labels** for better accessibility
+2. **Use appropriate resize options** based on content type
+3. **Set reasonable maxLength** for user guidance
+4. **Provide clear error messages** for validation
+5. **Use controlled components** for complex form logic
+6. **Consider mobile experience** when setting rows and resize options
+7. **Test with screen readers** for accessibility compliance
+
+## TypeScript
+
+Full TypeScript support with exported types:
+
+```tsx
+import type { TextareaProps, UseTextareaProps, UseTextareaReturn } from "@nugudi/react-components-textarea";
+```

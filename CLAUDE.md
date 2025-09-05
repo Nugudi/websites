@@ -10,18 +10,42 @@
 2. **SECOND**: Read [claude/frontend.md](./claude/frontend.md) — Frontend development patterns and code style
 3. **THIRD**: Read [claude/testing.md](./claude/testing.md) — Testing requirements and patterns
 
+### 📚 Package Documentation (READ BEFORE WRITING ANY CODE):
+
+Before writing ANY new code, you MUST check existing package documentation:
+
+- **Component APIs**: Read `packages/react/components/*/README.md` — All component API documentation
+- **Hook APIs**: Read `packages/react/hooks/*/README.md` — All hook API documentation
+- **Design Tokens**: Read `packages/themes/README.md` — Design token system documentation
+
+#### Development Priority (MANDATORY):
+
+1. **CHECK** existing packages before writing new code
+2. **REUSE** components/hooks when they meet requirements
+3. **EXTEND** existing solutions when possible
+4. **CREATE** new code only when absolutely necessary
+
+**DO NOT PROCEED** with any development until you have:
+
+- ✅ Read all package README files relevant to your task
+- ✅ Verified no existing solution meets the requirements
+- ✅ Confirmed that extension is not possible
+- ✅ Justified why new code creation is necessary
+
 ### Context-Specific Guidelines:
 
 #### When Working with Next.js Components:
 
 - **IF** creating or modifying pages in `app/(auth)/` or `app/(public)/` or components in `src/domains/*/ui/`
-- **THEN** read [claude/nextjs-component-structure-guideline.md](./claude/nextjs-component-structure-guideline.md) — Next.js App Router component hierarchy (Page → View → Section → Component)
+- **THEN** read [claude/frontend.md](./claude/frontend.md) — Complete component architecture rules (Page → View → Section → Component hierarchy)
+- **AND** read [claude/nextjs-component-structure-guideline.md](./claude/nextjs-component-structure-guideline.md) — Next.js App Router route structure and specific patterns
 
 #### When Creating Shared Components & Storybook:
 
 - **IF** developing shared components in `packages/react/components/` or `packages/react/hooks/`
 - **OR** adding Storybook documentation in `packages/ui/src/`
-- **THEN** read [storybook.md](./claude/storybook-guideline.md) — Component development workflow, export patterns, and Storybook story guidelines
+- **THEN** read [claude/storybook-guideline.md](./claude/storybook-guideline.md) — Storybook-specific development workflow and story guidelines
+- **AND** read [claude/packages.md](./claude/packages.md) — Import patterns, package usage, and naming conventions
 
 ## ⚠️ CRITICAL REMINDERS
 
@@ -59,3 +83,35 @@ Failure to read these documents will result in:
 - ❌ Incorrect component architecture (violating established patterns)
 
 **DO NOT PROCEED** with any development task until you have confirmed understanding of ALL the rules in the referenced documents.
+
+## 📋 Document Hierarchy and Responsibilities
+
+To avoid confusion, each document has a specific focus:
+
+- **[claude/packages.md](./claude/packages.md)** - **AUTHORITATIVE SOURCE** for:
+  - Import/export patterns
+  - Package usage guidelines  
+  - Naming conventions
+  - Setup requirements
+  - Component priority rules
+
+- **[claude/frontend.md](./claude/frontend.md)** - **COMPLETE GUIDE** for:
+  - Component architecture (Page → View → Section → Component)
+  - Layer responsibilities and patterns
+  - Error handling with Suspense/ErrorBoundary
+  - Data flow and state management
+
+- **[claude/nextjs-component-structure-guideline.md](./claude/nextjs-component-structure-guideline.md)** - **NEXT.JS SPECIFIC** for:
+  - App Router route structure
+  - Route groups and authentication patterns
+  - Next.js-specific patterns (metadata, loading, error UI)
+
+- **[claude/storybook-guideline.md](./claude/storybook-guideline.md)** - **STORYBOOK SPECIFIC** for:
+  - Story writing patterns
+  - CSS import rules with underscore aliases
+  - Storybook configuration
+
+- **[claude/testing.md](./claude/testing.md)** - **TESTING FOCUSED** for:
+  - Testing strategies and patterns
+  - What to test vs what to skip
+  - Testing tool usage

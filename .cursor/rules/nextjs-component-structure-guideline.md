@@ -1,6 +1,10 @@
-# Next.js App Router Component Architecture Rules
+# Next.js App Router Route Structure
 
-## Component Hierarchy Overview
+**Important**: For detailed component architecture rules (Page → View → Section → Component hierarchy), layer responsibilities, and component patterns, see [claude/frontend.md](./frontend.md).
+
+This file focuses specifically on Next.js App Router structure and route organization.
+
+## Next.js App Router Directory Structure
 
 ```
 apps/web/
@@ -44,7 +48,7 @@ apps/web/
                     ├── views/
                     ├── sections/
                     └── components/
-            
+
             # Option 2: Simple domains without sub-features
             └── ui/           # e.g., benefit/ui, cafeteria/ui (directly under domain)
                 ├── views/
@@ -52,415 +56,155 @@ apps/web/
                 └── components/
 ```
 
-## Layer-by-Layer Rules
+## Route Groups: Authentication Structure
 
-### 1. Page Layer (`app/[domain]/[feature]/page.tsx`)
+Next.js 15 route groups organize pages by authentication requirements:
 
-**Type**: Server Component  
-**Purpose**: Route entry point, data prefetching, metadata setup
+- **(auth)**: Protected pages requiring user authentication
+  - All pages inside this group require a logged-in user
+  - Examples: `/benefits`, `/cafeterias`, `/my`, etc.
+- **(public)**: Public pages accessible without authentication
+  - All pages inside this group are accessible to everyone
+  - Examples: `/auth/sign-in`, `/auth/sign-up`, `/home`, etc.
+
+**Note**: Route groups (parentheses folders) don't affect the URL structure - they're purely for organization.
+
+## Page-to-Domain Mapping
+
+### Protected Routes (auth)
+
+```
+/benefits          → domains/benefit/ui/views/benefit-page-view
+/cafeterias        → domains/cafeteria/ui/views/cafeteria-home-view
+/cafeterias/[id]   → domains/cafeteria/ui/views/cafeteria-detail-view
+/my                → domains/auth/profile/ui/views/profile-page-view
+```
+
+### Public Routes (public)
+
+```
+/auth/sign-in       → domains/auth/sign-in/ui/views/sign-in-view
+/auth/sign-up       → domains/auth/sign-up/ui/views/sign-up-view
+/auth/password/forgot → domains/auth/forgot-password/ui/views/forgot-password-view
+/home              → domains/cafeteria/ui/views/cafeteria-home-view (same as root)
+```
+
+## Next.js App Router Specific Patterns
+
+### 1. Server Components by Default
 
 ```typescript
-// MUST: Server Component
-// MUST: Handle URL/search params
-// MUST: Prefetch data for SSR
-// MUST: Wrap with HydrationBoundary
-// MAY: Set metadata for SEO
-// NEVER: Contain UI logic directly
-// NEVER: Use hooks or browser APIs
+// app/(auth)/benefits/page.tsx - Server Component by default
+const BenefitsPage = async ({ searchParams }) => {
+  // Server-side data fetching
+  const benefits = await getBenefits();
 
-const Page = async ({ params, searchParams }) => {
-  // 1. Extract parameters
-  // 2. Prefetch data on server
-  // 3. Return View wrapped in HydrationBoundary
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <BenefitPageView benefits={benefits} />
+    </HydrationBoundary>
+  );
+};
+
+export default BenefitsPage; // Pages use default export
+```
+
+### 2. Route Parameters
+
+```typescript
+// app/(auth)/cafeterias/[cafeteriaId]/page.tsx
+interface PageProps {
+  params: { cafeteriaId: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+}
+
+const CafeteriaDetailPage = async ({ params, searchParams }: PageProps) => {
+  const { cafeteriaId } = params;
+  const { tab = 'menu' } = searchParams;
+
+  return <CafeteriaDetailView cafeteriaId={cafeteriaId} activeTab={tab} />;
 };
 ```
 
-### 2. View Layer (`ui/views/`)
-
-**Type**: Client or Server Component  
-**Purpose**: Page layout composition and section orchestration
+### 3. Metadata Generation
 
 ```typescript
-// MUST: Import and compose Sections
-// MUST: Define page-level layout structure
-// MUST: Pass props to Sections
-// MAY: Manage page-level state (if client component)
-// MAY: Coordinate data flow between sections
-// NEVER: Fetch data directly
-// NEVER: Contain business logic
-// NEVER: Implement error/loading states
+// app/(auth)/cafeterias/[cafeteriaId]/page.tsx
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const cafeteria = await getCafeteria(params.cafeteriaId);
 
-export const [Feature]View = ({ prop1, prop2 }) => {
+  return {
+    title: cafeteria.name,
+    description: `${cafeteria.name}의 메뉴와 리뷰를 확인하세요`,
+  };
+}
+```
+
+### 4. Loading and Error UI
+
+```typescript
+// app/(auth)/cafeterias/loading.tsx
+export default function Loading() {
+  return <CafeteriaListSkeleton />;
+}
+
+// app/(auth)/cafeterias/error.tsx
+'use client';
+
+export default function Error({ error, reset }: { error: Error; reset: () => void }) {
+  return <ErrorBoundary error={error} onRetry={reset} />;
+}
+```
+
+### 5. Layout Files
+
+```typescript
+// app/(auth)/layout.tsx - Authentication layout
+export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="page-layout">
-      <FirstSection />
-      <SecondSection prop={prop1} />
-      <ThirdSection prop={prop2} />
+    <div className="auth-layout">
+      <AuthGuard>
+        <Navigation />
+        {children}
+      </AuthGuard>
     </div>
   );
-};
-```
+}
 
-### 3. Section Layer (`ui/sections/`)
-
-**Type**: Client Component (typically)  
-**Purpose**: Feature-specific logic encapsulation with error and loading boundaries
-
-```typescript
-// MUST: Implement Suspense boundary
-// MUST: Implement ErrorBoundary
-// MUST: Provide skeleton/loading UI
-// MUST: Handle data fetching (via hooks)
-// MAY: Manage section-specific state
-// MAY: Handle user interactions
-// NEVER: Define page layout
-// NEVER: Import other sections
-
-// Pattern: Three components per section
-export const [Feature]Section = (props) => {
+// app/(public)/layout.tsx - Public layout
+export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ErrorBoundary fallback={<[Feature]SectionError />}>
-      <Suspense fallback={<[Feature]SectionSkeleton />}>
-        <[Feature]SectionContent {...props} />
-      </Suspense>
-    </ErrorBoundary>
+    <div className="public-layout">
+      <PublicHeader />
+      {children}
+      <Footer />
+    </div>
   );
-};
-
-const [Feature]SectionSkeleton = () => { /* Loading UI */ };
-const [Feature]SectionError = () => { /* Error UI */ };
-const [Feature]SectionContent = (props) => { /* Actual content with data fetching */ };
-```
-
-### 4. Component Layer (`ui/components/`)
-
-**Type**: Client or Server Component  
-**Purpose**: Reusable, presentational UI components
-
-```typescript
-// MUST: Be pure/presentational
-// MUST: Accept data via props
-// MUST: Emit events via callback props
-// MAY: Have internal UI state (open/closed, etc.)
-// NEVER: Fetch data directly
-// NEVER: Have business logic
-// NEVER: Know about routes or navigation
-
-export const [Component] = ({ data, onAction }) => {
-  // Pure UI rendering
-  return <div onClick={onAction}>{data}</div>;
-};
-```
-
-## Folder Structure Rules
-
-### Each Component Must Have Its Own Folder
-
-**MANDATORY**: Every view, section, and component must be in its own folder with these files:
-
-```
-component-name/
-├── index.tsx        # Component implementation
-└── index.css.ts     # Vanilla Extract styles (NOT CSS Modules)
-```
-
-**Example Structure:**
-
-```
-views/
-└── sign-up-view/            # Folder name in kebab-case
-    ├── index.tsx            # Export: SignUpView
-    └── index.css.ts         # Vanilla Extract styles
-
-sections/
-└── password-forgot-section/ # Folder name in kebab-case
-    ├── index.tsx            # Export: PasswordForgotSection
-    └── index.css.ts         # Optional (sections may not need styles)
-
-components/
-└── email-sign-in-form/      # Folder name in kebab-case
-    ├── index.tsx            # Export: EmailSignInForm
-    └── index.css.ts         # Vanilla Extract styles
-    └── steps/               # Optional sub-components folder
-        └── email-form/
-            ├── index.tsx
-            └── index.css.ts
-```
-
-## Naming Conventions
-
-### File Structure
-
-```
-apps/web/src/
-└── domains/
-    └── auth/                              # Domain
-        ├── sign-up/                       # Feature
-        │   ├── constants/
-        │   │   └── sign-up.ts             # Feature constants
-        │   ├── schemas/
-        │   │   └── sign-up-schema.ts      # Zod validation schemas
-        │   ├── stores/
-        │   │   └── use-sign-up-store.ts   # Zustand store
-        │   ├── types/
-        │   │   └── sign-up.ts             # TypeScript types
-        │   └── ui/
-        │       ├── views/
-        │       │   └── sign-up-view/
-        │       │       ├── index.tsx
-        │       │       └── index.css.ts
-        │       ├── sections/
-        │       │   └── sign-up-section/
-        │       │       └── index.tsx
-        │       └── components/
-        │           └── sign-up-form/
-        │               ├── index.tsx
-        │               ├── index.css.ts
-        │               └── steps/
-        │                   ├── email-form/
-        │                   │   ├── index.tsx
-        │                   │   └── index.css.ts
-        │                   └── password-form/
-        │                       ├── index.tsx
-        │                       └── index.css.ts
-        └── my/                            # Another feature in same domain
-            └── ui/
-                ├── views/
-                │   └── my-page-view/
-                ├── sections/
-                │   ├── profile-section/
-                │   └── menu-section/
-                └── components/
-                    └── logout-button/
-```
-
-### Component Naming Pattern
-
-```typescript
-// Views: [Feature]View (in feature-view folder)
-// File: domains/auth/sign-up/ui/views/sign-up-view/index.tsx
-export const SignUpView = () => {};
-
-// Sections: [Feature]Section (in feature-section folder)
-// File: domains/auth/sign-up/ui/sections/sign-up-section/index.tsx
-export const SignUpSection = () => {};
-// Note: Skeleton and Error components are in the same file (not exported separately)
-
-// Components: Descriptive name (in component-name folder)
-// File: domains/auth/sign-up/ui/components/sign-up-form/index.tsx
-export const SignUpForm = () => {};
-// File: domains/auth/sign-in/ui/components/email-sign-in-form/index.tsx
-export const EmailSignInForm = () => {};
-// File: domains/auth/sign-in/ui/components/social-sign-in-button-list/index.tsx
-export const SocialSignInButtonList = () => {};
-```
-
-## Import Patterns
-
-### Within the Same Domain - MUST Use Relative Imports
-
-```typescript
-// ✅ CORRECT - Use relative imports within same domain
-// In: apps/web/src/domains/auth/sign-up/ui/views/sign-up-view/index.tsx
-import { SignUpSection } from '../../sections/sign-up-section';  // Same domain = relative
-
-// In: apps/web/src/domains/auth/sign-up/ui/sections/sign-up-section/index.tsx
-import { SignUpForm } from '../../components/sign-up-form';
-import { useSignUpStore } from '../../../stores/use-sign-up-store';
-import type { SignUpFormData } from '../../../types/sign-up';
-
-// In: apps/web/src/domains/auth/sign-up/ui/components/sign-up-form/index.tsx
-import { EmailForm } from './steps/email-form';
-import { PasswordForm } from './steps/password-form';
-
-// ❌ WRONG - Don't use absolute imports within same domain
-import { SignUpSection } from '@/src/domains/auth/sign-up/ui/sections/sign-up-section'; // NO!
-```
-
-### From Page to View
-
-```typescript
-// Public route example
-// In: app/(public)/auth/sign-up/page.tsx
-import { SignUpView } from '@/domains/auth/sign-up/ui/views/sign-up-view';
-
-// Protected route example  
-// In: app/(auth)/benefits/page.tsx
-import { BenefitPageView } from '@/domains/benefit/ui/views/benefit-page-view';
-```
-
-### Cross-Domain Imports - MUST Use Absolute Imports
-
-```typescript
-// ✅ CORRECT - Use absolute imports for cross-domain
-// In: apps/web/src/domains/cafeteria/...
-import { useAuth } from '@/src/domains/auth/hooks/use-auth';
-import { ProfileSection } from '@/src/domains/auth/profile/ui/sections/profile-section';
-
-// In: apps/web/src/shared/ui/components/...
-import { LoginWelcome } from '@/src/domains/auth/login/ui/components/login-welcome';
-
-// ❌ WRONG - Don't use relative imports for cross-domain
-import { useAuth } from '../../../auth/hooks/use-auth'; // NO!
-```
-
-### Using Monorepo Packages
-
-```typescript
-// Always use existing packages from monorepo - ALL use named exports
-import { Button } from '@nugudi/react-components-button';  // Named export
-import { Input } from '@nugudi/react-components-input';    // Named export
-import { Box, Flex, VStack } from '@nugudi/react-components-layout';  // Named exports
-import { useToggle } from '@nugudi/react-hooks-toggle';    // Named export
-import { vars, classes } from '@nugudi/themes';            // Named exports
-import { AppleIcon, HeartIcon } from '@nugudi/assets-icons';  // Named exports
-import { api } from '@nugudi/api';                          // Named export
-```
-
-## Data Flow Rules
-
-### Server → Client Data Flow
-
-```typescript
-// 1. Page prefetches data
-await queryClient.prefetchQuery({ queryKey: ["data"] });
-
-// 2. View receives props
-<FeatureView initialData={data} />
-
-// 3. Section fetches/uses prefetched data
-const { data } = useSuspenseQuery({ queryKey: ["data"] });
-
-// 4. Component receives data as props
-<Component data={data} />
-```
-
-### State Management Rules
-
-```
-- Page: URL state only (params, searchParams)
-- View: Page-level state (if needed)
-- Section: Feature-specific state
-- Component: UI-only state
-```
-
-## Error Handling Pattern
-
-```typescript
-// Each Section MUST follow this pattern:
-export const DataSection = () => {
-  return (
-    <ErrorBoundary
-      fallback={<DataSectionError />}
-      onError={(error) => console.error("DataSection error:", error)}
-    >
-      <Suspense fallback={<DataSectionSkeleton />}>
-        <DataSectionContent />
-      </Suspense>
-    </ErrorBoundary>
-  );
-};
-```
-
-## Query Hooks Pattern
-
-```typescript
-// In Section Content components:
-const SectionContent = ({ param }) => {
-  // For single data fetch
-  const { data } = useSuspenseQuery({
-    queryKey: ["resource", param],
-    queryFn: () => api.fetch(param),
-  });
-
-  // For infinite scroll
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-  } = useSuspenseInfiniteQuery({
-    queryKey: ["resources", param],
-    queryFn: ({ pageParam }) => api.fetchPage({ param, page: pageParam }),
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-  });
-
-  return <ComponentList data={data} onLoadMore={fetchNextPage} />;
-};
-```
-
-## Export/Import Pattern Rules
-
-### Export Patterns by Component Type
-
-```typescript
-// Views, Sections, Components: Use named export
-export const SignUpView = () => {};        // views - named export
-export const SignUpSection = () => {};     // sections - named export
-export const SignUpForm = () => {};        // components - named export
-
-// Page files: Use default export (ONLY exception)
-export default function Page() {}          // pages only
-
-// Hooks, Utils, Types: Use named export
-export const useSignUpStore = () => {};    // hooks
-export type SignUpFormData = {};           // types
-export const validateEmail = () => {};     // utils
-```
-
-### Import Rules Summary
-
-| From → To | Same Domain | Cross Domain | Shared/App | Packages |
-|-----------|-------------|--------------|------------|----------|
-| **Pattern** | Relative (`../`) | Absolute (`@/domains/`) | Absolute (`@/src/shared/`) | Package (`@nugudi/`) |
-| **Example** | `../../sections/` | `@/domains/auth/` | `@/src/shared/ui/` | `@nugudi/themes` |
-
-## Best Practices Summary
-
-1. **Route Groups**: Use `(auth)` for protected pages, `(public)` for public pages
-2. **Page**: Server-side data prefetching only (`app/(auth|public)/[domain]/page.tsx`)
-3. **View**: Layout composition only (`domains/[domain]/[feature?]/ui/views/`)
-4. **Section**: Business logic + Error/Loading boundaries (`ui/sections/`)
-5. **Component**: Pure UI components (`ui/components/`)
-6. **Always use** Suspense + ErrorBoundary in Sections
-7. **Never skip** the hierarchy (Page → View → Section → Component)
-8. **Keep components** pure and reusable
-9. **Domain Structure**: Use sub-features for complex domains (auth), direct UI for simple domains (benefit)
-10. **Name consistently** following the patterns above
-11. **Separate concerns** strictly between layers
-12. **Each component** must be in its own folder with `index.tsx` and `index.css.ts`
-13. **Domain logic** (stores, schemas, types) stays outside the `ui/` folder
-14. **Use Vanilla Extract** with `vars` and `classes` from `@nugudi/themes`
-15. **Always prefer** existing packages from `@nugudi/*` namespace (all use named exports)
-16. **Client Components**: Add `"use client"` when using event handlers or hooks
-17. **Follow monorepo** import conventions from packages.md
-18. **Named exports** for all components, sections, views (default export ONLY for page.tsx)
-
-## TypeScript Interface Rules
-
-```typescript
-// Views
-interface [Feature]ViewProps {
-  // Props from page params/searchParams
-}
-
-// Sections
-interface [Feature]SectionProps {
-  // Props from View
-}
-
-// Components
-interface [Component]Props {
-  // Data and callback props only
-  data: DataType;
-  onAction: (value: ValueType) => void;
 }
 ```
 
-This architecture ensures:
+## Key Differences from Pages Router
 
-- **Predictable** component behavior
-- **Maintainable** codebase
-- **Testable** components
-- **Optimal** performance with SSR/streaming
-- **Clear** separation of concerns
+1. **File-based routing**: Use `page.tsx` instead of `index.tsx`
+2. **Server Components**: Components are Server Components by default
+3. **Route Groups**: Use `(groupName)` for organization without affecting URLs
+4. **Co-located files**: `loading.tsx`, `error.tsx`, `layout.tsx` co-located with routes
+5. **Async components**: Page components can be async for data fetching
+
+## Best Practices for App Router
+
+1. **Use Server Components** for data fetching at the page level
+2. **Leverage route groups** to organize pages by authentication or feature areas
+3. **Co-locate layouts** with their respective route groups
+4. **Use loading.tsx** for consistent loading states
+5. **Implement error.tsx** for proper error boundaries
+6. **Generate metadata** dynamically for better SEO
+
+---
+
+For detailed component architecture, layer responsibilities, naming conventions, and import patterns, see:
+
+- **[claude/frontend.md](./frontend.md)** - Complete component architecture rules
+- **[claude/packages.md](./packages.md)** - Import patterns and package usage

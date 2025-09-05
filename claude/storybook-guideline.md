@@ -362,205 +362,13 @@ export type { UseHookNameProps, UseHookNameReturn } from './types';
 
 ---
 
-## 📤 Package Export Pattern (index.ts)
+## 📤 Package Import Patterns
 
-### Import Pattern Rules
+**Important**: For detailed package import patterns, export rules, and usage examples, see **[claude/packages.md](./packages.md)**.
 
-**CRITICAL**: ALL packages use named exports:
+This section focuses on Storybook-specific import requirements.
 
-| Package Type              | Import Pattern                       | Example                                                               |
-| ------------------------- | ------------------------------------ | --------------------------------------------------------------------- |
-| **Layout**                | Multiple named exports from single package | `import { Box, Flex, VStack } from '@nugudi/react-components-layout'` |
-| **Icons**                 | Multiple named exports from single package | `import { AppleIcon, GoogleIcon } from '@nugudi/assets-icons'`        |
-| **Individual Components** | Named export from each package      | `import { Button } from '@nugudi/react-components-button'`            |
-| **Themes**                | Namespace exports                    | `import { vars, classes } from '@nugudi/themes'`                      |
-| **API**                   | Named exports                        | `import { useSignUpLocal } from '@nugudi/api'`                         |
-
----
-
-### 1️⃣ Individual Component Packages (Single Export)
-
-Each component package exports **ONE main component**:
-
-```typescript
-// packages/react/components/button/src/index.ts
-export { Button } from './Button';
-export type { ButtonProps } from './types';
-```
-
-```typescript
-// packages/react/components/input/src/index.ts
-export { Input } from './Input';
-export { useInput } from './useInput'; // Hook if exists
-export type { InputProps, UseInputProps, UseInputReturn } from './types';
-```
-
-#### Import Pattern - ONE component per import
-
-```typescript
-// ✅ CORRECT - Each component from its own package
-import { Button } from '@nugudi/react-components-button';
-import { Input } from '@nugudi/react-components-input';
-import { Chip } from '@nugudi/react-components-chip';
-import { Switch } from '@nugudi/react-components-switch';
-import { Textarea } from '@nugudi/react-components-textarea';
-
-// ❌ WRONG - Cannot import multiple from individual packages
-import { Button, Input } from '@nugudi/react-components-button'; // NO! Input is not in button package
-```
-
----
-
-### 2️⃣ Layout Package (Multiple Exports)
-
-The layout package contains **MANY components** in one package:
-
-```typescript
-// packages/react/components/layout/src/index.ts
-
-// Layout components
-export { Box } from './layout/Box';
-export { Flex } from './layout/Flex';
-export { Grid } from './layout/Grid';
-export { GridItem } from './layout/GridItem';
-export { Stack } from './layout/Stack';
-export { HStack } from './layout/HStack';
-export { VStack } from './layout/VStack';
-export { Divider } from './layout/Divider';
-export { List } from './layout/List';
-export { ListItem } from './layout/ListItem';
-export { OrderedList } from './layout/OrderedList';
-export { UnorderedList } from './layout/UnOrderedList';
-
-// Typography components
-export { Heading } from './typography/Heading';
-export { Title } from './typography/Title';
-export { Body } from './typography/Body';
-export { Emphasis } from './typography/Emphasis';
-export { Logo } from './typography/Logo';
-
-// Export types
-export type * from './layout/types';
-export type * from './typography/types';
-```
-
-#### Import Pattern - MULTIPLE components from one package
-
-```typescript
-// ✅ CORRECT - Multiple imports from layout package
-import { Box, Flex, VStack, HStack } from '@nugudi/react-components-layout';
-import {
-  Title,
-  Body,
-  Heading,
-  Emphasis,
-} from '@nugudi/react-components-layout';
-
-// Can combine layout and typography since they're in the same package
-import {
-  Box,
-  Flex,
-  VStack,
-  Title,
-  Body,
-} from '@nugudi/react-components-layout';
-```
-
----
-
-### 3️⃣ Icons Package (Multiple Exports)
-
-Icons package contains **MANY icons** in one package:
-
-```typescript
-// packages/assets/icons/src/index.ts
-export { default as AppleIcon } from './svg/apple.svg?react';
-export { default as GoogleIcon } from './svg/google.svg?react';
-export { default as KakaoIcon } from './svg/kakao.svg?react';
-export { default as NaverIcon } from './svg/naver.svg?react';
-export { default as ArrowLeftIcon } from './svg/arrow-left.svg?react';
-export { default as ArrowRightIcon } from './svg/arrow-right.svg?react';
-export { default as ChevronLeftIcon } from './svg/chevron-left.svg?react';
-export { default as ChevronRightIcon } from './svg/chevron-right.svg?react';
-export { default as EyeIcon } from './svg/eye.svg?react';
-export { default as EyeOffIcon } from './svg/eye_off.svg?react';
-// ... many more icons - all using named exports of default imports
-```
-
-#### Import Pattern - MULTIPLE icons from one package
-
-```typescript
-// ✅ CORRECT - Multiple imports from icons package
-import {
-  AppleIcon,
-  GoogleIcon,
-  KakaoIcon,
-  NaverIcon,
-} from '@nugudi/assets-icons';
-
-import {
-  ArrowLeftIcon,
-  ArrowRightIcon,
-  ChevronLeftIcon,
-} from '@nugudi/assets-icons';
-```
-
----
-
-### 4️⃣ Hook Packages (Named Exports)
-
-Hook packages use named exports:
-
-```typescript
-// packages/react/hooks/button/src/index.ts
-export { useButton } from './useButton';
-export { useToggleButton } from './useToggleButton';
-export type {
-  UseButtonProps,
-  UseButtonReturn,
-  UseToggleButtonProps,
-  UseToggleButtonReturn,
-} from './types';
-```
-
-#### Import Pattern
-
-```typescript
-// ✅ CORRECT - Named imports for hooks
-import { useButton, useToggleButton } from '@nugudi/react-hooks-button';
-import { useToggle } from '@nugudi/react-hooks-toggle';
-import { useStepper } from '@nugudi/react-hooks-use-stepper';
-```
-
----
-
-### Real Usage Examples
-
-```typescript
-// ✅ CORRECT - Real world import patterns
-
-// Individual components - ONE per package
-import { Button } from '@nugudi/react-components-button';
-import { Input } from '@nugudi/react-components-input';
-import { Chip } from '@nugudi/react-components-chip';
-
-// Layout & Typography - MULTIPLE from same package
-import { Box, Flex, VStack, HStack } from '@nugudi/react-components-layout';
-import { Title, Body, Heading } from '@nugudi/react-components-layout';
-
-// Icons - MULTIPLE from same package
-import {
-  AppleIcon,
-  GoogleIcon,
-  KakaoIcon,
-  NaverIcon,
-} from '@nugudi/assets-icons';
-
-// Hooks - Named exports
-import { useToggle } from '@nugudi/react-hooks-toggle';
-```
-
-### In Storybook Stories
+### Storybook-Specific Import Pattern
 
 ```typescript
 // Main component (with underscore and CSS)
@@ -573,28 +381,11 @@ import { Box, VStack, Title, Body } from '@nugudi/react-components-layout';
 import { AppleIcon, GoogleIcon } from '@nugudi/assets-icons';
 ```
 
-### The @nugudi/ui Aggregated Package
+**Key Difference**: In Storybook stories, the main component being documented requires:
+1. **CSS import** - `import '@nugudi/react-components-[name]/style.css';`
+2. **Underscore alias** - `import { Component as _Component } from '@nugudi/react-components-[name]';`
 
-The UI package re-exports for convenience:
-
-```typescript
-// packages/ui/src/index.ts
-
-// Re-export individual components (all named exports)
-export { Button } from '@nugudi/react-components-button';
-export { Input } from '@nugudi/react-components-input';
-export { Chip } from '@nugudi/react-components-chip';
-export { Switch } from '@nugudi/react-components-switch';
-
-// Re-export layout & typography (already multiple named exports)
-export * from '@nugudi/react-components-layout';
-
-// Re-export icons (named exports)
-export * from '@nugudi/assets-icons';
-
-// Usage in apps - all named imports
-import { Button, Input, Box, VStack, Title, AppleIcon } from '@nugudi/ui';
-```
+Helper components don't need CSS imports or underscore aliases.
 
 ---
 
@@ -602,31 +393,9 @@ import { Button, Input, Box, VStack, Title, AppleIcon } from '@nugudi/ui';
 
 ### ⭐ PRIORITY: Always Use Existing Packages First
 
-**MANDATORY**: When creating stories, ALWAYS prioritize using existing components from packages:
+**Important**: For package usage priorities and component selection guidelines, see **[claude/packages.md](./packages.md)**.
 
-```typescript
-// ✅ CORRECT - Use existing packages
-import { Button } from '@nugudi/react-components-button';
-import { Box, Flex, VStack, HStack } from '@nugudi/react-components-layout';
-import { Title, Body, Heading } from '@nugudi/react-components-layout';
-import { Input } from '@nugudi/react-components-input';
-import { Chip } from '@nugudi/react-components-chip';
-
-// ❌ WRONG - Don't create custom components
-const CustomButton = () => {
-  /* ... */
-}; // NO!
-const CustomLayout = () => {
-  /* ... */
-}; // NO!
-```
-
-**Component Priority Order**:
-
-1. **FIRST**: Layout components from `@nugudi/react-components-layout`
-2. **SECOND**: Typography components from `@nugudi/react-components-layout`
-3. **THIRD**: UI components from `@nugudi/react-components-*`
-4. **LAST**: Only create inline JSX when demonstrating specific features
+In stories, always use existing `@nugudi/*` packages rather than creating custom components.
 
 ### 🚨 Import Rules for Story Files
 
@@ -1116,4 +885,3 @@ The user should NEVER have to remind you about:
 - Matching the visual design exactly
 
 # **NO EXCUSES - GET IT RIGHT ON FIRST ATTEMPT!**
-

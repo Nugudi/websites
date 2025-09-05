@@ -585,7 +585,7 @@ import { vars } from '@nugudi/themes';
 export const formContainer = style({
   display: 'flex',
   flexDirection: 'column',
-  gap: variables.box.spacing.md,
+  gap: vars.box.spacing[16],
 });
 ```
 

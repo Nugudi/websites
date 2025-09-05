@@ -50,10 +50,10 @@ Next.js 15 route groups organize pages by authentication requirements:
 
 ```typescript
 // ✅ CORRECT - Use packages
-import { Button } from '@nugudi/react-components-button';  // Named export
+import { Button } from '@nugudi/react-components-button'; // Named export
 import { useToggle } from '@nugudi/react-hooks-toggle';
-import { vars } from '@nugudi/themes';  // Use 'vars' not 'variables'
-import { AppleIcon, HeartIcon } from '@nugudi/assets-icons';  // Import individual icons
+import { vars } from '@nugudi/themes'; // Use 'vars' not 'variables'
+import { AppleIcon, HeartIcon } from '@nugudi/assets-icons'; // Import individual icons
 
 // ❌ WRONG - Don't create new implementations
 import Button from './components/button'; // NO!
@@ -197,6 +197,7 @@ const customLayout = style({ display: 'flex' }); // NO! Use Flex instead
 ```
 
 **Size Keywords**:
+
 - `"full"` → `100%`
 - `"screen"` → `100vw`
 - `"auto"` → `auto`
@@ -205,6 +206,7 @@ const customLayout = style({ display: 'flex' }); // NO! Use Flex instead
 - `"fit"` → `fit-content`
 
 **All Spacing Props Accept Pixels**:
+
 - Margin: `m`, `margin`, `mt`, `mr`, `mb`, `ml`, `mX`, `mY`
 - Padding: `p`, `padding`, `pt`, `pr`, `pb`, `pl`, `pX`, `pY`
 - Gap: `gap`, `columnGap`, `rowGap`
@@ -573,7 +575,7 @@ interface SignUpFormProps {
 }
 
 export const SignUpForm = (props: SignUpFormProps) => {
-  // Component implementation  
+  // Component implementation
 };
 
 // src/domains/auth/sign-up/ui/components/sign-up-form/index.css.ts
@@ -583,7 +585,7 @@ import { vars } from '@nugudi/themes';
 export const formContainer = style({
   display: 'flex',
   flexDirection: 'column',
-  gap: variables.box.spacing.md,
+  gap: vars.box.spacing[16],
 });
 ```
 
@@ -983,7 +985,7 @@ import { useAuth } from '@/src/domains/auth/hooks/use-auth';
 import { SignUpView } from '@/src/domains/auth/sign-up/ui/views/sign-up-view';
 
 // ✅ CORRECT - From app pages (protected routes)
-// From: app/(auth)/profile/page.tsx  
+// From: app/(auth)/profile/page.tsx
 import { ProfilePageView } from '@/src/domains/auth/profile/ui/views/profile-page-view';
 ```
 
@@ -1110,6 +1112,7 @@ Style import: @import '@nugudi/react-components-[name]/style.css';
 When working with domain entities, maintain consistent naming throughout the codebase:
 
 #### Example: Cafeteria Domain
+
 ```typescript
 // ✅ CORRECT - Consistent "cafeteria" naming
 interface CafeteriaRecommendCardProps {
@@ -1138,6 +1141,7 @@ interface CafeteriaRecommendCardProps {
 ```
 
 #### Example: Benefit Domain
+
 ```typescript
 // ✅ CORRECT - Consistent "benefit" naming
 export const BenefitPageView = () => {};

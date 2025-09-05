@@ -1,378 +1,580 @@
-# useMediaQuery
+# @nugudi/react-hooks-use-media-query
 
-> 🎯 React에서 CSS 미디어 쿼리를 쉽게 사용할 수 있는 커스텀 훅 라이브러리
+A React hook for responsive design with media query tracking and breakpoint utilities.
 
-[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-3178C6.svg)](https://www.typescriptlang.org/)
-
-## 📦 Installation
+## Installation
 
 ```bash
-npm install @nugudi/react-hooks-use-media-query
-# or
-yarn add @nugudi/react-hooks-use-media-query
-# or
 pnpm add @nugudi/react-hooks-use-media-query
 ```
 
-## ✨ Features
+## Import
 
-- 🚀 **실시간 미디어 쿼리 추적** - 화면 크기 변경 시 자동 업데이트
-- 📱 **반응형 디자인 지원** - 미리 정의된 브레이크포인트 제공
-- 🎨 **디바이스 타입 감지** - 모바일, 태블릿, 데스크톱 자동 구분
-- 🔧 **TypeScript 지원** - 완벽한 타입 안정성
-- ⚡ **최적화된 성능** - 자동 리스너 정리로 메모리 누수 방지
-- 🌐 **SSR 지원** - Next.js 등 서버 사이드 렌더링 완벽 호환
-
----
-
-## 📖 API Reference
-
-### `useMediaQuery`
-
-CSS 미디어 쿼리의 매칭 상태를 실시간으로 추적합니다.
-
-#### Signature
-
-```typescript
-function useMediaQuery(options: UseMediaQueryOptions): UseMediaQueryResult;
-
-interface UseMediaQueryOptions {
-  query: string;
-  defaultMatches?: boolean;
-  onChange?: (matches: boolean) => void;
-}
-
-interface UseMediaQueryResult {
-  matches: boolean;
-  query: string;
-}
+```tsx
+import { 
+  useMediaQuery, 
+  useDeviceType,
+  useIsXs,
+  useIsSm,
+  useIsMd,
+  useIsLg,
+  useIsXl,
+  useIs2xl,
+  BREAKPOINTS 
+} from "@nugudi/react-hooks-use-media-query";
 ```
 
-#### Parameters
+## Overview
 
-| Parameter        | Type                         | Required | Default | Description                           |
-| ---------------- | ---------------------------- | -------- | ------- | ------------------------------------- |
-| `query`          | `string`                     | ✅       | -       | CSS 미디어 쿼리 문자열                |
-| `defaultMatches` | `boolean`                    | ❌       | `false` | SSR 또는 초기 렌더링 시 사용할 기본값 |
-| `onChange`       | `(matches: boolean) => void` | ❌       | -       | 매칭 상태 변경 시 실행될 콜백         |
+This hook provides a robust solution for handling responsive design in React applications. It tracks media query matches in real-time, supports SSR, and includes convenient breakpoint utilities matching Tailwind CSS defaults.
 
-#### Returns
+## Basic Usage
 
-| Property  | Type      | Description                  |
-| --------- | --------- | ---------------------------- |
-| `matches` | `boolean` | 현재 미디어 쿼리 매칭 여부   |
-| `query`   | `string`  | 사용 중인 미디어 쿼리 문자열 |
+### useMediaQuery
 
----
+The core hook for tracking any media query.
 
-## 🎯 Examples
+```tsx
+import { useMediaQuery } from "@nugudi/react-hooks-use-media-query";
 
-### 📌 Basic Usage
-
-```typescript
-import { useMediaQuery } from '@nugudi/react-hooks-use-media-query';
-
-function MyComponent() {
-  const { matches } = useMediaQuery({
-    query: '(min-width: 768px)'
+function ResponsiveComponent() {
+  const { matches, query } = useMediaQuery({
+    query: "(min-width: 768px)"
   });
 
   return (
     <div>
-      {matches ? '🖥️ 데스크톱 뷰' : '📱 모바일 뷰'}
+      {matches ? (
+        <DesktopLayout />
+      ) : (
+        <MobileLayout />
+      )}
     </div>
   );
 }
 ```
 
-### 🌙 Dark Mode Detection
+### With onChange Callback
 
-```typescript
-function ThemeAwareComponent() {
+React to media query changes with a callback.
+
+```tsx
+function AdaptiveComponent() {
+  const [layout, setLayout] = React.useState("mobile");
+
   const { matches } = useMediaQuery({
-    query: '(prefers-color-scheme: dark)',
-    onChange: (isDark) => {
-      console.log(`다크 모드: ${isDark ? '켜짐' : '꺼짐'}`);
+    query: "(min-width: 1024px)",
+    onChange: (isDesktop) => {
+      setLayout(isDesktop ? "desktop" : "mobile");
+      // Analytics tracking
+      trackLayoutChange(isDesktop ? "desktop" : "mobile");
     }
   });
 
-  return (
-    <div style={{
-      backgroundColor: matches ? '#1a1a1a' : '#ffffff',
-      color: matches ? '#ffffff' : '#000000'
-    }}>
-      {matches ? '🌙 다크 모드' : '☀️ 라이트 모드'}
-    </div>
-  );
+  return <Layout type={layout} />;
 }
 ```
-
----
-
-## 📏 Breakpoint Hooks
-
-### Available Breakpoint Hooks
-
-| Hook         | 브레이크포인트 | 화면 크기 | 용도        |
-| ------------ | -------------- | --------- | ----------- |
-| `useIsXs()`  | `xs`           | ≥ 0px     | 모든 화면   |
-| `useIsSm()`  | `sm`           | ≥ 640px   | 모바일 가로 |
-| `useIsMd()`  | `md`           | ≥ 768px   | 태블릿      |
-| `useIsLg()`  | `lg`           | ≥ 1024px  | 데스크톱    |
-| `useIsXl()`  | `xl`           | ≥ 1280px  | 큰 데스크톱 |
-| `useIs2xl()` | `2xl`          | ≥ 1536px  | 초대형 화면 |
-
-### Example
-
-```typescript
-import { useIsMd, useIsLg } from '@nugudi/react-hooks-use-media-query';
-
-function ResponsiveLayout() {
-  const { matches: isMd } = useIsMd();
-  const { matches: isLg } = useIsLg();
-
-  if (isLg) return <DesktopLayout columns={3} />;
-  if (isMd) return <TabletLayout columns={2} />;
-  return <MobileLayout columns={1} />;
-}
-```
-
----
-
-## 📱 Device Type Detection
-
-### `useDeviceType`
-
-현재 디바이스 타입을 자동으로 감지합니다.
-
-#### Signature
-
-```typescript
-function useDeviceType(): DeviceTypeResult;
-
-interface DeviceTypeResult {
-  isMobile: boolean; // 모바일 여부
-  isTablet: boolean; // 태블릿 여부
-  isDesktop: boolean; // 데스크톱 여부
-  deviceType: 'mobile' | 'tablet' | 'desktop';
-}
-```
-
-#### Device Type Ranges
-
-| 디바이스   | 화면 너비      | 설명            |
-| ---------- | -------------- | --------------- |
-| 📱 Mobile  | ≤ 767px        | 스마트폰        |
-| 📱 Tablet  | 768px ~ 1023px | 태블릿          |
-| 🖥️ Desktop | ≥ 1024px       | 데스크톱 & 랩톱 |
-
-#### Example
-
-```typescript
-import { useDeviceType } from '@nugudi/react-hooks-use-media-query';
-
-function AdaptiveComponent() {
-  const { isMobile, isTablet, isDesktop, deviceType } = useDeviceType();
-
-  return (
-    <div>
-      <h1>현재 디바이스: {deviceType}</h1>
-
-      {isMobile && <MobileOnlyFeature />}
-      {isTablet && <TabletOptimizedView />}
-      {isDesktop && <DesktopFullFeature />}
-    </div>
-  );
-}
-```
-
----
-
-## 🚀 Advanced Examples
-
-### 🎨 Responsive Grid System
-
-```typescript
-import { useIsMd, useIsLg } from '@nugudi/react-hooks-use-media-query';
-
-function ResponsiveGrid({ items }) {
-  const { matches: isMd } = useIsMd();
-  const { matches: isLg } = useIsLg();
-
-  const columns = isLg ? 3 : isMd ? 2 : 1;
-
-  return (
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: `repeat(${columns}, 1fr)`,
-      gap: '1rem'
-    }}>
-      {items.map(item => (
-        <GridItem key={item.id} {...item} />
-      ))}
-    </div>
-  );
-}
-```
-
-### 🔄 Multiple Media Queries
-
-```typescript
-function MultiQueryComponent() {
-  const { matches: isLandscape } = useMediaQuery({
-    query: '(orientation: landscape)'
-  });
-
-  const { matches: hasHover } = useMediaQuery({
-    query: '(hover: hover)'
-  });
-
-  const { matches: isRetina } = useMediaQuery({
-    query: '(min-resolution: 2dppx)'
-  });
-
-  return (
-    <div>
-      <p>화면 방향: {isLandscape ? '🔄 가로' : '📱 세로'}</p>
-      <p>포인터 지원: {hasHover ? '🖱️ 마우스' : '👆 터치'}</p>
-      <p>디스플레이: {isRetina ? '🔬 레티나' : '📺 일반'}</p>
-    </div>
-  );
-}
-```
-
-### 📊 Responsive Navigation
-
-```typescript
-import { useDeviceType } from '@nugudi/react-hooks-use-media-query';
-
-function Navigation() {
-  const { isMobile } = useDeviceType();
-
-  return (
-    <nav>
-      {isMobile ? (
-        <HamburgerMenu />
-      ) : (
-        <DesktopNavBar />
-      )}
-    </nav>
-  );
-}
-```
-
----
-
-## ⚙️ Configuration
 
 ### SSR Support
 
-서버 사이드 렌더링 환경에서 `defaultMatches`를 사용하여 초기 상태를 설정합니다:
+Provide default matches for server-side rendering.
 
-```typescript
-// Next.js 예제
-const { matches } = useMediaQuery({
-  query: '(min-width: 768px)',
-  defaultMatches:
-    typeof window !== 'undefined' ? window.innerWidth >= 768 : true,
-});
+```tsx
+function SSRFriendlyComponent() {
+  // Assume desktop on server for better SEO
+  const { matches } = useMediaQuery({
+    query: "(min-width: 1024px)",
+    defaultMatches: true // Initial state for SSR
+  });
+
+  return matches ? <DesktopContent /> : <MobileContent />;
+}
 ```
 
-### Custom Breakpoints
+## Breakpoint Hooks
 
-프로젝트의 디자인 시스템에 맞춰 커스텀 브레이크포인트를 정의할 수 있습니다:
+Pre-configured hooks for common breakpoints (matching Tailwind CSS).
 
-```typescript
-// utils/breakpoints.ts
-export const useIsPhone = () =>
-  useMediaQuery({
-    query: '(max-width: 480px)',
-  });
+### Available Breakpoint Hooks
 
-export const useIsTabletPortrait = () =>
-  useMediaQuery({
-    query: '(min-width: 481px) and (max-width: 768px)',
-  });
+| Hook | Breakpoint | Description |
+|------|------------|-------------|
+| `useIsXs()` | ≥ 0px | All screens (always true) |
+| `useIsSm()` | ≥ 640px | Large mobile and up |
+| `useIsMd()` | ≥ 768px | Tablet and up |
+| `useIsLg()` | ≥ 1024px | Small desktop and up |
+| `useIsXl()` | ≥ 1280px | Desktop and up |
+| `useIs2xl()` | ≥ 1536px | Large desktop and up |
 
-export const useIsTabletLandscape = () =>
-  useMediaQuery({
-    query: '(min-width: 769px) and (max-width: 1024px)',
-  });
+### Breakpoint Hook Examples
+
+```tsx
+import { useIsMd, useIsLg, useIsXl } from "@nugudi/react-hooks-use-media-query";
+import { VStack, HStack } from "@nugudi/react-components-layout";
+
+function ResponsiveLayout() {
+  const { matches: isTablet } = useIsMd();
+  const { matches: isDesktop } = useIsLg();
+  const { matches: isLargeDesktop } = useIsXl();
+
+  // Progressive enhancement
+  const columns = isLargeDesktop ? 4 : isDesktop ? 3 : isTablet ? 2 : 1;
+
+  return (
+    <div>
+      {/* Navigation changes based on screen size */}
+      {isDesktop ? (
+        <HStack gap={20}>
+          <Logo />
+          <NavItems />
+          <UserMenu />
+        </HStack>
+      ) : (
+        <VStack gap={16}>
+          <HStack justify="space-between">
+            <Logo size="small" />
+            <HamburgerMenu />
+          </HStack>
+        </VStack>
+      )}
+
+      {/* Grid layout adapts to screen size */}
+      <Grid columns={columns} gap={16}>
+        {items.map(item => (
+          <GridItem key={item.id} {...item} />
+        ))}
+      </Grid>
+    </div>
+  );
+}
 ```
 
----
+## Device Type Detection
 
-## 🌍 Browser Compatibility
+Use the `useDeviceType` hook for simplified device categorization.
 
-| Browser | Version |
-| ------- | ------- |
-| Chrome  | 9+      |
-| Firefox | 6+      |
-| Safari  | 5.1+    |
-| Edge    | 12+     |
-| IE      | 10+     |
+```tsx
+import { useDeviceType } from "@nugudi/react-hooks-use-media-query";
 
-> 💡 구형 브라우저를 위한 폴백 처리가 내장되어 있습니다.
+function DeviceAwareComponent() {
+  const deviceType = useDeviceType();
 
----
+  switch (deviceType) {
+    case "mobile":
+      return <MobileView />;
+    case "tablet":
+      return <TabletView />;
+    case "desktop":
+      return <DesktopView />;
+    default:
+      return <DefaultView />;
+  }
+}
 
-## 📝 Notes
+// Custom device type logic
+function CustomDeviceDetection() {
+  const deviceType = useDeviceType({
+    mobile: "(max-width: 639px)",
+    tablet: "(min-width: 640px) and (max-width: 1023px)",
+    desktop: "(min-width: 1024px)"
+  });
 
-### Performance
+  return <Layout variant={deviceType} />;
+}
+```
 
-- ✅ React 18+ `useSyncExternalStore`를 활용한 최적화된 상태 동기화
-- ✅ 미디어 쿼리 리스너는 컴포넌트 언마운트 시 자동 정리
-- ✅ 불필요한 리렌더링 방지를 위한 최적화
-- ✅ 메모리 누수 방지
-- ✅ SSR hydration 과정에서 발생하는 불일치 방지
+## BREAKPOINTS Constants
 
-### TypeScript
+Use the BREAKPOINTS object for consistent media queries.
 
-- ✅ 완벽한 타입 정의 제공
-- ✅ 자동 완성 및 IntelliSense 지원
-- ✅ 타입 안정성 보장
+```tsx
+import { BREAKPOINTS, useMediaQuery } from "@nugudi/react-hooks-use-media-query";
 
-### Best Practices
+function CustomBreakpoint() {
+  // Use predefined breakpoints
+  const { matches: isTablet } = useMediaQuery({
+    query: BREAKPOINTS.md // "(min-width: 768px)"
+  });
 
-- 📌 컴포넌트 최상위에서 훅 호출
-- 📌 조건문 내에서 훅 호출 금지
-- 📌 SSR 환경에서는 `defaultMatches` 활용
+  // Combine breakpoints for ranges
+  const { matches: isTabletOnly } = useMediaQuery({
+    query: `${BREAKPOINTS.md} and (max-width: 1023px)`
+  });
 
----
+  // Custom combinations
+  const { matches: isLandscapeTablet } = useMediaQuery({
+    query: `${BREAKPOINTS.md} and (orientation: landscape)`
+  });
 
-## 🤝 Contributing
+  return (
+    <div>
+      {isTabletOnly && <TabletOptimizedContent />}
+      {isLandscapeTablet && <LandscapeLayout />}
+    </div>
+  );
+}
+```
 
-기여는 언제나 환영합니다! 이슈나 PR을 남겨주세요.
+## Real-World Examples
 
----
+### Responsive Navigation
 
-## 📄 License
+```tsx
+import { useIsLg } from "@nugudi/react-hooks-use-media-query";
+import { VStack, HStack, Drawer } from "@nugudi/react-components-layout";
 
-**MIT License**
+function Navigation() {
+  const { matches: isDesktop } = useIsLg();
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
-Copyright (c) 2025 dydals3440
+  if (isDesktop) {
+    return (
+      <nav>
+        <HStack gap={32} align="center">
+          <Logo />
+          <HStack gap={24}>
+            <NavLink href="/products">Products</NavLink>
+            <NavLink href="/about">About</NavLink>
+            <NavLink href="/contact">Contact</NavLink>
+          </HStack>
+          <UserActions />
+        </HStack>
+      </nav>
+    );
+  }
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+  return (
+    <>
+      <nav>
+        <HStack justify="space-between" padding={16}>
+          <Logo size="small" />
+          <MenuButton onClick={() => setMobileMenuOpen(true)} />
+        </HStack>
+      </nav>
+      
+      <Drawer
+        open={mobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
+        position="right"
+      >
+        <VStack gap={16} padding={20}>
+          <NavLink href="/products" mobile>Products</NavLink>
+          <NavLink href="/about" mobile>About</NavLink>
+          <NavLink href="/contact" mobile>Contact</NavLink>
+          <Divider />
+          <UserActions mobile />
+        </VStack>
+      </Drawer>
+    </>
+  );
+}
+```
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+### Adaptive Image Loading
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+```tsx
+import { useMediaQuery, BREAKPOINTS } from "@nugudi/react-hooks-use-media-query";
 
----
+function ResponsiveImage({ src, alt }) {
+  const { matches: isRetina } = useMediaQuery({
+    query: "(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi)"
+  });
+  
+  const { matches: isDesktop } = useMediaQuery({
+    query: BREAKPOINTS.lg
+  });
+  
+  const { matches: isTablet } = useMediaQuery({
+    query: BREAKPOINTS.md
+  });
 
-<div align="center">
-  <p>Made with 🍠 by <a href="https://github.com/dydals3440">dydals3440</a></p>
-</div>
+  // Choose image size based on device
+  const imageSize = isDesktop ? "large" : isTablet ? "medium" : "small";
+  const quality = isRetina ? "@2x" : "";
+  
+  const imageSrc = `${src}-${imageSize}${quality}.jpg`;
+
+  return (
+    <picture>
+      <source
+        media="(min-width: 1024px)"
+        srcSet={`${src}-large${quality}.webp`}
+        type="image/webp"
+      />
+      <source
+        media="(min-width: 768px)"
+        srcSet={`${src}-medium${quality}.webp`}
+        type="image/webp"
+      />
+      <img
+        src={imageSrc}
+        alt={alt}
+        loading="lazy"
+      />
+    </picture>
+  );
+}
+```
+
+### Conditional Rendering
+
+```tsx
+import { useIsMd, useIsLg } from "@nugudi/react-hooks-use-media-query";
+import { VStack, Grid } from "@nugudi/react-components-layout";
+
+function ProductGrid({ products }) {
+  const { matches: isTablet } = useIsMd();
+  const { matches: isDesktop } = useIsLg();
+
+  // Don't render sidebar on mobile
+  const showSidebar = isTablet;
+  
+  // Show more products on larger screens
+  const productsPerPage = isDesktop ? 12 : isTablet ? 8 : 4;
+  
+  // Different layouts for different screens
+  const gridColumns = isDesktop ? 4 : isTablet ? 3 : 2;
+
+  return (
+    <VStack gap={20}>
+      {showSidebar && (
+        <Sidebar>
+          <FilterOptions />
+          <SortOptions />
+        </Sidebar>
+      )}
+      
+      <Grid columns={gridColumns} gap={16}>
+        {products.slice(0, productsPerPage).map(product => (
+          <ProductCard 
+            key={product.id} 
+            {...product}
+            compact={!isDesktop}
+          />
+        ))}
+      </Grid>
+      
+      {!isDesktop && (
+        <MobileFilterButton />
+      )}
+    </VStack>
+  );
+}
+```
+
+### Dynamic Component Props
+
+```tsx
+import { useMediaQuery } from "@nugudi/react-hooks-use-media-query";
+import { Button, Modal } from "@nugudi/react-components";
+
+function AdaptiveModal({ isOpen, onClose, children }) {
+  const { matches: isDesktop } = useMediaQuery({
+    query: "(min-width: 1024px)"
+  });
+  
+  const { matches: isTablet } = useMediaQuery({
+    query: "(min-width: 768px)"
+  });
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size={isDesktop ? "large" : isTablet ? "medium" : "full"}
+      position={isDesktop ? "center" : "bottom"}
+      animation={isDesktop ? "fade" : "slide"}
+    >
+      <VStack gap={isDesktop ? 24 : 16}>
+        {children}
+        
+        <Button 
+          onClick={onClose}
+          fullWidth={!isDesktop}
+          size={isDesktop ? "md" : "lg"}
+        >
+          Close
+        </Button>
+      </VStack>
+    </Modal>
+  );
+}
+```
+
+### Performance Optimization
+
+```tsx
+import { useIsLg } from "@nugudi/react-hooks-use-media-query";
+
+function OptimizedDashboard() {
+  const { matches: isDesktop } = useIsLg();
+
+  // Lazy load heavy components on desktop only
+  const HeavyChart = isDesktop 
+    ? React.lazy(() => import("./HeavyChart"))
+    : null;
+
+  // Reduce data fetching on mobile
+  const dataLimit = isDesktop ? 100 : 20;
+  
+  // Disable animations on mobile for better performance
+  const enableAnimations = isDesktop;
+
+  return (
+    <Dashboard>
+      {isDesktop && (
+        <React.Suspense fallback={<ChartSkeleton />}>
+          <HeavyChart />
+        </React.Suspense>
+      )}
+      
+      <DataTable 
+        limit={dataLimit}
+        animated={enableAnimations}
+        virtualScroll={isDesktop}
+      />
+    </Dashboard>
+  );
+}
+```
+
+### Dark Mode Detection
+
+```tsx
+import { useMediaQuery } from "@nugudi/react-hooks-use-media-query";
+
+function ThemeAwareComponent() {
+  const { matches: prefersDark } = useMediaQuery({
+    query: "(prefers-color-scheme: dark)",
+    onChange: (isDark) => {
+      document.documentElement.classList.toggle("dark", isDark);
+    }
+  });
+
+  const { matches: prefersReducedMotion } = useMediaQuery({
+    query: "(prefers-reduced-motion: reduce)"
+  });
+
+  return (
+    <div className={prefersDark ? "dark-theme" : "light-theme"}>
+      <AnimatedLogo animate={!prefersReducedMotion} />
+      <ThemeToggle defaultChecked={prefersDark} />
+    </div>
+  );
+}
+```
+
+### Orientation Detection
+
+```tsx
+import { useMediaQuery } from "@nugudi/react-hooks-use-media-query";
+
+function VideoPlayer() {
+  const { matches: isLandscape } = useMediaQuery({
+    query: "(orientation: landscape)"
+  });
+
+  const { matches: isPortrait } = useMediaQuery({
+    query: "(orientation: portrait)"
+  });
+
+  return (
+    <div className="video-container">
+      {isLandscape ? (
+        <FullscreenVideo />
+      ) : (
+        <InlineVideo />
+      )}
+      
+      {isPortrait && (
+        <RotateDeviceHint />
+      )}
+    </div>
+  );
+}
+```
+
+## API Reference
+
+### useMediaQuery
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `query` | `string` | - | Media query string to evaluate |
+| `defaultMatches` | `boolean` | `false` | Initial match state for SSR |
+| `onChange` | `(matches: boolean) => void` | - | Callback when match state changes |
+| `matchMedia` | `Window["matchMedia"]` | - | Custom matchMedia for testing |
+
+**Returns:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `matches` | `boolean` | Current match state of the media query |
+| `query` | `string` | The media query string being evaluated |
+
+### Breakpoint Hooks
+
+All breakpoint hooks accept the same optional parameters as `useMediaQuery` except for `query`.
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `defaultMatches` | `boolean` | `false` | Initial match state for SSR |
+| `onChange` | `(matches: boolean) => void` | - | Callback when match state changes |
+
+### useDeviceType
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `queries` | `{ mobile?: string, tablet?: string, desktop?: string }` | Default breakpoints | Custom media queries for device types |
+
+**Returns:** `"mobile" | "tablet" | "desktop" | "unknown"`
+
+## Best Practices
+
+1. **Use semantic breakpoint hooks** instead of hardcoded pixel values
+2. **Provide defaultMatches for SSR** to avoid hydration mismatches
+3. **Consider mobile-first design** - start with mobile layout and enhance
+4. **Minimize re-renders** by using onChange callbacks strategically
+5. **Test on real devices** as media queries can behave differently
+6. **Use BREAKPOINTS constants** for consistency across your app
+7. **Combine with CSS media queries** for critical styling
+
+## TypeScript Support
+
+Full TypeScript support with exported types:
+
+```tsx
+import type { 
+  UseMediaQueryProps, 
+  UseMediaQueryReturn 
+} from "@nugudi/react-hooks-use-media-query";
+
+// Type-safe media query configuration
+const config: UseMediaQueryProps = {
+  query: "(min-width: 768px)",
+  defaultMatches: false,
+  onChange: (matches: boolean) => console.log(matches)
+};
+
+// Type-safe return value
+const result: UseMediaQueryReturn = useMediaQuery(config);
+```
+
+## Browser Compatibility
+
+- Modern browsers: Full support with `addEventListener`
+- Legacy browsers: Fallback to `addListener` for older browsers
+- SSR: Full support with `defaultMatches` parameter
+- Testing: Supports custom `matchMedia` injection
+
+## Performance Notes
+
+- Uses `useSyncExternalStore` for optimal React 18+ performance
+- Automatically cleans up listeners on unmount
+- Prevents unnecessary re-renders
+- Zero memory leaks
+- Hydration-safe for SSR
+
+## License
+
+MIT
