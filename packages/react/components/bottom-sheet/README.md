@@ -239,7 +239,7 @@ function ProductDetails({ product, isOpen, onClose }) {
         <Box 
           width={40}
           height={4}
-          backgroundColor="gray"
+          background="zinc"
           borderRadius="full"
           margin="0 auto"
         />

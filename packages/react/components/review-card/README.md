@@ -435,7 +435,7 @@ import { Box } from '@nugudi/react-components-layout';
 
 function StyledReview({ review }) {
   return (
-    <Box padding={20} backgroundColor="gray" borderRadius="lg">
+    <Box padding={20} background="zinc" borderRadius="lg">
       <ReviewCard
         imageUrl={review.image}
         date={review.date}

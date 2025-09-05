@@ -155,11 +155,11 @@ When creating a shared component:
 4. **ALWAYS use theme tokens**
    ```typescript
    // ✅ CORRECT
-   backgroundColor: vars.colors.$scale.main[100]
+   background: vars.colors.$scale.main[100]
    padding: vars.box.spacing[4]
    
    // ❌ WRONG
-   backgroundColor: '#e0e7ff'
+   background: '#e0e7ff'
    padding: '16px'
    ```
 

@@ -113,7 +113,7 @@ import { VStack, HStack, Box, Title, Body, Badge } from '@nugudi/react-component
 
 function ProductCard({ product }) {
   return (
-    <Box borderRadius="lg" overflow="hidden" backgroundColor="white">
+    <Box borderRadius="lg" overflow="hidden" background="whiteAlpha">
       <Box position="relative">
         <ImageCard 
           src={product.image}
@@ -218,7 +218,7 @@ import { VStack, HStack, Box, Title, Body, Button } from '@nugudi/react-componen
 
 function ProfileCard({ user }) {
   return (
-    <Box borderRadius="lg" overflow="hidden" backgroundColor="white">
+    <Box borderRadius="lg" overflow="hidden" background="whiteAlpha">
       <ImageCard 
         src={user.coverImage}
         alt="Cover"
@@ -365,7 +365,7 @@ import { VStack, HStack, Box, Title, Body, Badge } from '@nugudi/react-component
 
 function RecipeCard({ recipe }) {
   return (
-    <Box borderRadius="lg" overflow="hidden" backgroundColor="white">
+    <Box borderRadius="lg" overflow="hidden" background="whiteAlpha">
       <Box position="relative">
         <ImageCard
           src={recipe.image}
@@ -418,7 +418,7 @@ import { VStack, HStack, Box, Title, Body, Button, Badge } from '@nugudi/react-c
 
 function EventCard({ event }) {
   return (
-    <Box borderRadius="lg" overflow="hidden" backgroundColor="white">
+    <Box borderRadius="lg" overflow="hidden" background="whiteAlpha">
       <Box position="relative">
         <ImageCard
           src={event.image}
@@ -439,7 +439,7 @@ function EventCard({ event }) {
           top={12}
           right={12}
           padding={8}
-          backgroundColor="white"
+          background="whiteAlpha"
           borderRadius="md"
         >
           <VStack gap={0} align="center">
@@ -478,7 +478,7 @@ import { VStack, HStack, Box, Title, Body, Badge } from '@nugudi/react-component
 
 function PropertyCard({ property }) {
   return (
-    <Box borderRadius="lg" overflow="hidden" backgroundColor="white">
+    <Box borderRadius="lg" overflow="hidden" background="whiteAlpha">
       <Box position="relative">
         <ImageCard
           src={property.images[0]}
@@ -499,7 +499,7 @@ function PropertyCard({ property }) {
           bottom={12}
           right={12}
           padding={8}
-          backgroundColor="rgba(0,0,0,0.7)"
+          background="blackAlpha"
           borderRadius="md"
         >
           <Body fontSize="b4" style={{ color: 'white' }}>

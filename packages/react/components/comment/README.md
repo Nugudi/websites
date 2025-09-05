@@ -234,8 +234,7 @@ function QAThread() {
           marginTop={16}
           padding={12}
           borderRadius="md"
-          backgroundColor="positive"
-          backgroundColorShade={50}
+          background="yellow"
         >
           <Comment
             avatar={<Avatar name="Expert" src="/expert.jpg" size="sm" />}
@@ -389,7 +388,7 @@ function BlogComments() {
       <Title fontSize="t2">Comments ({comments.length})</Title>
       
       {/* Add comment form */}
-      <Box padding={16} backgroundColor="gray" borderRadius="lg">
+      <Box padding={16} background="zinc" borderRadius="lg">
         <VStack gap={12}>
           <Textarea 
             placeholder="Add a comment..."
@@ -545,7 +544,7 @@ function LiveChat({ messages }) {
       height={400} 
       overflowY="auto"
       padding={16}
-      backgroundColor="gray"
+      background="zinc"
       borderRadius="lg"
     >
       <VStack gap={8}>

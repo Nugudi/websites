@@ -167,8 +167,7 @@ function Sidebar() {
     <Box 
       width={280}
       height="100vh"
-      backgroundColor="gray"
-      backgroundColorShade={50}
+      background="zinc"
       padding={16}
     >
       <Title fontSize="t3" marginBottom={24}>
@@ -397,7 +396,7 @@ function AdminNavigation() {
     <Box 
       width={260}
       padding={20}
-      backgroundColor="white"
+      background="whiteAlpha"
       borderRight="1px solid #e0e0e0"
     >
       <Title fontSize="t3" marginBottom={24}>

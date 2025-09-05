@@ -197,7 +197,7 @@ function TaskProgress() {
   ];
 
   return (
-    <Box padding={24} borderRadius="lg" backgroundColor="white">
+    <Box padding={24} borderRadius="lg" background="whiteAlpha">
       <VStack gap={20}>
         <Title fontSize="t3">Application Progress</Title>
         
@@ -310,7 +310,7 @@ function ProfileCompletion() {
   const completedCount = profileSections.filter(s => s.completed).length;
 
   return (
-    <Box padding={20} borderRadius="lg" backgroundColor="gray" colorShade={50}>
+    <Box padding={20} borderRadius="lg" background="zinc">
       <VStack gap={16}>
         <Title fontSize="t3">Complete Your Profile</Title>
         
@@ -449,7 +449,7 @@ function NavigableSteps() {
             onClick={() => setActiveStep(step)}
             style={{
               padding: '8px 12px',
-              backgroundColor: step === activeStep ? '#007bff' : '#f0f0f0',
+              background: step === activeStep ? '#007bff' : '#f0f0f0',
               color: step === activeStep ? 'white' : 'black',
               border: 'none',
               borderRadius: '4px',

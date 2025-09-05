@@ -129,7 +129,7 @@ import { vars } from '@nugudi/themes';
 const styles = {
   padding: vars.box.spacing[4], // 16px
   borderRadius: vars.box.radii.lg, // 8px
-  backgroundColor: vars.colors.$scale.main[100],
+  background: vars.colors.$scale.main[100],
   boxShadow: vars.box.shadows.sm,
 };
 
@@ -137,7 +137,7 @@ const styles = {
 const styles = {
   padding: '16px', // NO! Use spacing tokens
   borderRadius: '8px', // NO! Use radii tokens
-  backgroundColor: '#e0e7ff', // NO! Use color scales
+  background: '#e0e7ff', // NO! Use color scales
 };
 ```
 

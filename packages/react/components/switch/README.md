@@ -93,18 +93,16 @@ Use any color from the theme's color scale:
 
 ```tsx
 // Theme colors
-<Switch color="gray" label="Gray" />
+<Switch color="zinc" label="Zinc" />
 <Switch color="red" label="Red" />
 <Switch color="yellow" label="Yellow" />
-<Switch color="green" label="Green" />
+<Switch color="main" label="Main" />
 <Switch color="blue" label="Blue" />
-<Switch color="teal" label="Teal" />
 <Switch color="purple" label="Purple" />
-<Switch color="pink" label="Pink" />
 
 // Different colors for different states
 <Switch 
-  color="green" 
+  color="main" 
   label="Active"
   defaultSelected={true}
 />
@@ -207,7 +205,7 @@ function SettingsForm() {
         isSelected={settings.autoSave}
         onToggle={handleToggle('autoSave')}
         label="Auto-save"
-        color="green"
+        color="main"
       />
     </form>
   );
@@ -269,7 +267,7 @@ function NotificationSettings() {
           isSelected={settings.push}
           onToggle={(val) => setSettings({...settings, push: val})}
           label="Push notifications"
-          color="green"
+          color="main"
           size="md"
         />
         
@@ -287,7 +285,7 @@ function NotificationSettings() {
           label={
             <VStack gap={4}>
               <Body fontSize="b2">Marketing emails</Body>
-              <Emphasis fontSize="e1" color="gray">
+              <Emphasis fontSize="e1" color="zinc">
                 Receive updates about new features and promotions
               </Emphasis>
             </VStack>
@@ -334,7 +332,7 @@ function FeatureFlags() {
         isSelected={features.debug}
         onToggle={(val) => setFeatures({...features, debug: val})}
         label="Debug mode"
-        color="gray"
+        color="zinc"
         size="sm"
       />
     </VStack>
@@ -371,7 +369,7 @@ function AccessibilitySettings() {
         label="Optimize for screen readers"
         labelPlacement="start"
         size="lg"
-        color="green"
+        color="main"
       />
     </div>
   );

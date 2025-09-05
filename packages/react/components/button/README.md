@@ -50,8 +50,8 @@ import { ArrowRightIcon, DownloadIcon } from '@nugudi/assets-icons';
 </Button>
 
 // Both icons
-<Button 
-  leftIcon={<DownloadIcon />} 
+<Button
+  leftIcon={<DownloadIcon />}
   rightIcon={<ArrowRightIcon />}
 >
   Download and Continue
@@ -85,18 +85,16 @@ Use any color from the theme's color scale:
 
 ```tsx
 // Theme colors
-<Button color="gray">Gray</Button>
+<Button color="zinc">Zinc</Button>
 <Button color="red">Red</Button>
 <Button color="yellow">Yellow</Button>
-<Button color="green">Green</Button>
+<Button color="main">Main</Button>
 <Button color="blue">Blue</Button>
-<Button color="teal">Teal</Button>
 <Button color="purple">Purple</Button>
-<Button color="pink">Pink</Button>
 
 // With different variants
 <Button variant="brand" color="blue">Brand Blue</Button>
-<Button variant="neutral" color="gray">Neutral Gray</Button>
+<Button variant="neutral" color="zinc">Neutral Zinc</Button>
 ```
 
 ## Width Options
@@ -190,8 +188,8 @@ function SaveButton() {
       onClick={handleSave}
       isLoading={isSaving}
       leftIcon={<SaveIcon />}
-      color="green"
-      size="lg"
+      color='green'
+      size='lg'
     >
       {isSaving ? 'Saving...' : 'Save Changes'}
     </Button>
@@ -205,9 +203,11 @@ function SaveButton() {
 import { HStack } from '@nugudi/react-components-layout';
 
 <HStack gap={8}>
-  <Button variant="neutral">Cancel</Button>
-  <Button variant="brand" color="blue">Confirm</Button>
-</HStack>
+  <Button variant='neutral'>Cancel</Button>
+  <Button variant='brand' color='blue'>
+    Confirm
+  </Button>
+</HStack>;
 ```
 
 ### Conditional Rendering
@@ -226,20 +226,21 @@ import { HStack } from '@nugudi/react-components-layout';
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| color | `keyof typeof vars.colors.$scale` | - | Button color from theme colors |
-| isLoading | `boolean` | `false` | Show loading spinner and disable button |
-| leftIcon | `React.ReactNode` | - | Icon element to display on the left |
-| rightIcon | `React.ReactNode` | - | Icon element to display on the right |
-| size | `'sm' \| 'md' \| 'lg'` | `'md'` | Button size |
-| variant | `'brand' \| 'neutral'` | `'brand'` | Button variant style |
-| width | `'auto' \| 'full'` | `'auto'` | Button width behavior |
-| ...buttonProps | `React.ButtonHTMLAttributes<HTMLButtonElement>` | - | All native button attributes |
+| Prop           | Type                                            | Default   | Description                             |
+| -------------- | ----------------------------------------------- | --------- | --------------------------------------- |
+| color          | `keyof typeof vars.colors.$scale`               | -         | Button color from theme colors          |
+| isLoading      | `boolean`                                       | `false`   | Show loading spinner and disable button |
+| leftIcon       | `React.ReactNode`                               | -         | Icon element to display on the left     |
+| rightIcon      | `React.ReactNode`                               | -         | Icon element to display on the right    |
+| size           | `'sm' \| 'md' \| 'lg'`                          | `'md'`    | Button size                             |
+| variant        | `'brand' \| 'neutral'`                          | `'brand'` | Button variant style                    |
+| width          | `'auto' \| 'full'`                              | `'auto'`  | Button width behavior                   |
+| ...buttonProps | `React.ButtonHTMLAttributes<HTMLButtonElement>` | -         | All native button attributes            |
 
 ### Native Button Props Support
 
 The component extends all native HTML button attributes:
+
 - `type`: `'button' \| 'submit' \| 'reset'`
 - `disabled`: `boolean`
 - `onClick`: Click event handler
@@ -252,6 +253,7 @@ The component extends all native HTML button attributes:
 ## Sizes
 
 Available sizes with their typical use cases:
+
 - `sm`: Small buttons for compact interfaces
 - `md`: Default size for most use cases
 - `lg`: Large buttons for primary actions or mobile interfaces

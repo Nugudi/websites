@@ -14,6 +14,7 @@ Nugudi Platform is a **package-first monorepo**. Always check and reuse existing
 
 ### 2. Development Guidelines
 
+- **[component-srp-guideline.md](./claude/component-srp-guideline.md)** — Component development with Single Responsibility Principle
 - **[storybook-guideline.md](./claude/storybook-guideline.md)** — Shared component development and documentation
 - **[testing.md](./claude/testing.md)** — Testing strategy and requirements
 
@@ -42,9 +43,10 @@ Nugudi Platform is a **package-first monorepo**. Always check and reuse existing
 ### When Creating Components:
 
 - [ ] Follow Page → View → Section → Component hierarchy
+- [ ] Apply Single Responsibility Principle (SRP) for each component
 - [ ] Use layout components from `@nugudi/react-components-layout`
 - [ ] Apply design tokens from `@nugudi/themes`
-- [ ] Add proper TypeScript types
+- [ ] Add proper TypeScript types with composition pattern
 - [ ] Include Storybook documentation
 
 ### When Committing:
@@ -58,5 +60,6 @@ Nugudi Platform is a **package-first monorepo**. Always check and reuse existing
 - **Package-first**: Always use existing packages before creating new code
 - **Type-safe**: Use TypeScript strictly (no `any` types)
 - **Component hierarchy**: Never skip layers in Page → View → Section → Component
+- **Single Responsibility**: Each component should have ONE clear responsibility
 - **Design tokens**: Use `vars` from `@nugudi/themes`, not hard-coded values
 - **Testing**: Write tests for business logic and complex components

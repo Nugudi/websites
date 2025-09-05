@@ -473,7 +473,7 @@ function Documentation() {
         <VStack gap={16} padding={20}>
           <Title fontSize='t3'>Installation</Title>
 
-          <Box padding={12} backgroundColor='gray' borderRadius='md'>
+          <Box padding={12} background='zinc' borderRadius='md'>
             <code>npm install @nugudi/react-components-tab</code>
           </Box>
 
@@ -618,7 +618,7 @@ function CourseContent({ course }) {
             <Box
               key={index}
               padding={16}
-              backgroundColor='gray'
+              background='zinc'
               borderRadius='md'
             >
               <HStack justify='space-between'>

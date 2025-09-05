@@ -46,7 +46,7 @@ function Modal({ isOpen, onClose, title, children }) {
   return (
     <Backdrop onClick={onClose}>
       <Box
-        backgroundColor="white"
+        background="whiteAlpha"
         borderRadius="lg"
         padding={24}
         maxWidth={500}
@@ -131,7 +131,7 @@ function Drawer({ isOpen, onClose, children }) {
         top={0}
         width={300}
         height="100vh"
-        backgroundColor="white"
+        background="whiteAlpha"
         transition="left 0.3s ease"
         zIndex={1001}
       >
@@ -192,7 +192,7 @@ function LoadingOverlay({ isLoading, message = "Loading..." }) {
     <Backdrop>
       <VStack gap={16} align="center" justify="center" height="100vh">
         <div className="spinner" />
-        <Body fontSize="b2" color="white">
+        <Body fontSize="b2" color="whiteAlpha">
           {message}
         </Body>
       </VStack>
@@ -228,7 +228,7 @@ function ConfirmDialog({
         top="50%"
         left="50%"
         transform="translate(-50%, -50%)"
-        backgroundColor="white"
+        background="whiteAlpha"
         borderRadius="lg"
         padding={24}
         minWidth={300}

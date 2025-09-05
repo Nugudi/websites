@@ -427,7 +427,7 @@ function GameCodeEntry() {
       </Button>
 
       {reward && (
-        <Box padding={16} backgroundColor="positive" borderRadius="md">
+        <Box padding={16} background="yellow" borderRadius="md">
           <Body fontSize="b2">🎉 {reward.message}</Body>
         </Box>
       )}
