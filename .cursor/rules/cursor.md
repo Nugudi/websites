@@ -8,14 +8,14 @@ Nugudi Platform is a **package-first monorepo**. Always check and reuse existing
 
 ### 1. Architecture & Structure
 
-- **[packages.md](./claude/packages.md)** — Monorepo structure, package system, commit rules
-- **[frontend.md](./claude/frontend.md)** — Frontend development patterns and architecture
-- **[nextjs-component-structure-guideline.md](./claude/nextjs-component-structure-guideline.md)** — Next.js App Router component hierarchy
+- **[packages.md](../rules/packages.md)** — Monorepo structure, package system, commit rules
+- **[frontend.md](../rules/frontend.md)** — Frontend development patterns and architecture
+- **[nextjs-component-structure-guideline.md](../rules/nextjs-component-structure-guideline.md)** — Next.js App Router component hierarchy
 
 ### 2. Development Guidelines
 
-- **[storybook-guideline.md](./claude/storybook-guideline.md)** — Shared component development and documentation
-- **[testing.md](./claude/testing.md)** — Testing strategy and requirements
+- **[storybook-guideline.md](../rules/storybook-guideline.md)** — Shared component development and documentation
+- **[testing.md](../rules/testing.md)** — Testing strategy and requirements
 
 ### 3. Package Documentation
 
