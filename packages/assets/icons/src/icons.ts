@@ -40,6 +40,7 @@ import SoupIcon from "./svg/soup.svg?react";
 import SubDishIcon from "./svg/sub-dish.svg?react";
 import SuccessIcon from "./svg/success.svg?react";
 import TeaIcon from "./svg/tea.svg?react";
+import UserFillIcon from "./svg/user_fill.svg?react";
 import type { IconRegistry } from "./types/icon";
 
 // 아이콘 레지스트리
@@ -207,6 +208,10 @@ export const iconRegistry: IconRegistry = {
   Reply: {
     component: ReplyIcon,
     tags: ["reply", "대댓글", "답글"],
+  },
+  UserFill: {
+    component: UserFillIcon,
+    tags: ["user", "fill", "사용자", "프로필", "계정"],
   },
 };
 

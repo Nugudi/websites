@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@nugudi/assets-icons": "workspace:*",
+    "@nugudi/react-components-avatar": "workspace:*",
     "@nugudi/react-components-backdrop": "workspace:*",
     "@nugudi/react-components-badge": "workspace:*",
     "@nugudi/react-components-bottom-sheet": "workspace:*",
