@@ -332,7 +332,7 @@ function ClickableCard({ title, description, image, href }) {
         <img src={image} alt="" />
         <VStack gap={8}>
           <Title level={3}>{title}</Title>
-          <Body size={2}>{description}</Body>
+          <Body fontSize="b2">{description}</Body>
         </VStack>
       </VStack>
     </a>
@@ -438,7 +438,7 @@ function MultiSelectTags() {
         })}
       </HStack>
       
-      <Body size={2}>
+      <Body fontSize="b2">
         Selected: {selectedTags.join(", ") || "None"}
       </Body>
     </VStack>

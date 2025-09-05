@@ -47,18 +47,18 @@ Three visual styles for different emphasis levels:
 ```tsx
 import { VStack, HStack } from '@nugudi/react-components-layout';
 
-// Solid variant (default) - strongest emphasis
-<HStack gap={8}>
-  <Badge variant="solid" tone="informative">Solid</Badge>
-  <Badge variant="solid" tone="positive">Solid</Badge>
-  <Badge variant="solid" tone="warning">Solid</Badge>
-</HStack>
-
-// Weak variant - subtle appearance
+// Weak variant (default) - subtle appearance
 <HStack gap={8}>
   <Badge variant="weak" tone="informative">Weak</Badge>
   <Badge variant="weak" tone="positive">Weak</Badge>
   <Badge variant="weak" tone="warning">Weak</Badge>
+</HStack>
+
+// Solid variant - strongest emphasis
+<HStack gap={8}>
+  <Badge variant="solid" tone="informative">Solid</Badge>
+  <Badge variant="solid" tone="positive">Solid</Badge>
+  <Badge variant="solid" tone="warning">Solid</Badge>
 </HStack>
 
 // Outline variant - bordered style
@@ -365,8 +365,8 @@ function EnvironmentBadge({ env }: { env: 'dev' | 'staging' | 'prod' }) {
 |------|------|---------|-------------|
 | children | `ReactNode` | - | **Required.** Badge content |
 | tone | `'neutral' \| 'informative' \| 'positive' \| 'warning' \| 'negative' \| 'purple'` | `'neutral'` | Semantic color tone |
-| variant | `'solid' \| 'weak' \| 'outline'` | `'solid'` | Visual style variant |
-| size | `'sm' \| 'md' \| 'lg'` | `'md'` | Badge size |
+| variant | `'solid' \| 'weak' \| 'outline'` | `'weak'` | Visual style variant |
+| size | `'sm' \| 'md' \| 'lg'` | `'sm'` | Badge size |
 | icon | `ReactElement` | - | Optional icon element |
 | ...spanProps | `ComponentPropsWithoutRef<'span'>` | - | All native span attributes |
 

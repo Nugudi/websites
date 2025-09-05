@@ -126,14 +126,16 @@ function Drawer({ isOpen, onClose, children }) {
       {isOpen && <Backdrop onClick={onClose} />}
       
       <Box
-        position="fixed"
-        left={isOpen ? 0 : -300}
-        top={0}
-        width={300}
-        height="100vh"
+        style={{
+          position: 'fixed',
+          left: isOpen ? 0 : -300,
+          top: 0,
+          width: 300,
+          height: '100vh',
+          transition: 'left 0.3s ease',
+          zIndex: 1001,
+        }}
         background="whiteAlpha"
-        transition="left 0.3s ease"
-        zIndex={1001}
       >
         <VStack gap={16} padding={20}>
           <Title fontSize="t2">Menu</Title>
@@ -224,15 +226,17 @@ function ConfirmDialog({
   return (
     <Backdrop onClick={onCancel}>
       <Box
-        position="fixed"
-        top="50%"
-        left="50%"
-        transform="translate(-50%, -50%)"
+        style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          minWidth: 300,
+          maxWidth: 400,
+        }}
         background="whiteAlpha"
         borderRadius="lg"
         padding={24}
-        minWidth={300}
-        maxWidth={400}
         onClick={(e) => e.stopPropagation()}
       >
         <VStack gap={20}>

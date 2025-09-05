@@ -159,8 +159,8 @@ function SettingSwitch({ label, description, value, onChange, disabled = false }
   return (
     <HStack justify="space-between" align="center" padding={16}>
       <VStack gap={4}>
-        <Body size={2} weight="medium">{label}</Body>
-        <Body size={3} tone="secondary">{description}</Body>
+        <Body fontSize="b2">{label}</Body>
+        <Body fontSize="b3" color="zinc" colorShade={600}>{description}</Body>
       </VStack>
       
       <button 
@@ -279,7 +279,7 @@ function FeatureFlag({ feature, onUpdate }) {
           {feature.beta && <Badge tone="purple">BETA</Badge>}
           {feature.experimental && <Badge tone="warning">EXPERIMENTAL</Badge>}
         </HStack>
-        <Body size={3} tone="secondary">
+        <Body fontSize="b3" color="zinc" colorShade={600}>
           {feature.description}
         </Body>
       </VStack>
@@ -292,7 +292,7 @@ function FeatureFlag({ feature, onUpdate }) {
           <span className="switch-indicator" />
         </button>
         {feature.locked && (
-          <Body size={3} tone="secondary">
+          <Body fontSize="b3" color="zinc" colorShade={600}>
             Requires upgrade
           </Body>
         )}
@@ -387,10 +387,10 @@ function PrivacySettings() {
             {index > 0 && <Divider />}
             <HStack justify="space-between">
               <VStack gap={4} flex={1}>
-                <Body size={2} weight="medium">
+                <Body fontSize="b2">
                   {option.title}
                 </Body>
-                <Body size={3} tone="secondary">
+                <Body fontSize="b3" color="zinc" colorShade={600}>
                   {option.description}
                 </Body>
               </VStack>
@@ -554,10 +554,10 @@ function AccessibilityPanel() {
             <div key={setting.key} className="a11y-setting">
               <HStack justify="space-between" align="start">
                 <VStack gap={4} flex={1}>
-                  <Body size={2} weight="medium">
+                  <Body fontSize="b2">
                     {setting.label}
                   </Body>
-                  <Body size={3} tone="secondary">
+                  <Body fontSize="b3" color="zinc" colorShade={600}>
                     {setting.description}
                   </Body>
                 </VStack>

@@ -201,7 +201,7 @@ function RegistrationFlow() {
       </div>
       
       {/* Step Counter */}
-      <Body size={2} tone="secondary">
+      <Body fontSize="b2" color="zinc" colorShade={600}>
         Step {currentIndex + 1} of {REGISTRATION_STEPS.length}
       </Body>
       
@@ -345,9 +345,9 @@ function CheckoutFlow({ cart }) {
         {stepIndicators.map(indicator => (
           <Body 
             key={indicator.name}
-            size={3}
-            weight={indicator.active ? "bold" : "normal"}
-            tone={indicator.active ? "primary" : "secondary"}
+            fontSize="b3"
+            color={indicator.active ? "main" : "zinc"}
+            colorShade={indicator.active ? 500 : 600}
           >
             {indicator.name}
           </Body>
@@ -451,7 +451,7 @@ function SurveyFlow() {
         <Step name="intro">
           <VStack gap={16} align="center">
             <Title level={1}>Customer Satisfaction Survey</Title>
-            <Body size={2}>
+            <Body fontSize="b2">
               Help us improve by sharing your experience. 
               This survey takes about 5 minutes.
             </Body>
@@ -517,7 +517,7 @@ function SurveyFlow() {
         <Step name="thank_you">
           <VStack gap={16} align="center">
             <Title level={1}>Thank You!</Title>
-            <Body size={2}>
+            <Body fontSize="b2">
               Your feedback helps us serve you better.
             </Body>
             <Button onClick={() => window.location.href = "/"}>
@@ -576,7 +576,7 @@ function InteractiveTutorial() {
           <Step name="welcome">
             <VStack gap={16} align="center">
               <Title level={1}>Welcome to AppName!</Title>
-              <Body size={2}>
+              <Body fontSize="b2">
                 Let's take a quick tour to get you started.
               </Body>
               <Button 
@@ -647,7 +647,7 @@ function InteractiveTutorial() {
           <Step name="complete">
             <VStack gap={16} align="center">
               <Title level={1}>You're All Set!</Title>
-              <Body size={2}>
+              <Body fontSize="b2">
                 You've completed {completedSteps.length} of {TUTORIAL_STEPS.length - 1} tutorial steps.
               </Body>
               <HStack gap={12}>

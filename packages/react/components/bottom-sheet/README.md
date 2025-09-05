@@ -45,7 +45,7 @@ import { BottomSheet } from '@nugudi/react-components-bottom-sheet';
   isOpen={isOpen}
   onClose={handleClose}
   snapPoints={[100, 300, 500]}
-  defaultSnapPoint={300}
+  defaultSnapPoint={1}
 >
   <div>
     Content that can be viewed at different heights
@@ -61,9 +61,9 @@ Set a specific initial height:
 <BottomSheet
   isOpen={isOpen}
   onClose={handleClose}
-  initialHeight={400}
+  initialHeight={40}  // 40% of viewport
 >
-  <div>Content with 400px initial height</div>
+  <div>Content with 40% initial height</div>
 </BottomSheet>
 ```
 

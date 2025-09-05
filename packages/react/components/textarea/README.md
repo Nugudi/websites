@@ -583,8 +583,8 @@ function CustomTextarea() {
 | `rows` | `number` | - | Number of visible text lines |
 | `placeholder` | `string` | - | Placeholder text |
 | `value` | `string` | - | Controlled value |
-| `onChange` | `(e: ChangeEvent) => void` | - | Change handler |
-| `...props` | `TextareaHTMLAttributes` | - | All standard HTML textarea attributes |
+| `onChange` | `(e: React.ChangeEvent<HTMLTextAreaElement>) => void` | - | Change handler |
+| `...props` | `React.TextareaHTMLAttributes<HTMLTextAreaElement>` | - | All standard HTML textarea attributes |
 
 ### useTextarea Props
 
@@ -592,7 +592,7 @@ function CustomTextarea() {
 |------|------|-------------|
 | `invalid` | `boolean` | Sets aria-invalid attribute |
 | `errorMessage` | `string` | Error message for aria-describedby |
-| `...props` | `TextareaHTMLAttributes` | All standard HTML textarea attributes |
+| `...props` | `React.TextareaHTMLAttributes<HTMLTextAreaElement>` | All standard HTML textarea attributes |
 
 ### useTextarea Return
 

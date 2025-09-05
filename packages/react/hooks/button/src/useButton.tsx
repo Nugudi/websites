@@ -63,7 +63,7 @@ export const useButton: OverloadedButtonFunction = (props: any): any => {
         href: disabled ? undefined : href,
         target: disabled ? undefined : target,
         rel: disabled ? undefined : rel,
-        "area-disabled": isDisabled,
+        "aria-disabled": isDisabled,
       };
       break;
     }
@@ -72,7 +72,7 @@ export const useButton: OverloadedButtonFunction = (props: any): any => {
         role: "button",
         type: props.type,
         disabled,
-        "area-disabled": undefined,
+        "aria-disabled": undefined,
       };
       break;
     }
@@ -80,7 +80,7 @@ export const useButton: OverloadedButtonFunction = (props: any): any => {
       additionalProps = {
         role: "button",
         type: type ?? "button",
-        "area-disabled": isDisabled,
+        "aria-disabled": isDisabled,
       };
       break;
     }

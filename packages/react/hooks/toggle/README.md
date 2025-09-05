@@ -396,10 +396,10 @@ function SettingsPanel() {
       {settings.map((setting, index) => (
         <HStack key={index} justify="space-between" align="center">
           <VStack gap={4}>
-            <Body size={2} weight="medium">
+            <Body fontSize="b2">
               {setting.label}
             </Body>
-            <Body size={3} tone="secondary">
+            <Body fontSize="b3" color="zinc" colorShade={600}>
               {setting.description}
             </Body>
           </VStack>
