@@ -1,5 +1,10 @@
 import type { vars } from "@nugudi/themes";
-import type { ComponentPropsWithoutRef } from "react";
+import type {
+  ComponentPropsWithoutRef,
+  ImgHTMLAttributes,
+  ReactElement,
+  ReactNode,
+} from "react";
 
 export type AvatarSize = "sm" | "md" | "lg";
 
@@ -38,7 +43,7 @@ export interface AvatarProps
   /**
    * 이니셜 대신 표시할 커스텀 아이콘
    */
-  icon?: React.ReactElement;
+  icon?: ReactElement;
   /**
    * 아바타 모서리 둥글기
    * @default 'full'
@@ -47,11 +52,11 @@ export interface AvatarProps
   /**
    * 커스텀 이미지 엘리먼트 (Next.js Image 통합용)
    */
-  imgElement?: React.ReactElement;
+  imgElement?: ReactElement<ImgHTMLAttributes<HTMLImageElement>>;
   /**
    * 이미지 props (Next.js getImageProps 통합용)
    */
-  imgProps?: React.ImgHTMLAttributes<HTMLImageElement>;
+  imgProps?: ImgHTMLAttributes<HTMLImageElement>;
 }
 
 export interface AvatarGroupProps extends ComponentPropsWithoutRef<"div"> {
@@ -65,16 +70,17 @@ export interface AvatarGroupProps extends ComponentPropsWithoutRef<"div"> {
    */
   size?: AvatarSize;
   /**
-   * 아바타 간 간격 (px)
+   * 아바타 간 간격 (number 또는 CSS 문자열 값)
    * 음수 값은 겹침 효과
-   * 지정하지 않으면 size에 따른 기본값 사용:
-   * - sm: -16px
-   * - md: -24px
-   * - lg: -40px
+   * 지정하지 않으면 size에 따른 기본값 사용 (테마 spacing rem 기반):
+   * - sm: calc(vars.box.spacing[4] * -1)
+   * - md: calc(vars.box.spacing[6] * -1)
+   * - lg: calc(vars.box.spacing[10] * -1)
+   * 예시: -16, "-1rem", "calc(1rem * -1)" 등
    */
-  spacing?: number;
+  spacing?: number | string;
   /**
    * 하위 아바타 컴포넌트들
    */
-  children: React.ReactNode;
+  children: ReactNode;
 }

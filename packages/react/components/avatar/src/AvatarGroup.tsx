@@ -1,5 +1,5 @@
 import { vars } from "@nugudi/themes";
-import { clsx } from "clsx";
+import clsx from "clsx";
 import React, { Children, cloneElement, isValidElement } from "react";
 import { Avatar } from "./Avatar";
 import * as styles from "./style.css";
@@ -16,7 +16,7 @@ export const AvatarGroup = React.forwardRef<HTMLDivElement, AvatarGroupProps>(
     { max = 3, size = "md", spacing, children, className, style, ...restProps },
     ref,
   ) => {
-    const effectiveSpacing =
+    const _effectiveSpacing =
       spacing !== undefined ? spacing : defaultSpacingMap[size];
 
     // children 중 Avatar 컴포넌트만 필터링
@@ -53,7 +53,6 @@ export const AvatarGroup = React.forwardRef<HTMLDivElement, AvatarGroupProps>(
             ),
             style: {
               ...avatarChild.props.style,
-              ...(index !== 0 ? { marginLeft: effectiveSpacing } : {}),
               zIndex: validChildren.length - index,
             },
           });
@@ -70,9 +69,6 @@ export const AvatarGroup = React.forwardRef<HTMLDivElement, AvatarGroupProps>(
               styles.avatarGroupExcess({ size }),
               styles.avatarGroupItem({ size }),
             )}
-            style={{
-              marginLeft: effectiveSpacing,
-            }}
           >
             +{excess}
           </span>

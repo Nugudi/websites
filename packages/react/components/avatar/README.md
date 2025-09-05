@@ -111,11 +111,12 @@ import { Avatar, AvatarGroup } from '@nugudi/react-components-avatar';
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| name | `string` | - | Name used for alt text and initials generation |
+| alt | `string` | - | 이미지 대체 텍스트 (웹 접근성을 위한 명시적 텍스트, 스크린리더에서 우선 사용) |
+| name | `string` | - | 이니셜 생성용 이름 (alt가 없을 때 대체 텍스트로도 사용) |
 | src | `string` | - | Image URL |
-| size | `'2xs' \| 'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'` | `'md'` | Avatar size |
+| size | `'sm' \| 'md' \| 'lg'` | `'md'` | Avatar size |
 | showBadge | `boolean` | `false` | Show status badge |
-| badgeColor | `'green' \| 'red' \| 'yellow' \| 'gray'` | `'green'` | Badge color |
+| badgeColor | `AvatarBadgeColor` (theme colors) | `'main'` | Badge color |
 | borderRadius | `'full' \| 'lg' \| 'md' \| 'sm' \| 'none'` | `'full'` | Border radius |
 | icon | `React.ReactElement` | - | Custom fallback icon |
 | onError | `() => void` | - | Image error handler |
@@ -134,13 +135,9 @@ import { Avatar, AvatarGroup } from '@nugudi/react-components-avatar';
 ## Sizes
 
 Available sizes with their dimensions:
-- `2xs`: 24px (1.5rem)
-- `xs`: 32px (2rem)
-- `sm`: 40px (2.5rem)
-- `md`: 48px (3rem) - default
-- `lg`: 56px (3.5rem)
-- `xl`: 64px (4rem)
-- `2xl`: 80px (5rem)
+- `sm`: 48px (3rem) 
+- `md`: 80px (5rem) - default
+- `lg`: 128px (8rem)
 
 ## Fallback Behavior
 
@@ -185,10 +182,10 @@ import '@nugudi/react-components-avatar/style.css';
 <Avatar name="User" showBadge badgeColor="yellow" />
 
 // Busy
-<Avatar name="User" showBadge badgeColor="red" />
+<Avatar name="User" showBadge badgeColor="orange" />
 
-// Offline
-<Avatar name="User" showBadge badgeColor="gray" />
+// Main brand color
+<Avatar name="User" showBadge badgeColor="main" />
 ```
 
 ### Error Handling

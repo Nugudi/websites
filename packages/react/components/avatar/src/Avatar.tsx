@@ -1,7 +1,7 @@
 import { UserFillIcon } from "@nugudi/assets-icons";
 import { vars } from "@nugudi/themes";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
-import { clsx } from "clsx";
+import clsx from "clsx";
 import React, { useCallback, useState } from "react";
 import * as styles from "./style.css";
 import type { AvatarProps } from "./types";
