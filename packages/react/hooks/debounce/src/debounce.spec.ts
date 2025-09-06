@@ -7,8 +7,6 @@ describe("debounce", () => {
     const mockCallback = vi.fn();
     const { result } = renderHook(() => debounce(mockCallback, 500));
 
-    console.log(result);
-
     expect(result.current).toBeDefined();
     expect(result.current.cancel).toBeDefined();
     expect(result.current.flush).toBeDefined();
