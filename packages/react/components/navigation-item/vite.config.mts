@@ -15,7 +15,7 @@ export default defineConfig({
     vanillaExtractPlugin(),
     dts({
       include: ["src"],
-      exclude: ["src/**/*.stories.tsx", "src/**/*.test.tsx"],
+      exclude: ["src/**/*.test.*", "src/**/*.spec.*", "src/**/__tests__/**"],
       outDir: "dist",
       entryRoot: "src",
       insertTypesEntry: true,
