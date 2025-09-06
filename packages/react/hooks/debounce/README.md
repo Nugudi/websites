@@ -1,6 +1,6 @@
 # @nugudi/react-hooks-debounce
 
-A React hook for debouncing function calls with advanced options like leading/trailing edges and max wait time.
+React에서 사용할 수 있는 debounce 함수로, leading/trailing edges와 max wait time 같은 고급 옵션을 제공합니다.
 
 ## Installation
 
@@ -16,7 +16,7 @@ import { debounce } from '@nugudi/react-hooks-debounce';
 
 ## Overview
 
-The `debounce` hook provides a robust way to debounce function calls in React applications. It helps optimize performance by limiting the rate at which a function can fire, making it perfect for search inputs, API calls, scroll/resize handlers, and form validation.
+`debounce` 함수는 React 애플리케이션에서 함수 호출을 디바운싱하는 강력한 방법을 제공합니다. 함수가 실행될 수 있는 빈도를 제한하여 성능을 최적화하며, 검색 입력, API 호출, 스크롤/리사이즈 핸들러, 폼 검증 등에 적합합니다.
 
 ## Basic Usage
 
@@ -862,7 +862,7 @@ function MaxWaitExample() {
 | ---------- | -------------------- | ------- | ------------------------ |
 | `callback` | `Function`           | -       | The function to debounce |
 | `delay`    | `number`             | `500`   | Delay in milliseconds    |
-| `options`  | `UseDebounceOptions` | `{}`    | Additional options       |
+| `options`  | `DebounceOptions` | `{}`    | Additional options       |
 
 **Options:**
 
@@ -898,8 +898,8 @@ Full TypeScript support with type inference:
 ```tsx
 import type {
   DebouncedFunction,
-  UseDebounceOptions,
-} from '@nugudi/react-hooks-use-debounce';
+  DebounceOptions,
+} from '@nugudi/react-hooks-debounce';
 
 // Type-safe debounced function
 const searchProducts = async (
@@ -915,7 +915,7 @@ const debouncedSearch: DebouncedFunction<typeof searchProducts> = debounce(
 );
 
 // Typed options
-const options: UseDebounceOptions = {
+const options: DebounceOptions = {
   leading: true,
   trailing: true,
   maxWait: 1000,
@@ -926,10 +926,10 @@ const customDebounce = debounce(myFunction, 300, options);
 
 ## Performance Considerations
 
-- The hook automatically handles cleanup on unmount
-- Function references are updated without losing debounce state
-- Uses `useCallback` and `useMemo` for optimization
-- Minimal re-renders as debounced function reference is stable
+- 컴포넌트 언마운트 시 자동으로 클린업 처리
+- 디바운스 상태를 잃지 않고 함수 참조 업데이트
+- 최적화를 위해 `useCallback`과 `useMemo` 사용
+- 디바운스된 함수 참조가 안정적이므로 리렌더링 최소화
 
 ## License
 
