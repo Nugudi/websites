@@ -9,8 +9,8 @@ export const LoginView = () => {
     <Flex
       className={styles.container}
       direction="column"
-      justify={"space-around"}
-      align={"center"}
+      justify="space-around"
+      align="center"
     >
       <LoginWelcome />
       <div className={styles.logo}>
