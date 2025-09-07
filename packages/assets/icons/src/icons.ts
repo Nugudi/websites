@@ -46,6 +46,7 @@ import SubDishIcon from "./svg/sub-dish.svg?react";
 import SuccessIcon from "./svg/success.svg?react";
 import TeaIcon from "./svg/tea.svg?react";
 import UserFillIcon from "./svg/user_fill.svg?react";
+import XIcon from "./svg/x.svg?react";
 import type { IconRegistry } from "./types/icon";
 
 // 아이콘 레지스트리
@@ -237,6 +238,10 @@ export const iconRegistry: IconRegistry = {
   NuguriBus: {
     component: NuguriBus,
     tags: ["nuguri", "bus", "너구디", "버스"],
+  },
+  X: {
+    component: XIcon,
+    tags: ["x", "x", "취소", "닫기"],
   },
 };
 

@@ -1,7 +1,6 @@
 "use client";
 
-import { CameraLineIcon, ExitIcon } from "@nugudi/assets-icons";
-import { Button } from "@nugudi/react-components-button";
+import { CameraLineIcon, XIcon } from "@nugudi/assets-icons";
 import { Box, Flex } from "@nugudi/react-components-layout";
 import { vars } from "@nugudi/themes";
 import Image from "next/image";
@@ -54,15 +53,18 @@ export const ImageUploadArea = ({
             className={styles.previewImage}
             style={{ objectFit: "cover" }}
           />
-          <Button
-            size="sm"
-            variant="neutral"
+          <button
             className={styles.removeButton}
             onClick={onImageRemove}
             aria-label="이미지 삭제"
+            type="button"
           >
-            <ExitIcon width={16} height={16} />
-          </Button>
+            <XIcon
+              width={28}
+              height={28}
+              color={vars.colors.$static.light.color.white}
+            />
+          </button>
         </Box>
       ) : (
         <Flex

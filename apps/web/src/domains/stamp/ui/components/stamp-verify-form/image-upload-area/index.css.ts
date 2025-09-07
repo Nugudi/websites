@@ -42,10 +42,18 @@ export const previewImage = style({
 
 export const removeButton = style({
   position: "absolute",
-  top: vars.box.spacing[12],
-  right: vars.box.spacing[12],
-  backgroundColor: vars.colors.$static.light.color.white,
-  borderRadius: vars.box.radii.full,
-  padding: vars.box.spacing[8],
-  boxShadow: vars.box.shadows.md,
+  right: 4,
+  top: 4,
+  background: "none",
+  border: "none",
+  cursor: "pointer",
+  padding: 0,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  color: vars.colors.$static.light.color.white,
+
+  ":hover": {
+    opacity: 0.8,
+  },
 });
