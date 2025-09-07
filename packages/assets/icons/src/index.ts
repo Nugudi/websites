@@ -32,6 +32,7 @@ export { default as MealCompleteStamp } from "./svg/meal-complete-stamp.svg?reac
 export { default as NaverIcon } from "./svg/naver.svg?react";
 export { default as NoodleIcon } from "./svg/noodle.svg?react";
 export { default as NotiIcon } from "./svg/noti.svg?react";
+export { default as NuguriBus } from "./svg/nuguri_bus.svg?react";
 export { default as PackagingIcon } from "./svg/packaging.svg?react";
 export { default as PenIcon } from "./svg/pen.svg?react";
 export { default as PencilIcon } from "./svg/pencil.svg?react";

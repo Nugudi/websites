@@ -32,6 +32,7 @@ import MealCompleteStamp from "./svg/meal-complete-stamp.svg?react";
 import NaverIcon from "./svg/naver.svg?react";
 import NoodleIcon from "./svg/noodle.svg?react";
 import NotiIcon from "./svg/noti.svg?react";
+import NuguriBus from "./svg/nuguri_bus.svg?react";
 import PackagingIcon from "./svg/packaging.svg?react";
 import PenIcon from "./svg/pen.svg?react";
 import PencilIcon from "./svg/pencil.svg?react";
@@ -232,6 +233,10 @@ export const iconRegistry: IconRegistry = {
   FillNuguriStamp: {
     component: FillNuguriStamp,
     tags: ["nuguri", "stamp", "너구디", "스탬프"],
+  },
+  NuguriBus: {
+    component: NuguriBus,
+    tags: ["nuguri", "bus", "너구디", "버스"],
   },
 };
 
