@@ -11,12 +11,15 @@ import CameraLineIcon from "./svg/camera-line.svg?react";
 import ClockIcon from "./svg/clock.svg?react";
 import CoinIcon from "./svg/coin.svg?react";
 import CommentIcon from "./svg/comment.svg?react";
+import EmptyBusStamp from "./svg/empty-bus-stamp.svg?react";
+import EmptyNuguriStamp from "./svg/empty-nuguri-stamp.svg?react";
 import EtcIcon from "./svg/etc.svg?react";
 import ExitIcon from "./svg/exit.svg?react";
 import EyeIcon from "./svg/eye.svg?react";
 import EyeOffIcon from "./svg/eye_off.svg?react";
 import FailIcon from "./svg/failure.svg?react";
 import FillHeartIcon from "./svg/fill-heart.svg?react";
+import FillNuguriStamp from "./svg/fill-nuguri-stamp.svg?react";
 import FolderIcon from "./svg/folder.svg?react";
 import GiftIcon from "./svg/gift.svg?react";
 import GoogleIcon from "./svg/google.svg?react";
@@ -25,9 +28,11 @@ import HomeIcon from "./svg/home.svg?react";
 import KakaoIcon from "./svg/kakao.svg?react";
 import LogoTextIcon from "./svg/logo_text.svg?react";
 import MajorDishIcon from "./svg/major-dish.svg?react";
+import MealCompleteStamp from "./svg/meal-complete-stamp.svg?react";
 import NaverIcon from "./svg/naver.svg?react";
 import NoodleIcon from "./svg/noodle.svg?react";
 import NotiIcon from "./svg/noti.svg?react";
+import NuguriBus from "./svg/nuguri_bus.svg?react";
 import PackagingIcon from "./svg/packaging.svg?react";
 import PenIcon from "./svg/pen.svg?react";
 import PencilIcon from "./svg/pencil.svg?react";
@@ -212,6 +217,26 @@ export const iconRegistry: IconRegistry = {
   UserFill: {
     component: UserFillIcon,
     tags: ["user", "fill", "사용자", "프로필", "계정"],
+  },
+  EmptyBusStamp: {
+    component: EmptyBusStamp,
+    tags: ["bus", "stamp", "버스", "스탬프"],
+  },
+  EmptyNuguriStamp: {
+    component: EmptyNuguriStamp,
+    tags: ["nuguri", "stamp", "너구디", "스탬프"],
+  },
+  MealCompleteStamp: {
+    component: MealCompleteStamp,
+    tags: ["meal", "complete", "식사", "완료"],
+  },
+  FillNuguriStamp: {
+    component: FillNuguriStamp,
+    tags: ["nuguri", "stamp", "너구디", "스탬프"],
+  },
+  NuguriBus: {
+    component: NuguriBus,
+    tags: ["nuguri", "bus", "너구디", "버스"],
   },
 };
 
