@@ -4,7 +4,6 @@ import { style } from "@vanilla-extract/css";
 export const container = style({
   display: "flex",
   alignItems: "center",
-  backgroundColor: vars.colors.$static.light.color.white,
   position: "sticky",
   top: 0,
   zIndex: 1,

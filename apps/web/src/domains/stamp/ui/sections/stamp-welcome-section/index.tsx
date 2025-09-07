@@ -6,7 +6,7 @@ export const StampWelcomeSection = () => {
   return (
     <VStack gap={48}>
       <StampWelcomeText />
-      <MealCompleteStamp width={320} height={320} />
+      <MealCompleteStamp width={240} height={240} />
     </VStack>
   );
 };

@@ -46,4 +46,5 @@ export { default as SubDishIcon } from "./svg/sub-dish.svg?react";
 export { default as SuccessIcon } from "./svg/success.svg?react";
 export { default as TeaIcon } from "./svg/tea.svg?react";
 export { default as UserFillIcon } from "./svg/user_fill.svg?react";
+export { default as XIcon } from "./svg/x.svg?react";
 export * from "./types/icon";
