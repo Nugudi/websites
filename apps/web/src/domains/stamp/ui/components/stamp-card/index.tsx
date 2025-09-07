@@ -4,20 +4,21 @@ import {
   FillNuguriStamp,
 } from "@nugudi/assets-icons";
 import { HStack, VStack } from "@nugudi/react-components-layout";
-import * as styles from "./index.css";
+
+import { STAMP_ICON } from "@/src/domains/stamp/constants/stamp";
 
 export const StampCard = () => {
   return (
-    <VStack className={styles.container} align="center">
-      <HStack justify="center" align="center" gap={80}>
-        <FillNuguriStamp width={200} height={200} />
-        <EmptyBusStamp width={200} height={200} />
+    <VStack align="center">
+      <HStack justify="center" align="center" gap={STAMP_ICON.GAP}>
+        <FillNuguriStamp width={STAMP_ICON.SIZE} height={STAMP_ICON.SIZE} />
+        <EmptyBusStamp width={STAMP_ICON.SIZE} height={STAMP_ICON.SIZE} />
       </HStack>
-      <HStack justify="center" align="center" gap={80}>
-        <EmptyBusStamp width={200} height={200} />
-        <EmptyNuguriStamp width={200} height={200} />
+      <HStack justify="center" align="center" gap={STAMP_ICON.GAP}>
+        <EmptyBusStamp width={STAMP_ICON.SIZE} height={STAMP_ICON.SIZE} />
+        <EmptyNuguriStamp width={STAMP_ICON.SIZE} height={STAMP_ICON.SIZE} />
       </HStack>
-      <EmptyNuguriStamp width={200} height={200} />
+      <EmptyNuguriStamp width={STAMP_ICON.SIZE} height={STAMP_ICON.SIZE} />
     </VStack>
   );
 };
