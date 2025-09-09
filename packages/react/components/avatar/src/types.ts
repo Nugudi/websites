@@ -6,7 +6,7 @@ import type {
   ReactNode,
 } from "react";
 
-export type AvatarSize = "sm" | "md" | "lg";
+export type AvatarSize = "xs" | "sm" | "md" | "lg";
 
 // themes 패키지의 색상 스케일 타입 추출
 export type AvatarBadgeColor = keyof typeof vars.colors.$scale;

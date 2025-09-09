@@ -40,12 +40,12 @@ const meta: Meta<typeof _Avatar> = {
       },
     },
     size: {
-      options: ["sm", "md", "lg"],
+      options: ["xs", "sm", "md", "lg"],
       control: "select",
       defaultValue: "md",
       description: "아바타 크기",
       table: {
-        type: { summary: "sm | md | lg" },
+        type: { summary: "xs | sm | md | lg" },
         defaultValue: { summary: "md" },
         category: "Appearance",
       },
@@ -144,11 +144,24 @@ export const WithIcon: Story = {
 
 export const Sizes: Story = {
   render: () => {
-    const sizes = ["sm", "md", "lg"] as const;
+    const sizes = ["xs", "sm", "md", "lg"] as const;
     return (
       <HStack gap={16} align="center">
         {sizes.map((size) => (
-          <_Avatar size={size} key={`default-${size}`} />
+          <VStack key={`size-${size}`} gap={8} align="center">
+            <_Avatar size={size} />
+            <Emphasis fontSize="e2" color="zinc">
+              {size} (
+              {size === "xs"
+                ? "30px"
+                : size === "sm"
+                  ? "40px"
+                  : size === "md"
+                    ? "80px"
+                    : "128px"}
+              )
+            </Emphasis>
+          </VStack>
         ))}
       </HStack>
     );
@@ -234,7 +247,7 @@ export const AvatarGroupBasic: Story = {
     return (
       <VStack gap={16}>
         <VStack gap={24}>
-          {(["sm", "md", "lg"] as const).map((size) => (
+          {(["xs", "sm", "md", "lg"] as const).map((size) => (
             <HStack key={size} gap={16} align="center">
               <_AvatarGroup size={size} max={4}>
                 {avatarUrls.map((url, index) => (
