@@ -22,8 +22,8 @@ export const avatarContainer = recipe({
   variants: {
     size: {
       sm: {
-        width: vars.box.spacing[12],
-        height: vars.box.spacing[12],
+        width: vars.box.spacing[10],
+        height: vars.box.spacing[10],
       },
       md: {
         width: vars.box.spacing[20],
