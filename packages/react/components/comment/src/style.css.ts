@@ -42,13 +42,13 @@ export const header = style({
 
 export const avatarSection = style({
   flexShrink: 0,
-  width: vars.box.spacing[10],
-  height: vars.box.spacing[10],
+  width: "30px",
+  height: "30px",
 });
 
 export const defaultAvatar = style({
-  width: vars.box.spacing[10],
-  height: vars.box.spacing[10],
+  width: "30px",
+  height: "30px",
   borderRadius: "50%",
   backgroundColor: vars.colors.$scale.zinc[300],
 });
@@ -94,7 +94,7 @@ export const timeAgo = style({
 });
 
 export const body = style({
-  paddingLeft: vars.box.spacing[14],
+  paddingLeft: "42px",
 });
 
 export const content = style({

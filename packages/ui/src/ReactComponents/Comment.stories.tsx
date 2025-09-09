@@ -1,24 +1,10 @@
 import "@nugudi/react-components-comment/style.css";
+import "@nugudi/react-components-avatar/style.css";
 
+import { Avatar } from "@nugudi/react-components-avatar";
 import { Comment as _Comment } from "@nugudi/react-components-comment";
 import { VStack } from "@nugudi/react-components-layout";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-
-// Helper component for avatar in Storybook environment
-//TODO: 추후 아바타 컴포넌트 구현 후 수정
-const Avatar = ({ src, alt }: { src: string; alt: string }) => (
-  // biome-ignore lint/performance/noImgElement: Storybook environment doesn't support Next.js Image
-  <img
-    src={src}
-    alt={alt}
-    style={{
-      width: "40px",
-      height: "40px",
-      borderRadius: "50%",
-      objectFit: "cover",
-    }}
-  />
-);
 
 const meta: Meta<typeof _Comment> = {
   title: "Components/Comment",
@@ -118,7 +104,11 @@ export const Default: Story = {
 export const WithAvatar: Story = {
   args: {
     avatar: (
-      <Avatar src="https://i.pravatar.cc/150?img=1" alt="애옹 프로필 이미지" />
+      <Avatar
+        src="https://i.pravatar.cc/150?img=1"
+        alt="애옹 프로필 이미지"
+        size="xs"
+      />
     ),
     username: "애옹",
     level: 3,
@@ -129,7 +119,9 @@ export const WithAvatar: Story = {
 
 export const Reply: Story = {
   args: {
-    avatar: <Avatar src="https://i.pravatar.cc/150?img=3" alt="애옹옹옹" />,
+    avatar: (
+      <Avatar src="https://i.pravatar.cc/150?img=3" alt="애옹옹옹" size="xs" />
+    ),
     username: "애옹옹옹",
     level: 7,
     timeAgo: "3분전",
@@ -143,7 +135,11 @@ export const CommentWithReplies: Story = {
     <VStack maxWidth="600px">
       <_Comment
         avatar={
-          <Avatar src="https://i.pravatar.cc/150?img=5" alt="원댓글작성자" />
+          <Avatar
+            src="https://i.pravatar.cc/150?img=5"
+            alt="원댓글작성자"
+            size="xs"
+          />
         }
         username="원댓글작성자"
         level={10}
@@ -152,7 +148,11 @@ export const CommentWithReplies: Story = {
       >
         <_Comment
           avatar={
-            <Avatar src="https://i.pravatar.cc/150?img=6" alt="대댓글작성자1" />
+            <Avatar
+              src="https://i.pravatar.cc/150?img=6"
+              alt="대댓글작성자1"
+              size="xs"
+            />
           }
           username="대댓글작성자1"
           level={5}
@@ -162,7 +162,11 @@ export const CommentWithReplies: Story = {
         />
         <_Comment
           avatar={
-            <Avatar src="https://i.pravatar.cc/150?img=7" alt="대댓글작성자2" />
+            <Avatar
+              src="https://i.pravatar.cc/150?img=7"
+              alt="대댓글작성자2"
+              size="xs"
+            />
           }
           username="대댓글작성자2"
           level={8}
@@ -179,21 +183,39 @@ export const MultipleComments: Story = {
   render: () => (
     <VStack maxWidth="600px">
       <_Comment
-        avatar={<Avatar src="https://i.pravatar.cc/150?img=8" alt="사용자1" />}
+        avatar={
+          <Avatar
+            src="https://i.pravatar.cc/150?img=8"
+            alt="사용자1"
+            size="xs"
+          />
+        }
         username="사용자1"
         level={12}
         timeAgo="2시간전"
         content="첫 번째 댓글입니다."
       />
       <_Comment
-        avatar={<Avatar src="https://i.pravatar.cc/150?img=9" alt="사용자2" />}
+        avatar={
+          <Avatar
+            src="https://i.pravatar.cc/150?img=9"
+            alt="사용자2"
+            size="xs"
+          />
+        }
         username="사용자2"
         level={3}
         timeAgo="1시간전"
         content="두 번째 댓글입니다. 멋진 게시물이네요!"
       />
       <_Comment
-        avatar={<Avatar src="https://i.pravatar.cc/150?img=10" alt="사용자3" />}
+        avatar={
+          <Avatar
+            src="https://i.pravatar.cc/150?img=10"
+            alt="사용자3"
+            size="xs"
+          />
+        }
         username="사용자3"
         level={1}
         timeAgo="30분전"
