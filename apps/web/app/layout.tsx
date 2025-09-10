@@ -36,10 +36,7 @@ const RootLayout = ({
 }>) => {
   return (
     <html lang="ko" suppressHydrationWarning={true}>
-      <body
-        className={`${Pretendard.variable}`}
-        suppressHydrationWarning={true}
-      >
+      <body className={Pretendard.className} suppressHydrationWarning={true}>
         <Providers>
           <MobileFirstLayout>{children}</MobileFirstLayout>
         </Providers>
