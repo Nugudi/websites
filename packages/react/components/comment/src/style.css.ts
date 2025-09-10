@@ -6,6 +6,7 @@ export const commentContainer = style({
   gap: vars.box.spacing[3],
   padding: `${vars.box.spacing[4]} 0`,
   borderBottom: `1px solid ${vars.colors.$scale.zinc[100]}`,
+  position: "relative",
 
   selectors: {
     "&:last-child": {
@@ -42,13 +43,13 @@ export const header = style({
 
 export const avatarSection = style({
   flexShrink: 0,
-  width: vars.box.spacing[10],
-  height: vars.box.spacing[10],
+  width: "30px",
+  height: "30px",
 });
 
 export const defaultAvatar = style({
-  width: vars.box.spacing[10],
-  height: vars.box.spacing[10],
+  width: "30px",
+  height: "30px",
   borderRadius: "50%",
   backgroundColor: vars.colors.$scale.zinc[300],
 });
@@ -94,7 +95,7 @@ export const timeAgo = style({
 });
 
 export const body = style({
-  paddingLeft: vars.box.spacing[14],
+  paddingLeft: "42px",
 });
 
 export const content = style({
@@ -107,4 +108,35 @@ export const content = style({
 export const replies = style({
   marginTop: vars.box.spacing[4],
   borderTop: `1px solid ${vars.colors.$scale.zinc[100]}`,
+});
+
+export const replyButtonWrapper = style({
+  marginTop: vars.box.spacing[2],
+  display: "flex",
+  justifyContent: "flex-end",
+  alignItems: "center",
+  width: "100%",
+});
+
+export const replyButton = style({
+  ...classes.typography.emphasis.e1,
+  padding: `${vars.box.spacing[1]} 0`,
+  color: vars.colors.$scale.zinc[400],
+  backgroundColor: "transparent",
+  cursor: "pointer",
+  transition: "all 0.2s ease",
+  border: "none",
+
+  selectors: {
+    "&:hover": {
+      color: vars.colors.$scale.main[500],
+    },
+    "&:active": {
+      color: vars.colors.$scale.main[500],
+    },
+  },
+});
+
+export const contentHighlighted = style({
+  color: vars.colors.$scale.main[500],
 });

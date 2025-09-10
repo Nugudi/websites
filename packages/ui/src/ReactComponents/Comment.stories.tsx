@@ -1,24 +1,11 @@
 import "@nugudi/react-components-comment/style.css";
+import "@nugudi/react-components-avatar/style.css";
 
+import { Avatar } from "@nugudi/react-components-avatar";
 import { Comment as _Comment } from "@nugudi/react-components-comment";
 import { VStack } from "@nugudi/react-components-layout";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-
-// Helper component for avatar in Storybook environment
-//TODO: 추후 아바타 컴포넌트 구현 후 수정
-const Avatar = ({ src, alt }: { src: string; alt: string }) => (
-  // biome-ignore lint/performance/noImgElement: Storybook environment doesn't support Next.js Image
-  <img
-    src={src}
-    alt={alt}
-    style={{
-      width: "40px",
-      height: "40px",
-      borderRadius: "50%",
-      objectFit: "cover",
-    }}
-  />
-);
+import { useState } from "react";
 
 const meta: Meta<typeof _Comment> = {
   title: "Components/Comment",
@@ -100,6 +87,32 @@ const meta: Meta<typeof _Comment> = {
         category: "콘텐츠",
       },
     },
+    showReplyButton: {
+      control: "boolean",
+      description: "답글 남기기 버튼 표시 여부",
+      table: {
+        type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
+        category: "상태",
+      },
+    },
+    onReplyClick: {
+      action: "onReplyClick",
+      description: "답글 버튼 클릭 시 호출되는 콜백",
+      table: {
+        type: { summary: "() => void" },
+        category: "이벤트",
+      },
+    },
+    isHighlighted: {
+      control: "boolean",
+      description: "댓글 하이라이트 여부 (답글 작성 중인 댓글 표시)",
+      table: {
+        type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
+        category: "상태",
+      },
+    },
   },
 };
 
@@ -118,7 +131,11 @@ export const Default: Story = {
 export const WithAvatar: Story = {
   args: {
     avatar: (
-      <Avatar src="https://i.pravatar.cc/150?img=1" alt="애옹 프로필 이미지" />
+      <Avatar
+        src="https://i.pravatar.cc/150?img=1"
+        alt="애옹 프로필 이미지"
+        size="xs"
+      />
     ),
     username: "애옹",
     level: 3,
@@ -129,7 +146,9 @@ export const WithAvatar: Story = {
 
 export const Reply: Story = {
   args: {
-    avatar: <Avatar src="https://i.pravatar.cc/150?img=3" alt="애옹옹옹" />,
+    avatar: (
+      <Avatar src="https://i.pravatar.cc/150?img=3" alt="애옹옹옹" size="xs" />
+    ),
     username: "애옹옹옹",
     level: 7,
     timeAgo: "3분전",
@@ -143,7 +162,11 @@ export const CommentWithReplies: Story = {
     <VStack maxWidth="600px">
       <_Comment
         avatar={
-          <Avatar src="https://i.pravatar.cc/150?img=5" alt="원댓글작성자" />
+          <Avatar
+            src="https://i.pravatar.cc/150?img=5"
+            alt="원댓글작성자"
+            size="xs"
+          />
         }
         username="원댓글작성자"
         level={10}
@@ -152,7 +175,11 @@ export const CommentWithReplies: Story = {
       >
         <_Comment
           avatar={
-            <Avatar src="https://i.pravatar.cc/150?img=6" alt="대댓글작성자1" />
+            <Avatar
+              src="https://i.pravatar.cc/150?img=6"
+              alt="대댓글작성자1"
+              size="xs"
+            />
           }
           username="대댓글작성자1"
           level={5}
@@ -162,7 +189,11 @@ export const CommentWithReplies: Story = {
         />
         <_Comment
           avatar={
-            <Avatar src="https://i.pravatar.cc/150?img=7" alt="대댓글작성자2" />
+            <Avatar
+              src="https://i.pravatar.cc/150?img=7"
+              alt="대댓글작성자2"
+              size="xs"
+            />
           }
           username="대댓글작성자2"
           level={8}
@@ -175,29 +206,189 @@ export const CommentWithReplies: Story = {
   ),
 };
 
+export const WithReplyButton: Story = {
+  args: {
+    avatar: (
+      <Avatar
+        src="https://i.pravatar.cc/150?img=2"
+        alt="사용자 프로필"
+        size="xs"
+      />
+    ),
+    username: "댓글작성자",
+    level: 5,
+    timeAgo: "10분전",
+    content:
+      "답글 버튼이 있는 댓글입니다. 오른쪽 끝에 답글 남기기 버튼이 표시됩니다.",
+    showReplyButton: true,
+  },
+};
+
+export const HighlightedComment: Story = {
+  args: {
+    avatar: (
+      <Avatar
+        src="https://i.pravatar.cc/150?img=12"
+        alt="하이라이트된 사용자"
+        size="xs"
+      />
+    ),
+    username: "하이라이트된댓글",
+    level: 8,
+    timeAgo: "방금 전",
+    content:
+      "이 댓글은 현재 답글을 작성 중인 댓글입니다. 텍스트 색상이 변경됩니다.",
+    showReplyButton: true,
+    isHighlighted: true,
+  },
+};
+
+export const CommentWithRepliesAndButton: Story = {
+  render: () => (
+    <VStack maxWidth="600px">
+      <_Comment
+        avatar={
+          <Avatar
+            src="https://i.pravatar.cc/150?img=4"
+            alt="메인댓글작성자"
+            size="xs"
+          />
+        }
+        username="메인댓글작성자"
+        level={7}
+        timeAgo="1시간전"
+        content="구내식당 맛있어요. 🥟"
+        showReplyButton={true}
+        onReplyClick={() => console.log("답글 클릭됨")}
+      >
+        <_Comment
+          avatar={
+            <Avatar
+              src="https://i.pravatar.cc/150?img=11"
+              alt="대댓글작성자"
+              size="xs"
+            />
+          }
+          username="대댓글작성자"
+          level={1}
+          timeAgo="30분전"
+          content="저도 동의합니다!"
+          isReply
+        />
+      </_Comment>
+    </VStack>
+  ),
+};
+
+export const InteractiveReplyHighlight: Story = {
+  render: () => {
+    const InteractiveComments = () => {
+      const [replyingTo, setReplyingTo] = useState<string | null>(null);
+
+      const comments = [
+        {
+          id: "1",
+          username: "사용자1",
+          level: 7,
+          timeAgo: "3분전",
+          content: "구내식당 맛있어요. 🥟",
+        },
+        {
+          id: "2",
+          username: "사용자2",
+          level: 3,
+          timeAgo: "5분전",
+          content: "오늘 메뉴 좋네요!",
+        },
+        {
+          id: "3",
+          username: "사용자3",
+          level: 1,
+          timeAgo: "10분전",
+          content: "내일도 기대됩니다.",
+        },
+      ];
+
+      const handleReplyClick = (commentId: string) => {
+        setReplyingTo(replyingTo === commentId ? null : commentId);
+      };
+
+      return (
+        <VStack maxWidth="600px">
+          {comments.map((comment) => (
+            <_Comment
+              key={comment.id}
+              avatar={
+                <Avatar
+                  src={`https://i.pravatar.cc/150?img=${comment.id}`}
+                  alt={comment.username}
+                  size="xs"
+                />
+              }
+              username={comment.username}
+              level={comment.level}
+              timeAgo={comment.timeAgo}
+              content={comment.content}
+              showReplyButton={true}
+              onReplyClick={() => handleReplyClick(comment.id)}
+              isHighlighted={replyingTo === comment.id}
+            />
+          ))}
+        </VStack>
+      );
+    };
+
+    return <InteractiveComments />;
+  },
+};
+
 export const MultipleComments: Story = {
   render: () => (
     <VStack maxWidth="600px">
       <_Comment
-        avatar={<Avatar src="https://i.pravatar.cc/150?img=8" alt="사용자1" />}
+        avatar={
+          <Avatar
+            src="https://i.pravatar.cc/150?img=8"
+            alt="사용자1"
+            size="xs"
+          />
+        }
         username="사용자1"
         level={12}
         timeAgo="2시간전"
         content="첫 번째 댓글입니다."
+        showReplyButton={true}
+        onReplyClick={() => console.log("첫 번째 댓글에 답글")}
       />
       <_Comment
-        avatar={<Avatar src="https://i.pravatar.cc/150?img=9" alt="사용자2" />}
+        avatar={
+          <Avatar
+            src="https://i.pravatar.cc/150?img=9"
+            alt="사용자2"
+            size="xs"
+          />
+        }
         username="사용자2"
         level={3}
         timeAgo="1시간전"
         content="두 번째 댓글입니다. 멋진 게시물이네요!"
+        showReplyButton={true}
+        onReplyClick={() => console.log("두 번째 댓글에 답글")}
       />
       <_Comment
-        avatar={<Avatar src="https://i.pravatar.cc/150?img=10" alt="사용자3" />}
+        avatar={
+          <Avatar
+            src="https://i.pravatar.cc/150?img=10"
+            alt="사용자3"
+            size="xs"
+          />
+        }
         username="사용자3"
         level={1}
         timeAgo="30분전"
         content="세 번째 댓글입니다."
+        showReplyButton={true}
+        onReplyClick={() => console.log("세 번째 댓글에 답글")}
       />
     </VStack>
   ),

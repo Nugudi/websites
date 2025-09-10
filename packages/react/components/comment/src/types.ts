@@ -17,4 +17,10 @@ export interface CommentProps {
   className?: string;
   /** Children comments/replies */
   children?: ReactNode;
+  /** Callback when reply button is clicked */
+  onReplyClick?: () => void;
+  /** Whether to show reply button */
+  showReplyButton?: boolean;
+  /** Whether this comment is highlighted (being replied to) */
+  isHighlighted?: boolean;
 }

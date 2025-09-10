@@ -21,9 +21,13 @@ export const avatarContainer = recipe({
   },
   variants: {
     size: {
+      xs: {
+        width: "30px",
+        height: "30px",
+      },
       sm: {
-        width: vars.box.spacing[12],
-        height: vars.box.spacing[12],
+        width: vars.box.spacing[10],
+        height: vars.box.spacing[10],
       },
       md: {
         width: vars.box.spacing[20],
@@ -122,12 +126,14 @@ export const avatarIcon = style({
 });
 
 const badgeSizeMap = {
+  xs: "9px",
   sm: vars.box.spacing[3],
   md: "1.125rem",
   lg: vars.box.spacing[6],
 } as const;
 
 const badgePositionMap = {
+  xs: "0px",
   sm: "0.0625rem",
   md: vars.box.spacing[1],
   lg: vars.box.spacing[2],
@@ -144,6 +150,12 @@ export const avatarBadge = recipe({
   },
   variants: {
     size: {
+      xs: {
+        width: badgeSizeMap.xs,
+        height: badgeSizeMap.xs,
+        bottom: badgePositionMap.xs,
+        right: badgePositionMap.xs,
+      },
       sm: {
         width: badgeSizeMap.sm,
         height: badgeSizeMap.sm,
@@ -186,6 +198,9 @@ export const avatarGroupItem = recipe({
   },
   variants: {
     size: {
+      xs: {
+        marginLeft: "-12px",
+      },
       sm: {
         marginLeft: `calc(${vars.box.spacing[4]} * -1)`,
       },
@@ -212,6 +227,10 @@ export const avatarGroupExcess = recipe({
   },
   variants: {
     size: {
+      xs: {
+        fontSize: "10px",
+        fontWeight: "bold",
+      },
       sm: {
         ...classes.typography.body.b4b,
       },

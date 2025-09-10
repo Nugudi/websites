@@ -1,24 +1,11 @@
-import { vars } from "@nugudi/themes";
 import clsx from "clsx";
 import React, { Children, cloneElement, isValidElement } from "react";
 import { Avatar } from "./Avatar";
 import * as styles from "./style.css";
 import type { AvatarGroupProps } from "./types";
 
-const defaultSpacingMap = {
-  sm: `calc(${vars.box.spacing[4]} * -1)`,
-  md: `calc(${vars.box.spacing[6]} * -1)`,
-  lg: `calc(${vars.box.spacing[10]} * -1)`,
-} as const;
-
 export const AvatarGroup = React.forwardRef<HTMLDivElement, AvatarGroupProps>(
-  (
-    { max = 3, size = "md", spacing, children, className, style, ...restProps },
-    ref,
-  ) => {
-    const _effectiveSpacing =
-      spacing !== undefined ? spacing : defaultSpacingMap[size];
-
+  ({ max = 3, size = "md", children, className, style, ...restProps }, ref) => {
     // children 중 Avatar 컴포넌트만 필터링
     const validChildren = Children.toArray(children).filter(
       (child) => isValidElement(child) && child.type === Avatar,
