@@ -86,6 +86,23 @@ const meta: Meta<typeof _Comment> = {
         category: "콘텐츠",
       },
     },
+    showReplyButton: {
+      control: "boolean",
+      description: "답글 남기기 버튼 표시 여부",
+      table: {
+        type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
+        category: "상태",
+      },
+    },
+    onReplyClick: {
+      action: "onReplyClick",
+      description: "답글 버튼 클릭 시 호출되는 콜백",
+      table: {
+        type: { summary: "() => void" },
+        category: "이벤트",
+      },
+    },
   },
 };
 
@@ -179,6 +196,61 @@ export const CommentWithReplies: Story = {
   ),
 };
 
+export const WithReplyButton: Story = {
+  args: {
+    avatar: (
+      <Avatar
+        src="https://i.pravatar.cc/150?img=2"
+        alt="사용자 프로필"
+        size="xs"
+      />
+    ),
+    username: "댓글작성자",
+    level: 5,
+    timeAgo: "10분전",
+    content:
+      "답글 버튼이 있는 댓글입니다. 오른쪽 끝에 답글 남기기 버튼이 표시됩니다.",
+    showReplyButton: true,
+  },
+};
+
+export const CommentWithRepliesAndButton: Story = {
+  render: () => (
+    <VStack maxWidth="600px">
+      <_Comment
+        avatar={
+          <Avatar
+            src="https://i.pravatar.cc/150?img=4"
+            alt="메인댓글작성자"
+            size="xs"
+          />
+        }
+        username="메인댓글작성자"
+        level={7}
+        timeAgo="1시간전"
+        content="구내식당 맛있어요. 🥟"
+        showReplyButton={true}
+        onReplyClick={() => console.log("답글 클릭됨")}
+      >
+        <_Comment
+          avatar={
+            <Avatar
+              src="https://i.pravatar.cc/150?img=11"
+              alt="대댓글작성자"
+              size="xs"
+            />
+          }
+          username="대댓글작성자"
+          level={1}
+          timeAgo="30분전"
+          content="저도 동의합니다!"
+          isReply
+        />
+      </_Comment>
+    </VStack>
+  ),
+};
+
 export const MultipleComments: Story = {
   render: () => (
     <VStack maxWidth="600px">
@@ -194,6 +266,8 @@ export const MultipleComments: Story = {
         level={12}
         timeAgo="2시간전"
         content="첫 번째 댓글입니다."
+        showReplyButton={true}
+        onReplyClick={() => console.log("첫 번째 댓글에 답글")}
       />
       <_Comment
         avatar={
@@ -207,6 +281,8 @@ export const MultipleComments: Story = {
         level={3}
         timeAgo="1시간전"
         content="두 번째 댓글입니다. 멋진 게시물이네요!"
+        showReplyButton={true}
+        onReplyClick={() => console.log("두 번째 댓글에 답글")}
       />
       <_Comment
         avatar={
@@ -220,6 +296,8 @@ export const MultipleComments: Story = {
         level={1}
         timeAgo="30분전"
         content="세 번째 댓글입니다."
+        showReplyButton={true}
+        onReplyClick={() => console.log("세 번째 댓글에 답글")}
       />
     </VStack>
   ),

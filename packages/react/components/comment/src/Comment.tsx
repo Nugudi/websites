@@ -12,6 +12,8 @@ export const Comment = ({
   isReply = false,
   className,
   children,
+  onReplyClick,
+  showReplyButton = false,
 }: CommentProps) => {
   return (
     <div
@@ -45,6 +47,17 @@ export const Comment = ({
 
         <div className={styles.body}>
           <p className={styles.content}>{content}</p>
+          {showReplyButton && !isReply && (
+            <div className={styles.replyButtonWrapper}>
+              <button
+                className={styles.replyButton}
+                onClick={onReplyClick}
+                type="button"
+              >
+                답글 남기기
+              </button>
+            </div>
+          )}
         </div>
 
         {children && <div className={styles.replies}>{children}</div>}
