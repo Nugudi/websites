@@ -2,7 +2,6 @@ import { CafeteriaReviewDetailView } from "@/src/domains/cafeteria/reviews/detai
 
 interface CafeteriaReviewDetailPageProps {
   params: Promise<{
-    cafeteriaId: string;
     reviewId: string;
   }>;
 }
@@ -11,11 +10,9 @@ interface CafeteriaReviewDetailPageProps {
 const CafeteriaReviewDetailPage = async ({
   params,
 }: CafeteriaReviewDetailPageProps) => {
-  const { cafeteriaId, reviewId } = await params;
+  const { reviewId } = await params;
 
-  return (
-    <CafeteriaReviewDetailView cafeteriaId={cafeteriaId} reviewId={reviewId} />
-  );
+  return <CafeteriaReviewDetailView reviewId={reviewId} />;
 };
 
 export default CafeteriaReviewDetailPage;

@@ -1,39 +1,44 @@
-import { Box, Divider, Flex, VStack } from "@nugudi/react-components-layout";
+"use client";
+
+import { Box, Flex, VStack } from "@nugudi/react-components-layout";
 import { NavBar } from "@/src/shared/ui/components/nav-bar";
+import { useCafeteriaReviewCommentReply } from "../../../hooks/useCafeteriaReviewCommentReply";
 import { CafeteriaReviewCommentInputSection } from "../../sections/cafeteria-review-comment-input-section";
 import { CafeteriaReviewCommentsSection } from "../../sections/cafeteria-review-comments-section";
 import { CafeteriaReviewDetailSection } from "../../sections/cafeteria-review-detail-section";
 import * as styles from "./index.css";
 
 interface CafeteriaReviewDetailViewProps {
-  cafeteriaId: string;
   reviewId: string;
 }
 
 export const CafeteriaReviewDetailView = ({
-  cafeteriaId,
   reviewId,
 }: CafeteriaReviewDetailViewProps) => {
+  const { replyingTo, handleReplyClick, handleCancelReply } =
+    useCafeteriaReviewCommentReply();
+
   return (
-    <Flex className={styles.container} pX={16}>
-      <Box className={styles.navBarWrapper} pt={16}>
+    <Flex direction="column" className={styles.container}>
+      <Box className={styles.navBarWrapper} pt={16} pX={16}>
         <NavBar />
       </Box>
 
-      <Box className={styles.content}>
+      <Box className={styles.content} pX={16}>
         <VStack gap={16}>
-          <CafeteriaReviewDetailSection
-            cafeteriaId={cafeteriaId}
-            reviewId={reviewId}
+          <CafeteriaReviewDetailSection />
+          <CafeteriaReviewCommentsSection
+            replyingTo={replyingTo}
+            onReplyClick={handleReplyClick}
           />
-          <Divider />
-          <CafeteriaReviewCommentsSection reviewId={reviewId} />
         </VStack>
       </Box>
 
-      <Box className={styles.inputWrapper} pb={16}>
-        <CafeteriaReviewCommentInputSection reviewId={reviewId} />
-      </Box>
+      <CafeteriaReviewCommentInputSection
+        reviewId={reviewId}
+        replyingTo={replyingTo}
+        onCancelReply={handleCancelReply}
+      />
     </Flex>
   );
 };
