@@ -6,6 +6,7 @@ export const commentContainer = style({
   gap: vars.box.spacing[3],
   padding: `${vars.box.spacing[4]} 0`,
   borderBottom: `1px solid ${vars.colors.$scale.zinc[100]}`,
+  position: "relative",
 
   selectors: {
     "&:last-child": {
@@ -120,7 +121,7 @@ export const replyButtonWrapper = style({
 export const replyButton = style({
   ...classes.typography.emphasis.e1,
   padding: `${vars.box.spacing[1]} 0`,
-  color: vars.colors.$scale.main[500],
+  color: vars.colors.$scale.zinc[400],
   backgroundColor: "transparent",
   cursor: "pointer",
   transition: "all 0.2s ease",
@@ -128,10 +129,14 @@ export const replyButton = style({
 
   selectors: {
     "&:hover": {
-      color: vars.colors.$scale.main[700],
+      color: vars.colors.$scale.main[500],
     },
     "&:active": {
-      color: vars.colors.$scale.main[700],
+      color: vars.colors.$scale.main[500],
     },
   },
+});
+
+export const contentHighlighted = style({
+  color: vars.colors.$scale.main[500],
 });

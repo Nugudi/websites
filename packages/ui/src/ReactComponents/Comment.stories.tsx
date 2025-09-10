@@ -5,6 +5,7 @@ import { Avatar } from "@nugudi/react-components-avatar";
 import { Comment as _Comment } from "@nugudi/react-components-comment";
 import { VStack } from "@nugudi/react-components-layout";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { useState } from "react";
 
 const meta: Meta<typeof _Comment> = {
   title: "Components/Comment",
@@ -101,6 +102,15 @@ const meta: Meta<typeof _Comment> = {
       table: {
         type: { summary: "() => void" },
         category: "이벤트",
+      },
+    },
+    isHighlighted: {
+      control: "boolean",
+      description: "댓글 하이라이트 여부 (답글 작성 중인 댓글 표시)",
+      table: {
+        type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
+        category: "상태",
       },
     },
   },
@@ -214,6 +224,25 @@ export const WithReplyButton: Story = {
   },
 };
 
+export const HighlightedComment: Story = {
+  args: {
+    avatar: (
+      <Avatar
+        src="https://i.pravatar.cc/150?img=12"
+        alt="하이라이트된 사용자"
+        size="xs"
+      />
+    ),
+    username: "하이라이트된댓글",
+    level: 8,
+    timeAgo: "방금 전",
+    content:
+      "이 댓글은 현재 답글을 작성 중인 댓글입니다. 텍스트 색상이 변경됩니다.",
+    showReplyButton: true,
+    isHighlighted: true,
+  },
+};
+
 export const CommentWithRepliesAndButton: Story = {
   render: () => (
     <VStack maxWidth="600px">
@@ -249,6 +278,68 @@ export const CommentWithRepliesAndButton: Story = {
       </_Comment>
     </VStack>
   ),
+};
+
+export const InteractiveReplyHighlight: Story = {
+  render: () => {
+    const InteractiveComments = () => {
+      const [replyingTo, setReplyingTo] = useState<string | null>(null);
+
+      const comments = [
+        {
+          id: "1",
+          username: "사용자1",
+          level: 7,
+          timeAgo: "3분전",
+          content: "구내식당 맛있어요. 🥟",
+        },
+        {
+          id: "2",
+          username: "사용자2",
+          level: 3,
+          timeAgo: "5분전",
+          content: "오늘 메뉴 좋네요!",
+        },
+        {
+          id: "3",
+          username: "사용자3",
+          level: 1,
+          timeAgo: "10분전",
+          content: "내일도 기대됩니다.",
+        },
+      ];
+
+      const handleReplyClick = (commentId: string) => {
+        setReplyingTo(replyingTo === commentId ? null : commentId);
+      };
+
+      return (
+        <VStack maxWidth="600px">
+          {comments.map((comment) => (
+            <_Comment
+              key={comment.id}
+              avatar={
+                <Avatar
+                  src={`https://i.pravatar.cc/150?img=${comment.id}`}
+                  alt={comment.username}
+                  size="xs"
+                />
+              }
+              username={comment.username}
+              level={comment.level}
+              timeAgo={comment.timeAgo}
+              content={comment.content}
+              showReplyButton={true}
+              onReplyClick={() => handleReplyClick(comment.id)}
+              isHighlighted={replyingTo === comment.id}
+            />
+          ))}
+        </VStack>
+      );
+    };
+
+    return <InteractiveComments />;
+  },
 };
 
 export const MultipleComments: Story = {

@@ -14,6 +14,7 @@ export const Comment = ({
   children,
   onReplyClick,
   showReplyButton = false,
+  isHighlighted = false,
 }: CommentProps) => {
   return (
     <div
@@ -46,7 +47,14 @@ export const Comment = ({
         </div>
 
         <div className={styles.body}>
-          <p className={styles.content}>{content}</p>
+          <p
+            className={clsx(
+              styles.content,
+              isHighlighted && styles.contentHighlighted,
+            )}
+          >
+            {content}
+          </p>
           {showReplyButton && !isReply && (
             <div className={styles.replyButtonWrapper}>
               <button
