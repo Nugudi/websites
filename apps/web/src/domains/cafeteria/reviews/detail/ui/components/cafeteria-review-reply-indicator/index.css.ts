@@ -1,4 +1,4 @@
-import { classes, vars } from "@nugudi/themes";
+import { vars } from "@nugudi/themes";
 import { style } from "@vanilla-extract/css";
 
 export const replyIndicator = style({
@@ -9,8 +9,6 @@ export const replyIndicator = style({
 
 export const cancelButton = style({
   padding: `${vars.box.spacing[1]} ${vars.box.spacing[2]}`,
-  ...classes.typography.emphasis.e2,
-  color: vars.colors.$scale.zinc[600],
   backgroundColor: vars.colors.$scale.zinc[200],
   border: "none",
   cursor: "pointer",

@@ -126,7 +126,7 @@ export const replyButton = style({
   color: vars.colors.$scale.zinc[400],
   backgroundColor: "transparent",
   cursor: "pointer",
-  transition: "all 0.2s ease",
+  transition: "color 0.2s ease",
   border: "none",
 
   selectors: {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import type { CafeteriaReviewReplyingTo } from "../types/comment";
 
 /**
@@ -19,13 +19,19 @@ export const useCommentReply = () => {
    * @param {string} commentId - 댓글 ID
    * @param {string} username - 댓글 작성자 이름
    */
-  const handleSelectCommentForReply = (commentId: string, username: string) => {
-    if (replyingTo?.commentId === commentId) {
-      setReplyingTo(null);
-    } else {
-      setReplyingTo({ commentId, username });
-    }
-  };
+  const handleSelectCommentForReply = useCallback(
+    (commentId: string, username: string) => {
+      setReplyingTo((prevReplyingTo) => {
+        // 이미 선택된 댓글을 다시 클릭하면 취소
+        if (prevReplyingTo?.commentId === commentId) {
+          return null;
+        }
+        // 새로운 댓글 선택
+        return { commentId, username };
+      });
+    },
+    [],
+  );
 
   /**
    * 답글 작성 모드를 취소

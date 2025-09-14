@@ -23,7 +23,9 @@ export const CafeteriaReviewReplyIndicator = ({
         @{username}님에게 답글 작성 중
       </Emphasis>
       <button type="button" onClick={onCancel} className={styles.cancelButton}>
-        취소
+        <Emphasis fontSize="e1" color="zinc" colorShade={600} as="span">
+          취소
+        </Emphasis>
       </button>
     </HStack>
   );
