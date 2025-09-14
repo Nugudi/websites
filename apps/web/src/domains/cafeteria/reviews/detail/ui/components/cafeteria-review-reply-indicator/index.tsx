@@ -15,7 +15,7 @@ export const CafeteriaReviewReplyIndicator = ({
   return (
     <HStack
       w={"95%"}
-      justify="between"
+      justify="space-between"
       align="center"
       className={styles.replyIndicator}
     >

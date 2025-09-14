@@ -3,6 +3,7 @@
 import { Avatar } from "@nugudi/react-components-avatar";
 import { Comment } from "@nugudi/react-components-comment";
 import { VStack } from "@nugudi/react-components-layout";
+import { useCallback } from "react";
 import type {
   CafeteriaReviewCommentData,
   CafeteriaReviewReplyingTo,
@@ -33,10 +34,9 @@ export const CafeteriaReviewCommentList = ({
   );
 };
 
-// --- comment item ---
 interface CafeteriaReviewCommentItemProps {
   comment: CafeteriaReviewCommentData;
-  replyingTo?: CafeteriaReviewReplyingTo | null;
+  replyingTo: CafeteriaReviewReplyingTo | null;
   onReplyClick?: (commentId: string, username: string) => void;
   isReply?: boolean;
 }
@@ -47,22 +47,11 @@ const CafeteriaReviewCommentItem = ({
   onReplyClick,
   isReply = false,
 }: CafeteriaReviewCommentItemProps) => {
-  // 답글 버튼 표시 여부 (답글에는 답글 버튼 없음)
-  const shouldShowReplyButton = () => {
-    return !isReply;
-  };
+  const isSelectedForReply = !isReply && replyingTo?.commentId === comment.id;
 
-  // 현재 댓글에 답글을 작성 중인지 확인
-  const isCurrentlyReplyingTo = () => {
-    if (isReply) return false;
-    return replyingTo?.commentId === comment.id;
-  };
-
-  // 답글 클릭 핸들러 생성
-  const createReplyClickHandler = () => {
-    if (!onReplyClick) return undefined;
-    return () => onReplyClick(comment.id, comment.username);
-  };
+  const handleReplyClick = useCallback(() => {
+    onReplyClick?.(comment.id, comment.username);
+  }, [onReplyClick, comment.id, comment.username]);
 
   return (
     <Comment
@@ -71,15 +60,16 @@ const CafeteriaReviewCommentItem = ({
       level={comment.level}
       timeAgo={comment.timeAgo}
       content={comment.content}
-      showReplyButton={shouldShowReplyButton()}
-      onReplyClick={createReplyClickHandler()}
-      isHighlighted={isCurrentlyReplyingTo()}
+      showReplyButton={!isReply}
+      onReplyClick={handleReplyClick}
+      isHighlighted={isSelectedForReply}
       isReply={isReply}
     >
       {comment.replies?.map((reply) => (
         <CafeteriaReviewCommentItem
           key={reply.id}
           comment={reply}
+          replyingTo={null}
           isReply={true}
         />
       ))}

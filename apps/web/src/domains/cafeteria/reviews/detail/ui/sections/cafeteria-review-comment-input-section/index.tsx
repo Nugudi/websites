@@ -10,9 +10,8 @@ import { CafeteriaReviewReplyIndicator } from "../../components/cafeteria-review
 import * as styles from "./index.css";
 
 interface CafeteriaReviewCommentInputSectionProps {
-  reviewId: string;
-  replyingTo?: CafeteriaReviewReplyingTo | null;
-  onCancelReply?: () => void;
+  replyingTo: CafeteriaReviewReplyingTo | null;
+  onCancelReply: () => void;
 }
 
 interface CommentFormData {
@@ -20,7 +19,6 @@ interface CommentFormData {
 }
 
 export const CafeteriaReviewCommentInputSection = ({
-  reviewId,
   replyingTo,
   onCancelReply,
 }: CafeteriaReviewCommentInputSectionProps) => {
@@ -32,31 +30,16 @@ export const CafeteriaReviewCommentInputSection = ({
 
   const commentValue = watch("comment");
 
-  const getSubmitIconClassName = (value: string | undefined): string => {
-    const hasContent = value?.trim();
-    return hasContent ? styles.activeIcon : styles.disabledIcon;
-  };
-
   const onSubmit = (data: CommentFormData) => {
     if (data.comment.trim()) {
       if (replyingTo) {
-        // 답글 제출
-        console.log("답글 제출:", {
-          reviewId,
-          parentCommentId: replyingTo.commentId,
-          content: data.comment,
-          replyTo: replyingTo.username,
-        });
+        // 대댓글 작성
       } else {
-        // 일반 댓글 제출
-        console.log("댓글 제출:", {
-          reviewId,
-          content: data.comment,
-        });
+        // 일반 댓글 작성
       }
 
       reset();
-      onCancelReply?.();
+      onCancelReply();
     }
   };
 
@@ -69,7 +52,7 @@ export const CafeteriaReviewCommentInputSection = ({
       p={16}
       className={styles.inputWrapper}
     >
-      {replyingTo && onCancelReply && (
+      {replyingTo && (
         <CafeteriaReviewReplyIndicator
           username={replyingTo.username}
           onCancel={onCancelReply}
@@ -93,11 +76,14 @@ export const CafeteriaReviewCommentInputSection = ({
               className={styles.buttonBox}
               type="submit"
               disabled={!commentValue?.trim()}
+              aria-label={replyingTo ? "답글 전송" : "댓글 전송"}
             >
               <ArrowUpCircleIcon
                 width={30}
                 height={30}
-                className={getSubmitIconClassName(commentValue)}
+                className={
+                  commentValue?.trim() ? styles.activeIcon : styles.disabledIcon
+                }
               />
             </button>
           }

@@ -5,10 +5,6 @@ export const replyIndicator = style({
   padding: `${vars.box.spacing[2]} ${vars.box.spacing[3]}`,
   backgroundColor: vars.colors.$scale.zinc[50],
   borderRadius: vars.box.radii.xl,
-  width: "100%",
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
 });
 
 export const cancelButton = style({
@@ -23,7 +19,7 @@ export const cancelButton = style({
 
   selectors: {
     "&:hover": {
-      backgroundColor: vars.colors.$scale.zinc[200],
+      backgroundColor: vars.colors.$scale.zinc[300],
     },
   },
 });

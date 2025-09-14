@@ -24,7 +24,7 @@ export const replyIconWrapper = style({
   color: vars.colors.$scale.zinc[500],
   position: "absolute",
   left: vars.box.spacing[5],
-  top: "18px",
+  top: vars.box.spacing[4],
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
@@ -41,16 +41,18 @@ export const header = style({
   marginBottom: vars.box.spacing[3],
 });
 
+const AVATAR_SIZE = "30px";
+
 export const avatarSection = style({
   flexShrink: 0,
-  width: "30px",
-  height: "30px",
+  width: AVATAR_SIZE,
+  height: AVATAR_SIZE,
 });
 
 export const defaultAvatar = style({
-  width: "30px",
-  height: "30px",
-  borderRadius: "50%",
+  width: AVATAR_SIZE,
+  height: AVATAR_SIZE,
+  borderRadius: vars.box.radii.full,
   backgroundColor: vars.colors.$scale.zinc[300],
 });
 
@@ -74,7 +76,7 @@ export const level = style({
   ...classes.typography.emphasis.e1,
   color: vars.colors.$scale.zinc[500],
   backgroundColor: vars.colors.$scale.zinc[100],
-  padding: `2px ${vars.box.spacing[2]}`,
+  padding: `${vars.box.spacing[0]} ${vars.box.spacing[2]}`,
   borderRadius: vars.box.radii.sm,
   flexShrink: 0,
 });
@@ -95,7 +97,7 @@ export const timeAgo = style({
 });
 
 export const body = style({
-  paddingLeft: "42px",
+  paddingLeft: `calc(${AVATAR_SIZE} + ${vars.box.spacing[3]})`,
 });
 
 export const content = style({

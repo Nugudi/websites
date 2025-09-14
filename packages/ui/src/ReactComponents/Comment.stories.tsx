@@ -280,66 +280,64 @@ export const CommentWithRepliesAndButton: Story = {
   ),
 };
 
-export const InteractiveReplyHighlight: Story = {
-  render: () => {
-    const InteractiveComments = () => {
-      const [replyingTo, setReplyingTo] = useState<string | null>(null);
+const InteractiveComments = () => {
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
 
-      const comments = [
-        {
-          id: "1",
-          username: "사용자1",
-          level: 7,
-          timeAgo: "3분전",
-          content: "구내식당 맛있어요. 🥟",
-        },
-        {
-          id: "2",
-          username: "사용자2",
-          level: 3,
-          timeAgo: "5분전",
-          content: "오늘 메뉴 좋네요!",
-        },
-        {
-          id: "3",
-          username: "사용자3",
-          level: 1,
-          timeAgo: "10분전",
-          content: "내일도 기대됩니다.",
-        },
-      ];
+  const comments = [
+    {
+      id: "1",
+      username: "사용자1",
+      level: 7,
+      timeAgo: "3분전",
+      content: "구내식당 맛있어요. 🥟",
+    },
+    {
+      id: "2",
+      username: "사용자2",
+      level: 3,
+      timeAgo: "5분전",
+      content: "오늘 메뉴 좋네요!",
+    },
+    {
+      id: "3",
+      username: "사용자3",
+      level: 1,
+      timeAgo: "10분전",
+      content: "내일도 기대됩니다.",
+    },
+  ];
 
-      const handleReplyClick = (commentId: string) => {
-        setReplyingTo(replyingTo === commentId ? null : commentId);
-      };
+  const handleReplyClick = (commentId: string) => {
+    setReplyingTo(replyingTo === commentId ? null : commentId);
+  };
 
-      return (
-        <VStack maxWidth="600px">
-          {comments.map((comment) => (
-            <_Comment
-              key={comment.id}
-              avatar={
-                <Avatar
-                  src={`https://i.pravatar.cc/150?img=${comment.id}`}
-                  alt={comment.username}
-                  size="xs"
-                />
-              }
-              username={comment.username}
-              level={comment.level}
-              timeAgo={comment.timeAgo}
-              content={comment.content}
-              showReplyButton={true}
-              onReplyClick={() => handleReplyClick(comment.id)}
-              isHighlighted={replyingTo === comment.id}
+  return (
+    <VStack maxWidth="600px">
+      {comments.map((comment) => (
+        <_Comment
+          key={comment.id}
+          avatar={
+            <Avatar
+              src={`https://i.pravatar.cc/150?img=${comment.id}`}
+              alt={comment.username}
+              size="xs"
             />
-          ))}
-        </VStack>
-      );
-    };
+          }
+          username={comment.username}
+          level={comment.level}
+          timeAgo={comment.timeAgo}
+          content={comment.content}
+          showReplyButton={true}
+          onReplyClick={() => handleReplyClick(comment.id)}
+          isHighlighted={replyingTo === comment.id}
+        />
+      ))}
+    </VStack>
+  );
+};
 
-    return <InteractiveComments />;
-  },
+export const InteractiveReplyHighlight: Story = {
+  render: () => <InteractiveComments />,
 };
 
 export const MultipleComments: Story = {
