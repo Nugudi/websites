@@ -5,12 +5,7 @@ import {
   Avatar as _Avatar,
   AvatarGroup as _AvatarGroup,
 } from "@nugudi/react-components-avatar";
-import {
-  Body,
-  Emphasis,
-  HStack,
-  VStack,
-} from "@nugudi/react-components-layout";
+import { Body, HStack, VStack } from "@nugudi/react-components-layout";
 import { vars } from "@nugudi/themes";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
@@ -150,17 +145,6 @@ export const Sizes: Story = {
         {sizes.map((size) => (
           <VStack key={`size-${size}`} gap={8} align="center">
             <_Avatar size={size} />
-            <Emphasis fontSize="e2" color="zinc">
-              {size} (
-              {size === "xs"
-                ? "30px"
-                : size === "sm"
-                  ? "40px"
-                  : size === "md"
-                    ? "80px"
-                    : "128px"}
-              )
-            </Emphasis>
           </VStack>
         ))}
       </HStack>
@@ -179,9 +163,6 @@ export const WithBadge: Story = {
         {badgeColors.map((color) => (
           <VStack key={color} gap={8} align="center">
             <_Avatar size="sm" showBadge badgeColor={color} />
-            <Emphasis fontSize="e2" color="zinc">
-              {color}
-            </Emphasis>
           </VStack>
         ))}
       </HStack>
@@ -224,9 +205,6 @@ export const BorderRadius: Story = {
               borderRadius={radius}
               src="https://bit.ly/kent-c-dodds"
             />
-            <Emphasis fontSize="e2" color="zinc">
-              {radius}
-            </Emphasis>
           </VStack>
         ))}
       </HStack>
