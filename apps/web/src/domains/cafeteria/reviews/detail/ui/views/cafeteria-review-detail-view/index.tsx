@@ -13,7 +13,7 @@ export const CafeteriaReviewDetailView = () => {
     useCommentReply();
 
   return (
-    <Flex direction="column" className={styles.container}>
+    <Flex direction="column" h={"100dvh"}>
       <Box className={styles.navBarWrapper} pt={16} pX={16}>
         <NavBar />
       </Box>

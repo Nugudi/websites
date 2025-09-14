@@ -21,7 +21,6 @@ export const useCommentReply = () => {
     setReplyingTo(null);
   };
 
-  // 특정 댓글이 현재 대댓글 대상으로 선택되었는지 확인
   const isCommentSelectedForReply = (commentId: string) => {
     return replyingTo?.commentId === commentId;
   };
