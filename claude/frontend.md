@@ -10,7 +10,7 @@ Page (Server Component) → View → Section (with Suspense/ErrorBoundary) → C
 
 **MUST use `vars` and `classes` from `@nugudi/themes`:**
 
-- Colors: Use `vars.colors.$scale.gray[500]` NOT hard-coded colors
+- Colors: Use `vars.colors.$scale.zinc[500]` NOT hard-coded colors
 - Spacing: Use `vars.box.spacing[16]` NOT `16px`
 - Radius: Use `vars.box.radii.lg` NOT `12px`
 - Shadows: Use `vars.box.shadows.sm` NOT custom shadows
@@ -48,8 +48,8 @@ domains/
 // NEVER: Use hooks or browser APIs
 
 // Example: app/page.tsx (home page shows cafeteria)
-import { HydrationBoundary } from '@tanstack/react-query';
-import { CafeteriaHomeView } from '@/src/domains/cafeteria/ui/views/cafeteria-home-view';
+import { HydrationBoundary } from "@tanstack/react-query";
+import { CafeteriaHomeView } from "@/src/domains/cafeteria/ui/views/cafeteria-home-view";
 
 const Page = async ({ params, searchParams }) => {
   // 1. Extract parameters
@@ -57,7 +57,7 @@ const Page = async ({ params, searchParams }) => {
 
   // 2. Prefetch data on server
   await queryClient.prefetchQuery({
-    queryKey: ['cafeterias', filter],
+    queryKey: ["cafeterias", filter],
     queryFn: () => api.cafeterias.getList({ filter }),
   });
 
@@ -69,7 +69,7 @@ const Page = async ({ params, searchParams }) => {
   );
 };
 
-export default Page;  // Pages MUST use default export
+export default Page; // Pages MUST use default export
 ```
 
 ### 2. View Layer (`ui/views/`)
@@ -144,7 +144,7 @@ export const CafeteriaBrowseMenuSection = ({ filter }) => {
 const CafeteriaBrowseMenuSectionSkeleton = () => {
   return (
     <div className="animate-pulse">
-      <div className="h-32 bg-gray-200 rounded" />
+      <div className="h-32 bg-zinc-200 rounded" />
     </div>
   );
 };
@@ -307,19 +307,19 @@ export const EmailForm = () => {};
 ```typescript
 // ✅ CORRECT - Use relative imports + named exports within same domain
 // In: apps/web/src/domains/auth/sign-up/ui/views/sign-up-view/index.tsx
-import { SignUpSection } from '../../sections/sign-up-section';
+import { SignUpSection } from "../../sections/sign-up-section";
 
 // In: apps/web/src/domains/auth/sign-up/ui/sections/sign-up-section/index.tsx
-import { SignUpForm } from '../../components/sign-up-form';
-import { useSignUpStore } from '../../../stores/use-sign-up-store'; // Named export for hooks
-import type { SignUpFormData } from '../../../types/sign-up';
+import { SignUpForm } from "../../components/sign-up-form";
+import { useSignUpStore } from "../../../stores/use-sign-up-store"; // Named export for hooks
+import type { SignUpFormData } from "../../../types/sign-up";
 
 // In: apps/web/src/domains/auth/sign-up/ui/components/sign-up-form/index.tsx
-import { EmailForm } from './steps/email-form';
-import { PasswordForm } from './steps/password-form';
+import { EmailForm } from "./steps/email-form";
+import { PasswordForm } from "./steps/password-form";
 
 // ❌ WRONG - Don't use absolute imports within same domain
-import { SignUpSection } from '@/src/domains/auth/sign-up/ui/sections/sign-up-section'; // NO!
+import { SignUpSection } from "@/src/domains/auth/sign-up/ui/sections/sign-up-section"; // NO!
 ```
 
 ### From Page to View - MUST Use Absolute Imports
@@ -328,14 +328,14 @@ import { SignUpSection } from '@/src/domains/auth/sign-up/ui/sections/sign-up-se
 // ✅ CORRECT - Pages use absolute imports for views
 // Public route example
 // In: app/(public)/auth/sign-up/page.tsx
-import { SignUpView } from '@/src/domains/auth/sign-up/ui/views/sign-up-view';
+import { SignUpView } from "@/src/domains/auth/sign-up/ui/views/sign-up-view";
 
 // Protected route example
 // In: app/(auth)/profile/page.tsx
-import { ProfilePageView } from '@/src/domains/auth/profile/ui/views/profile-page-view';
+import { ProfilePageView } from "@/src/domains/auth/profile/ui/views/profile-page-view";
 
 // In: app/page.tsx (home page shows cafeteria)
-import { CafeteriaHomeView } from '@/src/domains/cafeteria/ui/views/cafeteria-home-view';
+import { CafeteriaHomeView } from "@/src/domains/cafeteria/ui/views/cafeteria-home-view";
 ```
 
 ### Cross-Domain Imports - MUST Use Absolute Imports
@@ -343,45 +343,45 @@ import { CafeteriaHomeView } from '@/src/domains/cafeteria/ui/views/cafeteria-ho
 ```typescript
 // ✅ CORRECT - Use absolute imports for cross-domain
 // In: apps/web/src/domains/cafeteria/...
-import { useAuth } from '@/src/domains/auth/hooks/use-auth';
-import { LoginWelcome } from '@/src/domains/auth/login/ui/components/login-welcome';
+import { useAuth } from "@/src/domains/auth/hooks/use-auth";
+import { LoginWelcome } from "@/src/domains/auth/login/ui/components/login-welcome";
 
 // In: apps/web/src/shared/ui/components/...
-import { ProfileSection } from '@/src/domains/auth/profile/ui/sections/profile-section';
+import { ProfileSection } from "@/src/domains/auth/profile/ui/sections/profile-section";
 
 // ❌ WRONG - Don't use relative imports for cross-domain
-import { useAuth } from '../../../auth/hooks/use-auth'; // NO!
+import { useAuth } from "../../../auth/hooks/use-auth"; // NO!
 ```
 
 ### Using Monorepo Packages - Package Import Rules
 
 ```typescript
 // Individual component packages - Named exports
-import { Button } from '@nugudi/react-components-button'; // ✅ Named
-import { Input } from '@nugudi/react-components-input'; // ✅ Named
-import { Switch } from '@nugudi/react-components-switch'; // ✅ Named
+import { Button } from "@nugudi/react-components-button"; // ✅ Named
+import { Input } from "@nugudi/react-components-input"; // ✅ Named
+import { Switch } from "@nugudi/react-components-switch"; // ✅ Named
 
 // Layout package - Named exports
-import { Box, Flex, VStack, HStack } from '@nugudi/react-components-layout'; // ✅ Named
+import { Box, Flex, VStack, HStack } from "@nugudi/react-components-layout"; // ✅ Named
 import {
   Heading,
   Title,
   Body,
   Emphasis,
-} from '@nugudi/react-components-layout'; // ✅ Named
+} from "@nugudi/react-components-layout"; // ✅ Named
 
 // Hooks - Named exports
-import { useToggle } from '@nugudi/react-hooks-toggle'; // ✅ Named
-import { useStepper } from '@nugudi/react-hooks-use-stepper'; // ✅ Named
+import { useToggle } from "@nugudi/react-hooks-toggle"; // ✅ Named
+import { useStepper } from "@nugudi/react-hooks-use-stepper"; // ✅ Named
 
 // Themes - Named exports
-import { vars, classes } from '@nugudi/themes'; // ✅ Named
+import { vars, classes } from "@nugudi/themes"; // ✅ Named
 
 // Icons - Named exports
-import { AppleIcon, HeartIcon, ArrowRightIcon } from '@nugudi/assets-icons'; // ✅ Named
+import { AppleIcon, HeartIcon, ArrowRightIcon } from "@nugudi/assets-icons"; // ✅ Named
 
 // API - Named export
-import { api } from '@nugudi/api'; // ✅ Named
+import { api } from "@nugudi/api"; // ✅ Named
 ```
 
 ## Data Flow Rules
@@ -540,28 +540,28 @@ interface [Component]Props {
 ```typescript
 // ✅ CORRECT Examples
 // Within same domain (auth/sign-up)
-import { SignUpSection } from '../../sections/sign-up-section';
-import { useSignUpStore } from '../../../stores/use-sign-up-store';
+import { SignUpSection } from "../../sections/sign-up-section";
+import { useSignUpStore } from "../../../stores/use-sign-up-store";
 
 // Cross-domain
-import { LoginWelcome } from '@/src/domains/auth/login/ui/components/login-welcome';
+import { LoginWelcome } from "@/src/domains/auth/login/ui/components/login-welcome";
 
 // Shared components
-import { AppHeader } from '@/src/shared/ui/components/app-header';
+import { AppHeader } from "@/src/shared/ui/components/app-header";
 
 // Packages
-import { Button } from '@nugudi/react-components-button';
-import { Box, Flex } from '@nugudi/react-components-layout';
+import { Button } from "@nugudi/react-components-button";
+import { Box, Flex } from "@nugudi/react-components-layout";
 
 // ❌ WRONG Examples
 // Using absolute path within same domain
-import { SignUpSection } from '@/src/domains/auth/sign-up/ui/sections/sign-up-section';
+import { SignUpSection } from "@/src/domains/auth/sign-up/ui/sections/sign-up-section";
 
 // Using relative path for cross-domain
-import { LoginWelcome } from '../../../auth/login/ui/components/login-welcome';
+import { LoginWelcome } from "../../../auth/login/ui/components/login-welcome";
 
 // Wrong export pattern for packages
-import Button from '@nugudi/react-components-button'; // Should be named export
+import Button from "@nugudi/react-components-button"; // Should be named export
 ```
 
 This architecture ensures:

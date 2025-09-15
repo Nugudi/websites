@@ -50,13 +50,13 @@ Next.js 15 route groups organize pages by authentication requirements:
 
 ```typescript
 // ✅ CORRECT - Use packages
-import { Button } from '@nugudi/react-components-button'; // Named export
-import { useToggle } from '@nugudi/react-hooks-toggle';
-import { vars } from '@nugudi/themes'; // Use 'vars' not 'variables'
-import { AppleIcon, HeartIcon } from '@nugudi/assets-icons'; // Import individual icons
+import { Button } from "@nugudi/react-components-button"; // Named export
+import { useToggle } from "@nugudi/react-hooks-toggle";
+import { vars } from "@nugudi/themes"; // Use 'vars' not 'variables'
+import { AppleIcon, HeartIcon } from "@nugudi/assets-icons"; // Import individual icons
 
 // ❌ WRONG - Don't create new implementations
-import Button from './components/button'; // NO!
+import Button from "./components/button"; // NO!
 ```
 
 ### Package Import Priority
@@ -153,10 +153,10 @@ import {
   Grid,
   GridItem,
   Divider,
-} from '@nugudi/react-components-layout';
+} from "@nugudi/react-components-layout";
 
 // ❌ WRONG - Don't create custom layouts with vanilla extract
-const customLayout = style({ display: 'flex' }); // NO! Use Flex instead
+const customLayout = style({ display: "flex" }); // NO! Use Flex instead
 ```
 
 ##### Layout Component Usage Guide
@@ -305,11 +305,18 @@ import { Heading, Title, Body, Emphasis, Logo } from '@nugudi/react-components-l
 
 ```typescript
 import {
-  Box, Flex, VStack, HStack, Divider
-} from '@nugudi/react-components-layout';
+  Box,
+  Flex,
+  VStack,
+  HStack,
+  Divider,
+} from "@nugudi/react-components-layout";
 import {
-  Heading, Title, Body, Emphasis
-} from '@nugudi/react-components-layout';
+  Heading,
+  Title,
+  Body,
+  Emphasis,
+} from "@nugudi/react-components-layout";
 
 // Example: User profile card
 export const ProfileCard = () => {
@@ -324,15 +331,21 @@ export const ProfileCard = () => {
         {/* Content sections */}
         <VStack spacing={16}>
           <Box>
-            <Title fontSize="t2" as="h2">기본 정보</Title>
+            <Title fontSize="t2" as="h2">
+              기본 정보
+            </Title>
             <VStack spacing={8} marginTop={8}>
               <Body fontSize="b2">홍길동</Body>
-              <Body fontSize="b3" color="gray">소프트웨어 엔지니어</Body>
+              <Body fontSize="b3" color="zinc">
+                소프트웨어 엔지니어
+              </Body>
             </VStack>
           </Box>
 
           <Box>
-            <Title fontSize="t3" as="h3">연락처</Title>
+            <Title fontSize="t3" as="h3">
+              연락처
+            </Title>
             <VStack spacing={4} marginTop={8}>
               <Body fontSize="b3">email@example.com</Body>
               <Body fontSize="b3">010-1234-5678</Body>
@@ -341,7 +354,7 @@ export const ProfileCard = () => {
         </VStack>
 
         {/* Footer */}
-        <Emphasis fontSize="e1" color="gray">
+        <Emphasis fontSize="e1" color="zinc">
           마지막 업데이트: 2024년 1월 15일
         </Emphasis>
       </VStack>
@@ -361,56 +374,56 @@ export const ProfileCard = () => {
 
 ```typescript
 // Individual component imports - All use named exports
-import { Button } from '@nugudi/react-components-button';
-import { Input } from '@nugudi/react-components-input';
-import { Chip } from '@nugudi/react-components-chip';
-import { NavigationItem } from '@nugudi/react-components-navigation-item';
-import { Switch } from '@nugudi/react-components-switch';
-import { Tab } from '@nugudi/react-components-tab';
-import { Textarea } from '@nugudi/react-components-textarea';
-import { InputOTP } from '@nugudi/react-components-input-otp';
-import { StepIndicator } from '@nugudi/react-components-step-indicator';
-import { MenuCard } from '@nugudi/react-components-menu-card';
-import { BottomSheet } from '@nugudi/react-components-bottom-sheet';
-import { Backdrop } from '@nugudi/react-components-backdrop';
+import { Button } from "@nugudi/react-components-button";
+import { Input } from "@nugudi/react-components-input";
+import { Chip } from "@nugudi/react-components-chip";
+import { NavigationItem } from "@nugudi/react-components-navigation-item";
+import { Switch } from "@nugudi/react-components-switch";
+import { Tab } from "@nugudi/react-components-tab";
+import { Textarea } from "@nugudi/react-components-textarea";
+import { InputOTP } from "@nugudi/react-components-input-otp";
+import { StepIndicator } from "@nugudi/react-components-step-indicator";
+import { MenuCard } from "@nugudi/react-components-menu-card";
+import { BottomSheet } from "@nugudi/react-components-bottom-sheet";
+import { Backdrop } from "@nugudi/react-components-backdrop";
 
 // NavigationItem usage example
 <NavigationItem
   leftIcon={<CoinIcon />}
   rightIcon={<ArrowRightIcon />}
-  onClick={() => console.log('clicked')}
+  onClick={() => console.log("clicked")}
 >
   <div>Content with title and description</div>
-</NavigationItem>
+</NavigationItem>;
 ```
 
 ### React Hooks (`@nugudi/react-hooks-*`)
 
 ```typescript
 // Individual hook imports
-import { useButton, useToggleButton } from '@nugudi/react-hooks-button';
-import { useSwitch, useToggleSwitch } from '@nugudi/react-hooks-switch';
-import { useToggle } from '@nugudi/react-hooks-toggle';
-import { useStepper } from '@nugudi/react-hooks-use-stepper';
+import { useButton, useToggleButton } from "@nugudi/react-hooks-button";
+import { useSwitch, useToggleSwitch } from "@nugudi/react-hooks-switch";
+import { useToggle } from "@nugudi/react-hooks-toggle";
+import { useStepper } from "@nugudi/react-hooks-use-stepper";
 ```
 
 ### API Client (`@nugudi/api`)
 
 ```typescript
 // Use auto-generated API client from OpenAPI spec
-import { api } from '@nugudi/api';
-import { useQuery } from '@tanstack/react-query';
+import { api } from "@nugudi/api";
+import { useQuery } from "@tanstack/react-query";
 
 // API hooks with TanStack Query
 export function useUserProfile(userId: string) {
   return useQuery({
-    queryKey: ['user', userId],
+    queryKey: ["user", userId],
     queryFn: () => api.users.getProfile(userId),
   });
 }
 
 // MSW mocks available for testing
-import { handlers } from '@nugudi/api/index.msw';
+import { handlers } from "@nugudi/api/index.msw";
 ```
 
 ### Themes (`@nugudi/themes`)
@@ -425,8 +438,8 @@ vars.colors.$static       // Static colors
 vars.colors.$scale        // Color scales
   - whiteAlpha[100, 200, 300, 400, 500, 600, 700, 800, 900]
   - blackAlpha[100, 200, 300, 400, 500, 600, 700, 800, 900]
-  - gray[50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]
-  - red, yellow, green, blue, etc. (same scale)
+  - zinc[50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]
+  - red, yellow, main, blue, purple, etc. (same scale)
 
 // Spacing
 vars.box.spacing[0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64]
@@ -458,8 +471,8 @@ classes.stack;
 #### Usage Example
 
 ```typescript
-import { vars, classes } from '@nugudi/themes';
-import { style } from '@vanilla-extract/css';
+import { vars, classes } from "@nugudi/themes";
+import { style } from "@vanilla-extract/css";
 
 // Use pre-defined classes when available
 export const container = classes.container;
@@ -579,12 +592,12 @@ export const SignUpForm = (props: SignUpFormProps) => {
 };
 
 // src/domains/auth/sign-up/ui/components/sign-up-form/index.css.ts
-import { style } from '@vanilla-extract/css';
-import { vars } from '@nugudi/themes';
+import { style } from "@vanilla-extract/css";
+import { vars } from "@nugudi/themes";
 
 export const formContainer = style({
-  display: 'flex',
-  flexDirection: 'column',
+  display: "flex",
+  flexDirection: "column",
   gap: vars.box.spacing[16],
 });
 ```
@@ -616,7 +629,7 @@ export const useSignUpStore = create<SignUpStore>((set) => ({
 1. **FIRST - Check `classes`**: Always check if a pre-defined class exists
    - `classes.container`, `classes.flexCenter`, etc.
 2. **SECOND - Use `vars`**: Use design tokens for all style properties
-   - Colors: `vars.colors.$scale.gray[500]` NOT `#6B7280`
+   - Colors: `vars.colors.$scale.zinc[500]` NOT `#6B7280`
    - Spacing: `vars.box.spacing[16]` NOT `16px`
    - Radius: `vars.box.radii.lg` NOT `12px`
    - Shadows: `vars.box.shadows.sm` NOT custom shadows
@@ -630,8 +643,8 @@ export const useSignUpStore = create<SignUpStore>((set) => ({
 ```typescript
 // ✅ CORRECT - Always prioritize existing theme values
 // index.css.ts
-import { style } from '@vanilla-extract/css';
-import { vars, classes } from '@nugudi/themes';
+import { style } from "@vanilla-extract/css";
+import { vars, classes } from "@nugudi/themes";
 
 // FIRST: Check if there's a pre-defined class
 export const container = classes.container; // If exists
@@ -639,19 +652,19 @@ export const container = classes.container; // If exists
 // SECOND: Use design tokens from vars
 export const customCard = style({
   // Always use vars for consistent design
-  padding: vars.box.spacing[16],  // NOT: padding: '16px'
-  borderRadius: vars.box.radii.lg,  // NOT: borderRadius: '12px'
-  backgroundColor: vars.colors.$scale.whiteAlpha[100],  // NOT: backgroundColor: 'white'
-  boxShadow: vars.box.shadows.sm,  // NOT: boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+  padding: vars.box.spacing[16], // NOT: padding: '16px'
+  borderRadius: vars.box.radii.lg, // NOT: borderRadius: '12px'
+  backgroundColor: vars.colors.$scale.whiteAlpha[100], // NOT: backgroundColor: 'white'
+  boxShadow: vars.box.shadows.sm, // NOT: boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
 
   // Only use custom values when absolutely necessary
-  width: "149px",  // OK if specific requirement
+  width: "149px", // OK if specific requirement
 });
 
 // Component file
-import * as styles from './index.css';
+import * as styles from "./index.css";
 
-<div className={styles.customCard}>Content</div>
+<div className={styles.customCard}>Content</div>;
 ```
 
 ### CSS Modules for App-specific Styles
@@ -673,14 +686,14 @@ import * as styles from './index.css';
 
 ```typescript
 // Use @nugudi/api for all backend communication
-import { api } from '@nugudi/api';
+import { api } from "@nugudi/api";
 
 // TanStack Query for data fetching
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 
 export function useMenuData(date: string) {
   return useQuery({
-    queryKey: ['menu', date],
+    queryKey: ["menu", date],
     queryFn: () => api.menu.getByDate(date),
   });
 }
@@ -689,15 +702,15 @@ export function useMenuData(date: string) {
 ### Form Handling with React Hook Form
 
 ```typescript
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { signUpSchema } from '../schemas/sign-up-schema';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signUpSchema } from "../schemas/sign-up-schema";
 
 const form = useForm({
   resolver: zodResolver(signUpSchema),
   defaultValues: {
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   },
 });
 ```
@@ -900,21 +913,21 @@ pnpm storybook --filter=ui
 
 ```typescript
 // Component usage - All named exports
-import { Button } from '@nugudi/react-components-button';
-import { Box, Flex } from '@nugudi/react-components-layout';
+import { Button } from "@nugudi/react-components-button";
+import { Box, Flex } from "@nugudi/react-components-layout";
 
 // Hook usage
-import { useToggle } from '@nugudi/react-hooks-toggle';
-import { useStepper } from '@nugudi/react-hooks-use-stepper';
+import { useToggle } from "@nugudi/react-hooks-toggle";
+import { useStepper } from "@nugudi/react-hooks-use-stepper";
 
 // API usage
-import { api } from '@nugudi/api';
+import { api } from "@nugudi/api";
 
 // Theme usage
-import { vars } from '@nugudi/themes';
+import { vars } from "@nugudi/themes";
 
 // Icon usage - Import individual icons
-import { AppleIcon, HeartIcon, ArrowRightIcon } from '@nugudi/assets-icons';
+import { AppleIcon, HeartIcon, ArrowRightIcon } from "@nugudi/assets-icons";
 ```
 
 ---
@@ -958,19 +971,19 @@ pnpm commit                 # Commit with commitizen
 ```typescript
 // ✅ CORRECT - Within same domain (e.g., auth/sign-up)
 // From: src/domains/auth/sign-up/ui/views/sign-up-view/index.tsx
-import { SignUpForm } from '../../components/sign-up-form';
-import { useSignUpStore } from '../../../stores/use-sign-up-store';
-import { signUpSchema } from '../../../schemas/sign-up-schema';
-import type { SignUpFormData } from '../../../types/sign-up';
+import { SignUpForm } from "../../components/sign-up-form";
+import { useSignUpStore } from "../../../stores/use-sign-up-store";
+import { signUpSchema } from "../../../schemas/sign-up-schema";
+import type { SignUpFormData } from "../../../types/sign-up";
 
 // ✅ CORRECT - From section to component in same domain
 // From: src/domains/auth/sign-up/ui/sections/sign-up-section/index.tsx
-import { EmailForm } from '../../components/sign-up-form/steps/email-form';
-import { PasswordForm } from '../../components/sign-up-form/steps/password-form';
+import { EmailForm } from "../../components/sign-up-form/steps/email-form";
+import { PasswordForm } from "../../components/sign-up-form/steps/password-form";
 
 // ✅ CORRECT - Within same folder
 // From: src/domains/auth/sign-up/ui/components/sign-up-form/steps/email-form/index.tsx
-import * as styles from './index.css';
+import * as styles from "./index.css";
 ```
 
 #### Cross-Domain or from App - Use Absolute Imports
@@ -978,26 +991,26 @@ import * as styles from './index.css';
 ```typescript
 // ✅ CORRECT - Cross-domain imports
 // From: src/domains/cafeteria/...
-import { useAuth } from '@/src/domains/auth/hooks/use-auth';
+import { useAuth } from "@/src/domains/auth/hooks/use-auth";
 
 // ✅ CORRECT - From app pages (public routes)
 // From: app/(public)/auth/sign-up/page.tsx
-import { SignUpView } from '@/src/domains/auth/sign-up/ui/views/sign-up-view';
+import { SignUpView } from "@/src/domains/auth/sign-up/ui/views/sign-up-view";
 
 // ✅ CORRECT - From app pages (protected routes)
 // From: app/(auth)/profile/page.tsx
-import { ProfilePageView } from '@/src/domains/auth/profile/ui/views/profile-page-view';
+import { ProfilePageView } from "@/src/domains/auth/profile/ui/views/profile-page-view";
 ```
 
 #### Package Imports - Always Use Package Path
 
 ```typescript
 // ✅ CORRECT - Always use package imports for packages
-import { Button } from '@nugudi/react-components-button';
-import { vars } from '@nugudi/themes';
+import { Button } from "@nugudi/react-components-button";
+import { vars } from "@nugudi/themes";
 
 // ❌ WRONG - Never use relative imports for packages
-import { Button } from '../../../../../packages/react/components/button'; // NO!
+import { Button } from "../../../../../packages/react/components/button"; // NO!
 ```
 
 ---
@@ -1026,10 +1039,10 @@ When you import any component from `@nugudi` packages, you MUST complete TWO set
 
 ```css
 /* In apps/web/src/shared/styles/fds.module.css */
-@import '@nugudi/themes/themes.css';
-@import '@nugudi/react-components-layout/style.css';
-@import '@nugudi/react-components-button/style.css';
-@import '@nugudi/react-components-input/style.css';
+@import "@nugudi/themes/themes.css";
+@import "@nugudi/react-components-layout/style.css";
+@import "@nugudi/react-components-button/style.css";
+@import "@nugudi/react-components-input/style.css";
 /* Add style.css for EVERY package component you use */
 ```
 
@@ -1066,15 +1079,15 @@ import { Textarea } from '@nugudi/react-components-textarea';
 /* In apps/web/src/shared/styles/fds.module.css */
 
 /* 1. ALWAYS import themes first (required) */
-@import '@nugudi/themes/themes.css';
+@import "@nugudi/themes/themes.css";
 
 /* 2. Import layout package (contains layout AND typography components) */
-@import '@nugudi/react-components-layout/style.css';
+@import "@nugudi/react-components-layout/style.css";
 /* Layout includes: Box, Flex, VStack, HStack, Stack, Grid, GridItem, Divider */
 /* Typography includes: Heading, Title, Body, Emphasis, Logo */
 
 /* 3. Import individual component packages as needed */
-@import '@nugudi/react-components-[component-name]/style.css';
+@import "@nugudi/react-components-[component-name]/style.css";
 /* Examples: button, input, chip, tab, switch, textarea, etc. */
 ```
 
@@ -1167,7 +1180,7 @@ export const CafeteriaHomeView = () => {};
 
 // ✅ CORRECT - Default export ONLY for page.tsx files
 // app/page.tsx
-import { CafeteriaHomeView } from '@/src/domains/cafeteria/ui/views/cafeteria-home-view';
+import { CafeteriaHomeView } from "@/src/domains/cafeteria/ui/views/cafeteria-home-view";
 const HomePage = () => {
   return <CafeteriaHomeView />;
 };

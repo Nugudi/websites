@@ -18,7 +18,7 @@ import { Switch } from '@nugudi/react-components-switch';
 
 // Controlled switch
 const [isOn, setIsOn] = useState(false);
-<Switch 
+<Switch
   isSelected={isOn}
   onToggle={setIsOn}
 />
@@ -36,13 +36,13 @@ Add labels with flexible placement:
 <Switch label="Enable notifications" />
 
 // Label at the start
-<Switch 
+<Switch
   label="Dark mode"
   labelPlacement="start"
 />
 
 // With custom label element
-<Switch 
+<Switch
   label={
     <span>
       Agree to <a href="/terms">terms and conditions</a>
@@ -51,11 +51,11 @@ Add labels with flexible placement:
 />
 
 // Label with description
-<Switch 
+<Switch
   label={
     <div>
       <div>Auto-save</div>
-      <div style={{ fontSize: '12px', color: 'gray' }}>
+      <div style={{ fontSize: '12px', color: 'zinc' }}>
         Automatically save your work
       </div>
     </div>
@@ -101,13 +101,13 @@ Use any color from the theme's color scale:
 <Switch color="purple" label="Purple" />
 
 // Different colors for different states
-<Switch 
-  color="main" 
+<Switch
+  color="main"
   label="Active"
   defaultSelected={true}
 />
-<Switch 
-  color="red" 
+<Switch
+  color="red"
   label="Inactive"
   defaultSelected={false}
 />
@@ -119,9 +119,9 @@ Use any color from the theme's color scale:
 
 ```tsx
 // Component manages its own state
-<Switch 
+<Switch
   defaultSelected={false}
-  onToggle={(isSelected) => console.log('Toggled:', isSelected)}
+  onToggle={(isSelected) => console.log("Toggled:", isSelected)}
   label="Remember me"
 />
 ```
@@ -134,12 +134,12 @@ function ControlledExample() {
 
   return (
     <>
-      <Switch 
+      <Switch
         isSelected={enabled}
         onToggle={setEnabled}
         label="Enable feature"
       />
-      <p>Feature is {enabled ? 'enabled' : 'disabled'}</p>
+      <p>Feature is {enabled ? "enabled" : "disabled"}</p>
     </>
   );
 }
@@ -149,20 +149,20 @@ function ControlledExample() {
 
 ```tsx
 // Disabled in off position
-<Switch 
+<Switch
   isDisabled
   label="Unavailable option"
 />
 
 // Disabled in on position
-<Switch 
+<Switch
   isDisabled
   defaultSelected={true}
   label="Locked feature"
 />
 
 // Conditionally disabled
-<Switch 
+<Switch
   isDisabled={!hasPermission}
   label="Admin only"
 />
@@ -176,34 +176,34 @@ function SettingsForm() {
   const [settings, setSettings] = useState({
     notifications: true,
     darkMode: false,
-    autoSave: true
+    autoSave: true,
   });
 
   const handleToggle = (key: string) => (value: boolean) => {
-    setSettings(prev => ({ ...prev, [key]: value }));
+    setSettings((prev) => ({ ...prev, [key]: value }));
   };
 
   return (
     <form>
-      <Switch 
+      <Switch
         id="notifications"
         isSelected={settings.notifications}
-        onToggle={handleToggle('notifications')}
+        onToggle={handleToggle("notifications")}
         label="Push notifications"
       />
-      
-      <Switch 
+
+      <Switch
         id="dark-mode"
         isSelected={settings.darkMode}
-        onToggle={handleToggle('darkMode')}
+        onToggle={handleToggle("darkMode")}
         label="Dark mode"
         color="purple"
       />
-      
-      <Switch 
+
+      <Switch
         id="auto-save"
         isSelected={settings.autoSave}
-        onToggle={handleToggle('autoSave')}
+        onToggle={handleToggle("autoSave")}
         label="Auto-save"
         color="main"
       />
@@ -216,13 +216,13 @@ function SettingsForm() {
 
 ```tsx
 // End placement (default) - label after switch
-<Switch 
+<Switch
   label="Option A"
   labelPlacement="end"
 />
 
 // Start placement - label before switch
-<Switch 
+<Switch
   label="Option B"
   labelPlacement="start"
 />
@@ -247,41 +247,41 @@ function NotificationSettings() {
     email: true,
     push: false,
     sms: false,
-    marketing: true
+    marketing: true,
   });
 
   return (
     <VStack gap={16}>
       <Title fontSize="t2">Notification Preferences</Title>
-      
+
       <VStack gap={16}>
-        <Switch 
+        <Switch
           isSelected={settings.email}
-          onToggle={(val) => setSettings({...settings, email: val})}
+          onToggle={(val) => setSettings({ ...settings, email: val })}
           label="Email notifications"
           color="blue"
           size="md"
         />
-        
-        <Switch 
+
+        <Switch
           isSelected={settings.push}
-          onToggle={(val) => setSettings({...settings, push: val})}
+          onToggle={(val) => setSettings({ ...settings, push: val })}
           label="Push notifications"
           color="main"
           size="md"
         />
-        
-        <Switch 
+
+        <Switch
           isSelected={settings.sms}
-          onToggle={(val) => setSettings({...settings, sms: val})}
+          onToggle={(val) => setSettings({ ...settings, sms: val })}
           label="SMS notifications"
           color="yellow"
           size="md"
         />
-        
-        <Switch 
+
+        <Switch
           isSelected={settings.marketing}
-          onToggle={(val) => setSettings({...settings, marketing: val})}
+          onToggle={(val) => setSettings({ ...settings, marketing: val })}
           label={
             <VStack gap={4}>
               <Body fontSize="b2">Marketing emails</Body>
@@ -306,31 +306,31 @@ function FeatureFlags() {
   const [features, setFeatures] = useState({
     beta: false,
     experimental: false,
-    debug: false
+    debug: false,
   });
 
   return (
     <VStack gap={12}>
-      <Switch 
+      <Switch
         isSelected={features.beta}
-        onToggle={(val) => setFeatures({...features, beta: val})}
+        onToggle={(val) => setFeatures({ ...features, beta: val })}
         label="Beta features"
         color="yellow"
         size="sm"
       />
-      
-      <Switch 
+
+      <Switch
         isSelected={features.experimental}
-        onToggle={(val) => setFeatures({...features, experimental: val})}
+        onToggle={(val) => setFeatures({ ...features, experimental: val })}
         label="Experimental features"
         color="red"
         size="sm"
         isDisabled={!features.beta}
       />
-      
-      <Switch 
+
+      <Switch
         isSelected={features.debug}
-        onToggle={(val) => setFeatures({...features, debug: val})}
+        onToggle={(val) => setFeatures({ ...features, debug: val })}
         label="Debug mode"
         color="zinc"
         size="sm"
@@ -347,24 +347,24 @@ function AccessibilitySettings() {
   return (
     <VStack gap={16} role="group" aria-labelledby="accessibility-heading">
       <Title fontSize="t2" id="accessibility-heading">Accessibility</Title>
-      
-      <Switch 
+
+      <Switch
         id="high-contrast"
         label="High contrast mode"
         labelPlacement="start"
         size="lg"
         color="purple"
       />
-      
-      <Switch 
+
+      <Switch
         id="reduce-motion"
         label="Reduce motion"
         labelPlacement="start"
         size="lg"
         color="blue"
       />
-      
-      <Switch 
+
+      <Switch
         id="screen-reader"
         label="Optimize for screen readers"
         labelPlacement="start"
@@ -378,25 +378,25 @@ function AccessibilitySettings() {
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| color | `keyof typeof vars.colors.$scale` | - | Switch color from theme colors |
-| size | `'sm' \| 'md' \| 'lg'` | `'md'` | Switch size |
-| isDisabled | `boolean` | `false` | Disable the switch |
-| defaultSelected | `boolean` | `false` | Default selected state (uncontrolled) |
-| isSelected | `boolean` | - | Selected state (controlled) |
-| onToggle | `(isSelected: boolean) => void` | - | Callback when toggled |
-| id | `string` | - | HTML id attribute |
-| label | `React.ReactNode` | - | Label content |
-| labelPlacement | `'start' \| 'end'` | `'end'` | Label position relative to switch |
-| ...buttonProps | Omit<`React.ButtonHTMLAttributes`, 'onClick' \| 'disabled' \| 'type' \| 'role' \| 'id'> | - | Additional button attributes |
+| Prop            | Type                                                                                    | Default | Description                           |
+| --------------- | --------------------------------------------------------------------------------------- | ------- | ------------------------------------- |
+| color           | `keyof typeof vars.colors.$scale`                                                       | -       | Switch color from theme colors        |
+| size            | `'sm' \| 'md' \| 'lg'`                                                                  | `'md'`  | Switch size                           |
+| isDisabled      | `boolean`                                                                               | `false` | Disable the switch                    |
+| defaultSelected | `boolean`                                                                               | `false` | Default selected state (uncontrolled) |
+| isSelected      | `boolean`                                                                               | -       | Selected state (controlled)           |
+| onToggle        | `(isSelected: boolean) => void`                                                         | -       | Callback when toggled                 |
+| id              | `string`                                                                                | -       | HTML id attribute                     |
+| label           | `React.ReactNode`                                                                       | -       | Label content                         |
+| labelPlacement  | `'start' \| 'end'`                                                                      | `'end'` | Label position relative to switch     |
+| ...buttonProps  | Omit<`React.ButtonHTMLAttributes`, 'onClick' \| 'disabled' \| 'type' \| 'role' \| 'id'> | -       | Additional button attributes          |
 
 ## Styling
 
 The component uses CSS-in-JS with vanilla-extract. Import the styles:
 
 ```tsx
-import '@nugudi/react-components-switch/style.css';
+import "@nugudi/react-components-switch/style.css";
 ```
 
 ## Accessibility
@@ -414,7 +414,7 @@ import '@nugudi/react-components-switch/style.css';
 The component is fully typed. Import types as needed:
 
 ```tsx
-import type { SwitchProps } from '@nugudi/react-components-switch';
+import type { SwitchProps } from "@nugudi/react-components-switch";
 
 // Using in component props
 interface SettingItemProps {
