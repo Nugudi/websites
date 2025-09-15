@@ -113,6 +113,9 @@ importers:
       '@nugudi/assets-icons':
         specifier: workspace:*
         version: link:../../packages/assets/icons
+      '@nugudi/react-components-avatar':
+        specifier: workspace:*
+        version: link:../../packages/react/components/avatar
       '@nugudi/react-components-backdrop':
         specifier: workspace:*
         version: link:../../packages/react/components/backdrop
@@ -128,6 +131,9 @@ importers:
       '@nugudi/react-components-chip':
         specifier: workspace:*
         version: link:../../packages/react/components/chip
+      '@nugudi/react-components-comment':
+        specifier: workspace:*
+        version: link:../../packages/react/components/comment
       '@nugudi/react-components-input':
         specifier: workspace:*
         version: link:../../packages/react/components/input
@@ -143,6 +149,9 @@ importers:
       '@nugudi/react-components-navigation-item':
         specifier: workspace:*
         version: link:../../packages/react/components/navigation-item
+      '@nugudi/react-components-review-card':
+        specifier: workspace:*
+        version: link:../../packages/react/components/review-card
       '@nugudi/react-components-step-indicator':
         specifier: workspace:*
         version: link:../../packages/react/components/step-indicator

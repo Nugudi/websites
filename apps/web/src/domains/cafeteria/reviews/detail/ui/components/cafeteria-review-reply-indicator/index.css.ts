@@ -1,0 +1,23 @@
+import { vars } from "@nugudi/themes";
+import { style } from "@vanilla-extract/css";
+
+export const replyIndicator = style({
+  padding: `${vars.box.spacing[2]} ${vars.box.spacing[3]}`,
+  backgroundColor: vars.colors.$scale.zinc[50],
+  borderRadius: vars.box.radii.xl,
+});
+
+export const cancelButton = style({
+  padding: `${vars.box.spacing[1]} ${vars.box.spacing[2]}`,
+  backgroundColor: vars.colors.$scale.zinc[200],
+  border: "none",
+  cursor: "pointer",
+  borderRadius: vars.box.radii.full,
+  transition: "background-color 0.2s",
+
+  selectors: {
+    "&:hover": {
+      backgroundColor: vars.colors.$scale.zinc[300],
+    },
+  },
+});

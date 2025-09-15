@@ -129,7 +129,6 @@ import { Avatar, AvatarGroup } from '@nugudi/react-components-avatar';
 |------|------|---------|-------------|
 | max | `number` | `3` | Maximum avatars to display |
 | size | `AvatarSize` | `'md'` | Size for all avatars |
-| spacing | `number` | `-8` | Space between avatars (negative creates overlap) |
 | children | `React.ReactNode` | - | Avatar components |
 
 ## Sizes

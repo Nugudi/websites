@@ -6,6 +6,7 @@ export const commentContainer = style({
   gap: vars.box.spacing[3],
   padding: `${vars.box.spacing[4]} 0`,
   borderBottom: `1px solid ${vars.colors.$scale.zinc[100]}`,
+  position: "relative",
 
   selectors: {
     "&:last-child": {
@@ -23,7 +24,7 @@ export const replyIconWrapper = style({
   color: vars.colors.$scale.zinc[500],
   position: "absolute",
   left: vars.box.spacing[5],
-  top: "18px",
+  top: vars.box.spacing[4],
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
@@ -40,16 +41,18 @@ export const header = style({
   marginBottom: vars.box.spacing[3],
 });
 
+const AVATAR_SIZE = "30px";
+
 export const avatarSection = style({
   flexShrink: 0,
-  width: vars.box.spacing[10],
-  height: vars.box.spacing[10],
+  width: AVATAR_SIZE,
+  height: AVATAR_SIZE,
 });
 
 export const defaultAvatar = style({
-  width: vars.box.spacing[10],
-  height: vars.box.spacing[10],
-  borderRadius: "50%",
+  width: AVATAR_SIZE,
+  height: AVATAR_SIZE,
+  borderRadius: vars.box.radii.full,
   backgroundColor: vars.colors.$scale.zinc[300],
 });
 
@@ -73,7 +76,7 @@ export const level = style({
   ...classes.typography.emphasis.e1,
   color: vars.colors.$scale.zinc[500],
   backgroundColor: vars.colors.$scale.zinc[100],
-  padding: `2px ${vars.box.spacing[2]}`,
+  padding: `${vars.box.spacing[0]} ${vars.box.spacing[2]}`,
   borderRadius: vars.box.radii.sm,
   flexShrink: 0,
 });
@@ -94,7 +97,7 @@ export const timeAgo = style({
 });
 
 export const body = style({
-  paddingLeft: vars.box.spacing[14],
+  paddingLeft: `calc(${AVATAR_SIZE} + ${vars.box.spacing[3]})`,
 });
 
 export const content = style({
@@ -107,4 +110,35 @@ export const content = style({
 export const replies = style({
   marginTop: vars.box.spacing[4],
   borderTop: `1px solid ${vars.colors.$scale.zinc[100]}`,
+});
+
+export const replyButtonWrapper = style({
+  marginTop: vars.box.spacing[2],
+  display: "flex",
+  justifyContent: "flex-end",
+  alignItems: "center",
+  width: "100%",
+});
+
+export const replyButton = style({
+  ...classes.typography.emphasis.e1,
+  padding: `${vars.box.spacing[1]} 0`,
+  color: vars.colors.$scale.zinc[400],
+  backgroundColor: "transparent",
+  cursor: "pointer",
+  transition: "color 0.2s ease",
+  border: "none",
+
+  selectors: {
+    "&:hover": {
+      color: vars.colors.$scale.main[500],
+    },
+    "&:active": {
+      color: vars.colors.$scale.main[500],
+    },
+  },
+});
+
+export const contentHighlighted = style({
+  color: vars.colors.$scale.main[500],
 });

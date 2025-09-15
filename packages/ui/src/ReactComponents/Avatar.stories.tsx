@@ -5,12 +5,7 @@ import {
   Avatar as _Avatar,
   AvatarGroup as _AvatarGroup,
 } from "@nugudi/react-components-avatar";
-import {
-  Body,
-  Emphasis,
-  HStack,
-  VStack,
-} from "@nugudi/react-components-layout";
+import { Body, HStack, VStack } from "@nugudi/react-components-layout";
 import { vars } from "@nugudi/themes";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
@@ -40,12 +35,12 @@ const meta: Meta<typeof _Avatar> = {
       },
     },
     size: {
-      options: ["sm", "md", "lg"],
+      options: ["xs", "sm", "md", "lg"],
       control: "select",
       defaultValue: "md",
       description: "아바타 크기",
       table: {
-        type: { summary: "sm | md | lg" },
+        type: { summary: "xs | sm | md | lg" },
         defaultValue: { summary: "md" },
         category: "Appearance",
       },
@@ -144,11 +139,13 @@ export const WithIcon: Story = {
 
 export const Sizes: Story = {
   render: () => {
-    const sizes = ["sm", "md", "lg"] as const;
+    const sizes = ["xs", "sm", "md", "lg"] as const;
     return (
       <HStack gap={16} align="center">
         {sizes.map((size) => (
-          <_Avatar size={size} key={`default-${size}`} />
+          <VStack key={`size-${size}`} gap={8} align="center">
+            <_Avatar size={size} />
+          </VStack>
         ))}
       </HStack>
     );
@@ -166,9 +163,6 @@ export const WithBadge: Story = {
         {badgeColors.map((color) => (
           <VStack key={color} gap={8} align="center">
             <_Avatar size="sm" showBadge badgeColor={color} />
-            <Emphasis fontSize="e2" color="zinc">
-              {color}
-            </Emphasis>
           </VStack>
         ))}
       </HStack>
@@ -211,9 +205,6 @@ export const BorderRadius: Story = {
               borderRadius={radius}
               src="https://bit.ly/kent-c-dodds"
             />
-            <Emphasis fontSize="e2" color="zinc">
-              {radius}
-            </Emphasis>
           </VStack>
         ))}
       </HStack>
@@ -234,7 +225,7 @@ export const AvatarGroupBasic: Story = {
     return (
       <VStack gap={16}>
         <VStack gap={24}>
-          {(["sm", "md", "lg"] as const).map((size) => (
+          {(["xs", "sm", "md", "lg"] as const).map((size) => (
             <HStack key={size} gap={16} align="center">
               <_AvatarGroup size={size} max={4}>
                 {avatarUrls.map((url, index) => (
