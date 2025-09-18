@@ -1,6 +1,7 @@
-// 알림 목록 페이지
+import { NotificationView } from "@/src/domains/notification/ui/views/notification-view";
+
 const NotificationsPage = () => {
-  return <div>NotificationsPage</div>;
+  return <NotificationView />;
 };
 
 export default NotificationsPage;
