@@ -8,7 +8,8 @@ import {
   NotiIcon,
 } from "@nugudi/assets-icons";
 import { Avatar } from "@nugudi/react-components-avatar";
-import { Box, Flex, HStack } from "@nugudi/react-components-layout";
+import { Box, Emphasis, Flex, HStack } from "@nugudi/react-components-layout";
+import clsx from "clsx";
 import type { NotificationItem } from "../../../types/notification";
 import * as styles from "./index.css";
 
@@ -26,7 +27,7 @@ export function NotificationItemCard({
 
   return (
     <Box
-      className={`${styles.notificationItem} ${isUnread ? styles.unread : styles.read}`}
+      className={clsx(styles.notificationItem, isUnread && styles.unread)}
       onClick={handleClick}
     >
       <HStack gap={24} align="center" justify="center">
@@ -98,5 +99,9 @@ function NotificationItemAction({ notification }: NotificationItemActionProps) {
     return null;
   }
 
-  return <span className={styles.linkText}>35건 더보기</span>;
+  return (
+    <Emphasis mt={2} fontSize="e1" as="span" color="blue">
+      자세히 보기
+    </Emphasis>
+  );
 }

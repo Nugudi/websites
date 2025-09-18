@@ -10,8 +10,3 @@ export interface NotificationItem {
   icon?: string;
   link?: string;
 }
-
-export interface NotificationGroup {
-  date: string;
-  items: NotificationItem[];
-}

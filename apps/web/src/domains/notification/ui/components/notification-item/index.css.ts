@@ -24,10 +24,6 @@ export const unread = style({
   },
 });
 
-export const read = style({
-  backgroundColor: "white",
-});
-
 export const iconWrapper = style({
   flexShrink: 0,
   display: "flex",
@@ -71,17 +67,6 @@ export const timestamp = style({
   flexShrink: 0,
   marginLeft: vars.box.spacing[8],
   fontSize: "12px",
-});
-
-export const linkText = style({
-  color: vars.colors.$scale.blue[600],
-  marginTop: vars.box.spacing[2],
-  cursor: "pointer",
-  fontSize: "12px",
-
-  ":hover": {
-    textDecoration: "underline",
-  },
 });
 
 export const iconStyle = style({
