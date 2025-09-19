@@ -1,4 +1,15 @@
-import { icons } from "@nugudi/assets-icons";
+import {
+  AppleIcon,
+  BreadIcon,
+  EtcIcon,
+  MajorDishIcon,
+  NoodleIcon,
+  PicklesIcon,
+  RiceIcon,
+  SoupIcon,
+  SubDishIcon,
+  TeaIcon,
+} from "@nugudi/assets-icons";
 import type { ComponentType, SVGProps } from "react";
 import type { MenuCategory } from "../types";
 
@@ -14,43 +25,43 @@ export const CATEGORY_CONFIG: Record<
   }
 > = {
   RICE: {
-    Icon: icons.Rice.component,
+    Icon: RiceIcon,
     label: "밥류",
   },
   NOODLE: {
-    Icon: icons.Noodle.component,
+    Icon: NoodleIcon,
     label: "면류",
   },
   SOUP: {
-    Icon: icons.Soup.component,
+    Icon: SoupIcon,
     label: "국/탕/찌개",
   },
   MAIN_DISH: {
-    Icon: icons.MajorDish.component,
+    Icon: MajorDishIcon,
     label: "주요 반찬",
   },
   SIDE_DISH: {
-    Icon: icons.SubDish.component,
+    Icon: SubDishIcon,
     label: "서브반찬",
   },
   KIMCHI: {
-    Icon: icons.Pickles.component,
+    Icon: PicklesIcon,
     label: "김치 절임류",
   },
   BREAD_SANDWICH: {
-    Icon: icons.Bread.component,
+    Icon: BreadIcon,
     label: "빵토스트샌드위치",
   },
   SALAD_FRUIT: {
-    Icon: icons.Apple.component,
+    Icon: AppleIcon,
     label: "샐러드 / 과일",
   },
   DRINK: {
-    Icon: icons.Tea.component,
+    Icon: TeaIcon,
     label: "음료 후식류",
   },
   OTHER: {
-    Icon: icons.Etc.component,
+    Icon: EtcIcon,
     label: "기타",
   },
 };
