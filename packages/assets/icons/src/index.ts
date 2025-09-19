@@ -1,4 +1,3 @@
-export { iconRegistry, icons, searchIcons } from "./icons";
 export { default as AppleIcon } from "./svg/apple.svg?react";
 export { default as ArrowLeftIcon } from "./svg/arrow-left.svg?react";
 export { default as ArrowRightIcon } from "./svg/arrow-right.svg?react";
