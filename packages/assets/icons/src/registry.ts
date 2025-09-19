@@ -1,4 +1,3 @@
-// Icon imports
 import AppleIcon from "./svg/apple.svg?react";
 import ArrowLeftIcon from "./svg/arrow-left.svg?react";
 import ArrowRightIcon from "./svg/arrow-right.svg?react";
