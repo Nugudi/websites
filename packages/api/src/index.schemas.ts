@@ -22,7 +22,7 @@ export interface DeviceInfoDto {
   /** 디바이스 타입 */
   deviceType: DeviceInfoDtoDeviceType;
   /** 디바이스 고유 ID */
-  deviceUniqueId?: string;
+  deviceUniqueId: string;
   /** 디바이스 이름 */
   deviceName?: string;
   /** 디바이스 모델 */
@@ -45,23 +45,15 @@ export interface SignUpLocalRequest {
   email: string;
   /** 비밀번호 (최소 8자 이상, 최대 20자 이하, 영문/숫자/특수문자/대문자 1개 이상 포함) */
   password: string;
-  /** 약관 동의 목록 */
-  termAgreements: TermAgreementDto[];
-  /** 알림 수신 동의 여부 */
-  acceptsNotifications: boolean;
-  /** 마케팅 이메일 수신 동의 여부 */
-  acceptsMarketingEmail: boolean;
+  /** 개인정보 처리방침 약관 동의 여부 */
+  privacyPolicy: boolean;
+  /** 이용약관 동의 여부 */
+  termsOfService: boolean;
+  /** 위치정보 수집·이용약관 동의 여부  */
+  locationInfo: boolean;
+  /** 마케팅 이메일 수신 동의 여부 (선택적, 기본값: false) */
+  marketingEmail?: boolean;
   deviceInfo: DeviceInfoDto;
-}
-
-/**
- * 약관 동의 정보 (일반/소셜 공통)
- */
-export interface TermAgreementDto {
-  /** 약관 정책 ID */
-  termPolicyId: number;
-  /** 동의 여부 */
-  isAgreed: boolean;
 }
 
 /**
@@ -70,8 +62,18 @@ export interface TermAgreementDto {
 export interface SignUpResponse {
   /** 사용자 ID */
   userId?: number;
-  /** 성공 메시지 */
-  message?: string;
+  /** 사용자 이메일 */
+  email?: string;
+  /** 사용자 닉네임 */
+  nickname?: string;
+  /** 액세스 토큰 */
+  accessToken?: string;
+  /** 리프레시 토큰 */
+  refreshToken?: string;
+  /** 액세스 토큰 만료 시간 */
+  accessTokenExpiresAt?: Date;
+  /** 리프레시 토큰 만료 시간 */
+  refreshTokenExpiresAt?: Date;
 }
 
 export interface SuccessResponseSignUpResponse {
@@ -79,6 +81,67 @@ export interface SuccessResponseSignUpResponse {
   success?: boolean;
   message?: string;
   data?: SignUpResponse;
+}
+
+/**
+ * 토큰 갱신 응답
+ */
+export interface RefreshTokenResponse {
+  /** 새로운 액세스 토큰 */
+  accessToken?: string;
+  /** 새로운 리프레시 토큰 */
+  refreshToken?: string;
+  /** 액세스 토큰 만료 시간 */
+  accessTokenExpiresAt?: Date;
+  /** 리프레시 토큰 만료 시간 */
+  refreshTokenExpiresAt?: Date;
+}
+
+export interface SuccessResponseRefreshTokenResponse {
+  timestamp?: Date;
+  success?: boolean;
+  message?: string;
+  data?: RefreshTokenResponse;
+}
+
+/**
+ * 일반 로그인 요청
+ */
+export interface LocalLoginRequest {
+  /** 이메일 */
+  email: string;
+  /** 비밀번호 */
+  password: string;
+  deviceInfo: DeviceInfoDto;
+}
+
+/**
+ * 일반 로그인 응답
+ */
+export interface LocalLoginResponse {
+  /** 사용자 ID */
+  userId?: number;
+  /** 사용자 이메일 */
+  email?: string;
+  /** 사용자 닉네임 */
+  nickname?: string;
+  /** 프로필 이미지 URL */
+  profileImageUrl?: string;
+  /** 액세스 토큰 */
+  accessToken?: string;
+  /** 리프레시 토큰 */
+  refreshToken?: string;
+  /** 액세스 토큰 만료 시간 */
+  accessTokenExpiresAt?: Date;
+  /** 리프레시 토큰 만료 시간 */
+  refreshTokenExpiresAt?: Date;
+}
+
+export interface SuccessResponseLocalLoginResponse {
+  timestamp?: Date;
+  success?: boolean;
+  message?: string;
+  data?: LocalLoginResponse;
 }
 
 /**
@@ -103,8 +166,6 @@ export interface EmailVerifyRequest {
 export interface EmailVerifyResponse {
   /** 인증 성공 여부 */
   verified?: boolean;
-  /** 성공 메시지 */
-  message?: string;
 }
 
 export interface SuccessResponseEmailVerifyResponse {
@@ -132,8 +193,6 @@ export interface EmailVerificationRequest {
  * 이메일 인증 코드 발송 응답
  */
 export interface EmailVerificationResponse {
-  /** 성공 메시지 */
-  message?: string;
   /** 만료 시간(초) */
   expiresInSeconds?: number;
 }
@@ -143,6 +202,23 @@ export interface SuccessResponseEmailVerificationResponse {
   success?: boolean;
   message?: string;
   data?: EmailVerificationResponse;
+}
+
+/**
+ * 닉네임 사용 가능 여부 확인 응답
+ */
+export interface NicknameCheckResponse {
+  /** 확인한 닉네임 */
+  nickname?: string;
+  /** 사용 가능한지 여부 */
+  available?: boolean;
+}
+
+export interface SuccessResponseNicknameCheckResponse {
+  timestamp?: Date;
+  success?: boolean;
+  message?: string;
+  data?: NicknameCheckResponse;
 }
 
 export type SendEmailVerificationCode200 = {

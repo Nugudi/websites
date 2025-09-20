@@ -7,19 +7,33 @@
  */
 
 import type {
+  DataTag,
+  DefinedInitialDataOptions,
+  DefinedUseQueryResult,
   MutationFunction,
   QueryClient,
+  QueryFunction,
+  QueryKey,
+  UndefinedInitialDataOptions,
   UseMutationOptions,
   UseMutationResult,
+  UseQueryOptions,
+  UseQueryResult,
+  UseSuspenseQueryOptions,
+  UseSuspenseQueryResult,
 } from "@tanstack/react-query";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { http } from "./api/http";
 import type {
   EmailVerificationRequest,
   EmailVerifyRequest,
+  LocalLoginRequest,
   SendEmailVerificationCode200,
   SignUpLocalRequest,
   SuccessResponseEmailVerifyResponse,
+  SuccessResponseLocalLoginResponse,
+  SuccessResponseNicknameCheckResponse,
+  SuccessResponseRefreshTokenResponse,
   SuccessResponseSignUpResponse,
 } from "./index.schemas";
 
@@ -114,6 +128,194 @@ export const useSignUpLocal = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getSignUpLocalMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * 리프레시 토큰으로 새로운 토큰을 발급받습니다. Authorization 헤더에 'Bearer {refreshToken}' 형식으로 전달해주세요.
+ * @summary JWT 토큰 갱신
+ */
+export type refreshTokenResponse200 = {
+  data: SuccessResponseRefreshTokenResponse;
+  status: 200;
+};
+
+export type refreshTokenResponseComposite = refreshTokenResponse200;
+
+export type refreshTokenResponse = refreshTokenResponseComposite & {
+  headers: Headers;
+};
+
+export const getRefreshTokenUrl = () => {
+  return `https://dev.nugudi.com/api/v1/auth/refresh`;
+};
+
+export const refreshToken = async (
+  options?: RequestInit,
+): Promise<refreshTokenResponse> => {
+  return http<refreshTokenResponse>(getRefreshTokenUrl(), {
+    ...options,
+    method: "POST",
+  });
+};
+
+export const getRefreshTokenMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof refreshToken>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof http>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof refreshToken>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["refreshToken"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof refreshToken>>,
+    void
+  > = () => {
+    return refreshToken(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RefreshTokenMutationResult = NonNullable<
+  Awaited<ReturnType<typeof refreshToken>>
+>;
+
+export type RefreshTokenMutationError = unknown;
+
+/**
+ * @summary JWT 토큰 갱신
+ */
+export const useRefreshToken = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof refreshToken>>,
+      TError,
+      void,
+      TContext
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof refreshToken>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationOptions = getRefreshTokenMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+export type localLoginResponse200 = {
+  data: SuccessResponseLocalLoginResponse;
+  status: 200;
+};
+
+export type localLoginResponseComposite = localLoginResponse200;
+
+export type localLoginResponse = localLoginResponseComposite & {
+  headers: Headers;
+};
+
+export const getLocalLoginUrl = () => {
+  return `https://dev.nugudi.com/api/v1/auth/login/local`;
+};
+
+export const localLogin = async (
+  localLoginRequest: LocalLoginRequest,
+  options?: RequestInit,
+): Promise<localLoginResponse> => {
+  return http<localLoginResponse>(getLocalLoginUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(localLoginRequest),
+  });
+};
+
+export const getLocalLoginMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof localLogin>>,
+    TError,
+    { data: LocalLoginRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof http>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof localLogin>>,
+  TError,
+  { data: LocalLoginRequest },
+  TContext
+> => {
+  const mutationKey = ["localLogin"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof localLogin>>,
+    { data: LocalLoginRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return localLogin(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type LocalLoginMutationResult = NonNullable<
+  Awaited<ReturnType<typeof localLogin>>
+>;
+export type LocalLoginMutationBody = LocalLoginRequest;
+export type LocalLoginMutationError = unknown;
+
+export const useLocalLogin = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof localLogin>>,
+      TError,
+      { data: LocalLoginRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof localLogin>>,
+  TError,
+  { data: LocalLoginRequest },
+  TContext
+> => {
+  const mutationOptions = getLocalLoginMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -311,3 +513,362 @@ export const useSendEmailVerificationCode = <
 
   return useMutation(mutationOptions, queryClient);
 };
+
+/**
+ * 회원가입 시 닉네임 중복 여부를 확인합니다
+ * @summary 닉네임 사용 가능 여부 확인
+ */
+export type checkNicknameAvailabilityResponse200 = {
+  data: SuccessResponseNicknameCheckResponse;
+  status: 200;
+};
+
+export type checkNicknameAvailabilityResponseComposite =
+  checkNicknameAvailabilityResponse200;
+
+export type checkNicknameAvailabilityResponse =
+  checkNicknameAvailabilityResponseComposite & {
+    headers: Headers;
+  };
+
+export const getCheckNicknameAvailabilityUrl = (nickname: string) => {
+  return `https://dev.nugudi.com/api/v1/users/nicknames/${nickname}/availability`;
+};
+
+export const checkNicknameAvailability = async (
+  nickname: string,
+  options?: RequestInit,
+): Promise<checkNicknameAvailabilityResponse> => {
+  return http<checkNicknameAvailabilityResponse>(
+    getCheckNicknameAvailabilityUrl(nickname),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+export const getCheckNicknameAvailabilityQueryKey = (nickname: string) => {
+  return [
+    `https://dev.nugudi.com/api/v1/users/nicknames/${nickname}/availability`,
+  ] as const;
+};
+
+export const getCheckNicknameAvailabilityQueryOptions = <
+  TData = Awaited<ReturnType<typeof checkNicknameAvailability>>,
+  TError = unknown,
+>(
+  nickname: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof checkNicknameAvailability>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getCheckNicknameAvailabilityQueryKey(nickname);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof checkNicknameAvailability>>
+  > = ({ signal }) =>
+    checkNicknameAvailability(nickname, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!nickname,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof checkNicknameAvailability>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type CheckNicknameAvailabilityQueryResult = NonNullable<
+  Awaited<ReturnType<typeof checkNicknameAvailability>>
+>;
+export type CheckNicknameAvailabilityQueryError = unknown;
+
+export function useCheckNicknameAvailability<
+  TData = Awaited<ReturnType<typeof checkNicknameAvailability>>,
+  TError = unknown,
+>(
+  nickname: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof checkNicknameAvailability>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof checkNicknameAvailability>>,
+          TError,
+          Awaited<ReturnType<typeof checkNicknameAvailability>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useCheckNicknameAvailability<
+  TData = Awaited<ReturnType<typeof checkNicknameAvailability>>,
+  TError = unknown,
+>(
+  nickname: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof checkNicknameAvailability>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof checkNicknameAvailability>>,
+          TError,
+          Awaited<ReturnType<typeof checkNicknameAvailability>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useCheckNicknameAvailability<
+  TData = Awaited<ReturnType<typeof checkNicknameAvailability>>,
+  TError = unknown,
+>(
+  nickname: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof checkNicknameAvailability>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 닉네임 사용 가능 여부 확인
+ */
+
+export function useCheckNicknameAvailability<
+  TData = Awaited<ReturnType<typeof checkNicknameAvailability>>,
+  TError = unknown,
+>(
+  nickname: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof checkNicknameAvailability>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getCheckNicknameAvailabilityQueryOptions(
+    nickname,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * @summary 닉네임 사용 가능 여부 확인
+ */
+export const prefetchCheckNicknameAvailabilityQuery = async <
+  TData = Awaited<ReturnType<typeof checkNicknameAvailability>>,
+  TError = unknown,
+>(
+  queryClient: QueryClient,
+  nickname: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof checkNicknameAvailability>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+): Promise<QueryClient> => {
+  const queryOptions = getCheckNicknameAvailabilityQueryOptions(
+    nickname,
+    options,
+  );
+
+  await queryClient.prefetchQuery(queryOptions);
+
+  return queryClient;
+};
+
+export const getCheckNicknameAvailabilitySuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof checkNicknameAvailability>>,
+  TError = unknown,
+>(
+  nickname: string,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof checkNicknameAvailability>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getCheckNicknameAvailabilityQueryKey(nickname);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof checkNicknameAvailability>>
+  > = ({ signal }) =>
+    checkNicknameAvailability(nickname, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof checkNicknameAvailability>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type CheckNicknameAvailabilitySuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof checkNicknameAvailability>>
+>;
+export type CheckNicknameAvailabilitySuspenseQueryError = unknown;
+
+export function useCheckNicknameAvailabilitySuspense<
+  TData = Awaited<ReturnType<typeof checkNicknameAvailability>>,
+  TError = unknown,
+>(
+  nickname: string,
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof checkNicknameAvailability>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useCheckNicknameAvailabilitySuspense<
+  TData = Awaited<ReturnType<typeof checkNicknameAvailability>>,
+  TError = unknown,
+>(
+  nickname: string,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof checkNicknameAvailability>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useCheckNicknameAvailabilitySuspense<
+  TData = Awaited<ReturnType<typeof checkNicknameAvailability>>,
+  TError = unknown,
+>(
+  nickname: string,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof checkNicknameAvailability>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 닉네임 사용 가능 여부 확인
+ */
+
+export function useCheckNicknameAvailabilitySuspense<
+  TData = Awaited<ReturnType<typeof checkNicknameAvailability>>,
+  TError = unknown,
+>(
+  nickname: string,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof checkNicknameAvailability>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getCheckNicknameAvailabilitySuspenseQueryOptions(
+    nickname,
+    options,
+  );
+
+  const query = useSuspenseQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}

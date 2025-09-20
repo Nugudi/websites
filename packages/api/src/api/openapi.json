@@ -14,6 +14,7 @@
     { "url": "http://dev.nugudi.com", "description": "Generated server url" }
   ],
   "tags": [
+    { "name": "사용자 프로필", "description": "유저 프로필 관련 API" },
     {
       "name": "사용자 인증",
       "description": "회원가입, 로그인, 로그아웃 등 인증 관련 API"
@@ -39,6 +40,61 @@
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/SuccessResponseSignUpResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "tags": ["사용자 인증"],
+        "summary": "JWT 토큰 갱신",
+        "description": "리프레시 토큰으로 새로운 토큰을 발급받습니다. Authorization 헤더에 'Bearer {refreshToken}' 형식으로 전달해주세요.",
+        "operationId": "refreshToken",
+        "parameters": [
+          {
+            "name": "X-Device-ID",
+            "in": "header",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponseRefreshTokenResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+    "/api/v1/auth/login/local": {
+      "post": {
+        "tags": ["사용자 인증"],
+        "operationId": "localLogin",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LocalLoginRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponseLocalLoginResponse"
                 }
               }
             }
@@ -99,12 +155,41 @@
           }
         }
       }
+    },
+    "/api/v1/users/nicknames/{nickname}/availability": {
+      "get": {
+        "tags": ["사용자 프로필"],
+        "summary": "닉네임 사용 가능 여부 확인",
+        "description": "회원가입 시 닉네임 중복 여부를 확인합니다",
+        "operationId": "checkNicknameAvailability",
+        "parameters": [
+          {
+            "name": "nickname",
+            "in": "path",
+            "description": "확인할 닉네임 (2~12자, 한글/영문/숫자만)",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponseNicknameCheckResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
       "DeviceInfoDto": {
-        "required": ["deviceType"],
+        "required": ["deviceType", "deviceUniqueId"],
         "type": "object",
         "properties": {
           "deviceType": {
@@ -148,13 +233,13 @@
       },
       "SignUpLocalRequest": {
         "required": [
-          "acceptsMarketingEmail",
-          "acceptsNotifications",
           "deviceInfo",
           "email",
+          "locationInfo",
           "nickname",
           "password",
-          "termAgreements"
+          "privacyPolicy",
+          "termsOfService"
         ],
         "type": "object",
         "properties": {
@@ -173,42 +258,25 @@
             "description": "비밀번호 (최소 8자 이상, 최대 20자 이하, 영문/숫자/특수문자/대문자 1개 이상 포함)",
             "example": "SecurePass123!"
           },
-          "termAgreements": {
-            "type": "array",
-            "description": "약관 동의 목록",
-            "items": { "$ref": "#/components/schemas/TermAgreementDto" }
-          },
-          "acceptsNotifications": {
+          "privacyPolicy": {
             "type": "boolean",
-            "description": "알림 수신 동의 여부",
-            "example": true
+            "description": "개인정보 처리방침 약관 동의 여부"
           },
-          "acceptsMarketingEmail": {
+          "termsOfService": {
             "type": "boolean",
-            "description": "마케팅 이메일 수신 동의 여부",
-            "example": false
+            "description": "이용약관 동의 여부"
+          },
+          "locationInfo": {
+            "type": "boolean",
+            "description": "위치정보 수집·이용약관 동의 여부 "
+          },
+          "marketingEmail": {
+            "type": "boolean",
+            "description": "마케팅 이메일 수신 동의 여부 (선택적, 기본값: false)"
           },
           "deviceInfo": { "$ref": "#/components/schemas/DeviceInfoDto" }
         },
         "description": "일반 회원가입 요청 정보"
-      },
-      "TermAgreementDto": {
-        "required": ["isAgreed", "termPolicyId"],
-        "type": "object",
-        "properties": {
-          "termPolicyId": {
-            "type": "integer",
-            "description": "약관 정책 ID",
-            "format": "int64",
-            "example": 1
-          },
-          "isAgreed": {
-            "type": "boolean",
-            "description": "동의 여부",
-            "example": true
-          }
-        },
-        "description": "약관 동의 정보 (일반/소셜 공통)"
       },
       "SignUpResponse": {
         "type": "object",
@@ -219,10 +287,35 @@
             "format": "int64",
             "example": 123
           },
-          "message": {
+          "email": {
             "type": "string",
-            "description": "성공 메시지",
-            "example": "회원가입이 완료되었습니다"
+            "description": "사용자 이메일",
+            "example": "user@nugudi.com"
+          },
+          "nickname": {
+            "type": "string",
+            "description": "사용자 닉네임",
+            "example": "너구디유저"
+          },
+          "accessToken": {
+            "type": "string",
+            "description": "액세스 토큰",
+            "example": "eyJhbGciOiJIUzI1NiJ9..."
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "리프레시 토큰",
+            "example": "eyJhbGciOiJIUzI1NiJ9..."
+          },
+          "accessTokenExpiresAt": {
+            "type": "string",
+            "description": "액세스 토큰 만료 시간",
+            "format": "date-time"
+          },
+          "refreshTokenExpiresAt": {
+            "type": "string",
+            "description": "리프레시 토큰 만료 시간",
+            "format": "date-time"
           }
         },
         "description": "회원가입 성공 응답 (일반/소셜 공통)"
@@ -234,6 +327,115 @@
           "success": { "type": "boolean" },
           "message": { "type": "string" },
           "data": { "$ref": "#/components/schemas/SignUpResponse" }
+        }
+      },
+      "RefreshTokenResponse": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "description": "새로운 액세스 토큰",
+            "example": "eyJhbGciOiJIUzI1NiJ9..."
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "새로운 리프레시 토큰",
+            "example": "eyJhbGciOiJIUzI1NiJ9..."
+          },
+          "accessTokenExpiresAt": {
+            "type": "string",
+            "description": "액세스 토큰 만료 시간",
+            "format": "date-time"
+          },
+          "refreshTokenExpiresAt": {
+            "type": "string",
+            "description": "리프레시 토큰 만료 시간",
+            "format": "date-time"
+          }
+        },
+        "description": "토큰 갱신 응답"
+      },
+      "SuccessResponseRefreshTokenResponse": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "success": { "type": "boolean" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/RefreshTokenResponse" }
+        }
+      },
+      "LocalLoginRequest": {
+        "required": ["deviceInfo", "email", "password"],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "이메일",
+            "example": "user@nugudi.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "비밀번호",
+            "example": "SecurePass123!"
+          },
+          "deviceInfo": { "$ref": "#/components/schemas/DeviceInfoDto" }
+        },
+        "description": "일반 로그인 요청"
+      },
+      "LocalLoginResponse": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "description": "사용자 ID",
+            "format": "int64",
+            "example": 1
+          },
+          "email": {
+            "type": "string",
+            "description": "사용자 이메일",
+            "example": "user@nugudi.com"
+          },
+          "nickname": {
+            "type": "string",
+            "description": "사용자 닉네임",
+            "example": "너구디유저"
+          },
+          "profileImageUrl": {
+            "type": "string",
+            "description": "프로필 이미지 URL",
+            "example": "https://cdn.nugudi.com/profile/123.jpg"
+          },
+          "accessToken": {
+            "type": "string",
+            "description": "액세스 토큰",
+            "example": "eyJhbGciOiJIUzI1NiJ9..."
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "리프레시 토큰",
+            "example": "eyJhbGciOiJIUzI1NiJ9..."
+          },
+          "accessTokenExpiresAt": {
+            "type": "string",
+            "description": "액세스 토큰 만료 시간",
+            "format": "date-time"
+          },
+          "refreshTokenExpiresAt": {
+            "type": "string",
+            "description": "리프레시 토큰 만료 시간",
+            "format": "date-time"
+          }
+        },
+        "description": "일반 로그인 응답"
+      },
+      "SuccessResponseLocalLoginResponse": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "success": { "type": "boolean" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/LocalLoginResponse" }
         }
       },
       "EmailVerifyRequest": {
@@ -266,11 +468,6 @@
             "type": "boolean",
             "description": "인증 성공 여부",
             "example": true
-          },
-          "message": {
-            "type": "string",
-            "description": "성공 메시지",
-            "example": "이메일 인증이 완료되었습니다"
           }
         },
         "description": "이메일 인증 코드 확인 응답"
@@ -305,11 +502,6 @@
       "EmailVerificationResponse": {
         "type": "object",
         "properties": {
-          "message": {
-            "type": "string",
-            "description": "성공 메시지",
-            "example": "인증 코드가 발송되었습니다"
-          },
           "expiresInSeconds": {
             "type": "integer",
             "description": "만료 시간(초)",
@@ -327,6 +519,39 @@
           "message": { "type": "string" },
           "data": { "$ref": "#/components/schemas/EmailVerificationResponse" }
         }
+      },
+      "NicknameCheckResponse": {
+        "type": "object",
+        "properties": {
+          "nickname": {
+            "type": "string",
+            "description": "확인한 닉네임",
+            "example": "너구디유저"
+          },
+          "available": {
+            "type": "boolean",
+            "description": "사용 가능한지 여부",
+            "example": true
+          }
+        },
+        "description": "닉네임 사용 가능 여부 확인 응답"
+      },
+      "SuccessResponseNicknameCheckResponse": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "success": { "type": "boolean" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/NicknameCheckResponse" }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "JWT Bearer 토큰을 입력하세요. (Bearer 접두사는 자동으로 추가됩니다)",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
   }
