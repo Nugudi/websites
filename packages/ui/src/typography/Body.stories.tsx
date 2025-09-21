@@ -58,6 +58,18 @@ const meta: Meta<typeof _Body> = {
         category: "Color",
       },
     },
+    textAlign: {
+      control: "select",
+      options: ["left", "center", "right", "justify", "start", "end"],
+      description: "텍스트 정렬을 설정합니다",
+      defaultValue: { summary: "left" },
+      table: {
+        type: {
+          summary: '"left" | "center" | "right" | "justify" | "start" | "end"',
+        },
+        category: "Typography",
+      },
+    },
     children: {
       control: "text",
       description: "표시할 텍스트 내용",
@@ -95,6 +107,7 @@ export const Default: Story = {
     color: "zinc",
     colorShade: 600,
     as: "span",
+    textAlign: "left",
   },
 };
 
@@ -126,6 +139,51 @@ export const ZincVariations: Story = {
           <_Body key={shade} fontSize="b1" colorShade={shade}>
             다람쥐 헌 쳇바퀴에 타고파
           </_Body>
+        ))}
+      </div>
+    );
+  },
+};
+
+export const TextAlignVariations: Story = {
+  render: () => {
+    const alignments = [
+      "left",
+      "center",
+      "right",
+      "justify",
+      "start",
+      "end",
+    ] as const;
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "1rem",
+          width: "400px",
+        }}
+      >
+        {alignments.map((align) => (
+          <div
+            key={align}
+            style={{ border: "1px solid #e5e5e5", padding: "1rem" }}
+          >
+            <_Body
+              fontSize="b4b"
+              colorShade={400}
+              textAlign={align}
+              style={{ display: "block", marginBottom: "0.5rem" }}
+            >
+              textAlign: {align}
+            </_Body>
+            <_Body fontSize="b2" textAlign={align} as="p" style={{ margin: 0 }}>
+              다람쥐 헌 쳇바퀴에 타고파. 이 문장은 한글 타이포그래피를
+              테스트하기 위한 예시 문장입니다. 텍스트 정렬이 어떻게 적용되는지
+              확인할 수 있습니다.
+            </_Body>
+          </div>
         ))}
       </div>
     );

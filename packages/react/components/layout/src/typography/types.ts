@@ -8,32 +8,49 @@ export type ColorWithShade = {
   colorShade?: ColorShade;
 };
 
+export type TextAlignValue =
+  | "left"
+  | "center"
+  | "right"
+  | "justify"
+  | "start"
+  | "end";
+
+export type TypographyBaseProps = {
+  textAlign?: TextAlignValue;
+};
+
 export type HeadingProps = Omit<StyleProps, "color" | "background"> &
   AsElementProps &
-  ColorWithShade & {
+  ColorWithShade &
+  TypographyBaseProps & {
     fontSize: keyof typeof classes.typography.heading;
   };
 
 export type EmphasisProps = Omit<StyleProps, "color" | "background"> &
   AsElementProps &
-  ColorWithShade & {
+  ColorWithShade &
+  TypographyBaseProps & {
     fontSize: keyof typeof classes.typography.emphasis;
   };
 
 export type TitleProps = Omit<StyleProps, "color" | "background"> &
   AsElementProps &
-  ColorWithShade & {
+  ColorWithShade &
+  TypographyBaseProps & {
     fontSize: keyof typeof classes.typography.title;
   };
 
 export type BodyProps = Omit<StyleProps, "color" | "background"> &
   AsElementProps &
-  ColorWithShade & {
+  ColorWithShade &
+  TypographyBaseProps & {
     fontSize: keyof typeof classes.typography.body;
   };
 
 export type LogoProps = Omit<StyleProps, "color" | "background"> &
   AsElementProps &
-  ColorWithShade & {
+  ColorWithShade &
+  TypographyBaseProps & {
     fontSize: keyof typeof classes.typography.logo;
   };

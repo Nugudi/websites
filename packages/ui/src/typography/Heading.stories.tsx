@@ -55,6 +55,18 @@ const meta: Meta<typeof _Heading> = {
         category: "Color",
       },
     },
+    textAlign: {
+      control: "select",
+      options: ["left", "center", "right", "justify", "start", "end"],
+      description: "텍스트 정렬을 설정합니다",
+      defaultValue: { summary: "left" },
+      table: {
+        type: {
+          summary: '"left" | "center" | "right" | "justify" | "start" | "end"',
+        },
+        category: "Typography",
+      },
+    },
     children: {
       control: "text",
       description: "표시할 헤딩 텍스트 내용",
@@ -92,6 +104,7 @@ export const Default: Story = {
     fontSize: "h1",
     color: "zinc",
     colorShade: 800,
+    textAlign: "left",
   },
 };
 

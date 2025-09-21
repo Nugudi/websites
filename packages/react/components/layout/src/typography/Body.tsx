@@ -13,6 +13,7 @@ const Body = (props: BodyProps, ref: Ref<HTMLElement>) => {
     fontSize = "b1",
     color = "zinc",
     colorShade = 600,
+    textAlign = "left",
     children,
     className,
     style,
@@ -36,6 +37,7 @@ const Body = (props: BodyProps, ref: Ref<HTMLElement>) => {
       ]),
       style: {
         color: color && vars.colors.$scale?.[color]?.[colorShade],
+        textAlign,
         ...style,
       },
     },

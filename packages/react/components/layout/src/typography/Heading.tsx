@@ -13,6 +13,7 @@ const Heading = (props: HeadingProps, ref: Ref<HTMLElement>) => {
     fontSize = "h1",
     color = "zinc",
     colorShade = 800,
+    textAlign = "left",
     children,
     className,
     style,
@@ -36,6 +37,7 @@ const Heading = (props: HeadingProps, ref: Ref<HTMLElement>) => {
       ]),
       style: {
         color: color && vars.colors.$scale?.[color]?.[colorShade],
+        textAlign,
         ...style,
       },
     },

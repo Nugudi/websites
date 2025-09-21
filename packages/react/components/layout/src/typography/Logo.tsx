@@ -13,6 +13,7 @@ const Logo = (props: LogoProps, ref: Ref<HTMLElement>) => {
     fontSize = "l1",
     color = "main",
     colorShade = 500,
+    textAlign = "left",
     children,
     className,
     style,
@@ -36,6 +37,7 @@ const Logo = (props: LogoProps, ref: Ref<HTMLElement>) => {
       ]),
       style: {
         color: color && vars.colors.$scale?.[color]?.[colorShade],
+        textAlign,
         ...style,
       },
     },
