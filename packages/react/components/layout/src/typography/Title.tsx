@@ -13,6 +13,7 @@ const Title = (props: TitleProps, ref: Ref<HTMLElement>) => {
     fontSize = "t1",
     color = "zinc",
     colorShade = 700,
+    textAlign = "left",
     children,
     className,
     style,
@@ -36,6 +37,7 @@ const Title = (props: TitleProps, ref: Ref<HTMLElement>) => {
       ]),
       style: {
         color: color && vars.colors.$scale?.[color]?.[colorShade],
+        textAlign,
         ...style,
       },
     },
