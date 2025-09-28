@@ -42,7 +42,6 @@ export const BenefitMenuList = () => {
         <Link href={item.href} key={item.id} className={styles.linkWrapper}>
           <NavigationItem
             size="md"
-            key={item.id}
             leftIcon={<span>{item.icon}</span>}
             rightIcon={<ArrowRightIcon />}
           >
