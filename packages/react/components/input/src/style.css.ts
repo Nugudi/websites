@@ -13,6 +13,7 @@ export const containerStyle = recipe({
 export const labelStyle = recipe({
   base: {
     color: vars.colors.$scale.zinc[500],
+    paddingBottom: vars.box.spacing[1],
     ...classes.typography.emphasis.e2,
     transition: "color 0.2s",
     textAlign: "left",
