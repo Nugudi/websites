@@ -8,11 +8,6 @@ export const container = style({
   top: 0,
   zIndex: 1,
   transition: "transform 0.3s ease",
-  padding: `${vars.box.spacing[2]}`,
-});
-
-export const hidden = style({
-  transform: "translateY(-100%)",
 });
 
 export const backButton = style({

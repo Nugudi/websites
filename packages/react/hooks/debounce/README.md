@@ -11,7 +11,7 @@ pnpm add @nugudi/react-hooks-debounce
 ## Import
 
 ```tsx
-import { debounce } from '@nugudi/react-hooks-debounce';
+import { debounce } from "@nugudi/react-hooks-debounce";
 ```
 
 ## Overview
@@ -21,11 +21,11 @@ import { debounce } from '@nugudi/react-hooks-debounce';
 ## Basic Usage
 
 ```tsx
-import { debounce } from '@nugudi/react-hooks-debounce';
-import { useState, useCallback } from 'react';
+import { debounce } from "@nugudi/react-hooks-debounce";
+import { useState, useCallback } from "react";
 
 function SearchInput() {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState([]);
 
   const searchAPI = useCallback(async (term: string) => {
@@ -45,10 +45,10 @@ function SearchInput() {
   return (
     <div>
       <input
-        type='text'
+        type="text"
         value={searchTerm}
         onChange={handleChange}
-        placeholder='Search...'
+        placeholder="Search..."
       />
       <ul>
         {results.map((result) => (
@@ -65,19 +65,19 @@ function SearchInput() {
 ### Cancel Pending Calls
 
 ```tsx
-import { debounce } from '@nugudi/react-hooks-debounce';
+import { debounce } from "@nugudi/react-hooks-debounce";
 
 function AutoSaveEditor() {
-  const [content, setContent] = useState('');
-  const [saveStatus, setSaveStatus] = useState('idle');
+  const [content, setContent] = useState("");
+  const [saveStatus, setSaveStatus] = useState("idle");
 
   const saveContent = useCallback(async (text: string) => {
-    setSaveStatus('saving');
-    await fetch('/api/save', {
-      method: 'POST',
+    setSaveStatus("saving");
+    await fetch("/api/save", {
+      method: "POST",
       body: JSON.stringify({ content: text }),
     });
-    setSaveStatus('saved');
+    setSaveStatus("saved");
   }, []);
 
   const debouncedSave = debounce(saveContent, 1000);
@@ -85,7 +85,7 @@ function AutoSaveEditor() {
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
     setContent(value);
-    setSaveStatus('typing');
+    setSaveStatus("typing");
     debouncedSave(value);
   };
 
@@ -109,15 +109,15 @@ function AutoSaveEditor() {
 ### Flush Immediately
 
 ```tsx
-import { debounce } from '@nugudi/react-hooks-debounce';
+import { debounce } from "@nugudi/react-hooks-debounce";
 
 function FormWithValidation() {
-  const [email, setEmail] = useState('');
-  const [validationError, setValidationError] = useState('');
+  const [email, setEmail] = useState("");
+  const [validationError, setValidationError] = useState("");
 
   const validateEmail = useCallback((email: string) => {
     const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    setValidationError(isValid ? '' : 'Invalid email format');
+    setValidationError(isValid ? "" : "Invalid email format");
   }, []);
 
   const debouncedValidate = debounce(validateEmail, 500);
@@ -136,13 +136,13 @@ function FormWithValidation() {
   return (
     <div>
       <input
-        type='email'
+        type="email"
         value={email}
         onChange={handleChange}
         onBlur={handleBlur}
-        placeholder='Enter email'
+        placeholder="Enter email"
       />
-      {validationError && <span className='error'>{validationError}</span>}
+      {validationError && <span className="error">{validationError}</span>}
     </div>
   );
 }
@@ -151,10 +151,10 @@ function FormWithValidation() {
 ### Check Pending Status
 
 ```tsx
-import { debounce } from '@nugudi/react-hooks-debounce';
+import { debounce } from "@nugudi/react-hooks-debounce";
 
 function SearchWithLoader() {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
 
   const performSearch = useCallback(async (searchQuery: string) => {
@@ -184,7 +184,7 @@ function SearchWithLoader() {
       <input
         value={query}
         onChange={(e) => handleSearch(e.target.value)}
-        placeholder='Search...'
+        placeholder="Search..."
       />
       {(isPending || isSearching) && <span>Searching...</span>}
     </div>
@@ -197,15 +197,15 @@ function SearchWithLoader() {
 ### Live Search with API
 
 ```tsx
-import { debounce } from '@nugudi/react-hooks-debounce';
-import { useState, useCallback } from 'react';
-import { VStack, HStack, Input, Body } from '@nugudi/react-components-layout';
+import { debounce } from "@nugudi/react-hooks-debounce";
+import { useState, useCallback } from "react";
+import { VStack, HStack, Input, Body } from "@nugudi/react-components-layout";
 
 function ProductSearch() {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const searchProducts = useCallback(async (query: string) => {
     if (!query.trim()) {
@@ -214,7 +214,7 @@ function ProductSearch() {
     }
 
     setIsLoading(true);
-    setError('');
+    setError("");
 
     try {
       const response = await fetch(
@@ -222,13 +222,13 @@ function ProductSearch() {
       );
 
       if (!response.ok) {
-        throw new Error('Search failed');
+        throw new Error("Search failed");
       }
 
       const data = await response.json();
       setProducts(data.products);
     } catch (err) {
-      setError('Failed to search products');
+      setError("Failed to search products");
       setProducts([]);
     } finally {
       setIsLoading(false);
@@ -250,7 +250,7 @@ function ProductSearch() {
   };
 
   const handleClearSearch = () => {
-    setSearchTerm('');
+    setSearchTerm("");
     setProducts([]);
     debouncedSearch.cancel();
   };
@@ -259,21 +259,21 @@ function ProductSearch() {
     <VStack gap={16}>
       <HStack gap={8}>
         <Input
-          type='text'
+          type="text"
           value={searchTerm}
           onChange={handleSearchChange}
-          placeholder='Search products...'
+          placeholder="Search products..."
         />
         {searchTerm && <button onClick={handleClearSearch}>Clear</button>}
       </HStack>
 
       {error && (
-        <Body fontSize='b3' color='red'>
+        <Body fontSize="b3" color="red">
           {error}
         </Body>
       )}
 
-      {isLoading && <Body fontSize='b3'>Searching...</Body>}
+      {isLoading && <Body fontSize="b3">Searching...</Body>}
 
       {!isLoading && products.length > 0 && (
         <VStack gap={8}>
@@ -284,7 +284,7 @@ function ProductSearch() {
       )}
 
       {!isLoading && searchTerm && products.length === 0 && (
-        <Body fontSize='b3' color='gray'>
+        <Body fontSize="b3" color="zinc">
           No products found for "{searchTerm}"
         </Body>
       )}
@@ -296,45 +296,45 @@ function ProductSearch() {
 ### Auto-save Form
 
 ```tsx
-import { debounce } from '@nugudi/react-hooks-debounce';
-import { useState, useCallback, useEffect } from 'react';
+import { debounce } from "@nugudi/react-hooks-debounce";
+import { useState, useCallback, useEffect } from "react";
 import {
   VStack,
   HStack,
   Title,
   Body,
   Textarea,
-} from '@nugudi/react-components-layout';
+} from "@nugudi/react-components-layout";
 
 function AutoSaveNoteEditor() {
-  const [note, setNote] = useState({ title: '', content: '' });
+  const [note, setNote] = useState({ title: "", content: "" });
   const [saveStatus, setSaveStatus] = useState<
-    'idle' | 'saving' | 'saved' | 'error'
-  >('idle');
+    "idle" | "saving" | "saved" | "error"
+  >("idle");
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
   const saveNote = useCallback(async (noteData: typeof note) => {
-    setSaveStatus('saving');
+    setSaveStatus("saving");
 
     try {
-      const response = await fetch('/api/notes/auto-save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/notes/auto-save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(noteData),
       });
 
       if (!response.ok) {
-        throw new Error('Save failed');
+        throw new Error("Save failed");
       }
 
-      setSaveStatus('saved');
+      setSaveStatus("saved");
       setLastSaved(new Date());
 
       // Reset status after 2 seconds
-      setTimeout(() => setSaveStatus('idle'), 2000);
+      setTimeout(() => setSaveStatus("idle"), 2000);
     } catch (error) {
-      setSaveStatus('error');
-      console.error('Failed to save note:', error);
+      setSaveStatus("error");
+      console.error("Failed to save note:", error);
     }
   }, []);
 
@@ -344,14 +344,14 @@ function AutoSaveNoteEditor() {
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newNote = { ...note, title: e.target.value };
     setNote(newNote);
-    setSaveStatus('idle');
+    setSaveStatus("idle");
     debouncedSave(newNote);
   };
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newNote = { ...note, content: e.target.value };
     setNote(newNote);
-    setSaveStatus('idle');
+    setSaveStatus("idle");
     debouncedSave(newNote);
   };
 
@@ -366,38 +366,38 @@ function AutoSaveNoteEditor() {
 
   const getSaveStatusMessage = () => {
     switch (saveStatus) {
-      case 'saving':
-        return 'Saving...';
-      case 'saved':
-        return 'Saved';
-      case 'error':
-        return 'Failed to save';
+      case "saving":
+        return "Saving...";
+      case "saved":
+        return "Saved";
+      case "error":
+        return "Failed to save";
       default:
-        return lastSaved ? `Last saved: ${lastSaved.toLocaleTimeString()}` : '';
+        return lastSaved ? `Last saved: ${lastSaved.toLocaleTimeString()}` : "";
     }
   };
 
   return (
     <VStack gap={16}>
-      <HStack justify='space-between'>
-        <Title fontSize='t2'>Note Editor</Title>
-        <Body fontSize='b4' color={saveStatus === 'error' ? 'red' : 'gray'}>
+      <HStack justify="space-between">
+        <Title fontSize="t2">Note Editor</Title>
+        <Body fontSize="b4" color={saveStatus === "error" ? "red" : "zinc"}>
           {getSaveStatusMessage()}
         </Body>
       </HStack>
 
       <input
-        type='text'
+        type="text"
         value={note.title}
         onChange={handleTitleChange}
-        placeholder='Note title...'
-        className='note-title-input'
+        placeholder="Note title..."
+        className="note-title-input"
       />
 
       <Textarea
         value={note.content}
         onChange={handleContentChange}
-        placeholder='Start writing...'
+        placeholder="Start writing..."
         rows={20}
       />
 
@@ -413,7 +413,7 @@ function AutoSaveNoteEditor() {
         <button
           onClick={() => {
             debouncedSave.cancel();
-            setSaveStatus('idle');
+            setSaveStatus("idle");
           }}
         >
           Cancel Auto-save
@@ -427,9 +427,9 @@ function AutoSaveNoteEditor() {
 ### Infinite Scroll
 
 ```tsx
-import { debounce } from '@nugudi/react-hooks-debounce';
-import { useState, useCallback, useEffect, useRef } from 'react';
-import { VStack, Body } from '@nugudi/react-components-layout';
+import { debounce } from "@nugudi/react-hooks-debounce";
+import { useState, useCallback, useEffect, useRef } from "react";
+import { VStack, Body } from "@nugudi/react-components-layout";
 
 function InfiniteScrollList() {
   const [items, setItems] = useState<any[]>([]);
@@ -451,7 +451,7 @@ function InfiniteScrollList() {
       setHasMore(data.hasMore);
       setPage((prev) => prev + 1);
     } catch (error) {
-      console.error('Failed to load items:', error);
+      console.error("Failed to load items:", error);
     } finally {
       setIsLoading(false);
     }
@@ -485,7 +485,7 @@ function InfiniteScrollList() {
 
       {/* Loading indicator */}
       {isLoading && (
-        <Body fontSize='b3' color='gray'>
+        <Body fontSize="b3" color="zinc">
           Loading more items...
         </Body>
       )}
@@ -494,7 +494,7 @@ function InfiniteScrollList() {
       <div ref={observerTarget} style={{ height: 1 }} />
 
       {!hasMore && items.length > 0 && (
-        <Body fontSize='b3' color='gray'>
+        <Body fontSize="b3" color="zinc">
           No more items to load
         </Body>
       )}
@@ -506,26 +506,26 @@ function InfiniteScrollList() {
 ### Window Resize Handler
 
 ```tsx
-import { debounce } from '@nugudi/react-hooks-debounce';
-import { useState, useCallback, useEffect } from 'react';
-import { VStack, HStack, Title, Body } from '@nugudi/react-components-layout';
+import { debounce } from "@nugudi/react-hooks-debounce";
+import { useState, useCallback, useEffect } from "react";
+import { VStack, HStack, Title, Body } from "@nugudi/react-components-layout";
 
 function ResponsiveLayout() {
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
   });
-  const [layout, setLayout] = useState<'mobile' | 'tablet' | 'desktop'>(
-    'desktop'
+  const [layout, setLayout] = useState<"mobile" | "tablet" | "desktop">(
+    "desktop"
   );
 
   const updateLayout = useCallback((width: number) => {
     if (width < 768) {
-      setLayout('mobile');
+      setLayout("mobile");
     } else if (width < 1024) {
-      setLayout('tablet');
+      setLayout("tablet");
     } else {
-      setLayout('desktop');
+      setLayout("desktop");
     }
   }, []);
 
@@ -556,31 +556,31 @@ function ResponsiveLayout() {
       debouncedResize();
     };
 
-    window.addEventListener('resize', resizeListener);
+    window.addEventListener("resize", resizeListener);
 
     return () => {
-      window.removeEventListener('resize', resizeListener);
+      window.removeEventListener("resize", resizeListener);
       debouncedResize.cancel();
     };
   }, [debouncedResize, updateLayout]);
 
   return (
     <VStack gap={16}>
-      <Title fontSize='t2'>Responsive Layout Demo</Title>
+      <Title fontSize="t2">Responsive Layout Demo</Title>
 
       <HStack gap={12}>
-        <Body fontSize='b3'>
+        <Body fontSize="b3">
           Current layout: <strong>{layout}</strong>
         </Body>
-        <Body fontSize='b3'>
+        <Body fontSize="b3">
           Window size: {windowSize.width} x {windowSize.height}
         </Body>
       </HStack>
 
       <div className={`layout-container layout-${layout}`}>
-        {layout === 'mobile' && <MobileLayout />}
-        {layout === 'tablet' && <TabletLayout />}
-        {layout === 'desktop' && <DesktopLayout />}
+        {layout === "mobile" && <MobileLayout />}
+        {layout === "tablet" && <TabletLayout />}
+        {layout === "desktop" && <DesktopLayout />}
       </div>
     </VStack>
   );
@@ -590,15 +590,15 @@ function ResponsiveLayout() {
 ### Form Field Validation
 
 ```tsx
-import { debounce } from '@nugudi/react-hooks-debounce';
-import { useState, useCallback } from 'react';
-import { VStack, HStack, Body, Input } from '@nugudi/react-components-layout';
+import { debounce } from "@nugudi/react-hooks-debounce";
+import { useState, useCallback } from "react";
+import { VStack, HStack, Body, Input } from "@nugudi/react-components-layout";
 
 function RegistrationForm() {
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
+    username: "",
+    email: "",
+    password: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [checking, setChecking] = useState<Record<string, boolean>>({});
@@ -606,7 +606,7 @@ function RegistrationForm() {
   // Username availability check
   const checkUsernameAvailability = useCallback(async (username: string) => {
     if (username.length < 3) {
-      setErrors((prev) => ({ ...prev, username: 'Username too short' }));
+      setErrors((prev) => ({ ...prev, username: "Username too short" }));
       return;
     }
 
@@ -618,10 +618,10 @@ function RegistrationForm() {
 
       setErrors((prev) => ({
         ...prev,
-        username: available ? '' : 'Username already taken',
+        username: available ? "" : "Username already taken",
       }));
     } catch (error) {
-      setErrors((prev) => ({ ...prev, username: 'Failed to check username' }));
+      setErrors((prev) => ({ ...prev, username: "Failed to check username" }));
     } finally {
       setChecking((prev) => ({ ...prev, username: false }));
     }
@@ -632,11 +632,11 @@ function RegistrationForm() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!email) {
-      setErrors((prev) => ({ ...prev, email: '' }));
+      setErrors((prev) => ({ ...prev, email: "" }));
     } else if (!emailRegex.test(email)) {
-      setErrors((prev) => ({ ...prev, email: 'Invalid email format' }));
+      setErrors((prev) => ({ ...prev, email: "Invalid email format" }));
     } else {
-      setErrors((prev) => ({ ...prev, email: '' }));
+      setErrors((prev) => ({ ...prev, email: "" }));
     }
   }, []);
 
@@ -656,15 +656,15 @@ function RegistrationForm() {
     } else if (!hasUpperCase || !hasLowerCase || !hasNumbers) {
       setErrors((prev) => ({
         ...prev,
-        password: 'Password must include uppercase, lowercase, and numbers',
+        password: "Password must include uppercase, lowercase, and numbers",
       }));
     } else if (!hasSpecialChar) {
       setErrors((prev) => ({
         ...prev,
-        password: 'Consider adding special characters for stronger security',
+        password: "Consider adding special characters for stronger security",
       }));
     } else {
-      setErrors((prev) => ({ ...prev, password: '' }));
+      setErrors((prev) => ({ ...prev, password: "" }));
     }
   }, []);
 
@@ -677,17 +677,17 @@ function RegistrationForm() {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
     // Clear error immediately when user starts typing
-    setErrors((prev) => ({ ...prev, [field]: '' }));
+    setErrors((prev) => ({ ...prev, [field]: "" }));
 
     // Run debounced validation
     switch (field) {
-      case 'username':
+      case "username":
         debouncedCheckUsername(value);
         break;
-      case 'email':
+      case "email":
         debouncedValidateEmail(value);
         break;
-      case 'password':
+      case "password":
         debouncedCheckPassword(value);
         break;
     }
@@ -707,10 +707,10 @@ function RegistrationForm() {
     checkPasswordStrength(formData.password);
 
     // Check if there are any errors
-    const hasErrors = Object.values(errors).some((error) => error !== '');
+    const hasErrors = Object.values(errors).some((error) => error !== "");
     if (!hasErrors) {
       // Submit form
-      console.log('Form submitted:', formData);
+      console.log("Form submitted:", formData);
     }
   };
 
@@ -719,18 +719,18 @@ function RegistrationForm() {
       <VStack gap={20}>
         <div>
           <Input
-            type='text'
+            type="text"
             value={formData.username}
-            onChange={(e) => handleInputChange('username', e.target.value)}
-            placeholder='Username'
+            onChange={(e) => handleInputChange("username", e.target.value)}
+            placeholder="Username"
           />
           {checking.username && (
-            <Body fontSize='b4' color='gray'>
+            <Body fontSize="b4" color="zinc">
               Checking availability...
             </Body>
           )}
           {errors.username && (
-            <Body fontSize='b4' color='red'>
+            <Body fontSize="b4" color="red">
               {errors.username}
             </Body>
           )}
@@ -738,13 +738,13 @@ function RegistrationForm() {
 
         <div>
           <Input
-            type='email'
+            type="email"
             value={formData.email}
-            onChange={(e) => handleInputChange('email', e.target.value)}
-            placeholder='Email'
+            onChange={(e) => handleInputChange("email", e.target.value)}
+            placeholder="Email"
           />
           {errors.email && (
-            <Body fontSize='b4' color='red'>
+            <Body fontSize="b4" color="red">
               {errors.email}
             </Body>
           )}
@@ -752,22 +752,22 @@ function RegistrationForm() {
 
         <div>
           <Input
-            type='password'
+            type="password"
             value={formData.password}
-            onChange={(e) => handleInputChange('password', e.target.value)}
-            placeholder='Password'
+            onChange={(e) => handleInputChange("password", e.target.value)}
+            placeholder="Password"
           />
           {errors.password && (
             <Body
-              fontSize='b4'
-              color={errors.password.includes('Consider') ? 'yellow' : 'red'}
+              fontSize="b4"
+              color={errors.password.includes("Consider") ? "yellow" : "red"}
             >
               {errors.password}
             </Body>
           )}
         </div>
 
-        <button type='submit'>Register</button>
+        <button type="submit">Register</button>
       </VStack>
     </form>
   );
@@ -779,7 +779,7 @@ function RegistrationForm() {
 ### Leading and Trailing Edges
 
 ```tsx
-import { debounce } from '@nugudi/react-hooks-debounce';
+import { debounce } from "@nugudi/react-hooks-debounce";
 
 function AdvancedDebounceExample() {
   const handleClick = useCallback((count: number) => {
@@ -821,13 +821,13 @@ function AdvancedDebounceExample() {
 ### Maximum Wait Time
 
 ```tsx
-import { debounce } from '@nugudi/react-hooks-debounce';
+import { debounce } from "@nugudi/react-hooks-debounce";
 
 function MaxWaitExample() {
   const [scrollPosition, setScrollPosition] = useState(0);
 
   const updateScrollPosition = useCallback((position: number) => {
-    console.log('Saving scroll position:', position);
+    console.log("Saving scroll position:", position);
     // Save to backend or localStorage
   }, []);
 
@@ -843,9 +843,9 @@ function MaxWaitExample() {
       debouncedUpdate(position);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
       debouncedUpdate.cancel();
     };
   }, [debouncedUpdate]);
@@ -858,10 +858,10 @@ function MaxWaitExample() {
 
 ### debounce
 
-| Parameter  | Type                 | Default | Description              |
-| ---------- | -------------------- | ------- | ------------------------ |
-| `callback` | `Function`           | -       | The function to debounce |
-| `delay`    | `number`             | `500`   | Delay in milliseconds    |
+| Parameter  | Type              | Default | Description              |
+| ---------- | ----------------- | ------- | ------------------------ |
+| `callback` | `Function`        | -       | The function to debounce |
+| `delay`    | `number`          | `500`   | Delay in milliseconds    |
 | `options`  | `DebounceOptions` | `{}`    | Additional options       |
 
 **Options:**
@@ -899,7 +899,7 @@ Full TypeScript support with type inference:
 import type {
   DebouncedFunction,
   DebounceOptions,
-} from '@nugudi/react-hooks-debounce';
+} from "@nugudi/react-hooks-debounce";
 
 // Type-safe debounced function
 const searchProducts = async (

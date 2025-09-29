@@ -194,13 +194,13 @@ packages/ui/src/
 ### Component `vite.config.mts`
 
 ```typescript
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
-import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
-import dts from 'vite-plugin-dts';
-import tsconfigPaths from 'vite-tsconfig-paths';
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+import dts from "vite-plugin-dts";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
@@ -210,43 +210,43 @@ export default defineConfig({
     react(),
     vanillaExtractPlugin(), // For CSS-in-JS
     dts({
-      include: ['src'],
-      exclude: ['src/**/*.stories.tsx', 'src/**/*.test.tsx'],
-      outDir: 'dist',
-      entryRoot: 'src',
+      include: ["src"],
+      exclude: ["src/**/*.stories.tsx", "src/**/*.test.tsx"],
+      outDir: "dist",
+      entryRoot: "src",
       insertTypesEntry: true,
       rollupTypes: false,
-      tsconfigPath: './tsconfig.json',
+      tsconfigPath: "./tsconfig.json",
     }),
     tsconfigPaths(),
   ],
   build: {
     lib: {
-      entry: resolve(_dirname, 'src/index.ts'),
-      fileName: 'index',
-      formats: ['es'],
+      entry: resolve(_dirname, "src/index.ts"),
+      fileName: "index",
+      formats: ["es"],
     },
     rollupOptions: {
       external: [
-        'react',
-        'react-dom',
-        'react/jsx-runtime',
-        '@vanilla-extract/css',
+        "react",
+        "react-dom",
+        "react/jsx-runtime",
+        "@vanilla-extract/css",
       ],
       output: {
         assetFileNames: (assetInfo) => {
-          if (assetInfo.name?.endsWith('.css')) return 'index.css';
-          return assetInfo.name || 'assets/[name].[ext]';
+          if (assetInfo.name?.endsWith(".css")) return "index.css";
+          return assetInfo.name || "assets/[name].[ext]";
         },
       },
     },
     sourcemap: true,
     minify: false,
-    outDir: 'dist',
+    outDir: "dist",
   },
   resolve: {
     alias: {
-      '@': resolve(_dirname, './src'),
+      "@": resolve(_dirname, "./src"),
     },
   },
 });
@@ -255,10 +255,10 @@ export default defineConfig({
 ### Hook `vite.config.mts` (Simplified - No CSS)
 
 ```typescript
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'vite';
-import dts from 'vite-plugin-dts';
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { defineConfig } from "vite";
+import dts from "vite-plugin-dts";
 
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
@@ -266,27 +266,27 @@ const _dirname = dirname(_filename);
 export default defineConfig({
   plugins: [
     dts({
-      include: ['src'],
-      exclude: ['src/**/*.test.*', 'src/**/*.spec.*'],
-      outDir: 'dist',
-      entryRoot: 'src',
+      include: ["src"],
+      exclude: ["src/**/*.test.*", "src/**/*.spec.*"],
+      outDir: "dist",
+      entryRoot: "src",
       insertTypesEntry: true,
       rollupTypes: false,
-      tsconfigPath: './tsconfig.json',
+      tsconfigPath: "./tsconfig.json",
     }),
   ],
   build: {
     lib: {
-      entry: resolve(_dirname, 'src/index.ts'),
-      fileName: 'index',
-      formats: ['es'],
+      entry: resolve(_dirname, "src/index.ts"),
+      fileName: "index",
+      formats: ["es"],
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'react/jsx-runtime'],
+      external: ["react", "react-dom", "react/jsx-runtime"],
     },
     sourcemap: true,
     minify: false,
-    outDir: 'dist',
+    outDir: "dist",
   },
 });
 ```
@@ -294,13 +294,13 @@ export default defineConfig({
 ### `vitest.config.ts`
 
 ```typescript
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
     globals: true,
-    environment: 'jsdom',
-    setupFiles: ['./test-setup.ts'], // Optional
+    environment: "jsdom",
+    setupFiles: ["./test-setup.ts"], // Optional
   },
 });
 ```
@@ -313,8 +313,8 @@ export default defineConfig({
 
 ```typescript
 // packages/react/hooks/[name]/src/use[Name].ts
-import { useState, useCallback, useMemo } from 'react';
-import type { UseHookNameProps, UseHookNameReturn } from './types';
+import { useState, useCallback, useMemo } from "react";
+import type { UseHookNameProps, UseHookNameReturn } from "./types";
 
 export function useHookName(props?: UseHookNameProps): UseHookNameReturn {
   const [state, setState] = useState(props?.initialValue ?? false);
@@ -356,8 +356,8 @@ export interface UseHookNameReturn {
 
 ```typescript
 // packages/react/hooks/[name]/src/index.ts
-export { useHookName } from './useHookName';
-export type { UseHookNameProps, UseHookNameReturn } from './types';
+export { useHookName } from "./useHookName";
+export type { UseHookNameProps, UseHookNameReturn } from "./types";
 ```
 
 ---
@@ -372,16 +372,17 @@ This section focuses on Storybook-specific import requirements.
 
 ```typescript
 // Main component (with underscore and CSS)
-import '@nugudi/react-components-button/style.css';
-import { Button as _Button } from '@nugudi/react-components-button';
+import "@nugudi/react-components-button/style.css";
+import { Button as _Button } from "@nugudi/react-components-button";
 
 // Helper components (no underscore, no CSS)
-import { Input } from '@nugudi/react-components-input';
-import { Box, VStack, Title, Body } from '@nugudi/react-components-layout';
-import { AppleIcon, GoogleIcon } from '@nugudi/assets-icons';
+import { Input } from "@nugudi/react-components-input";
+import { Box, VStack, Title, Body } from "@nugudi/react-components-layout";
+import { AppleIcon, GoogleIcon } from "@nugudi/assets-icons";
 ```
 
 **Key Difference**: In Storybook stories, the main component being documented requires:
+
 1. **CSS import** - `import '@nugudi/react-components-[name]/style.css';`
 2. **Underscore alias** - `import { Component as _Component } from '@nugudi/react-components-[name]';`
 
@@ -406,10 +407,10 @@ In stories, always use existing `@nugudi/*` packages rather than creating custom
 ```typescript
 // ✅ For the MAIN component in the story:
 // 1. Import CSS (REQUIRED)
-import '@nugudi/react-components-bottom-sheet/style.css';
+import "@nugudi/react-components-bottom-sheet/style.css";
 
 // 2. Import with underscore prefix
-import { BottomSheet as _BottomSheet } from '@nugudi/react-components-bottom-sheet';
+import { BottomSheet as _BottomSheet } from "@nugudi/react-components-bottom-sheet";
 ```
 
 #### Helper Components (Supporting components used in examples)
@@ -418,9 +419,9 @@ import { BottomSheet as _BottomSheet } from '@nugudi/react-components-bottom-she
 // ✅ For HELPER components used in the story:
 // NO CSS import needed
 // NO underscore prefix
-import { Button } from '@nugudi/react-components-button';
-import { Body, Title } from '@nugudi/react-components-layout';
-import { Input } from '@nugudi/react-components-input';
+import { Button } from "@nugudi/react-components-button";
+import { Body, Title } from "@nugudi/react-components-layout";
+import { Input } from "@nugudi/react-components-input";
 ```
 
 #### Complete Example
@@ -445,7 +446,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof _BottomSheet> = {
   title: "Components/BottomSheet",
-  component: _BottomSheet,  // Uses underscore version
+  component: _BottomSheet, // Uses underscore version
   // ...
 };
 
@@ -456,9 +457,7 @@ export const WithContent: Story = {
     return (
       <>
         {/* Helper component - no underscore */}
-        <Button onClick={() => setOpen(true)}>
-          Open Bottom Sheet
-        </Button>
+        <Button onClick={() => setOpen(true)}>Open Bottom Sheet</Button>
 
         {/* Main component - with underscore */}
         <_BottomSheet open={open} onClose={() => setOpen(false)}>
@@ -490,37 +489,37 @@ export const WithContent: Story = {
 // packages/ui/src/ReactComponents/Button.stories.tsx
 
 // 1. CSS import (REQUIRED - for main component only)
-import '@nugudi/react-components-button/style.css';
+import "@nugudi/react-components-button/style.css";
 
 // 2. Main component with underscore alias
-import { Button as _Button } from '@nugudi/react-components-button';
+import { Button as _Button } from "@nugudi/react-components-button";
 
 // 3. Helper components without underscore or CSS
-import { Input } from '@nugudi/react-components-input';
-import { Body } from '@nugudi/react-components-layout';
+import { Input } from "@nugudi/react-components-input";
+import { Body } from "@nugudi/react-components-layout";
 
 // 4. Other imports
-import { ArrowLeftIcon } from '@nugudi/assets-icons';
-import { useButton } from '@nugudi/react-hooks-button';
-import { vars } from '@nugudi/themes';
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import { ArrowLeftIcon } from "@nugudi/assets-icons";
+import { useButton } from "@nugudi/react-hooks-button";
+import { vars } from "@nugudi/themes";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof _Button> = {
-  title: 'Components/Button', // Category/ComponentName
+  title: "Components/Button", // Category/ComponentName
   component: _Button,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
   argTypes: {
     size: {
-      options: ['sm', 'md', 'lg', 'icon'],
-      control: 'select',
-      defaultValue: 'lg',
+      options: ["sm", "md", "lg", "icon"],
+      control: "select",
+      defaultValue: "lg",
       table: {
-        type: { summary: 'sm | md | lg | icon' },
-        defaultValue: { summary: 'lg' },
-        category: 'Appearance',
+        type: { summary: "sm | md | lg | icon" },
+        defaultValue: { summary: "lg" },
+        category: "Appearance",
       },
     },
   },
@@ -531,7 +530,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    children: 'Button',
+    children: "Button",
   },
 };
 ```
@@ -543,32 +542,32 @@ export const Default: Story = {
 ### Using Object.keys for Dynamic Options
 
 ```typescript
-import { vars } from '@nugudi/themes';
+import { vars } from "@nugudi/themes";
 
 const meta: Meta<typeof _Component> = {
   // ...
   argTypes: {
     // Spacing options
     padding: {
-      control: 'select',
+      control: "select",
       options: Object.keys(vars.box.spacing), // [0, 1, 2, 4, 8, 10, 12, 16, 20, 24, 32, 40, 48, 56, 64]
     },
 
     // Border radius options
     borderRadius: {
-      control: 'select',
+      control: "select",
       options: Object.keys(vars.box.radii), // [none, sm, md, lg, xl, 2xl, full]
     },
 
     // Color options
     color: {
-      control: 'select',
-      options: Object.keys(vars.colors.$scale), // [main, gray, red, yellow, green, blue, ...]
+      control: "select",
+      options: Object.keys(vars.colors.$scale), // [main, zinc, red, yellow, green, blue, ...]
     },
 
     // Shadow options
     boxShadow: {
-      control: 'select',
+      control: "select",
       options: Object.keys(vars.box.shadows), // [xs, sm, md, lg, xl, 2xl]
     },
   },
@@ -624,8 +623,8 @@ pnpm build
 ```typescript
 export const Default: Story = {
   args: {
-    children: 'Default Content',
-    size: 'md',
+    children: "Default Content",
+    size: "md",
   },
 };
 ```
@@ -665,9 +664,7 @@ export const Interactive: Story = {
 export const Responsive: Story = {
   render: () => (
     <div style={{ width: "100%", padding: "20px" }}>
-      <_Component responsive>
-        Resize viewport to see changes
-      </_Component>
+      <_Component responsive>Resize viewport to see changes</_Component>
     </div>
   ),
   parameters: {
@@ -714,26 +711,26 @@ CSS Import: @nugudi/react-components-[name]/style.css
 
 ```typescript
 // 1. CSS (MANDATORY - for main component only)
-import '@nugudi/react-components-[name]/style.css';
+import "@nugudi/react-components-[name]/style.css";
 
 // 2. Main component (with underscore)
-import { Component as _Component } from '@nugudi/react-components-[name]';
+import { Component as _Component } from "@nugudi/react-components-[name]";
 
 // 3. Helper components (without underscore, no CSS)
-import { Button } from '@nugudi/react-components-button';
-import { Box, VStack } from '@nugudi/react-components-layout';
+import { Button } from "@nugudi/react-components-button";
+import { Box, VStack } from "@nugudi/react-components-layout";
 
 // 4. Icons
-import { IconName } from '@nugudi/assets-icons';
+import { IconName } from "@nugudi/assets-icons";
 
 // 5. Hooks
-import { useHook } from '@nugudi/react-hooks-[name]';
+import { useHook } from "@nugudi/react-hooks-[name]";
 
 // 6. Themes (namespace exports)
-import { vars, classes } from '@nugudi/themes';
+import { vars, classes } from "@nugudi/themes";
 
 // 7. Storybook types
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from "@storybook/react-vite";
 ```
 
 ### Story Title Categories

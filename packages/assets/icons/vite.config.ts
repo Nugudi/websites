@@ -15,8 +15,10 @@ export default defineConfig({
   ],
   build: {
     lib: {
-      entry: path.resolve(__dirname, "src/index.ts"),
-      fileName: "index",
+      entry: {
+        index: path.resolve(__dirname, "src/index.ts"),
+        registry: path.resolve(__dirname, "src/registry.ts"),
+      },
       formats: ["es"],
     },
     rollupOptions: {
