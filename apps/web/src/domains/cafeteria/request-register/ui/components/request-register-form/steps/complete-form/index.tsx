@@ -3,14 +3,17 @@
 import { Button } from "@nugudi/react-components-button";
 import { Body, Box, Title, VStack } from "@nugudi/react-components-layout";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import * as styles from "./index.css";
 
-export const CompleteForm = () => {
+interface CompleteFormProps {
+  onConfirm: () => void;
+}
+
+export const CompleteForm = ({ onConfirm }: CompleteFormProps) => {
   return (
     <VStack h="full" justify="space-between" className={styles.container}>
       <CompletionMessage />
-      <CompleteButton />
+      <CompleteButton onConfirm={onConfirm} />
     </VStack>
   );
 };
@@ -43,15 +46,8 @@ const CompletionMessage = () => {
   );
 };
 
-const CompleteButton = () => {
-  const router = useRouter();
-
-  const handleConfirm = () => {
-    router.replace("/");
-  };
-  return (
-    <Button variant="brand" color="zinc" size="lg" onClick={handleConfirm}>
-      확인
-    </Button>
-  );
-};
+const CompleteButton = ({ onConfirm }: { onConfirm: () => void }) => (
+  <Button variant="brand" color="zinc" size="lg" onClick={onConfirm}>
+    확인
+  </Button>
+);
