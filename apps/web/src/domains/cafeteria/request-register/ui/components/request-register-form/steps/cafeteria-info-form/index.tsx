@@ -137,10 +137,10 @@ export const CafeteriaInfoForm = ({ onNext }: CafeteriaInfoFormProps) => {
 
 const FormInfoText = () => {
   return (
-    <Title fontSize="t2" className={styles.title}>
-      <Title fontSize="t2" color="main" as="span">
+    <Title fontSize="t2" className={styles.title} as="h2">
+      <Box as="span" color="main">
         구디
-      </Title>
+      </Box>
       식당 여기있어요 !
     </Title>
   );
