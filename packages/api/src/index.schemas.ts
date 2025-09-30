@@ -3,12 +3,26 @@
  * Do not edit manually.
  * 너구디 API
  * 구내식당 플랫폼 API
- * OpenAPI spec version: v1
+ * OpenAPI spec version: 1.0.0
  */
+export interface SignUpSocialRequest {
+  /** 닉네임 */
+  nickname: string;
+  /** 개인정보 처리방침 약관 동의 여부 */
+  privacyPolicy: boolean;
+  /** 이용약관 동의 여부 */
+  termsOfService: boolean;
+  /** 위치정보 수집·이용약관 동의 여부  */
+  locationInfo: boolean;
+  /** 마케팅 이메일 수신 동의 여부 (선택적, 기본값: false) */
+  marketingEmail?: boolean;
+  deviceInfo: UserDeviceInfoDTO;
+}
+
 /**
  * 디바이스 타입
  */
-export type DeviceInfoDtoDeviceType =
+export type UserDeviceInfoDTODeviceType =
   | "IOS"
   | "ANDROID"
   | "WEB"
@@ -18,9 +32,9 @@ export type DeviceInfoDtoDeviceType =
 /**
  * 디바이스 정보 (일반/소셜 공통)
  */
-export interface DeviceInfoDto {
+export interface UserDeviceInfoDTO {
   /** 디바이스 타입 */
-  deviceType: DeviceInfoDtoDeviceType;
+  deviceType: UserDeviceInfoDTODeviceType;
   /** 디바이스 고유 ID */
   deviceUniqueId: string;
   /** 디바이스 이름 */
@@ -33,27 +47,6 @@ export interface DeviceInfoDto {
   appVersion?: string;
   /** 푸시 토큰 (알림 동의시에만 필수) */
   pushToken?: string;
-}
-
-/**
- * 일반 회원가입 요청 정보
- */
-export interface SignUpLocalRequest {
-  /** 닉네임 */
-  nickname: string;
-  /** 이메일 */
-  email: string;
-  /** 비밀번호 (최소 8자 이상, 최대 20자 이하, 영문/숫자/특수문자/대문자 1개 이상 포함) */
-  password: string;
-  /** 개인정보 처리방침 약관 동의 여부 */
-  privacyPolicy: boolean;
-  /** 이용약관 동의 여부 */
-  termsOfService: boolean;
-  /** 위치정보 수집·이용약관 동의 여부  */
-  locationInfo: boolean;
-  /** 마케팅 이메일 수신 동의 여부 (선택적, 기본값: false) */
-  marketingEmail?: boolean;
-  deviceInfo: DeviceInfoDto;
 }
 
 /**
@@ -79,8 +72,30 @@ export interface SignUpResponse {
 export interface SuccessResponseSignUpResponse {
   timestamp?: Date;
   success?: boolean;
+  code?: number;
   message?: string;
   data?: SignUpResponse;
+}
+
+/**
+ * 일반 회원가입 요청 정보
+ */
+export interface SignUpLocalRequest {
+  /** 닉네임 */
+  nickname: string;
+  /** 이메일 */
+  email: string;
+  /** 비밀번호 (최소 8자 이상, 최대 20자 이하, 영문/숫자/특수문자/대문자 1개 이상 포함) */
+  password: string;
+  /** 개인정보 처리방침 약관 동의 여부 */
+  privacyPolicy: boolean;
+  /** 이용약관 동의 여부 */
+  termsOfService: boolean;
+  /** 위치정보 수집·이용약관 동의 여부  */
+  locationInfo: boolean;
+  /** 마케팅 이메일 수신 동의 여부 (선택적, 기본값: false) */
+  marketingEmail?: boolean;
+  deviceInfo: UserDeviceInfoDTO;
 }
 
 /**
@@ -100,8 +115,25 @@ export interface RefreshTokenResponse {
 export interface SuccessResponseRefreshTokenResponse {
   timestamp?: Date;
   success?: boolean;
+  code?: number;
   message?: string;
   data?: RefreshTokenResponse;
+}
+
+/**
+ * 로그아웃 응답
+ */
+export interface LogoutResponse {
+  /** 로그아웃 처리 시간 */
+  logoutAt?: Date;
+}
+
+export interface SuccessResponseLogoutResponse {
+  timestamp?: Date;
+  success?: boolean;
+  code?: number;
+  message?: string;
+  data?: LogoutResponse;
 }
 
 /**
@@ -112,7 +144,7 @@ export interface LocalLoginRequest {
   email: string;
   /** 비밀번호 */
   password: string;
-  deviceInfo: DeviceInfoDto;
+  deviceInfo: UserDeviceInfoDTO;
 }
 
 /**
@@ -140,8 +172,56 @@ export interface LocalLoginResponse {
 export interface SuccessResponseLocalLoginResponse {
   timestamp?: Date;
   success?: boolean;
+  code?: number;
   message?: string;
   data?: LocalLoginResponse;
+}
+
+/**
+ * 카카오 소셜 로그인 요청
+ */
+export interface KakaoLoginRequest {
+  /** 카카오 OAuth 인가 코드 (카카오 로그인 후 발급받은 authorization code) */
+  code: string;
+  deviceInfo: UserDeviceInfoDTO;
+}
+
+/**
+ * 카카오 로그인 상태
+ */
+export type KakaoLoginResponseStatus = "EXISTING_USER" | "NEW_USER";
+/**
+ * 카카오 로그인 응답
+ */
+export interface KakaoLoginResponse {
+  /** 카카오 로그인 상태 */
+  status?: KakaoLoginResponseStatus;
+  /** 사용자 ID (기존 회원인 경우) */
+  userId?: number;
+  /** 사용자 닉네임 (기존 회원인 경우) */
+  nickname?: string;
+  /** 프로필 이미지 URL */
+  profileImageUrl?: string;
+  /** 액세스 토큰 (기존 회원인 경우) */
+  accessToken?: string;
+  /** 리프레시 토큰 (기존 회원인 경우) */
+  refreshToken?: string;
+  /** 액세스 토큰 만료 시간 */
+  accessTokenExpiresAt?: Date;
+  /** 리프레시 토큰 만료 시간 */
+  refreshTokenExpiresAt?: Date;
+  /** 등록 토큰 (신규 회원인 경우) */
+  registrationToken?: string;
+  /** 등록 토큰 만료 시간 (신규 회원인 경우) */
+  registrationTokenExpiresAt?: Date;
+}
+
+export interface SuccessResponseKakaoLoginResponse {
+  timestamp?: Date;
+  success?: boolean;
+  code?: number;
+  message?: string;
+  data?: KakaoLoginResponse;
 }
 
 /**
@@ -171,6 +251,7 @@ export interface EmailVerifyResponse {
 export interface SuccessResponseEmailVerifyResponse {
   timestamp?: Date;
   success?: boolean;
+  code?: number;
   message?: string;
   data?: EmailVerifyResponse;
 }
@@ -200,6 +281,7 @@ export interface EmailVerificationResponse {
 export interface SuccessResponseEmailVerificationResponse {
   timestamp?: Date;
   success?: boolean;
+  code?: number;
   message?: string;
   data?: EmailVerificationResponse;
 }
@@ -217,10 +299,55 @@ export interface NicknameCheckResponse {
 export interface SuccessResponseNicknameCheckResponse {
   timestamp?: Date;
   success?: boolean;
+  code?: number;
   message?: string;
   data?: NicknameCheckResponse;
 }
 
+export interface GetMyProfileResponse {
+  profile?: UserProfileDTO;
+  account?: UserAccountDTO;
+  health?: HealthInfoDTO;
+}
+
+export interface HealthInfoDTO {
+  height?: number;
+  weight?: number;
+}
+
+export interface SuccessResponseGetMyProfileResponse {
+  timestamp?: Date;
+  success?: boolean;
+  code?: number;
+  message?: string;
+  data?: GetMyProfileResponse;
+}
+
+export type UserAccountDTOProvider =
+  | "LOCAL"
+  | "GOOGLE"
+  | "APPLE"
+  | "KAKAO"
+  | "NAVER";
+export interface UserAccountDTO {
+  provider?: UserAccountDTOProvider;
+  email?: string;
+}
+
+export interface UserProfileDTO {
+  userId?: number;
+  nickname?: string;
+  profileImageUrl?: string;
+  joinDate?: Date;
+}
+
 export type SendEmailVerificationCode200 = {
   message?: string;
+};
+
+export type CheckNicknameAvailabilityParams = {
+  /**
+   * 확인할 닉네임 (2~12자, 한글/영문/숫자만)
+   */
+  nickname: string;
 };

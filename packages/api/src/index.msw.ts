@@ -3,7 +3,7 @@
  * Do not edit manually.
  * 너구디 API
  * 구내식당 플랫폼 API
- * OpenAPI spec version: v1
+ * OpenAPI spec version: 1.0.0
  */
 import { faker } from "@faker-js/faker";
 
@@ -12,11 +12,70 @@ import { delay, HttpResponse, http } from "msw";
 import type {
   SendEmailVerificationCode200,
   SuccessResponseEmailVerifyResponse,
+  SuccessResponseGetMyProfileResponse,
+  SuccessResponseKakaoLoginResponse,
   SuccessResponseLocalLoginResponse,
+  SuccessResponseLogoutResponse,
   SuccessResponseNicknameCheckResponse,
   SuccessResponseRefreshTokenResponse,
   SuccessResponseSignUpResponse,
 } from "./index.schemas";
+
+export const getSignUpSocialResponseMock = (
+  overrideResponse: Partial<SuccessResponseSignUpResponse> = {},
+): SuccessResponseSignUpResponse => ({
+  timestamp: faker.helpers.arrayElement([
+    new Date(`${faker.date.past().toISOString().split(".")[0]}Z`),
+    undefined,
+  ]),
+  success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+  code: faker.helpers.arrayElement([
+    faker.number.int({ min: undefined, max: undefined, multipleOf: undefined }),
+    undefined,
+  ]),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  data: faker.helpers.arrayElement([
+    {
+      userId: faker.helpers.arrayElement([
+        faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        undefined,
+      ]),
+      email: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      nickname: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      accessToken: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      refreshToken: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      accessTokenExpiresAt: faker.helpers.arrayElement([
+        new Date(`${faker.date.past().toISOString().split(".")[0]}Z`),
+        undefined,
+      ]),
+      refreshTokenExpiresAt: faker.helpers.arrayElement([
+        new Date(`${faker.date.past().toISOString().split(".")[0]}Z`),
+        undefined,
+      ]),
+    },
+    undefined,
+  ]),
+  ...overrideResponse,
+});
 
 export const getSignUpLocalResponseMock = (
   overrideResponse: Partial<SuccessResponseSignUpResponse> = {},
@@ -26,6 +85,10 @@ export const getSignUpLocalResponseMock = (
     undefined,
   ]),
   success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+  code: faker.helpers.arrayElement([
+    faker.number.int({ min: undefined, max: undefined, multipleOf: undefined }),
+    undefined,
+  ]),
   message: faker.helpers.arrayElement([
     faker.string.alpha({ length: { min: 10, max: 20 } }),
     undefined,
@@ -78,6 +141,10 @@ export const getRefreshTokenResponseMock = (
     undefined,
   ]),
   success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+  code: faker.helpers.arrayElement([
+    faker.number.int({ min: undefined, max: undefined, multipleOf: undefined }),
+    undefined,
+  ]),
   message: faker.helpers.arrayElement([
     faker.string.alpha({ length: { min: 10, max: 20 } }),
     undefined,
@@ -106,6 +173,34 @@ export const getRefreshTokenResponseMock = (
   ...overrideResponse,
 });
 
+export const getLogoutResponseMock = (
+  overrideResponse: Partial<SuccessResponseLogoutResponse> = {},
+): SuccessResponseLogoutResponse => ({
+  timestamp: faker.helpers.arrayElement([
+    new Date(`${faker.date.past().toISOString().split(".")[0]}Z`),
+    undefined,
+  ]),
+  success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+  code: faker.helpers.arrayElement([
+    faker.number.int({ min: undefined, max: undefined, multipleOf: undefined }),
+    undefined,
+  ]),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  data: faker.helpers.arrayElement([
+    {
+      logoutAt: faker.helpers.arrayElement([
+        new Date(`${faker.date.past().toISOString().split(".")[0]}Z`),
+        undefined,
+      ]),
+    },
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
 export const getLocalLoginResponseMock = (
   overrideResponse: Partial<SuccessResponseLocalLoginResponse> = {},
 ): SuccessResponseLocalLoginResponse => ({
@@ -114,6 +209,10 @@ export const getLocalLoginResponseMock = (
     undefined,
   ]),
   success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+  code: faker.helpers.arrayElement([
+    faker.number.int({ min: undefined, max: undefined, multipleOf: undefined }),
+    undefined,
+  ]),
   message: faker.helpers.arrayElement([
     faker.string.alpha({ length: { min: 10, max: 20 } }),
     undefined,
@@ -162,6 +261,74 @@ export const getLocalLoginResponseMock = (
   ...overrideResponse,
 });
 
+export const getKakaoLoginResponseMock = (
+  overrideResponse: Partial<SuccessResponseKakaoLoginResponse> = {},
+): SuccessResponseKakaoLoginResponse => ({
+  timestamp: faker.helpers.arrayElement([
+    new Date(`${faker.date.past().toISOString().split(".")[0]}Z`),
+    undefined,
+  ]),
+  success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+  code: faker.helpers.arrayElement([
+    faker.number.int({ min: undefined, max: undefined, multipleOf: undefined }),
+    undefined,
+  ]),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  data: faker.helpers.arrayElement([
+    {
+      status: faker.helpers.arrayElement([
+        faker.helpers.arrayElement(["EXISTING_USER", "NEW_USER"] as const),
+        undefined,
+      ]),
+      userId: faker.helpers.arrayElement([
+        faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        undefined,
+      ]),
+      nickname: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      profileImageUrl: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      accessToken: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      refreshToken: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      accessTokenExpiresAt: faker.helpers.arrayElement([
+        new Date(`${faker.date.past().toISOString().split(".")[0]}Z`),
+        undefined,
+      ]),
+      refreshTokenExpiresAt: faker.helpers.arrayElement([
+        new Date(`${faker.date.past().toISOString().split(".")[0]}Z`),
+        undefined,
+      ]),
+      registrationToken: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      registrationTokenExpiresAt: faker.helpers.arrayElement([
+        new Date(`${faker.date.past().toISOString().split(".")[0]}Z`),
+        undefined,
+      ]),
+    },
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
 export const getVerifyEmailCodeResponseMock = (
   overrideResponse: Partial<SuccessResponseEmailVerifyResponse> = {},
 ): SuccessResponseEmailVerifyResponse => ({
@@ -170,6 +337,10 @@ export const getVerifyEmailCodeResponseMock = (
     undefined,
   ]),
   success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+  code: faker.helpers.arrayElement([
+    faker.number.int({ min: undefined, max: undefined, multipleOf: undefined }),
+    undefined,
+  ]),
   message: faker.helpers.arrayElement([
     faker.string.alpha({ length: { min: 10, max: 20 } }),
     undefined,
@@ -204,6 +375,10 @@ export const getCheckNicknameAvailabilityResponseMock = (
     undefined,
   ]),
   success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+  code: faker.helpers.arrayElement([
+    faker.number.int({ min: undefined, max: undefined, multipleOf: undefined }),
+    undefined,
+  ]),
   message: faker.helpers.arrayElement([
     faker.string.alpha({ length: { min: 10, max: 20 } }),
     undefined,
@@ -223,6 +398,120 @@ export const getCheckNicknameAvailabilityResponseMock = (
   ]),
   ...overrideResponse,
 });
+
+export const getGetMyProfileResponseMock = (
+  overrideResponse: Partial<SuccessResponseGetMyProfileResponse> = {},
+): SuccessResponseGetMyProfileResponse => ({
+  timestamp: faker.helpers.arrayElement([
+    new Date(`${faker.date.past().toISOString().split(".")[0]}Z`),
+    undefined,
+  ]),
+  success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+  code: faker.helpers.arrayElement([
+    faker.number.int({ min: undefined, max: undefined, multipleOf: undefined }),
+    undefined,
+  ]),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  data: faker.helpers.arrayElement([
+    {
+      profile: faker.helpers.arrayElement([
+        {
+          userId: faker.helpers.arrayElement([
+            faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
+            undefined,
+          ]),
+          nickname: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          profileImageUrl: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          joinDate: faker.helpers.arrayElement([
+            new Date(faker.date.past().toISOString().split("T")[0]),
+            undefined,
+          ]),
+        },
+        undefined,
+      ]),
+      account: faker.helpers.arrayElement([
+        {
+          provider: faker.helpers.arrayElement([
+            faker.helpers.arrayElement([
+              "LOCAL",
+              "GOOGLE",
+              "APPLE",
+              "KAKAO",
+              "NAVER",
+            ] as const),
+            undefined,
+          ]),
+          email: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+        },
+        undefined,
+      ]),
+      health: faker.helpers.arrayElement([
+        {
+          height: faker.helpers.arrayElement([
+            faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
+            undefined,
+          ]),
+          weight: faker.helpers.arrayElement([
+            faker.number.float({
+              min: undefined,
+              max: undefined,
+              fractionDigits: 2,
+            }),
+            undefined,
+          ]),
+        },
+        undefined,
+      ]),
+    },
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
+export const getSignUpSocialMockHandler = (
+  overrideResponse?:
+    | SuccessResponseSignUpResponse
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) =>
+        | Promise<SuccessResponseSignUpResponse>
+        | SuccessResponseSignUpResponse),
+) => {
+  return http.post("*/api/v1/auth/signup/social", async (info) => {
+    await delay(500);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getSignUpSocialResponseMock(),
+      ),
+      { status: 201, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
 
 export const getSignUpLocalMockHandler = (
   overrideResponse?:
@@ -274,6 +563,31 @@ export const getRefreshTokenMockHandler = (
   });
 };
 
+export const getLogoutMockHandler = (
+  overrideResponse?:
+    | SuccessResponseLogoutResponse
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) =>
+        | Promise<SuccessResponseLogoutResponse>
+        | SuccessResponseLogoutResponse),
+) => {
+  return http.post("*/api/v1/auth/logout", async (info) => {
+    await delay(500);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getLogoutResponseMock(),
+      ),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
 export const getLocalLoginMockHandler = (
   overrideResponse?:
     | SuccessResponseLocalLoginResponse
@@ -293,6 +607,31 @@ export const getLocalLoginMockHandler = (
             ? await overrideResponse(info)
             : overrideResponse
           : getLocalLoginResponseMock(),
+      ),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
+export const getKakaoLoginMockHandler = (
+  overrideResponse?:
+    | SuccessResponseKakaoLoginResponse
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) =>
+        | Promise<SuccessResponseKakaoLoginResponse>
+        | SuccessResponseKakaoLoginResponse),
+) => {
+  return http.post("*/api/v1/auth/login/kakao", async (info) => {
+    await delay(500);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getKakaoLoginResponseMock(),
       ),
       { status: 200, headers: { "Content-Type": "application/json" } },
     );
@@ -358,29 +697,55 @@ export const getCheckNicknameAvailabilityMockHandler = (
         | Promise<SuccessResponseNicknameCheckResponse>
         | SuccessResponseNicknameCheckResponse),
 ) => {
-  return http.get(
-    "*/api/v1/users/nicknames/:nickname/availability",
-    async (info) => {
-      await delay(500);
+  return http.get("*/api/v1/users/nickname/availability", async (info) => {
+    await delay(500);
 
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === "function"
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getCheckNicknameAvailabilityResponseMock(),
-        ),
-        { status: 200, headers: { "Content-Type": "application/json" } },
-      );
-    },
-  );
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getCheckNicknameAvailabilityResponseMock(),
+      ),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
+export const getGetMyProfileMockHandler = (
+  overrideResponse?:
+    | SuccessResponseGetMyProfileResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<SuccessResponseGetMyProfileResponse>
+        | SuccessResponseGetMyProfileResponse),
+) => {
+  return http.get("*/api/v1/users/me", async (info) => {
+    await delay(500);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getGetMyProfileResponseMock(),
+      ),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  });
 };
 export const getApiMock = () => [
+  getSignUpSocialMockHandler(),
   getSignUpLocalMockHandler(),
   getRefreshTokenMockHandler(),
+  getLogoutMockHandler(),
   getLocalLoginMockHandler(),
+  getKakaoLoginMockHandler(),
   getVerifyEmailCodeMockHandler(),
   getSendEmailVerificationCodeMockHandler(),
   getCheckNicknameAvailabilityMockHandler(),
+  getGetMyProfileMockHandler(),
 ];

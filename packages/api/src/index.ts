@@ -3,7 +3,7 @@
  * Do not edit manually.
  * 너구디 API
  * 구내식당 플랫폼 API
- * OpenAPI spec version: v1
+ * OpenAPI spec version: 1.0.0
  */
 
 import type {
@@ -25,13 +25,19 @@ import type {
 import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { http } from "./api/http";
 import type {
+  CheckNicknameAvailabilityParams,
   EmailVerificationRequest,
   EmailVerifyRequest,
+  KakaoLoginRequest,
   LocalLoginRequest,
   SendEmailVerificationCode200,
   SignUpLocalRequest,
+  SignUpSocialRequest,
   SuccessResponseEmailVerifyResponse,
+  SuccessResponseGetMyProfileResponse,
+  SuccessResponseKakaoLoginResponse,
   SuccessResponseLocalLoginResponse,
+  SuccessResponseLogoutResponse,
   SuccessResponseNicknameCheckResponse,
   SuccessResponseRefreshTokenResponse,
   SuccessResponseSignUpResponse,
@@ -39,6 +45,137 @@ import type {
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
+/**
+ * 소셜 로그인으로 인증에 성공한 신규 회원의 회원가입을 진행합니다.
+
+사용 방법:
+1. 카카오 로그인(/api/v1/auth/login/kakao) 호출
+2. 신규 회원인 경우 202 상태와 함께 registrationToken 수신
+3. X-Registration-Token 헤더에, 받은 토큰을 포함하여 본 API 호출
+4. 필수 정보(닉네임 등)를 요청 바디에 포함
+5. 회원가입 성공 시 accessToken과 refreshToken을 응답 바디로 반환
+
+주의사항:
+- registrationToken은 30분간 유효
+- 토큰 만료 시 카카오 로그인부터 다시 진행
+ * @summary 소셜 계정 회원가입
+ */
+export type signUpSocialResponse201 = {
+  data: SuccessResponseSignUpResponse;
+  status: 201;
+};
+
+export type signUpSocialResponseComposite = signUpSocialResponse201;
+
+export type signUpSocialResponse = signUpSocialResponseComposite & {
+  headers: Headers;
+};
+
+export const getSignUpSocialUrl = () => {
+  return `https://dev.nugudi.com/api/v1/auth/signup/social`;
+};
+
+export const signUpSocial = async (
+  signUpSocialRequest: SignUpSocialRequest,
+  options?: RequestInit,
+): Promise<signUpSocialResponse> => {
+  return http<signUpSocialResponse>(getSignUpSocialUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(signUpSocialRequest),
+  });
+};
+
+export const getSignUpSocialMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof signUpSocial>>,
+    TError,
+    { data: SignUpSocialRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof http>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof signUpSocial>>,
+  TError,
+  { data: SignUpSocialRequest },
+  TContext
+> => {
+  const mutationKey = ["signUpSocial"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof signUpSocial>>,
+    { data: SignUpSocialRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return signUpSocial(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type SignUpSocialMutationResult = NonNullable<
+  Awaited<ReturnType<typeof signUpSocial>>
+>;
+export type SignUpSocialMutationBody = SignUpSocialRequest;
+export type SignUpSocialMutationError = unknown;
+
+/**
+ * @summary 소셜 계정 회원가입
+ */
+export const useSignUpSocial = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof signUpSocial>>,
+      TError,
+      { data: SignUpSocialRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof signUpSocial>>,
+  TError,
+  { data: SignUpSocialRequest },
+  TContext
+> => {
+  const mutationOptions = getSignUpSocialMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * 이메일과 비밀번호를 사용한 일반 회원가입을 진행합니다.
+
+회원가입 성공 시:
+- 자동으로 로그인 처리
+- accessToken과 refreshToken을 응답 바디에 반환
+
+반환되는 토큰:
+- accessToken: API 호출 시 Authorization 헤더에 Bearer 형식으로 사용
+- refreshToken: 토큰 갱신 시 사용
+- 사용자 정보 (userId, email, nickname 등)
+
+디바이스 관리:
+- 다중 기기 로그인 지원을 위해 X-Device-ID 헤더를 선택적으로 전송 가능
+- 프론트엔드에서 UUID 생성 후 로컬 스토리지에 저장하여 사용 권장
+
+사전 요구사항:
+- 이메일 인증 완료 (/api/v1/auth/email/verify-code)
+ * @summary 일반 회원가입
+ */
 export type signUpLocalResponse201 = {
   data: SuccessResponseSignUpResponse;
   status: 201;
@@ -110,6 +247,9 @@ export type SignUpLocalMutationResult = NonNullable<
 export type SignUpLocalMutationBody = SignUpLocalRequest;
 export type SignUpLocalMutationError = unknown;
 
+/**
+ * @summary 일반 회원가입
+ */
 export const useSignUpLocal = <TError = unknown, TContext = unknown>(
   options?: {
     mutation?: UseMutationOptions<
@@ -133,7 +273,18 @@ export const useSignUpLocal = <TError = unknown, TContext = unknown>(
 };
 
 /**
- * 리프레시 토큰으로 새로운 토큰을 발급받습니다. Authorization 헤더에 'Bearer {refreshToken}' 형식으로 전달해주세요.
+ * 리프레시 토큰으로 새로운 토큰을 발급받습니다.
+
+필수 헤더:
+- Authorization: Bearer {refreshToken} 형식으로 리프레시 토큰 전달
+- X-Device-ID: 토큰을 갱신할 디바이스의 고유 ID
+
+디바이스 ID 관리:
+- 로그인 시 사용한 동일한 디바이스 ID를 전달해야 함
+- 다른 디바이스 ID로 갱신 시도 시 실패
+
+반환 내용:
+- 새로운 accessToken과 refreshToken
  * @summary JWT 토큰 갱신
  */
 export type refreshTokenResponse200 = {
@@ -227,6 +378,129 @@ export const useRefreshToken = <TError = unknown, TContext = unknown>(
   return useMutation(mutationOptions, queryClient);
 };
 
+/**
+ * 현재 기기에서 로그아웃합니다.
+
+필수 헤더:
+- Authorization: Bearer {accessToken} - 현재 사용 중인 액세스 토큰
+- X-Refresh-Token: 현재 디바이스의 리프레시 토큰
+- X-Device-ID: 로그인 시 사용한 디바이스 고유 ID
+
+디바이스 ID 관리:
+- 프론트엔드에서 UUID.randomUUID() 등으로 생성
+- 웹: localStorage, 모바일 앱: SecureStorage 등에 저장
+- 로그인 시 생성/저장한 동일한 ID를 로그아웃 시에도 사용
+
+동작 방식:
+- 해당 디바이스의 세션만 종료 (다른 기기는 유지)
+- 액세스 토큰은 블랙리스트에 추가
+- 리프레시 토큰은 무효화
+ * @summary 로그아웃
+ */
+export type logoutResponse200 = {
+  data: SuccessResponseLogoutResponse;
+  status: 200;
+};
+
+export type logoutResponseComposite = logoutResponse200;
+
+export type logoutResponse = logoutResponseComposite & {
+  headers: Headers;
+};
+
+export const getLogoutUrl = () => {
+  return `https://dev.nugudi.com/api/v1/auth/logout`;
+};
+
+export const logout = async (
+  options?: RequestInit,
+): Promise<logoutResponse> => {
+  return http<logoutResponse>(getLogoutUrl(), {
+    ...options,
+    method: "POST",
+  });
+};
+
+export const getLogoutMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof logout>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof http>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof logout>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["logout"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof logout>>,
+    void
+  > = () => {
+    return logout(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type LogoutMutationResult = NonNullable<
+  Awaited<ReturnType<typeof logout>>
+>;
+
+export type LogoutMutationError = unknown;
+
+/**
+ * @summary 로그아웃
+ */
+export const useLogout = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof logout>>,
+      TError,
+      void,
+      TContext
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof logout>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationOptions = getLogoutMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * 이메일과 비밀번호로 로그인합니다.
+
+반환 내용:
+- accessToken: API 호출 시 Authorization 헤더에 Bearer 형식으로 사용
+- refreshToken: 토큰 갱신 시 사용, 안전하게 저장 필요
+- 사용자 정보 (userId, email, nickname 등)
+
+디바이스 관리:
+- 다중 기기 로그인 지원을 위해 X-Device-ID 헤더를 선택적으로 전송 가능
+- 프론트엔드에서 UUID 생성 후 로컬 스토리지에 저장하여 사용 권장
+ * @summary 일반 로그인
+ */
 export type localLoginResponse200 = {
   data: SuccessResponseLocalLoginResponse;
   status: 200;
@@ -298,6 +572,9 @@ export type LocalLoginMutationResult = NonNullable<
 export type LocalLoginMutationBody = LocalLoginRequest;
 export type LocalLoginMutationError = unknown;
 
+/**
+ * @summary 일반 로그인
+ */
 export const useLocalLogin = <TError = unknown, TContext = unknown>(
   options?: {
     mutation?: UseMutationOptions<
@@ -320,6 +597,132 @@ export const useLocalLogin = <TError = unknown, TContext = unknown>(
   return useMutation(mutationOptions, queryClient);
 };
 
+/**
+ * RedirectURI 를 프론트 https://nugudi.com/api/auth/callback/kakao 로 설정하고 카카오로부터 전달받은 인가 코드를 백엔드에 전달합니다.
+
+반환 상태:
+- 기존 회원 (200 OK): accessToken과 refreshToken을 응답 바디에 반환
+- 신규 회원 (202 ACCEPTED): registrationToken을 응답 바디에 반환
+
+신규 회원의 경우:
+1. 반환받은 registrationToken을 저장
+2. /api/v1/auth/signup/social 엔드포인트 호출 시 X-Registration-Token 헤더에 해당 토큰을 포함
+3. 추가 정보(닉네임 등) 입력 후 회원가입 완료
+ * @summary 카카오 소셜 로그인
+ */
+export type kakaoLoginResponse200 = {
+  data: SuccessResponseKakaoLoginResponse;
+  status: 200;
+};
+
+export type kakaoLoginResponseComposite = kakaoLoginResponse200;
+
+export type kakaoLoginResponse = kakaoLoginResponseComposite & {
+  headers: Headers;
+};
+
+export const getKakaoLoginUrl = () => {
+  return `https://dev.nugudi.com/api/v1/auth/login/kakao`;
+};
+
+export const kakaoLogin = async (
+  kakaoLoginRequest: KakaoLoginRequest,
+  options?: RequestInit,
+): Promise<kakaoLoginResponse> => {
+  return http<kakaoLoginResponse>(getKakaoLoginUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(kakaoLoginRequest),
+  });
+};
+
+export const getKakaoLoginMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof kakaoLogin>>,
+    TError,
+    { data: KakaoLoginRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof http>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof kakaoLogin>>,
+  TError,
+  { data: KakaoLoginRequest },
+  TContext
+> => {
+  const mutationKey = ["kakaoLogin"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof kakaoLogin>>,
+    { data: KakaoLoginRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return kakaoLogin(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type KakaoLoginMutationResult = NonNullable<
+  Awaited<ReturnType<typeof kakaoLogin>>
+>;
+export type KakaoLoginMutationBody = KakaoLoginRequest;
+export type KakaoLoginMutationError = unknown;
+
+/**
+ * @summary 카카오 소셜 로그인
+ */
+export const useKakaoLogin = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof kakaoLogin>>,
+      TError,
+      { data: KakaoLoginRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof kakaoLogin>>,
+  TError,
+  { data: KakaoLoginRequest },
+  TContext
+> => {
+  const mutationOptions = getKakaoLoginMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * 발송된 6자리 인증 코드를 확인합니다.
+
+인증 성공 시:
+- 해당 이메일이 인증 완료 상태로 변경
+- isVerified: true 반환
+
+인증 후 가능한 작업:
+- SIGNUP 목적: /api/v1/auth/signup/local로 회원가입 진행
+- RESET_PASSWORD 목적: 비밀번호 재설정 API 호출
+
+주의사항:
+- 코드는 5분 내에 입력해야 함
+- 3회 이상 잘못된 코드 입력 시 새로운 코드 발송 필요
+- 인증 완료 후 30분 내에 회원가입/비밀번호 재설정을 완료해야 함
+ * @summary 이메일 인증 코드 확인
+ */
 export type verifyEmailCodeResponse200 = {
   data: SuccessResponseEmailVerifyResponse;
   status: 200;
@@ -391,6 +794,9 @@ export type VerifyEmailCodeMutationResult = NonNullable<
 export type VerifyEmailCodeMutationBody = EmailVerifyRequest;
 export type VerifyEmailCodeMutationError = unknown;
 
+/**
+ * @summary 이메일 인증 코드 확인
+ */
 export const useVerifyEmailCode = <TError = unknown, TContext = unknown>(
   options?: {
     mutation?: UseMutationOptions<
@@ -413,6 +819,35 @@ export const useVerifyEmailCode = <TError = unknown, TContext = unknown>(
   return useMutation(mutationOptions, queryClient);
 };
 
+/**
+ * 6자리 인증 코드를 이메일로 발송합니다.
+
+사용 목적(purpose):
+- SIGNUP: 회원가입 시 이메일 소유 확인
+- RESET_PASSWORD: 비밀번호 재설정 시 본인 확인
+
+재전송이 필요한 경우:
+- 이메일을 받지 못한 경우 (스팸함 확인 필요)
+- 5분이 지나 코드가 만료된 경우
+- 3회 이상 잘못된 코드를 입력한 경우
+- 기존 코드를 분실한 경우
+
+재전송 시 동작:
+- 기존 코드는 즉시 무효화됨
+- 새로운 6자리 코드가 생성되어 발송됨
+- 새 코드로만 인증 가능 (이전 코드 사용 불가)
+
+제한 사항:
+- 동일 이메일로 1시간 내 최대 5회 발송 가능
+- 재전송은 마지막 코드 발송으로부터 1분 후 재전송 가능 (쿨다운 시간)
+- 인증 코드는 5분간 유효
+
+발송 후 프로세스:
+1. 이메일로 전송된 6자리 코드 확인
+2. /api/v1/auth/email/verify-code로 코드 검증
+3. 회원가입 또는 비밀번호 재설정 진행
+ * @summary 이메일 인증 코드 발송
+ */
 export type sendEmailVerificationCodeResponse200 = {
   data: SendEmailVerificationCode200;
   status: 200;
@@ -489,6 +924,9 @@ export type SendEmailVerificationCodeMutationResult = NonNullable<
 export type SendEmailVerificationCodeMutationBody = EmailVerificationRequest;
 export type SendEmailVerificationCodeMutationError = unknown;
 
+/**
+ * @summary 이메일 인증 코드 발송
+ */
 export const useSendEmailVerificationCode = <
   TError = unknown,
   TContext = unknown,
@@ -515,7 +953,18 @@ export const useSendEmailVerificationCode = <
 };
 
 /**
- * 회원가입 시 닉네임 중복 여부를 확인합니다
+ * 회원가입 시 닉네임 중복 여부를 확인합니다.
+
+검증 규칙:
+- 길이: 2~12자
+- 허용 문자: 한글, 영문(대소문자), 숫자만 가능
+- 특수문자, 공백, 이모지 사용 불가
+- 중복 체크 (이미 사용 중인 닉네임 차단)
+
+반환 값:
+- isAvailable: true (사용 가능) / false (사용 불가)
+- nickname: 검증한 닉네임
+- message: 사용 불가 시 구체적인 사유
  * @summary 닉네임 사용 가능 여부 확인
  */
 export type checkNicknameAvailabilityResponse200 = {
@@ -531,16 +980,30 @@ export type checkNicknameAvailabilityResponse =
     headers: Headers;
   };
 
-export const getCheckNicknameAvailabilityUrl = (nickname: string) => {
-  return `https://dev.nugudi.com/api/v1/users/nicknames/${nickname}/availability`;
+export const getCheckNicknameAvailabilityUrl = (
+  params: CheckNicknameAvailabilityParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `https://dev.nugudi.com/api/v1/users/nickname/availability?${stringifiedParams}`
+    : `https://dev.nugudi.com/api/v1/users/nickname/availability`;
 };
 
 export const checkNicknameAvailability = async (
-  nickname: string,
+  params: CheckNicknameAvailabilityParams,
   options?: RequestInit,
 ): Promise<checkNicknameAvailabilityResponse> => {
   return http<checkNicknameAvailabilityResponse>(
-    getCheckNicknameAvailabilityUrl(nickname),
+    getCheckNicknameAvailabilityUrl(params),
     {
       ...options,
       method: "GET",
@@ -548,9 +1011,12 @@ export const checkNicknameAvailability = async (
   );
 };
 
-export const getCheckNicknameAvailabilityQueryKey = (nickname: string) => {
+export const getCheckNicknameAvailabilityQueryKey = (
+  params: CheckNicknameAvailabilityParams,
+) => {
   return [
-    `https://dev.nugudi.com/api/v1/users/nicknames/${nickname}/availability`,
+    `https://dev.nugudi.com/api/v1/users/nickname/availability`,
+    ...(params ? [params] : []),
   ] as const;
 };
 
@@ -558,7 +1024,7 @@ export const getCheckNicknameAvailabilityQueryOptions = <
   TData = Awaited<ReturnType<typeof checkNicknameAvailability>>,
   TError = unknown,
 >(
-  nickname: string,
+  params: CheckNicknameAvailabilityParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -573,19 +1039,14 @@ export const getCheckNicknameAvailabilityQueryOptions = <
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
   const queryKey =
-    queryOptions?.queryKey ?? getCheckNicknameAvailabilityQueryKey(nickname);
+    queryOptions?.queryKey ?? getCheckNicknameAvailabilityQueryKey(params);
 
   const queryFn: QueryFunction<
     Awaited<ReturnType<typeof checkNicknameAvailability>>
   > = ({ signal }) =>
-    checkNicknameAvailability(nickname, { signal, ...requestOptions });
+    checkNicknameAvailability(params, { signal, ...requestOptions });
 
-  return {
-    queryKey,
-    queryFn,
-    enabled: !!nickname,
-    ...queryOptions,
-  } as UseQueryOptions<
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof checkNicknameAvailability>>,
     TError,
     TData
@@ -601,7 +1062,7 @@ export function useCheckNicknameAvailability<
   TData = Awaited<ReturnType<typeof checkNicknameAvailability>>,
   TError = unknown,
 >(
-  nickname: string,
+  params: CheckNicknameAvailabilityParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -628,7 +1089,7 @@ export function useCheckNicknameAvailability<
   TData = Awaited<ReturnType<typeof checkNicknameAvailability>>,
   TError = unknown,
 >(
-  nickname: string,
+  params: CheckNicknameAvailabilityParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -655,7 +1116,7 @@ export function useCheckNicknameAvailability<
   TData = Awaited<ReturnType<typeof checkNicknameAvailability>>,
   TError = unknown,
 >(
-  nickname: string,
+  params: CheckNicknameAvailabilityParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -678,7 +1139,7 @@ export function useCheckNicknameAvailability<
   TData = Awaited<ReturnType<typeof checkNicknameAvailability>>,
   TError = unknown,
 >(
-  nickname: string,
+  params: CheckNicknameAvailabilityParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -694,7 +1155,7 @@ export function useCheckNicknameAvailability<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getCheckNicknameAvailabilityQueryOptions(
-    nickname,
+    params,
     options,
   );
 
@@ -716,7 +1177,7 @@ export const prefetchCheckNicknameAvailabilityQuery = async <
   TError = unknown,
 >(
   queryClient: QueryClient,
-  nickname: string,
+  params: CheckNicknameAvailabilityParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -729,7 +1190,7 @@ export const prefetchCheckNicknameAvailabilityQuery = async <
   },
 ): Promise<QueryClient> => {
   const queryOptions = getCheckNicknameAvailabilityQueryOptions(
-    nickname,
+    params,
     options,
   );
 
@@ -742,7 +1203,7 @@ export const getCheckNicknameAvailabilitySuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof checkNicknameAvailability>>,
   TError = unknown,
 >(
-  nickname: string,
+  params: CheckNicknameAvailabilityParams,
   options?: {
     query?: Partial<
       UseSuspenseQueryOptions<
@@ -757,12 +1218,12 @@ export const getCheckNicknameAvailabilitySuspenseQueryOptions = <
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
   const queryKey =
-    queryOptions?.queryKey ?? getCheckNicknameAvailabilityQueryKey(nickname);
+    queryOptions?.queryKey ?? getCheckNicknameAvailabilityQueryKey(params);
 
   const queryFn: QueryFunction<
     Awaited<ReturnType<typeof checkNicknameAvailability>>
   > = ({ signal }) =>
-    checkNicknameAvailability(nickname, { signal, ...requestOptions });
+    checkNicknameAvailability(params, { signal, ...requestOptions });
 
   return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
     Awaited<ReturnType<typeof checkNicknameAvailability>>,
@@ -780,7 +1241,7 @@ export function useCheckNicknameAvailabilitySuspense<
   TData = Awaited<ReturnType<typeof checkNicknameAvailability>>,
   TError = unknown,
 >(
-  nickname: string,
+  params: CheckNicknameAvailabilityParams,
   options: {
     query: Partial<
       UseSuspenseQueryOptions<
@@ -799,7 +1260,7 @@ export function useCheckNicknameAvailabilitySuspense<
   TData = Awaited<ReturnType<typeof checkNicknameAvailability>>,
   TError = unknown,
 >(
-  nickname: string,
+  params: CheckNicknameAvailabilityParams,
   options?: {
     query?: Partial<
       UseSuspenseQueryOptions<
@@ -818,7 +1279,7 @@ export function useCheckNicknameAvailabilitySuspense<
   TData = Awaited<ReturnType<typeof checkNicknameAvailability>>,
   TError = unknown,
 >(
-  nickname: string,
+  params: CheckNicknameAvailabilityParams,
   options?: {
     query?: Partial<
       UseSuspenseQueryOptions<
@@ -841,7 +1302,7 @@ export function useCheckNicknameAvailabilitySuspense<
   TData = Awaited<ReturnType<typeof checkNicknameAvailability>>,
   TError = unknown,
 >(
-  nickname: string,
+  params: CheckNicknameAvailabilityParams,
   options?: {
     query?: Partial<
       UseSuspenseQueryOptions<
@@ -857,9 +1318,303 @@ export function useCheckNicknameAvailabilitySuspense<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getCheckNicknameAvailabilitySuspenseQueryOptions(
-    nickname,
+    params,
     options,
   );
+
+  const query = useSuspenseQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 로그인한 유저 본인의 프로필을 조회합니다
+ * @summary 내 프로필 조회
+ */
+export type getMyProfileResponse200 = {
+  data: SuccessResponseGetMyProfileResponse;
+  status: 200;
+};
+
+export type getMyProfileResponseComposite = getMyProfileResponse200;
+
+export type getMyProfileResponse = getMyProfileResponseComposite & {
+  headers: Headers;
+};
+
+export const getGetMyProfileUrl = () => {
+  return `https://dev.nugudi.com/api/v1/users/me`;
+};
+
+export const getMyProfile = async (
+  options?: RequestInit,
+): Promise<getMyProfileResponse> => {
+  return http<getMyProfileResponse>(getGetMyProfileUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetMyProfileQueryKey = () => {
+  return [`https://dev.nugudi.com/api/v1/users/me`] as const;
+};
+
+export const getGetMyProfileQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMyProfile>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof getMyProfile>>, TError, TData>
+  >;
+  request?: SecondParameter<typeof http>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetMyProfileQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getMyProfile>>> = ({
+    signal,
+  }) => getMyProfile({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getMyProfile>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetMyProfileQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getMyProfile>>
+>;
+export type GetMyProfileQueryError = unknown;
+
+export function useGetMyProfile<
+  TData = Awaited<ReturnType<typeof getMyProfile>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMyProfile>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMyProfile>>,
+          TError,
+          Awaited<ReturnType<typeof getMyProfile>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMyProfile<
+  TData = Awaited<ReturnType<typeof getMyProfile>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMyProfile>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMyProfile>>,
+          TError,
+          Awaited<ReturnType<typeof getMyProfile>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMyProfile<
+  TData = Awaited<ReturnType<typeof getMyProfile>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMyProfile>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 내 프로필 조회
+ */
+
+export function useGetMyProfile<
+  TData = Awaited<ReturnType<typeof getMyProfile>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMyProfile>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetMyProfileQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * @summary 내 프로필 조회
+ */
+export const prefetchGetMyProfileQuery = async <
+  TData = Awaited<ReturnType<typeof getMyProfile>>,
+  TError = unknown,
+>(
+  queryClient: QueryClient,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMyProfile>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+): Promise<QueryClient> => {
+  const queryOptions = getGetMyProfileQueryOptions(options);
+
+  await queryClient.prefetchQuery(queryOptions);
+
+  return queryClient;
+};
+
+export const getGetMyProfileSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMyProfile>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseSuspenseQueryOptions<
+      Awaited<ReturnType<typeof getMyProfile>>,
+      TError,
+      TData
+    >
+  >;
+  request?: SecondParameter<typeof http>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetMyProfileQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getMyProfile>>> = ({
+    signal,
+  }) => getMyProfile({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getMyProfile>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetMyProfileSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getMyProfile>>
+>;
+export type GetMyProfileSuspenseQueryError = unknown;
+
+export function useGetMyProfileSuspense<
+  TData = Awaited<ReturnType<typeof getMyProfile>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getMyProfile>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMyProfileSuspense<
+  TData = Awaited<ReturnType<typeof getMyProfile>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getMyProfile>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMyProfileSuspense<
+  TData = Awaited<ReturnType<typeof getMyProfile>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getMyProfile>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 내 프로필 조회
+ */
+
+export function useGetMyProfileSuspense<
+  TData = Awaited<ReturnType<typeof getMyProfile>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getMyProfile>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetMyProfileSuspenseQueryOptions(options);
 
   const query = useSuspenseQuery(
     queryOptions,
