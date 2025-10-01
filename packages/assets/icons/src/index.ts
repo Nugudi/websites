@@ -24,6 +24,7 @@ export { default as GiftIcon } from "./svg/gift.svg?react";
 export { default as GoogleIcon } from "./svg/google.svg?react";
 export { default as HeartIcon } from "./svg/heart.svg?react";
 export { default as HomeIcon } from "./svg/home.svg?react";
+export { default as InfoIcon } from "./svg/Info.svg?react";
 export { default as KakaoIcon } from "./svg/kakao.svg?react";
 export { default as LogoTextIcon } from "./svg/logo_text.svg?react";
 export { default as MajorDishIcon } from "./svg/major-dish.svg?react";
