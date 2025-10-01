@@ -39,19 +39,17 @@ const TransactionInfo = ({
   );
 };
 
-const TransactionIcon = ({ type }: { type: "meal" | "event" }) => {
-  // TODO: 포인트 타입에 따라 추후 변경 예정
-  const getIconSrc = (type: "meal" | "event") => {
-    switch (type) {
-      case "meal":
-        return "/images/ic-cooking.png";
-      case "event":
-        return "/images/ic-clapping-hands.png";
-      default:
-        return "/images/ic-clapping-hands.png";
-    }
-  };
+// TODO: 포인트 타입에 따라 추후 변경/분리 예정
+const getIconSrc = (type: "meal" | "event") => {
+  switch (type) {
+    case "meal":
+      return "/images/ic-cooking.png";
+    case "event":
+      return "/images/ic-clapping-hands.png";
+  }
+};
 
+const TransactionIcon = ({ type }: { type: "meal" | "event" }) => {
   return (
     <Box borderRadius="2xl" p={8} className={styles.iconWrapper}>
       <Image src={getIconSrc(type)} alt="" width={24} height={24} />

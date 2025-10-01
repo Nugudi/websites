@@ -11,6 +11,8 @@ export const isPositiveAmount = (amount: number): boolean => {
  * @example formatPointAmount(-100) => "-100P"
  */
 export const formatPointAmount = (amount: number): string => {
+  if (!Number.isFinite(amount)) return "0P";
+
   const sign = isPositiveAmount(amount) ? "+" : "";
   return `${sign}${amount}P`;
 };
@@ -20,5 +22,7 @@ export const formatPointAmount = (amount: number): string => {
  * @example formatPointBalance(3000) => "3,000 P"
  */
 export const formatPointBalance = (balance: number): string => {
+  if (!Number.isFinite(balance)) return "0 P";
+
   return `${balance.toLocaleString()} P`;
 };
