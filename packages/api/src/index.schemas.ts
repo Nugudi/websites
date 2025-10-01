@@ -341,6 +341,18 @@ export interface UserProfileDTO {
   joinDate?: Date;
 }
 
+export interface GetKakaoAuthorizeResponse {
+  authorizeUrl?: string;
+}
+
+export interface SuccessResponseGetKakaoAuthorizeResponse {
+  timestamp?: Date;
+  success?: boolean;
+  code?: number;
+  message?: string;
+  data?: GetKakaoAuthorizeResponse;
+}
+
 export type SendEmailVerificationCode200 = {
   message?: string;
 };

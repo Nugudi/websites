@@ -313,6 +313,26 @@
         },
         "security": [{ "bearerAuth": [] }]
       }
+    },
+    "/api/v1/auth/login/kakao/authorize-url": {
+      "get": {
+        "tags": ["사용자 인증"],
+        "summary": "카카오 OAuth 인증 URL 조회",
+        "description": "카카오 OAuth 인증을 위한 인증 URL을 조회합니다.\n\nOAuth 설정을 서버에서 중앙 관리하여 프론트엔드-백엔드 간 설정 동기화를 보장합니다.\n\n사용 방법:\n1. 이 API를 호출하여 카카오 OAuth 인증 URL을 받음\n2. 받은 URL로 사용자를 리다이렉트\n3. 사용자가 카카오 로그인 및 동의 완료\n4. 프론트엔드 redirect_uri로 인가 코드(code)가 전달됨\n5. 인가 코드를 /api/v1/auth/login/kakao 엔드포인트로 전달하여 로그인 완료",
+        "operationId": "getKakaoAuthorizeUrl",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponseGetKakaoAuthorizeResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -858,6 +878,20 @@
           "nickname": { "type": "string" },
           "profileImageUrl": { "type": "string" },
           "joinDate": { "type": "string", "format": "date" }
+        }
+      },
+      "GetKakaoAuthorizeResponse": {
+        "type": "object",
+        "properties": { "authorizeUrl": { "type": "string" } }
+      },
+      "SuccessResponseGetKakaoAuthorizeResponse": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "success": { "type": "boolean" },
+          "code": { "type": "integer", "format": "int32" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/GetKakaoAuthorizeResponse" }
         }
       }
     },

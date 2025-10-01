@@ -34,6 +34,7 @@ import type {
   SignUpLocalRequest,
   SignUpSocialRequest,
   SuccessResponseEmailVerifyResponse,
+  SuccessResponseGetKakaoAuthorizeResponse,
   SuccessResponseGetMyProfileResponse,
   SuccessResponseKakaoLoginResponse,
   SuccessResponseLocalLoginResponse,
@@ -1615,6 +1616,337 @@ export function useGetMyProfileSuspense<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetMyProfileSuspenseQueryOptions(options);
+
+  const query = useSuspenseQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 카카오 OAuth 인증을 위한 인증 URL을 조회합니다.
+
+OAuth 설정을 서버에서 중앙 관리하여 프론트엔드-백엔드 간 설정 동기화를 보장합니다.
+
+사용 방법:
+1. 이 API를 호출하여 카카오 OAuth 인증 URL을 받음
+2. 받은 URL로 사용자를 리다이렉트
+3. 사용자가 카카오 로그인 및 동의 완료
+4. 프론트엔드 redirect_uri로 인가 코드(code)가 전달됨
+5. 인가 코드를 /api/v1/auth/login/kakao 엔드포인트로 전달하여 로그인 완료
+ * @summary 카카오 OAuth 인증 URL 조회
+ */
+export type getKakaoAuthorizeUrlResponse200 = {
+  data: SuccessResponseGetKakaoAuthorizeResponse;
+  status: 200;
+};
+
+export type getKakaoAuthorizeUrlResponseComposite =
+  getKakaoAuthorizeUrlResponse200;
+
+export type getKakaoAuthorizeUrlResponse =
+  getKakaoAuthorizeUrlResponseComposite & {
+    headers: Headers;
+  };
+
+export const getGetKakaoAuthorizeUrlUrl = () => {
+  return `https://dev.nugudi.com/api/v1/auth/login/kakao/authorize-url`;
+};
+
+export const getKakaoAuthorizeUrl = async (
+  options?: RequestInit,
+): Promise<getKakaoAuthorizeUrlResponse> => {
+  return http<getKakaoAuthorizeUrlResponse>(getGetKakaoAuthorizeUrlUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetKakaoAuthorizeUrlQueryKey = () => {
+  return [
+    `https://dev.nugudi.com/api/v1/auth/login/kakao/authorize-url`,
+  ] as const;
+};
+
+export const getGetKakaoAuthorizeUrlQueryOptions = <
+  TData = Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<
+      Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+      TError,
+      TData
+    >
+  >;
+  request?: SecondParameter<typeof http>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetKakaoAuthorizeUrlQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>
+  > = ({ signal }) => getKakaoAuthorizeUrl({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetKakaoAuthorizeUrlQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>
+>;
+export type GetKakaoAuthorizeUrlQueryError = unknown;
+
+export function useGetKakaoAuthorizeUrl<
+  TData = Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+          TError,
+          Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetKakaoAuthorizeUrl<
+  TData = Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+          TError,
+          Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetKakaoAuthorizeUrl<
+  TData = Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 카카오 OAuth 인증 URL 조회
+ */
+
+export function useGetKakaoAuthorizeUrl<
+  TData = Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetKakaoAuthorizeUrlQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * @summary 카카오 OAuth 인증 URL 조회
+ */
+export const prefetchGetKakaoAuthorizeUrlQuery = async <
+  TData = Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+  TError = unknown,
+>(
+  queryClient: QueryClient,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+): Promise<QueryClient> => {
+  const queryOptions = getGetKakaoAuthorizeUrlQueryOptions(options);
+
+  await queryClient.prefetchQuery(queryOptions);
+
+  return queryClient;
+};
+
+export const getGetKakaoAuthorizeUrlSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseSuspenseQueryOptions<
+      Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+      TError,
+      TData
+    >
+  >;
+  request?: SecondParameter<typeof http>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetKakaoAuthorizeUrlQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>
+  > = ({ signal }) => getKakaoAuthorizeUrl({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetKakaoAuthorizeUrlSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>
+>;
+export type GetKakaoAuthorizeUrlSuspenseQueryError = unknown;
+
+export function useGetKakaoAuthorizeUrlSuspense<
+  TData = Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetKakaoAuthorizeUrlSuspense<
+  TData = Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetKakaoAuthorizeUrlSuspense<
+  TData = Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 카카오 OAuth 인증 URL 조회
+ */
+
+export function useGetKakaoAuthorizeUrlSuspense<
+  TData = Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getKakaoAuthorizeUrl>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetKakaoAuthorizeUrlSuspenseQueryOptions(options);
 
   const query = useSuspenseQuery(
     queryOptions,
