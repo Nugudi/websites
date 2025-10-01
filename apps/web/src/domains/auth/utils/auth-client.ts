@@ -49,7 +49,8 @@ export class AuthClient {
       return NextResponse.redirect(new URL("/", request.url));
     } catch (error) {
       console.error(error);
-      return NextResponse.redirect(new URL("/error", request.url));
+      // 에러를 re-throw하여 상위 핸들러(route.ts)에서 처리할 수 있도록 함
+      throw error;
     }
   }
 

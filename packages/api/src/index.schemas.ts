@@ -183,6 +183,8 @@ export interface SuccessResponseLocalLoginResponse {
 export interface KakaoLoginRequest {
   /** 카카오 OAuth 인가 코드 (카카오 로그인 후 발급받은 authorization code) */
   code: string;
+  /** 카카오 인증 시 사용한 redirect URI (인가 URL 조회 시 전달한 값과 동일해야 함) */
+  redirectUri: string;
   deviceInfo: UserDeviceInfoDTO;
 }
 
@@ -362,4 +364,11 @@ export type CheckNicknameAvailabilityParams = {
    * 확인할 닉네임 (2~12자, 한글/영문/숫자만)
    */
   nickname: string;
+};
+
+export type GetKakaoAuthorizeUrlParams = {
+  /**
+   * 카카오 인증 완료 후 리다이렉트될 URI
+   */
+  redirectUri: string;
 };

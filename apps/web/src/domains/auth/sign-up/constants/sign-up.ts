@@ -27,8 +27,14 @@ export const TERMS_AND_CONDITIONS_LIST = [
   },
   {
     id: 3,
-    title: "마케팅 이메일 수신 동의",
+    title: "위치정보 수집·이용약관",
     link: "https://yolog.com/location",
+    mandatory: true,
+  },
+  {
+    id: 4,
+    title: "마케팅 이메일 수신 동의",
+    link: "https://yolog.com/marketing",
     mandatory: false,
   },
 ] as TermsAgreement[];

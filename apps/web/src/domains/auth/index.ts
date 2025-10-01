@@ -15,9 +15,12 @@ export const auth = new AuthClient({
     try {
       // NUGUDI API: GET /api/v1/auth/login/kakao/authorize-url
       // 매개변수 없음 (baseUrl은 서버에서 관리)
-      const response = await getKakaoAuthorizeUrl({
-        next: { revalidate: 60 * 60 }, // 1 hour cache
-      });
+      const response = await getKakaoAuthorizeUrl(
+        {
+          redirectUri: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback/kakao`,
+        },
+        { next: { revalidate: 60 * 60 } }, // 1 hour
+      );
 
       console.log("[authorize] Response:", {
         status: response.status,
@@ -49,14 +52,14 @@ export const auth = new AuthClient({
       }
 
       const deviceId =
-        request.headers.get("x-device-id") ||
-        `web-${Date.now()}-${Math.random()}`;
+        request.headers.get("x-device-id") || `web-${crypto.randomUUID()}`;
 
       console.log("[callback] Calling kakaoLogin with deviceId:", deviceId);
 
       // NUGUDI API: POST /api/v1/auth/login/kakao
       const response = await kakaoLogin({
         code,
+        redirectUri: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback/kakao`,
         deviceInfo: {
           deviceType: "WEB",
           deviceUniqueId: deviceId,
@@ -78,12 +81,19 @@ export const auth = new AuthClient({
       }
 
       // 신규 회원 (status: "NEW_USER") - registrationToken 반환
+      // null을 반환하면 callback 함수가 에러 페이지로 리다이렉트함
+      // 대신 API 라우트 핸들러에서 직접 처리하도록 예외를 던짐
       if (data.status === "NEW_USER" && data.registrationToken) {
         console.log("[callback] New user - registration required", {
           registrationToken: data.registrationToken,
         });
-        // TODO: 신규 회원의 경우 회원가입 페이지로 리다이렉트 처리 필요
-        return null;
+
+        throw new Error(
+          JSON.stringify({
+            type: "NEW_USER",
+            registrationToken: data.registrationToken,
+          }),
+        );
       }
 
       // 기존 회원 (status: "EXISTING_USER") - 세션 생성
@@ -119,7 +129,8 @@ export const auth = new AuthClient({
       return null;
     } catch (error) {
       console.error("[callback] Error:", error);
-      return null;
+      // NEW_USER 에러는 route handler에서 처리할 수 있도록 다시 throw
+      throw error;
     }
   },
 });
