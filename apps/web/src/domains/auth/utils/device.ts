@@ -1,5 +1,5 @@
 import type { UserDeviceInfoDTO } from "@nugudi/api/schemas";
-import UAParser from "ua-parser-js";
+import { UAParser } from "ua-parser-js";
 
 /**
  * User Agent를 파싱하여 디바이스 정보 생성
@@ -8,7 +8,6 @@ export const createDeviceInfo = (userAgent: string): UserDeviceInfoDTO => {
   const parser = new UAParser(userAgent);
   const device = parser.getDevice();
   const os = parser.getOS();
-  const _browser = parser.getBrowser();
 
   let deviceType: UserDeviceInfoDTO["deviceType"] = "WEB";
   if (os.name === "iOS") {
