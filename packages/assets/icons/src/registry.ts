@@ -24,6 +24,7 @@ import GiftIcon from "./svg/gift.svg?react";
 import GoogleIcon from "./svg/google.svg?react";
 import HeartIcon from "./svg/heart.svg?react";
 import HomeIcon from "./svg/home.svg?react";
+import InfoIcon from "./svg/Info.svg?react";
 import KakaoIcon from "./svg/kakao.svg?react";
 import LogoTextIcon from "./svg/logo_text.svg?react";
 import MajorDishIcon from "./svg/major-dish.svg?react";
@@ -85,6 +86,10 @@ export const iconRegistry: IconRegistry = {
   Tea: {
     component: TeaIcon,
     tags: ["tea", "차", "음료", "티"],
+  },
+  Info: {
+    component: InfoIcon,
+    tags: ["info", "정보", "도움말"],
   },
   ArrowLeft: {
     component: ArrowLeftIcon,

@@ -14,17 +14,19 @@ export const title = {
     fontSize: typography.fontSize[28],
     letterSpacing: typography.letterSpacing[28],
     lineHeight: typography.lineHeight[134],
-    fontWeight: typography.fontWeight[700],
+    fontWeight: typography.fontWeight[600],
   },
   t2: {
     fontSize: typography.fontSize[22],
     letterSpacing: typography.letterSpacing[22],
     lineHeight: typography.lineHeight[130],
+    fontWeight: typography.fontWeight[600],
   },
   t3: {
     fontSize: typography.fontSize[20],
     letterSpacing: typography.letterSpacing[20],
     lineHeight: typography.lineHeight[128],
+    fontWeight: typography.fontWeight[600],
   },
 };
 
