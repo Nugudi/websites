@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { auth } from "@/src/domains/auth";
+import { SESSION_COOKIE_MAX_AGE } from "@/src/domains/auth/constants/session";
 import { isTokenExpired } from "@/src/domains/auth/utils/jwt";
 
 export async function middleware(request: NextRequest) {
@@ -36,7 +37,7 @@ export async function middleware(request: NextRequest) {
         httpOnly: true,
         sameSite: "lax",
         secure: true,
-        maxAge: 60 * 60 * 24 * 7, // 7일
+        maxAge: SESSION_COOKIE_MAX_AGE,
       });
       return response;
     }

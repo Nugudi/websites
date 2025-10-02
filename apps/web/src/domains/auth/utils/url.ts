@@ -1,13 +1,16 @@
-import { btoa } from "node:buffer";
+import { base64url } from "jose";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 export const state = {
   encode: (value: Record<string, string>) => {
-    return btoa(JSON.stringify(value));
+    const jsonString = JSON.stringify(value);
+    const encoded = new TextEncoder().encode(jsonString);
+    return base64url.encode(encoded);
   },
   decode: <T = Record<string, string>>(value: string): T => {
-    return JSON.parse(atob(value)) as T;
+    const decoded = base64url.decode(value);
+    return JSON.parse(new TextDecoder().decode(decoded)) as T;
   },
 };
 

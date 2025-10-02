@@ -1,5 +1,4 @@
 import { getKakaoAuthorizeUrl, kakaoLogin } from "@nugudi/api";
-import { UAParser } from "ua-parser-js";
 import type {
   ExchangeTokenParams,
   GetAuthorizeUrlParams,
@@ -7,6 +6,7 @@ import type {
   Session,
 } from "../types";
 import { AuthError } from "../types/errors";
+import { createDeviceInfo } from "../utils/device";
 
 export class KakaoProvider implements OAuthProvider {
   readonly type = "kakao" as const;
@@ -51,15 +51,8 @@ export class KakaoProvider implements OAuthProvider {
         throw AuthError.invalidCallbackCode("kakao");
       }
 
-      // 클라이언트에서 전달된 deviceInfo 읽기 (헤더 또는 쿠키)
-      const deviceUniqueId =
-        request.headers.get("x-device-id") ||
-        request.cookies.get("deviceId")?.value ||
-        crypto.randomUUID();
-
       const userAgent = request.headers.get("user-agent") || "Unknown";
-
-      const deviceInfo = this.parseDeviceInfo(userAgent, deviceUniqueId);
+      const deviceInfo = createDeviceInfo(userAgent);
 
       const response = await kakaoLogin({
         code,
@@ -119,50 +112,5 @@ export class KakaoProvider implements OAuthProvider {
       if (error instanceof AuthError) throw error;
       throw AuthError.tokenExchangeFailed("kakao", String(error));
     }
-  }
-
-  /**
-   * User-Agent에서 디바이스 정보 추출 (ua-parser-js 사용)
-   */
-  private parseDeviceInfo(
-    userAgent: string,
-    deviceUniqueId: string,
-  ): {
-    deviceType: "IOS" | "ANDROID" | "WEB";
-    deviceUniqueId: string;
-    deviceName: string;
-    deviceModel: string;
-    osVersion: string;
-  } {
-    const parser = new UAParser(userAgent);
-    const device = parser.getDevice();
-    const os = parser.getOS();
-    const browser = parser.getBrowser();
-
-    // 디바이스 타입 결정
-    let deviceType: "IOS" | "ANDROID" | "WEB" = "WEB";
-    if (os.name === "iOS") {
-      deviceType = "IOS";
-    } else if (os.name === "Android") {
-      deviceType = "ANDROID";
-    }
-
-    // 디바이스 이름 결정
-    let deviceName = "Web Browser";
-    if (device.model) {
-      deviceName = device.model;
-    } else if (device.vendor) {
-      deviceName = device.vendor;
-    } else if (os.name) {
-      deviceName = `${os.name} Device`;
-    }
-
-    return {
-      deviceType,
-      deviceUniqueId,
-      deviceName,
-      deviceModel: browser.name || "Unknown",
-      osVersion: os.version || "Unknown",
-    };
   }
 }

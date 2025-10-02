@@ -1,6 +1,10 @@
 import { decodeJwt } from "jose";
+import { TOKEN_REFRESH_BUFFER } from "../constants/session";
 
-export const isTokenExpired = (token: string, buffer = 300) => {
+export const isTokenExpired = (
+  token: string,
+  buffer = TOKEN_REFRESH_BUFFER,
+) => {
   try {
     const payload = decodeJwt(token);
     if (!payload.exp) {

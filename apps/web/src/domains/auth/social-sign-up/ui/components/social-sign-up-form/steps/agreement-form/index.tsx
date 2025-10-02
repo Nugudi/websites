@@ -2,13 +2,11 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSocial } from "@nugudi/api";
-import type { UserDeviceInfoDTO } from "@nugudi/api/schemas";
 import { Button } from "@nugudi/react-components-button";
 import { Body, Box, Heading } from "@nugudi/react-components-layout";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { UAParser } from "ua-parser-js";
 import { SOCIAL_TERMS_LIST } from "../../../../../constants/social-sign-up";
 import {
   type SocialSignUpAgreementSchema,
@@ -16,6 +14,7 @@ import {
 } from "../../../../../schemas/social-sign-up-schema";
 import { useSocialSignUpStore } from "../../../../../stores/use-social-sign-up-store";
 import type { TermsAgreementState } from "../../../../../types/social-sign-up";
+import { createDeviceInfo } from "../../../../../utils/device";
 import * as styles from "./index.css";
 import { SocialTerms } from "./terms";
 
@@ -101,31 +100,6 @@ export const AgreementForm = () => {
     return mandatoryTerms.every((term) => termsAgreements[String(term.id)]);
   }, [termsAgreements]);
 
-  const createDeviceInfo = (): UserDeviceInfoDTO => {
-    const parser = new UAParser(navigator.userAgent);
-    const device = parser.getDevice();
-    const os = parser.getOS();
-    const browser = parser.getBrowser();
-
-    let deviceType: UserDeviceInfoDTO["deviceType"] = "WEB";
-    if (os.name === "iOS") {
-      deviceType = "IOS";
-    } else if (os.name === "Android") {
-      deviceType = "ANDROID";
-    }
-
-    return {
-      deviceType,
-      deviceUniqueId: crypto.randomUUID(),
-      deviceName:
-        device.model || device.vendor || `${os.name || "Unknown"} Device`,
-      deviceModel: browser.name || "Unknown Browser",
-      osVersion: os.version || "Unknown",
-      appVersion: "1.0.0",
-      pushToken: "",
-    };
-  };
-
   const onSubmit = async (agreementData: SocialSignUpAgreementSchema) => {
     if (!registrationToken || !data.nickname) {
       alert("필수 정보가 누락되었습니다. 처음부터 다시 시도해주세요.");
@@ -143,7 +117,7 @@ export const AgreementForm = () => {
           termsOfService: agreementData.termsOfService,
           locationInfo: agreementData.locationInfo,
           marketingEmail: agreementData.marketingEmail ?? false,
-          deviceInfo: createDeviceInfo(),
+          deviceInfo: createDeviceInfo(navigator.userAgent),
         },
         {
           headers: {

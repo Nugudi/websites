@@ -3,7 +3,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { SOCIAL_SIGN_UP_STORE_KEY } from "../constants/social-sign-up";
 import type { SocialSignUpSchema } from "../schemas/social-sign-up-schema";
 
-type UseSocialSignUpStoreState = Partial<SocialSignUpSchema> & {
+type UseSocialSignUpStoreState = {
   data: Partial<SocialSignUpSchema>;
   setData: (data: Partial<SocialSignUpSchema>) => void;
 
