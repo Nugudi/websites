@@ -202,18 +202,11 @@ export class AuthClient {
     session: Session,
   ): Promise<string | null> {
     try {
-      console.log("[RefreshToken] Attempting to refresh token...");
       const response = await refreshToken({
         headers: {
           Authorization: `Bearer ${session.tokenSet.refreshToken}`,
         },
       });
-
-      console.log("[RefreshToken] Response status:", response.status);
-      console.log(
-        "[RefreshToken] Response data:",
-        JSON.stringify(response.data, null, 2),
-      );
 
       if (
         response.status === 200 &&
@@ -228,14 +221,11 @@ export class AuthClient {
           },
         };
 
-        console.log("[RefreshToken] Successfully refreshed tokens");
         return this.encrypt(refreshedSession);
       }
 
-      console.log("[RefreshToken] Invalid response format");
       return null;
     } catch (error) {
-      console.error("[RefreshToken] Error:", error);
       logger.error("Token refresh failed in middleware", {
         error: error instanceof Error ? error.message : String(error),
       });

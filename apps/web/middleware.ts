@@ -26,15 +26,10 @@ export async function middleware(request: NextRequest) {
 
   // Access Token 만료 체크
   if (isTokenExpired(session.tokenSet.accessToken)) {
-    console.log("[Middleware] Access token expired, attempting refresh...");
-
     // 토큰 갱신 시도
     const encryptedSession = await auth.refreshAndGetEncryptedSession(session);
 
     if (encryptedSession) {
-      console.log(
-        "[Middleware] Token refresh successful, updating session cookie",
-      );
       // 갱신 성공 - 새 쿠키 설정
       const response = NextResponse.next();
       response.cookies.set("nugudi.session", encryptedSession, {
@@ -46,7 +41,6 @@ export async function middleware(request: NextRequest) {
       return response;
     }
 
-    console.log("[Middleware] Token refresh failed, deleting session cookie");
     // 갱신 실패 - 쿠키 삭제
     const response = NextResponse.next();
     response.cookies.delete("nugudi.session");

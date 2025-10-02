@@ -54,7 +54,6 @@ const handler = async (
     // 잘못된 경로
     return NextResponse.redirect(new URL("/404", request.url));
   } catch (error) {
-    console.log(error);
     return handleAuthError(error, request);
   }
 };

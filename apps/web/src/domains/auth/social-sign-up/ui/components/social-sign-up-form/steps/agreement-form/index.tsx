@@ -158,8 +158,7 @@ export const AgreementForm = () => {
       } else {
         throw new Error("회원가입에 실패했습니다.");
       }
-    } catch (error) {
-      console.error("Social signup error:", error);
+    } catch (_error) {
       alert("회원가입 중 오류가 발생했습니다. 다시 시도해주세요.");
     } finally {
       setIsSubmitting(false);
