@@ -1,0 +1,31 @@
+import type { TermsAgreement } from "../types/social-sign-up";
+
+export const TOTAL_SOCIAL_SIGN_UP_STEPS = 2;
+export const SOCIAL_SIGN_UP_STORE_KEY = "social-sign-up-store";
+
+export const SOCIAL_TERMS_LIST = [
+  {
+    id: 1,
+    title: "개인정보 처리 방침",
+    link: "https://yolog.com/privacy",
+    mandatory: true,
+  },
+  {
+    id: 2,
+    title: "이용 약관 동의",
+    link: "https://yolog.com/terms",
+    mandatory: true,
+  },
+  {
+    id: 3,
+    title: "위치정보 이용 동의",
+    link: "https://yolog.com/location",
+    mandatory: true,
+  },
+  {
+    id: 4,
+    title: "마케팅 이메일 수신 동의",
+    link: "https://yolog.com/marketing",
+    mandatory: false,
+  },
+] as TermsAgreement[];

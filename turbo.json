@@ -4,6 +4,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
+      "env": ["INTERNAL_AUTH_SECRET", "SENTRY_AUTH_TOKEN", "SENTRY_DSN"],
       "inputs": [
         "$TURBO_DEFAULT$",
         ".env*",

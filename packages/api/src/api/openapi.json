@@ -182,7 +182,7 @@
       "post": {
         "tags": ["사용자 인증"],
         "summary": "카카오 소셜 로그인",
-        "description": "RedirectURI 를 프론트 https://nugudi.com/api/auth/callback/kakao 로 설정하고 카카오로부터 전달받은 인가 코드를 백엔드에 전달합니다.\n\n반환 상태:\n- 기존 회원 (200 OK): accessToken과 refreshToken을 응답 바디에 반환\n- 신규 회원 (202 ACCEPTED): registrationToken을 응답 바디에 반환\n\n신규 회원의 경우:\n1. 반환받은 registrationToken을 저장\n2. /api/v1/auth/signup/social 엔드포인트 호출 시 X-Registration-Token 헤더에 해당 토큰을 포함\n3. 추가 정보(닉네임 등) 입력 후 회원가입 완료",
+        "description": "카카오로부터 전달받은 인가 코드와 redirect URI를 백엔드에 전달하여 로그인을 처리합니다.\n\n사용 방법:\n1. 인가 URL 조회 API로 redirect_uri를 포함한 카카오 인증 URL 획득\n2. 사용자를 카카오 로그인 페이지로 리다이렉트\n3. 카카오 인증 완료 후 프론트엔드 redirect_uri로 인가 코드(code) 수신\n4. 이 API에 code와 동일한 redirect_uri를 함께 전달\n\n반환 상태:\n- 기존 회원 (200 OK): accessToken과 refreshToken을 응답 바디에 반환\n- 신규 회원 (202 ACCEPTED): registrationToken을 응답 바디에 반환\n\n신규 회원의 경우:\n1. 반환받은 registrationToken을 저장\n2. /api/v1/auth/signup/social 엔드포인트 호출 시 X-Registration-Token 헤더에 해당 토큰을 포함\n3. 추가 정보(닉네임 등) 입력 후 회원가입 완료\n\n주의사항:\n- redirect_uri는 인가 URL 조회 시 사용한 값과 정확히 일치해야 합니다\n- 불일치 시 카카오 API 호출이 실패합니다",
         "operationId": "kakaoLogin",
         "requestBody": {
           "content": {
@@ -312,6 +312,36 @@
           }
         },
         "security": [{ "bearerAuth": [] }]
+      }
+    },
+    "/api/v1/auth/login/kakao/authorize-url": {
+      "get": {
+        "tags": ["사용자 인증"],
+        "summary": "카카오 OAuth 인증 URL 조회",
+        "description": "카카오 OAuth 인증을 위한 인증 URL을 조회합니다.\n\nOAuth 설정을 서버에서 중앙 관리하여 프론트엔드-백엔드 간 설정 동기화를 보장합니다.\n\n사용 방법:\n1. 프론트엔드의 redirect_uri를 파라미터로 전달하여 이 API 호출\n2. 받은 URL로 사용자를 리다이렉트\n3. 사용자가 카카오 로그인 및 동의 완료\n4. 프론트엔드 redirect_uri로 인가 코드(code)가 전달됨\n5. 인가 코드를 /api/v1/auth/login/kakao 엔드포인트로 전달하여 로그인 완료\n\n참고:\n- redirect_uri는 카카오 개발자 콘솔에 등록된 URI여야 합니다\n- 로컬: http://localhost:3000/auth/callback\n- 배포: https://nugudi.com/auth/callback",
+        "operationId": "getKakaoAuthorizeUrl",
+        "parameters": [
+          {
+            "name": "redirectUri",
+            "in": "query",
+            "description": "카카오 인증 완료 후 리다이렉트될 URI",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "http://localhost:3000/auth/callback"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponseGetKakaoAuthorizeResponse"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -626,13 +656,18 @@
         }
       },
       "KakaoLoginRequest": {
-        "required": ["code", "deviceInfo"],
+        "required": ["code", "deviceInfo", "redirectUri"],
         "type": "object",
         "properties": {
           "code": {
             "type": "string",
             "description": "카카오 OAuth 인가 코드 (카카오 로그인 후 발급받은 authorization code)",
             "example": "mMJrjSJksVH3Z8xK8GQ_Vs..."
+          },
+          "redirectUri": {
+            "type": "string",
+            "description": "카카오 인증 시 사용한 redirect URI (인가 URL 조회 시 전달한 값과 동일해야 함)",
+            "example": "http://localhost:3000/auth/callback"
           },
           "deviceInfo": { "$ref": "#/components/schemas/UserDeviceInfoDTO" }
         },
@@ -858,6 +893,20 @@
           "nickname": { "type": "string" },
           "profileImageUrl": { "type": "string" },
           "joinDate": { "type": "string", "format": "date" }
+        }
+      },
+      "GetKakaoAuthorizeResponse": {
+        "type": "object",
+        "properties": { "authorizeUrl": { "type": "string" } }
+      },
+      "SuccessResponseGetKakaoAuthorizeResponse": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "success": { "type": "boolean" },
+          "code": { "type": "integer", "format": "int32" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/GetKakaoAuthorizeResponse" }
         }
       }
     },

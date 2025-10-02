@@ -12,6 +12,7 @@ import { delay, HttpResponse, http } from "msw";
 import type {
   SendEmailVerificationCode200,
   SuccessResponseEmailVerifyResponse,
+  SuccessResponseGetKakaoAuthorizeResponse,
   SuccessResponseGetMyProfileResponse,
   SuccessResponseKakaoLoginResponse,
   SuccessResponseLocalLoginResponse,
@@ -488,6 +489,34 @@ export const getGetMyProfileResponseMock = (
   ...overrideResponse,
 });
 
+export const getGetKakaoAuthorizeUrlResponseMock = (
+  overrideResponse: Partial<SuccessResponseGetKakaoAuthorizeResponse> = {},
+): SuccessResponseGetKakaoAuthorizeResponse => ({
+  timestamp: faker.helpers.arrayElement([
+    new Date(`${faker.date.past().toISOString().split(".")[0]}Z`),
+    undefined,
+  ]),
+  success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+  code: faker.helpers.arrayElement([
+    faker.number.int({ min: undefined, max: undefined, multipleOf: undefined }),
+    undefined,
+  ]),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  data: faker.helpers.arrayElement([
+    {
+      authorizeUrl: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+    },
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
 export const getSignUpSocialMockHandler = (
   overrideResponse?:
     | SuccessResponseSignUpResponse
@@ -737,6 +766,31 @@ export const getGetMyProfileMockHandler = (
     );
   });
 };
+
+export const getGetKakaoAuthorizeUrlMockHandler = (
+  overrideResponse?:
+    | SuccessResponseGetKakaoAuthorizeResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<SuccessResponseGetKakaoAuthorizeResponse>
+        | SuccessResponseGetKakaoAuthorizeResponse),
+) => {
+  return http.get("*/api/v1/auth/login/kakao/authorize-url", async (info) => {
+    await delay(500);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getGetKakaoAuthorizeUrlResponseMock(),
+      ),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
 export const getApiMock = () => [
   getSignUpSocialMockHandler(),
   getSignUpLocalMockHandler(),
@@ -748,4 +802,5 @@ export const getApiMock = () => [
   getSendEmailVerificationCodeMockHandler(),
   getCheckNicknameAvailabilityMockHandler(),
   getGetMyProfileMockHandler(),
+  getGetKakaoAuthorizeUrlMockHandler(),
 ];

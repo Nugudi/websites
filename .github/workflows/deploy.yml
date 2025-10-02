@@ -22,7 +22,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install
@@ -46,3 +46,4 @@ jobs:
           PRODUCTION: ${{ github.event_name == 'push' }}
           BUILD_ENV: |
             SENTRY_AUTH_TOKEN="${{ secrets.SENTRY_AUTH_TOKEN }}"
+            INTERNAL_AUTH_SECRET="${{ secrets.INTERNAL_AUTH_SECRET }}"
