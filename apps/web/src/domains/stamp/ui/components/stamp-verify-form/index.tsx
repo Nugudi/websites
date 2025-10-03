@@ -30,7 +30,6 @@ export const StampVerifyForm = () => {
       return;
     }
     // TODO: API 호출하여 이미지 업로드 및 인증 처리
-    console.log("Submit:", uploadedImage);
   };
 
   return (

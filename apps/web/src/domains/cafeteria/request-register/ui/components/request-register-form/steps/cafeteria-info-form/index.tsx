@@ -34,9 +34,8 @@ export const CafeteriaInfoForm = ({ onNext }: CafeteriaInfoFormProps) => {
     },
   });
 
-  const onSubmit = (data: CafeteriaInfoFormData) => {
+  const onSubmit = (_data: CafeteriaInfoFormData) => {
     // TODO: API 호출로 데이터 전송
-    console.log("제출 데이터:", data);
     onNext();
   };
 
@@ -46,7 +45,6 @@ export const CafeteriaInfoForm = ({ onNext }: CafeteriaInfoFormProps) => {
 
   const handleImageUpload = () => {
     // TODO: 이미지 업로드 기능 구현
-    console.log("이미지 업로드");
   };
 
   return (
