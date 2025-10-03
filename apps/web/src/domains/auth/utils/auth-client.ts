@@ -145,10 +145,15 @@ export class AuthClient {
 
   /**
    * 세션 조회 (서버 전용)
-   * @param options.refresh - 토큰 자동 갱신 여부 (기본값: true)
+   *
+   * IMPORTANT: 토큰 만료 체크는 Middleware에서 수행하므로 여기서는 체크하지 않음
+   * - Middleware: 모든 요청에 대해 토큰 만료 체크 + 자동 갱신
+   * - Server Component: 갱신된 세션을 단순 조회만 수행 (refresh: false 권장)
+   *
+   * @param options.refresh - 토큰 자동 갱신 여부 (기본값: false, Middleware가 이미 처리함)
    */
   public async getSession(
-    options: { refresh?: boolean } = { refresh: true },
+    options: { refresh?: boolean } = { refresh: false },
   ): Promise<Session | null> {
     const cookieStore = await cookies();
     const cookie = cookieStore.get(this.config.sessionCookieName);
@@ -163,12 +168,13 @@ export class AuthClient {
       return null;
     }
 
-    // refresh 옵션이 false면 토큰 갱신 없이 반환
+    // refresh 옵션이 false면 토큰 갱신 없이 반환 (기본 동작)
     if (!options.refresh) {
       return session;
     }
 
-    // Access Token 만료 체크 및 갱신
+    // refresh: true가 명시적으로 전달된 경우에만 갱신 수행
+    // (API Route 등 Middleware를 거치지 않는 특수한 경우에만 사용)
     if (isTokenExpired(session.tokenSet.accessToken)) {
       const refreshed = await this.refreshSession(session);
       if (!refreshed) {

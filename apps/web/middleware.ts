@@ -2,7 +2,9 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { auth } from "@/src/domains/auth";
 import { SESSION_COOKIE_MAX_AGE } from "@/src/domains/auth/constants/session";
+import { AuthError } from "@/src/domains/auth/types/errors";
 import { isTokenExpired } from "@/src/domains/auth/utils/jwt";
+import { logger } from "@/src/lib/logger";
 
 const PUBLIC_PATHS = ["/auth", "/api/auth"];
 const LOGIN_PATH = "/auth/login";
@@ -82,7 +84,21 @@ export async function middleware(request: NextRequest) {
     return response;
   } catch (error) {
     // 예외 발생 시 로그 기록 후 로그인 페이지로
-    console.error("[Middleware] Authentication error:", error);
+    if (error instanceof AuthError) {
+      // 구조화된 AuthError는 상세 정보와 함께 로깅
+      logger.error("Authentication error in middleware", {
+        code: error.code,
+        message: error.message,
+        context: error.context,
+        pathname,
+      });
+    } else {
+      // 일반 에러는 기존 방식대로 로깅
+      logger.error("Unexpected error in middleware", {
+        error: error instanceof Error ? error.message : String(error),
+        pathname,
+      });
+    }
     return redirectToLogin(request);
   }
 }

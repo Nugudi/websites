@@ -34,8 +34,8 @@ const SignInEmailForm = () => {
     mode: "onTouched",
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log("Form submitted:", data);
+  const onSubmit = (_data: FormData) => {
+    // TODO: 이메일 로그인 API 연동
   };
 
   const togglePasswordVisibility = () => {

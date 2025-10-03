@@ -40,10 +40,9 @@ export const ReviewWriteSection = ({
     return [...currentRatings, rating];
   };
 
-  const onSubmit = async (data: ReviewFormData) => {
+  const onSubmit = async (_data: ReviewFormData) => {
     // TODO: API 호출 구현
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log("Submitting review:", { cafeteriaId, ...data });
   };
 
   return (
