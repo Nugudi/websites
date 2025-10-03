@@ -21,19 +21,31 @@ interface Review {
 export const CafeteriaReviewTab = () => {
   const reviews = getMockReviews();
   const { cafeteriaId } = useParams();
+  const cafeteriaName = "더애옹푸드"; // TODO: Get from actual data
 
   return (
     <VStack gap={16}>
-      <ReviewPromptCard cafeteriaId={Number(cafeteriaId)} />
+      <ReviewPromptCard
+        cafeteriaId={cafeteriaId as string}
+        cafeteriaName={cafeteriaName}
+      />
       <ReviewsList reviews={reviews} />
     </VStack>
   );
 };
 
-const ReviewPromptCard = ({ cafeteriaId }: { cafeteriaId: number }) => {
+interface ReviewPromptCardProps {
+  cafeteriaId: string;
+  cafeteriaName: string;
+}
+
+const ReviewPromptCard = ({
+  cafeteriaId,
+  cafeteriaName,
+}: ReviewPromptCardProps) => {
   return (
     <VStack gap={32} pY={16} className={styles.reviewPromptCard}>
-      <ReviewPromptText />
+      <ReviewPromptText cafeteriaName={cafeteriaName} />
       <Box className={styles.buttonBox}>
         <CharacterImage />
         <WriteReviewButton cafeteriaId={cafeteriaId} />
@@ -42,10 +54,14 @@ const ReviewPromptCard = ({ cafeteriaId }: { cafeteriaId: number }) => {
   );
 };
 
-const ReviewPromptText = () => {
+interface ReviewPromptTextProps {
+  cafeteriaName: string;
+}
+
+const ReviewPromptText = ({ cafeteriaName }: ReviewPromptTextProps) => {
   return (
     <VStack align="start" grow={1}>
-      <Title fontSize="t2">더애옹푸드에 다녀오셨나요?</Title>
+      <Title fontSize="t2">{cafeteriaName}에 다녀오셨나요?</Title>
       <Body fontSize="b3" color="zinc" colorShade={500}>
         오늘의 메뉴 리뷰를 남겨주세요!
       </Body>
@@ -68,7 +84,7 @@ const CharacterImage = () => {
 };
 
 interface WriteReviewButtonProps {
-  cafeteriaId: number;
+  cafeteriaId: string;
 }
 
 const WriteReviewButton = ({ cafeteriaId }: WriteReviewButtonProps) => {

@@ -20,7 +20,7 @@ export const CafeteriaInfoCard = ({ cafeteria }: CafeteriaInfoCardProps) => {
     <Box className={styles.infoCard} marginTop={-64} mX={16}>
       <VStack align="center" gap={16} padding={24}>
         <VStack gap={8} align="center">
-          <PackagingAvailableNotice />
+          {cafeteria.isPackagingAvailable && <PackagingAvailableNotice />}
           <CafeteriaNameWithActions name={cafeteria.name} />
         </VStack>
         <Divider />

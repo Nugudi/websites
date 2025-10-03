@@ -31,7 +31,7 @@ const HeroImage = ({ cafeteriaName }: { cafeteriaName: string }) => {
       width={500}
       height={240}
       className={styles.backgroundImage}
-      loading="lazy"
+      priority
     />
   );
 };
