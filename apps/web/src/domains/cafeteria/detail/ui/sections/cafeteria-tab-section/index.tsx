@@ -38,6 +38,9 @@ export const CafeteriaTabSection = ({
           <VStack gap={8} pY={16}>
             <CafeteriaReviewTabControls
               onMenuClick={() => setIsMenuSheetOpen(true)}
+              onDateClick={() => {
+                // TODO: 캘린더
+              }}
             />
             <CafeteriaReviewTab />
           </VStack>

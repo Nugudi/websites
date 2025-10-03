@@ -6,7 +6,7 @@ import { HStack } from "@nugudi/react-components-layout";
 
 interface CafeteriaReviewTabControlsProps {
   onMenuClick: () => void;
-  onDateClick?: () => void;
+  onDateClick: () => void;
 }
 
 export const CafeteriaReviewTabControls = ({
