@@ -1,12 +1,12 @@
 import type { cookies } from "next/headers";
 
 export type {
-  KakaoLoginResponse,
   LocalLoginResponse,
   SignUpResponse,
-  SuccessResponseKakaoLoginResponse,
+  SocialLoginResponse,
   SuccessResponseLocalLoginResponse,
   SuccessResponseSignUpResponse,
+  SuccessResponseSocialLoginResponse,
 } from "@nugudi/api/schemas";
 
 export interface CookieOptions
