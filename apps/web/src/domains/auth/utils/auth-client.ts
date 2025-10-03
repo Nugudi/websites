@@ -1,4 +1,4 @@
-import { refreshToken } from "@nugudi/api";
+import { logout as logoutAPI, refreshToken } from "@nugudi/api";
 import * as jose from "jose";
 import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
@@ -119,6 +119,26 @@ export class AuthClient {
    * 로그아웃
    */
   public async logout(request: NextRequest) {
+    const session = await this.getSession({ refresh: false });
+
+    // 서버에 로그아웃 알림 (Refresh Token 무효화)
+    if (session) {
+      try {
+        await logoutAPI({
+          headers: {
+            Authorization: `Bearer ${session.tokenSet.refreshToken}`,
+            "X-Device-ID": session.deviceId,
+          },
+        });
+      } catch (error) {
+        // 서버 로그아웃 실패해도 클라이언트 쿠키는 삭제
+        logger.error("Server logout failed", {
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    }
+
+    // 클라이언트 쿠키 삭제
     const cookieStore = await cookies();
     cookieStore.delete({
       name: this.config.sessionCookieName,
@@ -146,11 +166,12 @@ export class AuthClient {
   /**
    * 세션 조회 (서버 전용)
    *
-   * IMPORTANT: 토큰 만료 체크는 Middleware에서 수행하므로 여기서는 체크하지 않음
+   * IMPORTANT: 기본적으로 토큰 만료 체크는 Middleware에서 수행하므로 여기서는 체크하지 않음
+   * - 단, options.refresh가 true로 명시된 경우에는 만료 체크 및 자동 갱신을 수행함
    * - Middleware: 모든 요청에 대해 토큰 만료 체크 + 자동 갱신
    * - Server Component: 갱신된 세션을 단순 조회만 수행 (refresh: false 권장)
    *
-   * @param options.refresh - 토큰 자동 갱신 여부 (기본값: false, Middleware가 이미 처리함)
+   * @param options.refresh - 토큰 자동 갱신 여부 (기본값: false, Middleware가 이미 처리함, true일 경우 만료 체크 및 갱신 수행)
    */
   public async getSession(
     options: { refresh?: boolean } = { refresh: false },
@@ -208,30 +229,12 @@ export class AuthClient {
     session: Session,
   ): Promise<string | null> {
     try {
-      const response = await refreshToken({
-        headers: {
-          Authorization: `Bearer ${session.tokenSet.refreshToken}`,
-          "X-Device-ID": session.deviceId,
-        },
-      });
-
-      if (
-        response.status === 200 &&
-        response.data.data?.accessToken &&
-        response.data.data?.refreshToken
-      ) {
-        const refreshedSession: Session = {
-          ...session,
-          tokenSet: {
-            accessToken: response.data.data.accessToken,
-            refreshToken: response.data.data.refreshToken,
-          },
-        };
-
-        return this.encrypt(refreshedSession);
+      const refreshedSession = await this.callRefreshTokenAPI(session);
+      if (!refreshedSession) {
+        return null;
       }
 
-      return null;
+      return this.encrypt(refreshedSession);
     } catch (error) {
       logger.error("Token refresh failed in middleware", {
         error: error instanceof Error ? error.message : String(error),
@@ -241,41 +244,51 @@ export class AuthClient {
   }
 
   /**
-   * 토큰 갱신
+   * 토큰 갱신 (Server Component용)
    */
   private async refreshSession(session: Session): Promise<Session | null> {
     try {
-      const response = await refreshToken({
-        headers: {
-          Authorization: `Bearer ${session.tokenSet.refreshToken}`,
-          "X-Device-ID": session.deviceId,
-        },
-      });
-
-      if (
-        response.status === 200 &&
-        response.data.data?.accessToken &&
-        response.data.data?.refreshToken
-      ) {
-        const refreshedSession: Session = {
-          ...session,
-          tokenSet: {
-            accessToken: response.data.data.accessToken,
-            refreshToken: response.data.data.refreshToken,
-          },
-        };
-
-        await this.setSession(refreshedSession);
-        return refreshedSession;
+      const refreshedSession = await this.callRefreshTokenAPI(session);
+      if (!refreshedSession) {
+        return null;
       }
 
-      return null;
+      await this.setSession(refreshedSession);
+      return refreshedSession;
     } catch (error) {
       logger.error("Token refresh failed", {
         error: error instanceof Error ? error.message : String(error),
       });
       return null;
     }
+  }
+
+  /**
+   * 토큰 갱신 API 호출 (공통 로직)
+   */
+  private async callRefreshTokenAPI(session: Session): Promise<Session | null> {
+    const response = await refreshToken({
+      headers: {
+        Authorization: `Bearer ${session.tokenSet.refreshToken}`,
+        "X-Device-ID": session.deviceId,
+      },
+    });
+
+    if (
+      response.status === 200 &&
+      response.data.data?.accessToken &&
+      response.data.data?.refreshToken
+    ) {
+      return {
+        ...session,
+        tokenSet: {
+          accessToken: response.data.data.accessToken,
+          refreshToken: response.data.data.refreshToken,
+        },
+      };
+    }
+
+    return null;
   }
 
   /**
