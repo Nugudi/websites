@@ -20,18 +20,17 @@ interface Review {
 
 export const CafeteriaReviewTab = () => {
   const reviews = getMockReviews();
-  const params = useParams();
-  const cafeteriaId = params?.cafeteriaId as string;
+  const { cafeteriaId } = useParams();
 
   return (
     <VStack gap={16}>
-      <ReviewPromptCard cafeteriaId={cafeteriaId} />
+      <ReviewPromptCard cafeteriaId={Number(cafeteriaId)} />
       <ReviewsList reviews={reviews} />
     </VStack>
   );
 };
 
-const ReviewPromptCard = ({ cafeteriaId }: { cafeteriaId: string }) => {
+const ReviewPromptCard = ({ cafeteriaId }: { cafeteriaId: number }) => {
   return (
     <VStack gap={32} pY={16} className={styles.reviewPromptCard}>
       <ReviewPromptText />
@@ -69,7 +68,7 @@ const CharacterImage = () => {
 };
 
 interface WriteReviewButtonProps {
-  cafeteriaId: string;
+  cafeteriaId: number;
 }
 
 const WriteReviewButton = ({ cafeteriaId }: WriteReviewButtonProps) => {

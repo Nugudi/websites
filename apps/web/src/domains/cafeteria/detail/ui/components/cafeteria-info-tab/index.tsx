@@ -17,7 +17,7 @@ export const CafeteriaInfoTab = ({ cafeteriaId }: CafeteriaInfoTabProps) => {
     <VStack gap={32} pt={16} pb={24}>
       <Menu cafeteria={cafeteria} />
       <NutritionInfoCard />
-      <LocationMapCard address="대전광역시 서구 1길" />
+      <LocationMapCard address={cafeteria.location} />
     </VStack>
   );
 };
@@ -77,20 +77,18 @@ const LocationMapCard = ({ address }: { address: string }) => {
       <Body fontSize="b3b" colorShade={600}>
         식당 지도
       </Body>
-      <MapPlaceholder />
-      <AddressInfo address={address} />
+      <MapCard address={address} />
     </VStack>
   );
 };
 
-const MapPlaceholder = () => {
+const MapCard = ({ address }: { address: string }) => {
   return (
-    <Box height={180} borderRadius="lg" className={styles.mapPlaceholder}>
-      <Body fontSize="b3">지도 들어갈 자리</Body>
-    </Box>
+    <VStack gap={8}>
+      <Box height={180} borderRadius="lg" className={styles.mapPlaceholder}>
+        <Body fontSize="b3">지도 들어갈 자리</Body>
+      </Box>
+      <Body fontSize="b3">📍 {address}</Body>
+    </VStack>
   );
-};
-
-const AddressInfo = ({ address }: { address: string }) => {
-  return <Body fontSize="b3">📍 {address}</Body>;
 };

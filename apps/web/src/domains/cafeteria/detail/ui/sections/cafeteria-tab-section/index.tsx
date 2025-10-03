@@ -1,15 +1,14 @@
 "use client";
 
-import { CalendarIcon, FolderIcon } from "@nugudi/assets-icons";
 import { Backdrop } from "@nugudi/react-components-backdrop";
-import { Chip } from "@nugudi/react-components-chip";
-import { HStack, VStack } from "@nugudi/react-components-layout";
+import { VStack } from "@nugudi/react-components-layout";
 import { Tabs } from "@nugudi/react-components-tab";
 import { useState } from "react";
 import { getMockCafeteriaData } from "../../../constants/mock-data";
 import { CafeteriaInfoTab } from "../../components/cafeteria-info-tab";
 import { CafeteriaMenuBottomSheet } from "../../components/cafeteria-menu-bottom-sheet";
 import { CafeteriaReviewTab } from "../../components/cafeteria-review-tab";
+import { CafeteriaReviewTabControls } from "../../components/cafeteria-review-tab-controls";
 
 interface CafeteriaTabSectionProps {
   cafeteriaId: string;
@@ -37,19 +36,9 @@ export const CafeteriaTabSection = ({
 
         <Tabs.Panel value="review">
           <VStack gap={8} pY={16}>
-            <HStack gap={8} justify="end">
-              <Chip
-                label="메뉴 확인"
-                icon={<FolderIcon width={16} height={16} />}
-                size="md"
-                onClick={() => setIsMenuSheetOpen(true)}
-              />
-              <Chip
-                label="날짜 선택"
-                icon={<CalendarIcon width={16} height={16} />}
-                size="md"
-              />
-            </HStack>
+            <CafeteriaReviewTabControls
+              onMenuClick={() => setIsMenuSheetOpen(true)}
+            />
             <CafeteriaReviewTab />
           </VStack>
         </Tabs.Panel>
