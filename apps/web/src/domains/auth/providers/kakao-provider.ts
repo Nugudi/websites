@@ -53,6 +53,7 @@ export class KakaoProvider implements OAuthProvider {
 
       const userAgent = request.headers.get("user-agent") || "Unknown";
       const deviceInfo = createDeviceInfo(userAgent);
+      const deviceId = deviceInfo.deviceUniqueId;
 
       const response = await kakaoLogin({
         code,
@@ -107,6 +108,7 @@ export class KakaoProvider implements OAuthProvider {
           refreshToken: data.refreshToken,
         },
         provider: "kakao",
+        deviceId,
       };
     } catch (error) {
       if (error instanceof AuthError) throw error;

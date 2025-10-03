@@ -205,6 +205,7 @@ export class AuthClient {
       const response = await refreshToken({
         headers: {
           Authorization: `Bearer ${session.tokenSet.refreshToken}`,
+          "X-Device-ID": session.deviceId,
         },
       });
 
@@ -241,6 +242,7 @@ export class AuthClient {
       const response = await refreshToken({
         headers: {
           Authorization: `Bearer ${session.tokenSet.refreshToken}`,
+          "X-Device-ID": session.deviceId,
         },
       });
 

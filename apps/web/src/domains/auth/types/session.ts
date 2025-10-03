@@ -25,6 +25,7 @@ export interface Session {
   user: User;
   tokenSet: TokenSet;
   provider: ProviderType;
+  deviceId: string;
 }
 
 /**
