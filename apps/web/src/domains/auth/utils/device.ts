@@ -3,23 +3,30 @@ import type { NextRequest } from "next/server";
 import { UAParser } from "ua-parser-js";
 
 /**
- * 브라우저 쿠키에서 특정 값 읽기
- */
-const getCookieValue = (name: string): string | undefined => {
-  if (typeof document === "undefined") return undefined;
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(";").shift();
-  return undefined;
-};
-
-/**
  * User Agent를 파싱하여 디바이스 정보 생성
- * 쿠키에 저장된 기존 device ID가 있으면 재사용하고, 없으면 새로 생성
+ *
+ * @param userAgent - User Agent 문자열
+ * @param deviceId - Device ID (서버에서 관리되는 고유 식별자)
+ * @param request - (Optional) NextRequest 객체 (서버 사이드에서만 사용)
+ *
+ * @example
+ * ```tsx
+ * // 클라이언트에서 사용 (Server Action으로 deviceId 가져오기)
+ * const deviceId = await getOrCreateDeviceId();
+ * const deviceInfo = createDeviceInfo(navigator.userAgent, deviceId);
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // 서버에서 사용 (OAuth Provider 등)
+ * const deviceId = request.cookies.get("x-device-id")?.value || crypto.randomUUID();
+ * const deviceInfo = createDeviceInfo(userAgent, deviceId, request);
+ * ```
  */
 export const createDeviceInfo = (
   userAgent: string,
-  request?: NextRequest,
+  deviceId: string,
+  _request?: NextRequest,
 ): UserDeviceInfoDTO => {
   const parser = new UAParser(userAgent);
   const device = parser.getDevice();
@@ -32,16 +39,9 @@ export const createDeviceInfo = (
     deviceType = "ANDROID";
   }
 
-  // 쿠키에서 기존 device ID 조회
-  // 서버: NextRequest에서 쿠키 읽기
-  // 클라이언트: document.cookie에서 쿠키 읽기
-  const existingDeviceId =
-    request?.cookies.get("x-device-id")?.value || getCookieValue("x-device-id");
-  const deviceUniqueId = existingDeviceId || crypto.randomUUID();
-
   return {
     deviceType,
-    deviceUniqueId,
+    deviceUniqueId: deviceId,
     deviceName:
       device.model || device.vendor || `${os.name || "Unknown"} Device`,
     deviceModel: device.model || "Unknown",

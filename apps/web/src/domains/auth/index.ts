@@ -16,3 +16,6 @@ export const auth = new AuthClient({
     maxAge: SESSION_COOKIE_MAX_AGE,
   },
 });
+
+// Server Actions
+export { getOrCreateDeviceId } from "./actions/get-or-create-device-id";

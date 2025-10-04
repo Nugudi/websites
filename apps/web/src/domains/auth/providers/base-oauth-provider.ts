@@ -89,8 +89,10 @@ export abstract class BaseOAuthProvider implements OAuthProvider {
       }
 
       const userAgent = request.headers.get("user-agent") || "Unknown";
-      const deviceInfo = createDeviceInfo(userAgent, request);
-      const deviceId = deviceInfo.deviceUniqueId;
+      // 쿠키에서 기존 Device ID를 가져오거나 새로 생성
+      const deviceId =
+        request.cookies.get("x-device-id")?.value || crypto.randomUUID();
+      const deviceInfo = createDeviceInfo(userAgent, deviceId, request);
 
       const response = await this.fetchLogin({
         code,
