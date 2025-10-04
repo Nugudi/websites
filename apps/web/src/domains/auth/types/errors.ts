@@ -22,6 +22,12 @@ export const AUTH_ERROR_CODES = {
   SESSION_EXPIRED: "SESSION_EXPIRED",
   TOKEN_REFRESH_FAILED: "TOKEN_REFRESH_FAILED",
   INVALID_SESSION_DATA: "INVALID_SESSION_DATA",
+  SESSION_SETUP_FAILED: "SESSION_SETUP_FAILED",
+
+  // 회원가입 관련
+  SIGNUP_FAILED: "SIGNUP_FAILED",
+  INVALID_SIGNUP_DATA: "INVALID_SIGNUP_DATA",
+  MISSING_REQUIRED_FIELDS: "MISSING_REQUIRED_FIELDS",
 
   // 기타
   UNKNOWN_ERROR: "UNKNOWN_ERROR",
@@ -193,6 +199,50 @@ export class AuthError extends Error {
       AUTH_ERROR_CODES.NEW_USER_SIGNUP_REQUIRED,
       `New user from ${providerType} - signup required`,
       { providerType, registrationToken },
+    );
+  }
+
+  /**
+   * 회원가입 실패
+   */
+  static signupFailed(reason?: string, context?: Record<string, unknown>) {
+    return new AuthError(
+      AUTH_ERROR_CODES.SIGNUP_FAILED,
+      `Sign up failed${reason ? `: ${reason}` : ""}`,
+      { reason, ...context },
+    );
+  }
+
+  /**
+   * 잘못된 회원가입 데이터
+   */
+  static invalidSignupData(reason?: string) {
+    return new AuthError(
+      AUTH_ERROR_CODES.INVALID_SIGNUP_DATA,
+      `Invalid sign up data${reason ? `: ${reason}` : ""}`,
+      { reason },
+    );
+  }
+
+  /**
+   * 필수 필드 누락
+   */
+  static missingRequiredFields(fields: string[]) {
+    return new AuthError(
+      AUTH_ERROR_CODES.MISSING_REQUIRED_FIELDS,
+      `Missing required fields: ${fields.join(", ")}`,
+      { fields },
+    );
+  }
+
+  /**
+   * 세션 설정 실패
+   */
+  static sessionSetupFailed(reason?: string) {
+    return new AuthError(
+      AUTH_ERROR_CODES.SESSION_SETUP_FAILED,
+      `Session setup failed${reason ? `: ${reason}` : ""}`,
+      { reason },
     );
   }
 

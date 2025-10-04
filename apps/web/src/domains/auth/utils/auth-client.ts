@@ -47,7 +47,7 @@ export class AuthClient {
 
       const baseUrl = new URL(request.url).origin;
       const redirectUri = new URL(
-        `/api/auth/${providerType}/callback`,
+        `/api/auth/callback/${providerType}`,
         baseUrl,
       ).toString();
 
@@ -79,7 +79,7 @@ export class AuthClient {
       }
 
       const redirectUri = new URL(
-        `/api/auth/${providerType}/callback`,
+        `/api/auth/callback/${providerType}`,
         request.url,
       ).toString();
 

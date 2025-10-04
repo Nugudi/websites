@@ -1,14 +1,12 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signUpSocial } from "@nugudi/api";
 import { Button } from "@nugudi/react-components-button";
 import { Body, Box, Heading } from "@nugudi/react-components-layout";
-import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { createDeviceInfo } from "../../../../../../utils/device";
 import { SOCIAL_TERMS_LIST } from "../../../../../constants/social-sign-up";
+import { useSocialSignUpSubmit } from "../../../../../hooks/use-social-sign-up-submit";
 import {
   type SocialSignUpAgreementSchema,
   socialSignUpAgreementSchema,
@@ -19,9 +17,7 @@ import * as styles from "./index.css";
 import { SocialTerms } from "./terms";
 
 export const AgreementForm = () => {
-  const { data, registrationToken, resetAll } = useSocialSignUpStore();
-  const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { onSubmit: handleSubmit, isSubmitting } = useSocialSignUpSubmit();
 
   const [termsAgreements, setTermsAgreements] = useState<TermsAgreementState>(
     () => {
@@ -100,52 +96,13 @@ export const AgreementForm = () => {
     return mandatoryTerms.every((term) => termsAgreements[String(term.id)]);
   }, [termsAgreements]);
 
-  const onSubmit = async (agreementData: SocialSignUpAgreementSchema) => {
-    if (!registrationToken || !data.nickname) {
-      alert("필수 정보가 누락되었습니다. 처음부터 다시 시도해주세요.");
-      router.push("/auth/sign-in");
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      const response = await signUpSocial(
-        {
-          nickname: data.nickname,
-          privacyPolicy: agreementData.privacyPolicy,
-          termsOfService: agreementData.termsOfService,
-          locationInfo: agreementData.locationInfo,
-          marketingEmail: agreementData.marketingEmail ?? false,
-          deviceInfo: createDeviceInfo(navigator.userAgent),
-        },
-        {
-          headers: {
-            "X-Registration-Token": registrationToken,
-          },
-        },
-      );
-
-      if (response.status === 201 && response.data.success) {
-        resetAll();
-        router.push("/");
-      } else {
-        throw new Error("회원가입에 실패했습니다.");
-      }
-    } catch (_error) {
-      alert("회원가입 중 오류가 발생했습니다. 다시 시도해주세요.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   const onPrevious = () => {
     const { setStep } = useSocialSignUpStore.getState();
     setStep(1);
   };
 
   return (
-    <form className={styles.form} onSubmit={form.handleSubmit(onSubmit)}>
+    <form className={styles.form} onSubmit={form.handleSubmit(handleSubmit)}>
       <Box className={styles.titleContainer}>
         <Heading fontSize="h1" color="zinc">
           이용약관 동의가 필요해요
