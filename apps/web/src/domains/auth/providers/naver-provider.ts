@@ -1,12 +1,12 @@
-import { getGoogleAuthorizeUrl, googleLogin } from "@nugudi/api";
+import { getNaverAuthorizeUrl, naverLogin } from "@nugudi/api";
 import type { createDeviceInfo } from "../utils/device";
 import { BaseOAuthProvider } from "./base-oauth-provider";
 
-export class GoogleProvider extends BaseOAuthProvider {
-  readonly type = "google" as const;
+export class NaverProvider extends BaseOAuthProvider {
+  readonly type = "naver" as const;
 
   protected async fetchAuthorizeUrl(redirectUri: string) {
-    return getGoogleAuthorizeUrl({ redirectUri });
+    return getNaverAuthorizeUrl({ redirectUri });
   }
 
   protected async fetchLogin(params: {
@@ -14,6 +14,6 @@ export class GoogleProvider extends BaseOAuthProvider {
     redirectUri: string;
     deviceInfo: ReturnType<typeof createDeviceInfo>;
   }) {
-    return googleLogin(params);
+    return naverLogin(params);
   }
 }
