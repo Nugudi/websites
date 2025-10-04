@@ -11,7 +11,7 @@ export const LoginSocialButtons = () => {
       <a href="/api/auth/kakao/login" aria-label="Kakao 계정으로 로그인">
         <KakaoIcon />
       </a>
-      <a href="/login/naver" aria-label="Naver 계정으로 로그인">
+      <a href="/api/auth/naver/login" aria-label="Naver 계정으로 로그인">
         <NaverIcon />
       </a>
     </Flex>

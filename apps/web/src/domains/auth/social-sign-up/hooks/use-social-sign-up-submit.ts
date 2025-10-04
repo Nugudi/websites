@@ -2,6 +2,7 @@ import { signUpSocial } from "@nugudi/api";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { logger } from "@/src/lib/logger";
+import { getOrCreateDeviceId } from "../../actions/get-or-create-device-id";
 import { AuthError } from "../../types/errors";
 import { createDeviceInfo } from "../../utils/device";
 import { SOCIAL_SIGN_UP_STORE_KEY } from "../constants/social-sign-up";
@@ -50,8 +51,6 @@ export const useSocialSignUpSubmit = () => {
     setIsSubmitting(true);
 
     try {
-      const deviceInfo = createDeviceInfo(navigator.userAgent);
-
       logger.info("Starting social sign up", {
         provider,
         nickname: data.nickname,
@@ -65,7 +64,11 @@ export const useSocialSignUpSubmit = () => {
         throw AuthError.missingRequiredFields(["registrationToken"]);
       }
 
-      // 1. 소셜 회원가입 API 호출
+      // 1. Device ID를 Server Action을 통해 가져오기 (httpOnly 쿠키에서 안전하게 관리)
+      const deviceId = await getOrCreateDeviceId();
+      const deviceInfo = createDeviceInfo(navigator.userAgent, deviceId);
+
+      // 2. 소셜 회원가입 API 호출
       const response = await signUpSocial(
         {
           nickname: data.nickname,
@@ -108,6 +111,7 @@ export const useSocialSignUpSubmit = () => {
       });
 
       // 3. 세션 설정을 위해 내부 API 호출
+      // deviceId는 서버에서 쿠키를 통해 재사용하되, 클라이언트에서 생성한 ID도 전달
       const sessionResponse = await fetch("/api/auth/sign-up/social", {
         method: "POST",
         headers: {
