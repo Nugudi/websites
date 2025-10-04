@@ -1,3 +1,4 @@
+import { GoogleProvider } from "../providers/google-provider";
 import { KakaoProvider } from "../providers/kakao-provider";
 import { AuthError } from "./errors";
 import type { Provider, ProviderRegistry, ProviderType } from "./provider";
@@ -7,6 +8,7 @@ class ProviderRegistryImplements {
 
   constructor() {
     this.registerProvider(new KakaoProvider());
+    this.registerProvider(new GoogleProvider());
   }
 
   /**

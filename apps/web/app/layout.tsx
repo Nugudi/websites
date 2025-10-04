@@ -23,10 +23,6 @@ export const metadata: Metadata = {
       url: "https://nugudi.com",
     },
   ],
-  icons: [
-    { rel: "apple-touch-icon", url: "/images/icons/apple-touch-icon.png" },
-    { rel: "icon", url: "/images/icons/favicon.ico" },
-  ],
 };
 
 const RootLayout = ({

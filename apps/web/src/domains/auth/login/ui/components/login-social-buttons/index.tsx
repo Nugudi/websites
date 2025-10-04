@@ -5,7 +5,7 @@ import { vars } from "@nugudi/themes";
 export const LoginSocialButtons = () => {
   return (
     <Flex gap={vars.box.spacing[4]}>
-      <a href="/login/google" aria-label="Google 계정으로 로그인">
+      <a href="/api/auth/google/login" aria-label="Google 계정으로 로그인">
         <GoogleIcon />
       </a>
       <a href="/api/auth/kakao/login" aria-label="Kakao 계정으로 로그인">
