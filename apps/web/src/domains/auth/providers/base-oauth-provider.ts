@@ -89,7 +89,7 @@ export abstract class BaseOAuthProvider implements OAuthProvider {
       }
 
       const userAgent = request.headers.get("user-agent") || "Unknown";
-      const deviceInfo = createDeviceInfo(userAgent);
+      const deviceInfo = createDeviceInfo(userAgent, request);
       const deviceId = deviceInfo.deviceUniqueId;
 
       const response = await this.fetchLogin({

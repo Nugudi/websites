@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
       deviceId,
     };
 
-    // 세션 저장
+    // 세션 저장 (setSession 내부에서 deviceId도 쿠키로 저장됨)
     await auth.setSession(session);
 
     return NextResponse.json({ success: true });

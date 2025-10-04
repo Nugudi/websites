@@ -161,6 +161,16 @@ export class AuthClient {
       encrypted,
       this.config.cookieOptions,
     );
+
+    // Device ID를 별도 쿠키로 저장하여 재사용 가능하도록 함
+    if (session.deviceId) {
+      cookieStore.set("x-device-id", session.deviceId, {
+        ...this.config.cookieOptions,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+      });
+    }
   }
 
   /**
