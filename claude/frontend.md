@@ -235,44 +235,46 @@ components/
 ```
 apps/web/src/
 └── domains/
-    └── auth/                              # Domain
-        ├── sign-up/                       # Feature
-        │   ├── constants/
-        │   │   └── sign-up.ts             # Feature constants
-        │   ├── schemas/
-        │   │   └── sign-up-schema.ts      # Zod validation schemas
-        │   ├── stores/
-        │   │   └── use-sign-up-store.ts   # Zustand store
-        │   ├── types/
-        │   │   └── sign-up.ts             # TypeScript types
-        │   └── ui/
-        │       ├── views/
-        │       │   └── sign-up-view/
-        │       │       ├── index.tsx
-        │       │       └── index.css.ts
-        │       ├── sections/
-        │       │   └── sign-up-section/
-        │       │       └── index.tsx
-        │       └── components/
-        │           └── sign-up-form/
-        │               ├── index.tsx
-        │               ├── index.css.ts
-        │               └── steps/
-        │                   ├── email-form/
-        │                   │   ├── index.tsx
-        │                   │   └── index.css.ts
-        │                   └── password-form/
-        │                       ├── index.tsx
-        │                       └── index.css.ts
-        └── my/                            # Another feature in same domain
-            └── ui/
-                ├── views/
-                │   └── my-page-view/
-                ├── sections/
-                │   ├── profile-section/
-                │   └── menu-section/
-                └── components/
-                    └── logout-button/
+    └── auth/                              # Domain (unified structure)
+        ├── constants/
+        │   ├── social-sign-up.ts          # Social sign-up constants
+        │   └── terms.ts                   # Terms and conditions
+        ├── schemas/
+        │   ├── credentials-sign-in-schema.ts
+        │   └── social-sign-up-schema.ts   # Zod validation schemas
+        ├── errors/
+        │   └── auth-error.ts              # Auth error class
+        ├── providers/
+        │   ├── base-oauth-provider.ts     # Base OAuth provider
+        │   ├── google-provider.ts
+        │   ├── naver-provider.ts
+        │   └── registry.ts                # Provider registry
+        ├── stores/
+        │   └── use-social-sign-up-store.ts # Zustand store
+        ├── types/
+        │   └── index.ts                   # TypeScript types
+        ├── utils/
+        │   └── device.ts                  # Device info utilities
+        └── ui/
+            ├── views/
+            │   ├── credentials-sign-in-view/
+            │   │   ├── index.tsx
+            │   │   └── index.css.ts
+            │   └── social-sign-up-view/
+            │       ├── index.tsx
+            │       └── index.css.ts
+            ├── sections/
+            │   ├── credentials-sign-in-section/
+            │   │   └── index.tsx
+            │   └── social-sign-up-section/
+            │       └── index.tsx
+            └── components/
+                ├── credentials-sign-in-form/
+                │   ├── index.tsx
+                │   └── index.css.ts
+                └── social-sign-up-form/
+                    ├── index.tsx
+                    └── index.css.ts
 ```
 
 ### Component Naming Pattern

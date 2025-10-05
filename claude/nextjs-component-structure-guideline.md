@@ -74,17 +74,16 @@ Next.js 15 route groups organize pages by authentication requirements:
 ### Protected Routes (auth)
 ```
 /benefits          → domains/benefit/ui/views/benefit-page-view
-/cafeterias        → domains/cafeteria/ui/views/cafeteria-home-view
-/cafeterias/[id]   → domains/cafeteria/ui/views/cafeteria-detail-view
-/my                → domains/auth/profile/ui/views/profile-page-view
+/cafeterias        → domains/cafeteria/home/ui/views/cafeteria-home-view
+/cafeterias/[id]   → domains/cafeteria/detail/ui/views/cafeteria-detail-view
+/my                → domains/user/ui/views/my-page-view
 ```
 
 ### Public Routes (public)
 ```
-/auth/sign-in       → domains/auth/sign-in/ui/views/sign-in-view
-/auth/sign-up       → domains/auth/sign-up/ui/views/sign-up-view
-/auth/password/forgot → domains/auth/forgot-password/ui/views/forgot-password-view
-/home              → domains/cafeteria/ui/views/cafeteria-home-view (same as root)
+/auth/sign-in       → domains/auth/ui/views/credentials-sign-in-view
+/auth/sign-up/social → domains/auth/ui/views/social-sign-up-view
+/home              → domains/cafeteria/home/ui/views/cafeteria-home-view (same as root)
 ```
 
 ## Next.js App Router Specific Patterns
