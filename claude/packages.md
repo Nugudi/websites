@@ -13,11 +13,9 @@ nugudi/
 │           │   └── profile/      # Profile page (authenticated users only)
 │           └── (public)/  # 🌍 Public routes - No authentication required
 │               └── auth/        # Auth-related public pages
-│                   ├── login/    # Login page (social login options)
-│                   ├── sign-in/  # Sign in with email page
-│                   │   └── email/ # Email sign in page
-│                   ├── sign-up/  # Sign up page
-│                   └── forgot-password/ # Forgot password page
+│                   ├── sign-in/  # Sign in with credentials page
+│                   └── sign-up/  # Sign up pages
+│                       └── social/ # Social sign up page
 ├── packages/               # Shared packages (ALWAYS use these!)
 │   ├── ui/                # Aggregated UI library with Storybook
 │   ├── api/               # OpenAPI client + MSW mocks
@@ -527,30 +525,40 @@ apps/web/
 │           └── sign-up/   # Sign up page
 ├── src/
 │   ├── domains/           # Domain logic
-│   │   ├── auth/          # Complex domain with multiple features
-│   │   │   ├── login/     # Social login
-│   │   │   ├── sign-in/   # Email sign in
-│   │   │   ├── sign-up/   # Sign up
-│   │   │   ├── profile/   # User profile
-│   │   │   └── forgot-password/ # Password recovery
-│   │   │       ├── constants/
-│   │   │       ├── schemas/
-│   │   │       ├── stores/
-│   │   │       ├── types/
-│   │   │       └── ui/
-│   │   │           ├── components/
-│   │   │           ├── sections/
-│   │   │           └── views/
-│   │   ├── benefit/       # Simple domain without sub-features
-│   │   │   └── ui/        # UI directly under domain
-│   │   │       ├── components/
+│   │   ├── auth/          # Auth domain (unified)
+│   │   │   ├── constants/
+│   │   │   ├── schemas/
+│   │   │   ├── errors/
+│   │   │   ├── providers/
+│   │   │   ├── types/
+│   │   │   ├── utils/
+│   │   │   └── ui/
+│   │   │       ├── views/
 │   │   │       ├── sections/
-│   │   │       └── views/
-│   │   └── cafeteria/     # Cafeteria domain
+│   │   │       └── components/
+│   │   ├── user/          # User domain (profile, points)
+│   │   │   ├── constants/
+│   │   │   ├── utils/
+│   │   │   └── ui/
+│   │   │       ├── views/
+│   │   │       ├── sections/
+│   │   │       └── components/
+│   │   ├── benefit/       # Simple domain
+│   │   │   └── ui/
+│   │   │       ├── views/
+│   │   │       ├── sections/
+│   │   │       └── components/
+│   │   ├── cafeteria/     # Cafeteria domain (multi-feature)
+│   │   │   ├── home/
+│   │   │   │   ├── types/
+│   │   │   │   ├── mocks/
+│   │   │   │   └── ui/
+│   │   │   ├── detail/
+│   │   │   ├── register-request/
+│   │   │   └── review/
+│   │   └── stamp/         # Stamp domain
+│   │       ├── constants/
 │   │       └── ui/
-│   │           ├── components/
-│   │           ├── sections/
-│   │           └── views/
 │   └── shared/            # Shared utilities
 │       ├── configs/       # Configuration
 │       ├── providers/     # React providers

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import Providers from "../src/shared/providers";
 import "../src/shared/styles/globals.css";
-import MobileFirstLayout from "@/src/shared/ui/components/mobile-first-layout";
+import MobileFirstLayout from "@/src/shared/components/mobile-first-layout";
 
 const Pretendard = localFont({
   src: "../node_modules/pretendard/dist/web/variable/woff2/PretendardVariable.woff2",
@@ -23,6 +23,10 @@ export const metadata: Metadata = {
       url: "https://nugudi.com",
     },
   ],
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-icon.png",
+  },
 };
 
 const RootLayout = ({

@@ -72,33 +72,29 @@ Next.js 15 route groups organize pages by authentication requirements:
 ## Page-to-Domain Mapping
 
 ### Protected Routes (auth)
-
 ```
 /benefits          → domains/benefit/ui/views/benefit-page-view
-/cafeterias        → domains/cafeteria/ui/views/cafeteria-home-view
-/cafeterias/[id]   → domains/cafeteria/ui/views/cafeteria-detail-view
-/my                → domains/auth/profile/ui/views/profile-page-view
+/cafeterias        → domains/cafeteria/home/ui/views/cafeteria-home-view
+/cafeterias/[id]   → domains/cafeteria/detail/ui/views/cafeteria-detail-view
+/my                → domains/user/ui/views/my-page-view
 ```
 
 ### Public Routes (public)
-
 ```
-/auth/sign-in       → domains/auth/sign-in/ui/views/sign-in-view
-/auth/sign-up       → domains/auth/sign-up/ui/views/sign-up-view
-/auth/password/forgot → domains/auth/forgot-password/ui/views/forgot-password-view
-/home              → domains/cafeteria/ui/views/cafeteria-home-view (same as root)
+/auth/sign-in       → domains/auth/ui/views/credentials-sign-in-view
+/auth/sign-up/social → domains/auth/ui/views/social-sign-up-view
+/home              → domains/cafeteria/home/ui/views/cafeteria-home-view (same as root)
 ```
 
 ## Next.js App Router Specific Patterns
 
 ### 1. Server Components by Default
-
 ```typescript
 // app/(auth)/benefits/page.tsx - Server Component by default
 const BenefitsPage = async ({ searchParams }) => {
   // Server-side data fetching
   const benefits = await getBenefits();
-
+  
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <BenefitPageView benefits={benefits} />
@@ -110,7 +106,6 @@ export default BenefitsPage; // Pages use default export
 ```
 
 ### 2. Route Parameters
-
 ```typescript
 // app/(auth)/cafeterias/[cafeteriaId]/page.tsx
 interface PageProps {
@@ -121,20 +116,17 @@ interface PageProps {
 const CafeteriaDetailPage = async ({ params, searchParams }: PageProps) => {
   const { cafeteriaId } = params;
   const { tab = 'menu' } = searchParams;
-
+  
   return <CafeteriaDetailView cafeteriaId={cafeteriaId} activeTab={tab} />;
 };
 ```
 
 ### 3. Metadata Generation
-
 ```typescript
 // app/(auth)/cafeterias/[cafeteriaId]/page.tsx
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const cafeteria = await getCafeteria(params.cafeteriaId);
-
+  
   return {
     title: cafeteria.name,
     description: `${cafeteria.name}의 메뉴와 리뷰를 확인하세요`,
@@ -143,7 +135,6 @@ export async function generateMetadata({
 ```
 
 ### 4. Loading and Error UI
-
 ```typescript
 // app/(auth)/cafeterias/loading.tsx
 export default function Loading() {
@@ -159,7 +150,6 @@ export default function Error({ error, reset }: { error: Error; reset: () => voi
 ```
 
 ### 5. Layout Files
-
 ```typescript
 // app/(auth)/layout.tsx - Authentication layout
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
@@ -205,6 +195,5 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
 ---
 
 For detailed component architecture, layer responsibilities, naming conventions, and import patterns, see:
-
 - **[claude/frontend.md](./frontend.md)** - Complete component architecture rules
 - **[claude/packages.md](./packages.md)** - Import patterns and package usage

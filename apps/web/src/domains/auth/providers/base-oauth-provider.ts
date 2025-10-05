@@ -1,3 +1,4 @@
+import { AuthError } from "../errors/auth-error";
 import type {
   ExchangeTokenParams,
   GetAuthorizeUrlParams,
@@ -5,7 +6,6 @@ import type {
   ProviderType,
   Session,
 } from "../types";
-import { AuthError } from "../types/errors";
 import { createDeviceInfo } from "../utils/device";
 
 /**

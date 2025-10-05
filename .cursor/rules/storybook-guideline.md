@@ -562,7 +562,7 @@ const meta: Meta<typeof _Component> = {
     // Color options
     color: {
       control: "select",
-      options: Object.keys(vars.colors.$scale), // [main, zinc, red, yellow, main, blue, purple ...]
+      options: Object.keys(vars.colors.$scale), // [main, zinc, red, yellow, green, blue, ...]
     },
 
     // Shadow options

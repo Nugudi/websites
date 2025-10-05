@@ -1,7 +1,7 @@
-import { ProfilePageView } from "@/src/domains/auth/profile/ui/views/profile-page-view";
+import { UserProfileView } from "@/src/domains/user/ui/views/user-profile-view";
 
 const ProfilePage = () => {
-  return <ProfilePageView />;
+  return <UserProfileView />;
 };
 
 export default ProfilePage;

@@ -2,7 +2,7 @@
 
 import { Body, Box, Emphasis, VStack } from "@nugudi/react-components-layout";
 import { MenuCard } from "@nugudi/react-components-menu-card";
-import { getMockCafeteriaData } from "../../../constants/mock-data";
+import { getMockCafeteriaData } from "../../../mocks/cafeteria-mock-data";
 import type { CafeteriaDetail } from "../../../types/cafeteria-detail";
 import * as styles from "./index.css";
 

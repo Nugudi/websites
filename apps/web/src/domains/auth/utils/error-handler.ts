@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { logger } from "@/src/lib/logger";
-import { AuthError } from "../types/errors";
+import { logger } from "@/src/shared/utils/logger";
+import { AuthError } from "../errors/auth-error";
 
 /**
  * 중앙화된 인증 에러 핸들러
