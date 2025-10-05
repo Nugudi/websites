@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { logger } from "@/src/lib/logger";
+import { logger } from "@/src/shared/utils/logger";
 import { AuthError } from "../errors/auth-error";
 
 /**

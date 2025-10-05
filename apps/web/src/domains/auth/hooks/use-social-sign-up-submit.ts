@@ -1,7 +1,7 @@
 import { signUpSocial } from "@nugudi/api";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { logger } from "@/src/lib/logger";
+import { logger } from "@/src/shared/utils/logger";
 import { getOrCreateDeviceId } from "../actions/get-or-create-device-id";
 import { SOCIAL_SIGN_UP_STORE_KEY } from "../constants/social-sign-up";
 import { AuthError } from "../errors/auth-error";

@@ -2,7 +2,7 @@ import { logout as logoutAPI, refreshToken } from "@nugudi/api";
 import * as jose from "jose";
 import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
-import { logger } from "@/src/lib/logger";
+import { logger } from "@/src/shared/utils/logger";
 import { AuthError } from "../errors/auth-error";
 import { providerRegistry } from "../providers/provider-registry";
 import {

@@ -4,7 +4,7 @@ import { auth } from "@/src/domains/auth";
 import { SESSION_COOKIE_MAX_AGE } from "@/src/domains/auth/constants/session";
 import { AuthError } from "@/src/domains/auth/errors/auth-error";
 import { isTokenExpired } from "@/src/domains/auth/utils/jwt";
-import { logger } from "@/src/lib/logger";
+import { logger } from "@/src/shared/utils/logger";
 
 const PUBLIC_PATHS = ["/auth", "/api/auth"];
 const LOGIN_PATH = "/auth/login";
