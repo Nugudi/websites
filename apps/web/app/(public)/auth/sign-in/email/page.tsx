@@ -1,7 +1,7 @@
-import { SignInEmailView } from "@/src/domains/auth/sign-in/ui/views/sign-in-email-view";
+import { AuthSignInEmailView } from "@/src/domains/auth/ui/views/auth-sign-in-email-view";
 
 const SignInEmailPage = () => {
-  return <SignInEmailView />;
+  return <AuthSignInEmailView />;
 };
 
 export default SignInEmailPage;

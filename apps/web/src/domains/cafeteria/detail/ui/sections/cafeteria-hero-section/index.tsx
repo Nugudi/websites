@@ -2,7 +2,7 @@
 
 import { VStack } from "@nugudi/react-components-layout";
 import Image from "next/image";
-import { getMockCafeteriaData } from "../../../constants/mock-data";
+import { getMockCafeteriaData } from "../../../mocks/cafeteria-mock-data";
 import { CafeteriaInfoCard } from "../../components/cafeteria-info-card";
 import * as styles from "./index.css";
 

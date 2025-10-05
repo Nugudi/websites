@@ -1,4 +1,4 @@
-export const STAMP_ICON = {
+export const STAMP_LAYOUT = {
   SIZE: 140,
   GAP: 20,
 };

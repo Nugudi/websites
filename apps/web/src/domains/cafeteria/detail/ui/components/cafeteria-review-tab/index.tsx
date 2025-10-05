@@ -6,7 +6,7 @@ import type { Badge } from "@nugudi/react-components-review-card";
 import { ReviewCard } from "@nugudi/react-components-review-card";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { getMockReviews } from "../../../constants/mock-data";
+import { getMockReviews } from "../../../mocks/cafeteria-mock-data";
 import * as styles from "./index.css";
 
 interface Review {

@@ -1,5 +1,5 @@
 import { Flex } from "@nugudi/react-components-layout";
-import { NavBar } from "@/src/shared/ui/components/nav-bar";
+import { NavBar } from "@/src/shared/components/nav-bar";
 import { NotificationListSection } from "../../sections/notification-list-section";
 import * as styles from "./index.css";
 

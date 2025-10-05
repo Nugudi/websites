@@ -14,6 +14,5 @@ export interface CookieOptions
     Parameters<Awaited<ReturnType<typeof cookies>>["set"]>[2]
   > {}
 
-export * from "./errors";
 export * from "./provider";
 export * from "./session";

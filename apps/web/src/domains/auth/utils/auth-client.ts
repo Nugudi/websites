@@ -2,13 +2,10 @@ import { logout as logoutAPI, refreshToken } from "@nugudi/api";
 import * as jose from "jose";
 import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
-import { providerRegistry } from "@/src/domains/auth/types/registry";
-import { handleAuthError } from "@/src/domains/auth/utils/error-handler";
-import { isTokenExpired } from "@/src/domains/auth/utils/jwt";
-import { state } from "@/src/domains/auth/utils/url";
 import { logger } from "@/src/lib/logger";
+import { AuthError } from "../errors/auth-error";
+import { providerRegistry } from "../providers/provider-registry";
 import {
-  AuthError,
   type ClientSession,
   type CookieOptions,
   isOAuthProvider,
@@ -16,6 +13,9 @@ import {
   type Session,
   toClientSession,
 } from "../types";
+import { handleAuthError } from "./error-handler";
+import { isTokenExpired } from "./jwt";
+import { state } from "./url";
 
 export interface AuthClientConfig {
   secret: string;

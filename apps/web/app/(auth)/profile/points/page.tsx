@@ -1,7 +1,7 @@
-import { AuthPointsView } from "@/src/domains/auth/points/ui/views/points-view";
+import { UserPointsView } from "@/src/domains/user/ui/views/user-points-view";
 
 const ProfilePointsPage = () => {
-  return <AuthPointsView />;
+  return <UserPointsView />;
 };
 
 export default ProfilePointsPage;

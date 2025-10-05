@@ -3,7 +3,7 @@
 import { Button } from "@nugudi/react-components-button";
 import { Flex } from "@nugudi/react-components-layout";
 import { useRouter } from "next/navigation";
-import { StampCard } from "@/src/domains/stamp/ui/components/stamp-card";
+import { StampCard } from "../../components/stamp-card";
 import * as styles from "./index.css";
 
 export const StampCollectionSection = () => {

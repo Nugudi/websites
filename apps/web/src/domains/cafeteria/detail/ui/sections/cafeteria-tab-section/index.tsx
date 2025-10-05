@@ -4,7 +4,7 @@ import { Backdrop } from "@nugudi/react-components-backdrop";
 import { VStack } from "@nugudi/react-components-layout";
 import { Tabs } from "@nugudi/react-components-tab";
 import { useState } from "react";
-import { getMockCafeteriaData } from "../../../constants/mock-data";
+import { getMockCafeteriaData } from "../../../mocks/cafeteria-mock-data";
 import { CafeteriaInfoTab } from "../../components/cafeteria-info-tab";
 import { CafeteriaMenuBottomSheet } from "../../components/cafeteria-menu-bottom-sheet";
 import { CafeteriaReviewTab } from "../../components/cafeteria-review-tab";

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ReviewWriteView } from "@/src/domains/cafeteria/reviews/write/ui/views/review-write-view";
+import { CafeteriaReviewWriteView } from "@/src/domains/cafeteria/review/write/ui/views/cafeteria-review-write-view";
 
 interface PageProps {
   params: Promise<{
@@ -17,7 +17,10 @@ const CafeteriaReviewWritePage = async ({ params }: PageProps) => {
 
   // TODO: Fetch cafeteria info from API
   return (
-    <ReviewWriteView cafeteriaId={cafeteriaId} cafeteriaName="더용민푸드" />
+    <CafeteriaReviewWriteView
+      cafeteriaId={cafeteriaId}
+      cafeteriaName="더용민푸드"
+    />
   );
 };
 
