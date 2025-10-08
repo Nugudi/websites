@@ -3,10 +3,7 @@ import { createContext, useContext } from "react";
 export interface UseTabsContext {
   value: string;
   onChange: (value: string) => void;
-  contentIndex: number;
-  setContentIndex: (index: number) => void;
-  valueToIndexMap: Map<string, number>;
-  indexToValueMap: Map<number, string>;
+  scrollOffset: number;
 }
 
 const TabsContext = createContext<UseTabsContext | null>(null);

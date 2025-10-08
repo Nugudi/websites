@@ -8,6 +8,7 @@ export const container = style({
   top: 0,
   zIndex: 1,
   transition: "transform 0.3s ease",
+  height: vars.box.spacing[12],
 });
 
 export const backButton = style({

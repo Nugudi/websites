@@ -32,7 +32,6 @@
     "@vanilla-extract/recipes": "^0.5.7",
     "clsx": "^2.1.1",
     "embla-carousel": "^8.5.1",
-    "embla-carousel-auto-height": "^8.5.1",
     "embla-carousel-react": "^8.5.1"
   },
   "devDependencies": {

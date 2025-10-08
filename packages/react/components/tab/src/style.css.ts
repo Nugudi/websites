@@ -4,22 +4,28 @@ import { recipe } from "@vanilla-extract/recipes";
 
 export const tabsContainerStyle = style({
   width: "100%",
-  height: "100dvh",
-  display: "flex",
-  flexDirection: "column",
   WebkitTapHighlightColor: "transparent",
+});
+
+export const tabListWrapper = style({
+  position: "sticky",
+  top: 0,
+  backgroundColor: vars.colors.$static.light.color.white,
+  zIndex: 100,
+  width: "100%",
+  borderBottom: `1px solid ${vars.colors.$scale.zinc[200]}`,
 });
 
 export const tabListStyle = recipe({
   base: {
     display: "flex",
-    position: "relative",
+    width: "100%",
   },
 });
 
 export const tabStyle = recipe({
   base: {
-    padding: "12px 16px",
+    padding: "16px",
     border: "none",
     background: "transparent",
     cursor: "pointer",
@@ -71,36 +77,7 @@ export const tabStyle = recipe({
 
 export const tabPanelStyle = style({
   padding: "8px 16px",
+  width: "100%",
   flexShrink: 0,
-  width: "100%",
-  height: "100%",
-  overflow: "auto",
   boxSizing: "border-box",
-});
-
-export const carouselViewportStyle = style({
-  overflow: "hidden",
-  width: "100%",
-  flex: 1,
-  touchAction: "manipulation",
-  WebkitOverflowScrolling: "touch",
-});
-
-export const carouselContainerStyle = style({
-  display: "flex",
-  height: "100%",
-  transition: "height 300ms ease",
-  backfaceVisibility: "hidden",
-  touchAction: "manipulation",
-  // 드래그 가능하도록 설정
-  userSelect: "none",
-  WebkitUserSelect: "none",
-  MozUserSelect: "none",
-  msUserSelect: "none",
-  cursor: "grab",
-  // iOS Safari 호환성
-  WebkitOverflowScrolling: "touch",
-  ":active": {
-    cursor: "grabbing",
-  },
 });
