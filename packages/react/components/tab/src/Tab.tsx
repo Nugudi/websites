@@ -104,7 +104,6 @@ const TabPanel = ({ value, children, className }: TabPanelProps) => {
     scrollOffset,
   } = useTabsContext();
   const { tabPanelProps, isActive } = useTabPanel({ value }, selectedValue);
-  const isFirstRender = useRef(true);
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -116,28 +115,25 @@ const TabPanel = ({ value, children, className }: TabPanelProps) => {
   }, [value, valueToIndexMap, indexToValueMap]);
 
   useEffect(() => {
-    if (isActive && !isFirstRender.current) {
-      // DOM 업데이트 후 스크롤 처리
-      requestAnimationFrame(() => {
-        if (!panelRef.current) return;
+    if (!isActive) return;
 
-        const elementTop = panelRef.current.getBoundingClientRect().top;
-        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    // 탭 전환 시 DOM 업데이트 후 스크롤 처리
+    requestAnimationFrame(() => {
+      if (!panelRef.current) return;
 
-        // TabPanel이 화면 위쪽에 가려져 있을 때만 스크롤
-        if (elementTop < scrollOffset) {
-          const offsetPosition = scrollTop + elementTop - scrollOffset - 8; // 8px extra padding
+      const elementTop = panelRef.current.getBoundingClientRect().top;
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
 
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: "smooth",
-          });
-        }
-      });
-    }
-    if (isFirstRender.current && isActive) {
-      isFirstRender.current = false;
-    }
+      // TabPanel이 화면 위쪽에 가려져 있을 때만 스크롤
+      if (elementTop < scrollOffset) {
+        const offsetPosition = scrollTop + elementTop - scrollOffset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth",
+        });
+      }
+    });
   }, [isActive, scrollOffset]);
 
   if (!isActive) {
