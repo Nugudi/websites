@@ -22,7 +22,7 @@ export const CafeteriaTabSection = ({
 
   return (
     <>
-      <Tabs defaultValue="info">
+      <Tabs defaultValue="info" scrollOffset={48}>
         <Tabs.List>
           <Tabs.Item value="info">식당 정보</Tabs.Item>
           <Tabs.Item value="review">리뷰</Tabs.Item>

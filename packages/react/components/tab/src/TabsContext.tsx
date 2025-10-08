@@ -1,3 +1,4 @@
+import type { RefObject } from "react";
 import { createContext, useContext } from "react";
 
 export interface UseTabsContext {
@@ -7,6 +8,8 @@ export interface UseTabsContext {
   setContentIndex: (index: number) => void;
   valueToIndexMap: Map<string, number>;
   indexToValueMap: Map<number, string>;
+  tabListRef: RefObject<HTMLDivElement | null>;
+  scrollOffset: number;
 }
 
 const TabsContext = createContext<UseTabsContext | null>(null);
