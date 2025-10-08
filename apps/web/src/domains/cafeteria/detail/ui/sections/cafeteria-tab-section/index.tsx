@@ -23,12 +23,10 @@ export const CafeteriaTabSection = ({
   return (
     <>
       <Tabs defaultValue="info">
-        <VStack gap={16}>
-          <Tabs.List>
-            <Tabs.Item value="info">식당 정보</Tabs.Item>
-            <Tabs.Item value="review">리뷰</Tabs.Item>
-          </Tabs.List>
-        </VStack>
+        <Tabs.List>
+          <Tabs.Item value="info">식당 정보</Tabs.Item>
+          <Tabs.Item value="review">리뷰</Tabs.Item>
+        </Tabs.List>
 
         <Tabs.Panel value="info">
           <CafeteriaInfoTab cafeteriaId={cafeteriaId} />

@@ -1,6 +1,5 @@
-import AutoHeight from "embla-carousel-auto-height";
 import useEmblaCarousel from "embla-carousel-react";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useTabsContext } from "./TabsContext";
 
 export interface UseTabsCarouselProps {
@@ -21,22 +20,17 @@ export const useTabsCarousel = (
   const api = useTabsContext({ strict: false });
   const isInitialScroll = useRef(true);
 
-  const plugins = useMemo(() => [AutoHeight()], []);
-
-  const [emblaRef, emblaApi] = useEmblaCarousel(
-    {
-      loop: props.loop,
-      dragThreshold: props.dragThreshold || 5,
-      duration: 20,
-      watchDrag: true,
-      axis: "x",
-      dragFree: false,
-      containScroll: "trimSnaps",
-      skipSnaps: false,
-      startIndex: 0,
-    },
-    plugins,
-  );
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: props.loop,
+    dragThreshold: props.dragThreshold || 5,
+    duration: 20,
+    watchDrag: true,
+    axis: "x",
+    dragFree: false,
+    containScroll: "trimSnaps",
+    skipSnaps: false,
+    startIndex: 0,
+  });
 
   // embla select 이벤트 처리
   useEffect(() => {
@@ -96,7 +90,6 @@ export const useTabsCarousel = (
     updateTabIndex,
     rootProps: {
       "data-carousel": "",
-      "data-auto-height": "",
     },
   };
 };
