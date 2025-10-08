@@ -81,12 +81,3 @@ export const tabPanelStyle = style({
   flexShrink: 0,
   boxSizing: "border-box",
 });
-
-export const carouselViewportStyle = style({
-  overflow: "hidden",
-  width: "100%",
-});
-
-export const carouselContainerStyle = style({
-  display: "flex",
-});

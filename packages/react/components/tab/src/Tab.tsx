@@ -1,5 +1,5 @@
 import { clsx } from "clsx";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import {
   tabListStyle,
   tabListWrapper,
@@ -22,30 +22,13 @@ const Tabs = ({
     defaultValue,
   });
 
-  const [contentIndex, setContentIndex] = useState(0);
-  const valueToIndexMap = useRef(new Map<string, number>());
-  const indexToValueMap = useRef(new Map<number, string>());
-  const tabListRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    return () => {
-      valueToIndexMap.current.clear();
-      indexToValueMap.current.clear();
-    };
-  }, []);
-
   const contextValue = useMemo(
     () => ({
       value,
       onChange: handleChange,
-      contentIndex,
-      setContentIndex,
-      valueToIndexMap: valueToIndexMap.current,
-      indexToValueMap: indexToValueMap.current,
-      tabListRef,
       scrollOffset,
     }),
-    [value, handleChange, contentIndex, scrollOffset],
+    [value, handleChange, scrollOffset],
   );
 
   return (
@@ -58,11 +41,8 @@ const Tabs = ({
 };
 
 const TabList = ({ children, className }: TabListProps) => {
-  const { tabListRef } = useTabsContext();
-
   return (
     <div
-      ref={tabListRef}
       role="tablist"
       className={clsx(tabListStyle(), tabListWrapper, className)}
     >
@@ -97,22 +77,9 @@ const Tab = ({ value, children, disabled, className, onClick }: TabProps) => {
 };
 
 const TabPanel = ({ value, children, className }: TabPanelProps) => {
-  const {
-    value: selectedValue,
-    valueToIndexMap,
-    indexToValueMap,
-    scrollOffset,
-  } = useTabsContext();
+  const { value: selectedValue, scrollOffset } = useTabsContext();
   const { tabPanelProps, isActive } = useTabPanel({ value }, selectedValue);
   const panelRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const currentSize = valueToIndexMap.size;
-    if (!valueToIndexMap.has(value)) {
-      valueToIndexMap.set(value, currentSize);
-      indexToValueMap.set(currentSize, value);
-    }
-  }, [value, valueToIndexMap, indexToValueMap]);
 
   useEffect(() => {
     if (!isActive) return;
