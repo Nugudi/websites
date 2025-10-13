@@ -1,5 +1,5 @@
 import { clsx } from "clsx";
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   tabListStyle,
   tabListWrapper,
@@ -21,14 +21,21 @@ const Tabs = ({
   const { value, onChange: handleChange } = useTabs({
     defaultValue,
   });
+  const [tabListRef, setTabListRef] = useState<HTMLDivElement | null>(null);
+
+  const handleSetTabListRef = useCallback((ref: HTMLDivElement) => {
+    setTabListRef(ref);
+  }, []);
 
   const contextValue = useMemo(
     () => ({
       value,
       onChange: handleChange,
       scrollOffset,
+      tabListRef,
+      setTabListRef: handleSetTabListRef,
     }),
-    [value, handleChange, scrollOffset],
+    [value, handleChange, scrollOffset, tabListRef, handleSetTabListRef],
   );
 
   return (
@@ -41,10 +48,21 @@ const Tabs = ({
 };
 
 const TabList = ({ children, className }: TabListProps) => {
+  const tabListRef = useRef<HTMLDivElement>(null);
+  const { setTabListRef, scrollOffset } = useTabsContext();
+
+  useEffect(() => {
+    if (setTabListRef && tabListRef.current) {
+      setTabListRef(tabListRef.current);
+    }
+  }, [setTabListRef]);
+
   return (
     <div
+      ref={tabListRef}
       role="tablist"
       className={clsx(tabListStyle(), tabListWrapper, className)}
+      style={{ top: `${scrollOffset}px` }}
     >
       {children}
     </div>
@@ -77,7 +95,7 @@ const Tab = ({ value, children, disabled, className, onClick }: TabProps) => {
 };
 
 const TabPanel = ({ value, children, className }: TabPanelProps) => {
-  const { value: selectedValue, scrollOffset } = useTabsContext();
+  const { value: selectedValue, scrollOffset, tabListRef } = useTabsContext();
   const { tabPanelProps, isActive } = useTabPanel({ value }, selectedValue);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -88,12 +106,19 @@ const TabPanel = ({ value, children, className }: TabPanelProps) => {
     requestAnimationFrame(() => {
       if (!panelRef.current) return;
 
+      // tabListRef가 없거나 offsetHeight가 없으면 스크롤 처리 건너뛰기
+      const tabListHeight = tabListRef?.offsetHeight ?? 0;
+
+      // tabList의 높이가 없으면 스크롤 처리하지 않음
+      if (tabListHeight === 0) return;
+
+      const totalOffset = scrollOffset + tabListHeight;
       const elementTop = panelRef.current.getBoundingClientRect().top;
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
 
       // TabPanel이 화면 위쪽에 가려져 있을 때만 스크롤
-      if (elementTop < scrollOffset) {
-        const offsetPosition = scrollTop + elementTop - scrollOffset;
+      if (elementTop < totalOffset) {
+        const offsetPosition = scrollTop + elementTop - totalOffset;
 
         window.scrollTo({
           top: offsetPosition,
@@ -101,7 +126,7 @@ const TabPanel = ({ value, children, className }: TabPanelProps) => {
         });
       }
     });
-  }, [isActive, scrollOffset]);
+  }, [isActive, scrollOffset, tabListRef]);
 
   if (!isActive) {
     return null;
