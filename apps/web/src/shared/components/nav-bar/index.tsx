@@ -9,12 +9,16 @@ interface NavBarProps {
   title?: string;
   showBackButton?: boolean;
   onBackClick?: () => void;
+  background?: "white" | "transparent" | "blur";
+  padding?: "none" | "default";
 }
 
 export const NavBar = ({
   title,
   showBackButton = true,
   onBackClick,
+  background,
+  padding,
 }: NavBarProps) => {
   const router = useRouter();
 
@@ -27,7 +31,7 @@ export const NavBar = ({
   };
 
   return (
-    <header className={styles.container}>
+    <header className={styles.container({ background, padding })}>
       {showBackButton && (
         <Button
           size="sm"
