@@ -10,6 +10,7 @@ import {
 import { TabsProvider, useTabsContext } from "./TabsContext";
 import type { TabListProps, TabPanelProps, TabProps, TabsProps } from "./types";
 import { useTab, useTabPanel, useTabs } from "./useTab";
+import { useTabScroll } from "./useTabScroll";
 
 /**
  * Tabs 컴포넌트 - 탭 UI의 최상위 컨테이너
@@ -30,7 +31,7 @@ const Tabs = ({
 
   const [tabListRef, setTabListRef] = useState<HTMLDivElement | null>(null);
 
-  const handleSetTabListRef = useCallback((ref: HTMLDivElement) => {
+  const handleSetTabListRef = useCallback((ref: HTMLDivElement | null) => {
     setTabListRef(ref);
   }, []);
 
@@ -62,10 +63,11 @@ const TabList = ({ children, className }: TabListProps) => {
 
   // TabList가 마운트되면 부모 Tabs 컴포넌트에 ref 전달
   // 이렇게 하면 TabPanel에서 TabList의 높이를 계산할 수 있음
+  // 언마운트 시 ref를 정리하여 메모리 누수 방지
   useEffect(() => {
-    if (setTabListRef && tabListRef.current) {
-      setTabListRef(tabListRef.current);
-    }
+    const node = tabListRef.current;
+    if (setTabListRef) setTabListRef(node);
+    return () => setTabListRef?.(null);
   }, [setTabListRef]);
 
   return (
@@ -128,40 +130,12 @@ const TabPanel = ({ value, children, className }: TabPanelProps) => {
   const panelRef = useRef<HTMLDivElement>(null);
 
   // 탭 전환 시 스크롤 처리
-  useEffect(() => {
-    if (!isActive) return;
-
-    requestAnimationFrame(() => {
-      if (!panelRef.current) return;
-
-      const tabListHeight = tabListRef?.offsetHeight ?? 0;
-
-      if (tabListHeight === 0 && scrollOffset === 0) return;
-
-      // 전체 오프셋 = NavBar 높이 + TabList 높이
-      const totalOffset = scrollOffset + tabListHeight;
-
-      // 패널의 현재 화면상 위치 (viewport 기준)
-      const elementTop = panelRef.current.getBoundingClientRect().top;
-
-      // 현재 페이지의 스크롤 위치
-      const scrollTop = window.scrollY || document.documentElement.scrollTop;
-
-      // 패널이 TabList에 가려져 있는지 확인
-      if (elementTop < totalOffset) {
-        // 현재 스크롤 위치 + 패널의 상대 위치 - 전체 오프셋
-        const offsetPosition = Math.max(
-          0,
-          scrollTop + elementTop - totalOffset,
-        );
-
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: "smooth",
-        });
-      }
-    });
-  }, [isActive, scrollOffset, tabListRef]);
+  useTabScroll({
+    isActive,
+    panelRef,
+    scrollOffset,
+    tabListRef,
+  });
 
   if (!isActive) {
     return null;

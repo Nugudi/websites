@@ -14,7 +14,7 @@ export interface UseTabsContext {
   onChange: (value: string) => void;
   scrollOffset: number;
   tabListRef?: HTMLDivElement | null;
-  setTabListRef?: (ref: HTMLDivElement) => void;
+  setTabListRef?: (ref: HTMLDivElement | null) => void;
 }
 
 const TabsContext = createContext<UseTabsContext | null>(null);
