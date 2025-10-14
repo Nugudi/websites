@@ -1,5 +1,17 @@
 import { classes, vars } from "@nugudi/themes";
-import { style } from "@vanilla-extract/css";
+import { keyframes, style } from "@vanilla-extract/css";
+
+const bounceAnimation = keyframes({
+  "0%": {
+    transform: "scale(1)",
+  },
+  "50%": {
+    transform: "scale(1.05)",
+  },
+  "100%": {
+    transform: "scale(1)",
+  },
+});
 
 export const container = style({
   display: "flex",
@@ -7,7 +19,9 @@ export const container = style({
   alignItems: "center",
   padding: "8px 0",
   backgroundColor: vars.colors.$static.light.color.white,
-  boxShadow: "rgb(238, 238, 238) 0px 1px 0px inset",
+  borderTopRightRadius: vars.box.radii["3xl"],
+  borderTopLeftRadius: vars.box.radii["3xl"],
+  borderTop: `1px solid ${vars.colors.$scale.zinc[100]}`,
   position: "fixed",
   bottom: 0,
   zIndex: 1,
@@ -26,18 +40,13 @@ export const tab = style({
   cursor: "pointer",
   transition: "all 0.3s ease",
   minWidth: "60px",
-  color: vars.colors.$scale.zinc[400],
+  color: vars.colors.$scale.zinc[300],
   textDecoration: "none",
-
-  selectors: {
-    "&:hover": {
-      transform: "scale(1.05)",
-    },
-  },
 });
 
 export const active = style({
-  color: vars.colors.$scale.main[500],
+  color: vars.colors.$scale.zinc[500],
+  animation: `${bounceAnimation} 0.5s ease-out`,
 });
 
 export const label = style({

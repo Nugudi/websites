@@ -18,7 +18,7 @@ export const AppHeader = () => {
           <NotiIcon
             width={24}
             height={24}
-            color={vars.colors.$static.light.color.black}
+            color={vars.colors.$scale.zinc[400]}
           />
         </Link>
       </HStack>
