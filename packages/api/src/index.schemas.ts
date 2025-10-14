@@ -313,6 +313,167 @@ export interface SuccessResponseEmailVerificationResponse {
 }
 
 /**
+ * 영업 요일 (예: 평일만 영업하는 경우)
+ */
+export type BusinessHoursRequestOperatingDaysItem =
+  | "MONDAY"
+  | "TUESDAY"
+  | "WEDNESDAY"
+  | "THURSDAY"
+  | "FRIDAY"
+  | "SATURDAY"
+  | "SUNDAY";
+/**
+ * 구내식당 영업시간 정보
+ */
+export interface BusinessHoursRequest {
+  lunchStartTime?: LocalTime;
+  lunchEndTime?: LocalTime;
+  dinnerStartTime?: LocalTime;
+  dinnerEndTime?: LocalTime;
+  /** 영업 요일 (예: 평일만 영업하는 경우) */
+  operatingDays: BusinessHoursRequestOperatingDaysItem[];
+  /** 특별 휴무일 (공휴일 등) */
+  specialHolidays?: Date[];
+  /** 영업시간 비고 */
+  note?: string;
+}
+
+/**
+ * 저녁 종료 시간
+ */
+export interface LocalTime {
+  hour?: number;
+  minute?: number;
+  second?: number;
+  nano?: number;
+}
+
+export interface RegisterCafeteriaRequest {
+  name: string;
+  address: string;
+  addressDetail: string;
+  latitude?: number;
+  longitude?: number;
+  phone?: string;
+  description?: string;
+  oneLineIntro?: string;
+  mealTicketPrice?: number;
+  mainImageFileId?: number;
+  businessHours?: BusinessHoursRequest;
+  takeoutAvailable: boolean;
+}
+
+export interface RegisterCafeteriaResponse {
+  cafeteriaId?: number;
+  name?: string;
+  address?: string;
+  addressDetail?: string;
+  latitude?: number;
+  longitude?: number;
+  phone?: string;
+  description?: string;
+  oneLineIntro?: string;
+  mealTicketPrice?: number;
+  mainImageFileId?: number;
+  takeoutAvailable?: boolean;
+  createdAt?: Date;
+}
+
+export interface SuccessResponseRegisterCafeteriaResponse {
+  timestamp?: Date;
+  success?: boolean;
+  code?: number;
+  message?: string;
+  data?: RegisterCafeteriaResponse;
+}
+
+export type MenuItemDtoCategory =
+  | "RICE"
+  | "SOUP"
+  | "MAIN_DISH"
+  | "SIDE_DISH"
+  | "KIMCHI"
+  | "SALAD"
+  | "DESSERT"
+  | "DRINK"
+  | "SPECIAL";
+/**
+ * 메뉴 항목 목록
+ */
+export interface MenuItemDto {
+  name?: string;
+  category?: MenuItemDtoCategory;
+  calories?: number;
+  caloriesSource?: string;
+  displayOrder?: number;
+}
+
+/**
+ * 식사 시간대 (BREAKFAST, LUNCH, DINNER)
+ */
+export type RegisterCafeteriaMenuRequestMealType =
+  | "BREAKFAST"
+  | "LUNCH"
+  | "DINNER";
+/**
+ * 구내식당 식단표 등록 요청
+ */
+export interface RegisterCafeteriaMenuRequest {
+  /** 구내식당 ID */
+  restaurantId: number;
+  /** 식단 날짜 */
+  menuDate: Date;
+  /** 식사 시간대 (BREAKFAST, LUNCH, DINNER) */
+  mealType: RegisterCafeteriaMenuRequestMealType;
+  /** 메뉴 항목 목록 */
+  menuItems: MenuItemDto[];
+  /** 메뉴 이미지 파일 ID */
+  menuImageFileId?: number;
+  /** 특이사항 (예: 알레르기 정보, 추가 안내사항) */
+  specialNote?: string;
+}
+
+/**
+ * 식사 시간대
+ */
+export type RegisterCafeteriaMenuResponseMealType =
+  | "BREAKFAST"
+  | "LUNCH"
+  | "DINNER";
+/**
+ * 구내식당 식단표 등록 응답
+ */
+export interface RegisterCafeteriaMenuResponse {
+  /** 식단표 ID */
+  menuId?: number;
+  /** 구내식당 ID */
+  restaurantId?: number;
+  /** 식단 날짜 */
+  menuDate?: Date;
+  /** 식사 시간대 */
+  mealType?: RegisterCafeteriaMenuResponseMealType;
+  /** 메뉴 항목 목록 */
+  menuItems?: MenuItemDto[];
+  /** 총 칼로리 */
+  totalCalories?: number;
+  /** 메뉴 이미지 파일 ID */
+  menuImageFileId?: number;
+  /** 특이사항 */
+  specialNote?: string;
+  /** 등록 일시 */
+  createdAt?: Date;
+}
+
+export interface SuccessResponseRegisterCafeteriaMenuResponse {
+  timestamp?: Date;
+  success?: boolean;
+  code?: number;
+  message?: string;
+  data?: RegisterCafeteriaMenuResponse;
+}
+
+/**
  * 닉네임 사용 가능 여부 확인 응답
  */
 export interface NicknameCheckResponse {
@@ -367,6 +528,105 @@ export interface UserProfileDTO {
   joinDate?: Date;
 }
 
+export interface BusinessHoursDTO {
+  lunch?: TimeRangeDTO;
+  dinner?: TimeRangeDTO;
+  note?: string;
+}
+
+export interface CafeteriaInfoDTO {
+  id?: number;
+  name?: string;
+  address?: string;
+  addressDetail?: string;
+  latitude?: number;
+  longitude?: number;
+  phone?: string;
+  mealTicketPrice?: number;
+  takeoutAvailable?: boolean;
+  businessHours?: BusinessHoursDTO;
+}
+
+export interface GetCafeteriaWithMenuResponse {
+  cafeteria?: CafeteriaInfoDTO;
+  menus?: MenuInfoDTO[];
+}
+
+export interface MenuInfoDTO {
+  mealType?: string;
+  menuItems?: MenuItemDto[];
+  specialNote?: string;
+  nutritionInfo?: NutritionInfoDTO;
+}
+
+export interface NutritionInfoDTO {
+  totalCalories?: number;
+  dailyPercentage?: number;
+  walkingSteps?: number;
+  runningKm?: number;
+  cyclingKm?: number;
+  stairsFloors?: number;
+}
+
+export interface PageInfo {
+  nextCursor?: number;
+  size?: number;
+  hasNext?: boolean;
+}
+
+export interface PageResponseGetCafeteriaWithMenuResponse {
+  timestamp?: Date;
+  success?: boolean;
+  code?: number;
+  message?: string;
+  data?: GetCafeteriaWithMenuResponse[];
+  pageInfo?: PageInfo;
+}
+
+export interface TimeRangeDTO {
+  start?: LocalTime;
+  end?: LocalTime;
+}
+
+export interface GetCafeteriaResponse {
+  cafeteria?: CafeteriaInfoDTO;
+}
+
+export interface SuccessResponseGetCafeteriaResponse {
+  timestamp?: Date;
+  success?: boolean;
+  code?: number;
+  message?: string;
+  data?: GetCafeteriaResponse;
+}
+
+export interface GetCafeteriaMenuResponse {
+  menuDate?: Date;
+  menus?: MenuInfoDTO[];
+}
+
+export interface SuccessResponseGetCafeteriaMenuResponse {
+  timestamp?: Date;
+  success?: boolean;
+  code?: number;
+  message?: string;
+  data?: GetCafeteriaMenuResponse;
+}
+
+export interface GetCafeteriaMenuAvailabilityResponse {
+  year?: number;
+  month?: number;
+  daysWithMenu?: number[];
+}
+
+export interface SuccessResponseGetCafeteriaMenuAvailabilityResponse {
+  timestamp?: Date;
+  success?: boolean;
+  code?: number;
+  message?: string;
+  data?: GetCafeteriaMenuAvailabilityResponse;
+}
+
 export interface GetNaverAuthorizeResponse {
   authorizeUrl?: string;
 }
@@ -412,6 +672,42 @@ export type CheckNicknameAvailabilityParams = {
    * 확인할 닉네임 (2~12자, 한글/영문/숫자만)
    */
   nickname: string;
+};
+
+export type GetCafeteriasWithMenuParams = {
+  /**
+   * 커서 (이전 페이지의 마지막 구내식당 ID, 첫 페이지는 null)
+   */
+  cursor?: number;
+  /**
+   * 조회할 개수 (기본 10개)
+   */
+  size?: number;
+  /**
+   * 조회할 식단표 날짜 (null이면 오늘)
+   */
+  date?: Date;
+};
+
+export type GetCafeteriaMenuByDateParams = {
+  /**
+   * 조회할 식단표 날짜 (null이면 오늘)
+   */
+  date?: Date;
+};
+
+export type GetCafeteriaMenuAvailabilityParams = {
+  /**
+   * 조회할 년도 (2025 이상)
+   * @minimum 2025
+   */
+  year: number;
+  /**
+   * 조회할 월 (1-12)
+   * @minimum 1
+   * @maximum 12
+   */
+  month: number;
 };
 
 export type GetNaverAuthorizeUrlParams = {
