@@ -11,3 +11,4 @@ export type {
   UseTabsReturn,
 } from "./types";
 export { useTab, useTabPanel, useTabs } from "./useTab";
+export { useTabScroll } from "./useTabScroll";

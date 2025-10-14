@@ -4,7 +4,7 @@ export interface TabsProps {
   children: React.ReactNode;
   defaultValue?: string;
   className?: string;
-  style?: React.CSSProperties;
+  scrollOffset?: number;
 }
 
 export interface TabListProps {

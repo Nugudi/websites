@@ -35,7 +35,11 @@ const TabBar = () => {
           aria-label={tab.label}
         >
           <Icon />
-          <span className={styles.label}>{tab.label}</span>
+          <span
+            className={`${styles.label} ${isActive ? styles.activeLabel : ""}`}
+          >
+            {tab.label}
+          </span>
         </Link>
       );
     });
