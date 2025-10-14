@@ -46,7 +46,7 @@ export const tab = style({
 
 export const active = style({
   color: vars.colors.$scale.zinc[500],
-  animation: `${bounceAnimation} 1s ease-in-out`,
+  animation: `${bounceAnimation} 0.5s ease-out`,
 });
 
 export const label = style({

@@ -6,8 +6,16 @@ import { NavigationItem } from "@nugudi/react-components-navigation-item";
 import Link from "next/link";
 import * as styles from "./index.css";
 
+interface MenuItem {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  href: string;
+}
+
 export const BenefitMenuList = () => {
-  const menuItems = [
+  const menuItems: MenuItem[] = [
     // {
     //   id: "mbti",
     //   title: "밥 MBTI 검사하기",
@@ -54,17 +62,9 @@ export const BenefitMenuList = () => {
   );
 };
 
-interface MenuItem {
-  id: string;
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-  href: string;
-}
-
 const MenuItem = ({ item }: { item: MenuItem }) => {
   return (
-    <Link href={item.href} key={item.id} className={styles.linkWrapper}>
+    <Link href={item.href} className={styles.linkWrapper}>
       <NavigationItem
         size="md"
         leftIcon={
