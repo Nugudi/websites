@@ -4,8 +4,7 @@ export interface TabsProps {
   children: React.ReactNode;
   defaultValue?: string;
   className?: string;
-  style?: React.CSSProperties;
-  scrollOffset?: number; // Offset in pixels for scroll position when switching tabs
+  scrollOffset?: number;
 }
 
 export interface TabListProps {
