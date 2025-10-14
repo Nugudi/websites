@@ -51,5 +51,9 @@ export const active = style({
 
 export const label = style({
   ...classes.typography.emphasis.e2,
-  color: "inherit",
+  color: vars.colors.$scale.zinc[400],
+});
+
+export const activeLabel = style({
+  color: vars.colors.$scale.zinc[500],
 });
