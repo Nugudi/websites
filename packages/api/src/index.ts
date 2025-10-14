@@ -28,6 +28,9 @@ import type {
   CheckNicknameAvailabilityParams,
   EmailVerificationRequest,
   EmailVerifyRequest,
+  GetCafeteriaMenuAvailabilityParams,
+  GetCafeteriaMenuByDateParams,
+  GetCafeteriasWithMenuParams,
   GetGoogleAuthorizeUrlParams,
   GetKakaoAuthorizeUrlParams,
   GetNaverAuthorizeUrlParams,
@@ -35,10 +38,16 @@ import type {
   KakaoLoginRequest,
   LocalLoginRequest,
   NaverLoginRequest,
+  PageResponseGetCafeteriaWithMenuResponse,
+  RegisterCafeteriaMenuRequest,
+  RegisterCafeteriaRequest,
   SendEmailVerificationCode200,
   SignUpLocalRequest,
   SignUpSocialRequest,
   SuccessResponseEmailVerifyResponse,
+  SuccessResponseGetCafeteriaMenuAvailabilityResponse,
+  SuccessResponseGetCafeteriaMenuResponse,
+  SuccessResponseGetCafeteriaResponse,
   SuccessResponseGetGoogleAuthorizeResponse,
   SuccessResponseGetKakaoAuthorizeResponse,
   SuccessResponseGetMyProfileResponse,
@@ -47,6 +56,8 @@ import type {
   SuccessResponseLogoutResponse,
   SuccessResponseNicknameCheckResponse,
   SuccessResponseRefreshTokenResponse,
+  SuccessResponseRegisterCafeteriaMenuResponse,
+  SuccessResponseRegisterCafeteriaResponse,
   SuccessResponseSignUpResponse,
   SuccessResponseSocialLoginResponse,
 } from "./index.schemas";
@@ -1209,6 +1220,253 @@ export const useSendEmailVerificationCode = <
 };
 
 /**
+ * 새로운 구내식당을 등록합니다.
+
+필수 정보:
+- 이름 (2~100자)
+- 주소 (최대 255자)
+- 상세 주소 (최대 100자)
+- 영업 요일 (businessHours.operatingDays)
+- 포장 가능 여부 (takeoutAvailable)
+
+선택 정보:
+- 위도/경도
+- 전화번호 (형식: 02-1234-5678)
+- 설명 (최대 1000자)
+- 한 줄 소개 (최대 200자)
+- 식권 가격 (0~50,000원)
+- 대표 이미지 파일 ID
+- 영업시간 정보 (businessHours)
+  - 점심 시간 (lunchStartTime, lunchEndTime)
+  - 저녁 시간 (dinnerStartTime, dinnerEndTime)
+  - 특별 휴무일 (specialHolidays)
+  - 비고 (note)
+
+등록 완료 시:
+- 구내식당 ID 반환
+- 등록된 모든 정보 반환
+- 생성 일시 반환
+ * @summary 구내식당 등록
+ */
+export type registerCafeteriaResponse201 = {
+  data: SuccessResponseRegisterCafeteriaResponse;
+  status: 201;
+};
+
+export type registerCafeteriaResponseSuccess = registerCafeteriaResponse201 & {
+  headers: Headers;
+};
+
+export type registerCafeteriaResponse = registerCafeteriaResponseSuccess;
+
+export const getRegisterCafeteriaUrl = () => {
+  return `https://dev.nugudi.com/api/v1/admin/cafeterias`;
+};
+
+export const registerCafeteria = async (
+  registerCafeteriaRequest: RegisterCafeteriaRequest,
+  options?: RequestInit,
+): Promise<registerCafeteriaResponse> => {
+  return http<registerCafeteriaResponse>(getRegisterCafeteriaUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(registerCafeteriaRequest),
+  });
+};
+
+export const getRegisterCafeteriaMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof registerCafeteria>>,
+    TError,
+    { data: RegisterCafeteriaRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof http>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof registerCafeteria>>,
+  TError,
+  { data: RegisterCafeteriaRequest },
+  TContext
+> => {
+  const mutationKey = ["registerCafeteria"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof registerCafeteria>>,
+    { data: RegisterCafeteriaRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return registerCafeteria(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RegisterCafeteriaMutationResult = NonNullable<
+  Awaited<ReturnType<typeof registerCafeteria>>
+>;
+export type RegisterCafeteriaMutationBody = RegisterCafeteriaRequest;
+export type RegisterCafeteriaMutationError = unknown;
+
+/**
+ * @summary 구내식당 등록
+ */
+export const useRegisterCafeteria = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof registerCafeteria>>,
+      TError,
+      { data: RegisterCafeteriaRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof registerCafeteria>>,
+  TError,
+  { data: RegisterCafeteriaRequest },
+  TContext
+> => {
+  const mutationOptions = getRegisterCafeteriaMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * 특정 구내식당의 특정 날짜의 식단표를 등록합니다.
+
+필수 정보:
+- 구내식당 ID
+- 식단 날짜
+- 식사 시간대 (BREAKFAST, LUNCH, DINNER)
+- 메뉴 항목 목록 (1~30개)
+
+선택 정보:
+- 가격 (0~50,000원)
+- 메뉴 이미지 파일 ID
+- 특이사항 (최대 200자)
+
+중복 검증:
+- 동일한 구내식당의 동일한 날짜, 동일한 식사 시간대에는 하나의 식단표만 등록 가능
+- 예: 2025-10-09 점심 식단표가 이미 있으면 같은 날짜 점심 식단표 추가 등록 불가
+
+등록 완료 시:
+- 식단표 ID 반환
+- 자동 계산된 총 칼로리 반환
+- 등록된 모든 정보 반환
+ * @summary 식단표 등록
+ */
+export type registerCafeteriaMenuResponse201 = {
+  data: SuccessResponseRegisterCafeteriaMenuResponse;
+  status: 201;
+};
+
+export type registerCafeteriaMenuResponseSuccess =
+  registerCafeteriaMenuResponse201 & {
+    headers: Headers;
+  };
+
+export type registerCafeteriaMenuResponse =
+  registerCafeteriaMenuResponseSuccess;
+
+export const getRegisterCafeteriaMenuUrl = () => {
+  return `https://dev.nugudi.com/api/v1/admin/cafeterias/menus`;
+};
+
+export const registerCafeteriaMenu = async (
+  registerCafeteriaMenuRequest: RegisterCafeteriaMenuRequest,
+  options?: RequestInit,
+): Promise<registerCafeteriaMenuResponse> => {
+  return http<registerCafeteriaMenuResponse>(getRegisterCafeteriaMenuUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(registerCafeteriaMenuRequest),
+  });
+};
+
+export const getRegisterCafeteriaMenuMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof registerCafeteriaMenu>>,
+    TError,
+    { data: RegisterCafeteriaMenuRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof http>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof registerCafeteriaMenu>>,
+  TError,
+  { data: RegisterCafeteriaMenuRequest },
+  TContext
+> => {
+  const mutationKey = ["registerCafeteriaMenu"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof registerCafeteriaMenu>>,
+    { data: RegisterCafeteriaMenuRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return registerCafeteriaMenu(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RegisterCafeteriaMenuMutationResult = NonNullable<
+  Awaited<ReturnType<typeof registerCafeteriaMenu>>
+>;
+export type RegisterCafeteriaMenuMutationBody = RegisterCafeteriaMenuRequest;
+export type RegisterCafeteriaMenuMutationError = unknown;
+
+/**
+ * @summary 식단표 등록
+ */
+export const useRegisterCafeteriaMenu = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof registerCafeteriaMenu>>,
+      TError,
+      { data: RegisterCafeteriaMenuRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof registerCafeteriaMenu>>,
+  TError,
+  { data: RegisterCafeteriaMenuRequest },
+  TContext
+> => {
+  const mutationOptions = getRegisterCafeteriaMenuMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
  * 회원가입 시 닉네임 중복 여부를 확인합니다.
 
 검증 규칙:
@@ -1871,6 +2129,1532 @@ export function useGetMyProfileSuspense<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetMyProfileSuspenseQueryOptions(options);
+
+  const query = useSuspenseQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 너구디에 등록된 구내식당 목록과 특정 날짜의 식단표를 조회합니다.
+
+**주요 기능:**
+- 구내식당 기본 정보
+- 특정 날짜의 식단표 (menuItems, 칼로리, 가격 등)
+- 식단표가 없는 구내식당은 menu 필드가 null
+
+**페이징:**
+- 커서 기반 무한 스크롤 지원
+- cursor: 다음 페이지를 조회하려면 이전 응답의 pageInfo.nextCursor 값 전달
+- size: 한 번에 조회할 개수 (기본 10개)
+
+**날짜:**
+- date를 지정하지 않으면 오늘 날짜 기준으로 조회
+
+ * @summary 특정 날짜 구내식당 식단표 조회 (무한 스크롤)
+ */
+export type getCafeteriasWithMenuResponse200 = {
+  data: PageResponseGetCafeteriaWithMenuResponse;
+  status: 200;
+};
+
+export type getCafeteriasWithMenuResponseSuccess =
+  getCafeteriasWithMenuResponse200 & {
+    headers: Headers;
+  };
+
+export type getCafeteriasWithMenuResponse =
+  getCafeteriasWithMenuResponseSuccess;
+
+export const getGetCafeteriasWithMenuUrl = (
+  params?: GetCafeteriasWithMenuParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `https://dev.nugudi.com/api/v1/cafeterias?${stringifiedParams}`
+    : `https://dev.nugudi.com/api/v1/cafeterias`;
+};
+
+export const getCafeteriasWithMenu = async (
+  params?: GetCafeteriasWithMenuParams,
+  options?: RequestInit,
+): Promise<getCafeteriasWithMenuResponse> => {
+  return http<getCafeteriasWithMenuResponse>(
+    getGetCafeteriasWithMenuUrl(params),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+export const getGetCafeteriasWithMenuQueryKey = (
+  params?: GetCafeteriasWithMenuParams,
+) => {
+  return [
+    `https://dev.nugudi.com/api/v1/cafeterias`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetCafeteriasWithMenuQueryOptions = <
+  TData = Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+  TError = unknown,
+>(
+  params?: GetCafeteriasWithMenuParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetCafeteriasWithMenuQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getCafeteriasWithMenu>>
+  > = ({ signal }) =>
+    getCafeteriasWithMenu(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetCafeteriasWithMenuQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getCafeteriasWithMenu>>
+>;
+export type GetCafeteriasWithMenuQueryError = unknown;
+
+export function useGetCafeteriasWithMenu<
+  TData = Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+  TError = unknown,
+>(
+  params: undefined | GetCafeteriasWithMenuParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+          TError,
+          Awaited<ReturnType<typeof getCafeteriasWithMenu>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCafeteriasWithMenu<
+  TData = Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+  TError = unknown,
+>(
+  params?: GetCafeteriasWithMenuParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+          TError,
+          Awaited<ReturnType<typeof getCafeteriasWithMenu>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCafeteriasWithMenu<
+  TData = Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+  TError = unknown,
+>(
+  params?: GetCafeteriasWithMenuParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 특정 날짜 구내식당 식단표 조회 (무한 스크롤)
+ */
+
+export function useGetCafeteriasWithMenu<
+  TData = Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+  TError = unknown,
+>(
+  params?: GetCafeteriasWithMenuParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetCafeteriasWithMenuQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * @summary 특정 날짜 구내식당 식단표 조회 (무한 스크롤)
+ */
+export const prefetchGetCafeteriasWithMenuQuery = async <
+  TData = Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+  TError = unknown,
+>(
+  queryClient: QueryClient,
+  params?: GetCafeteriasWithMenuParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+): Promise<QueryClient> => {
+  const queryOptions = getGetCafeteriasWithMenuQueryOptions(params, options);
+
+  await queryClient.prefetchQuery(queryOptions);
+
+  return queryClient;
+};
+
+export const getGetCafeteriasWithMenuSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+  TError = unknown,
+>(
+  params?: GetCafeteriasWithMenuParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetCafeteriasWithMenuQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getCafeteriasWithMenu>>
+  > = ({ signal }) =>
+    getCafeteriasWithMenu(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetCafeteriasWithMenuSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getCafeteriasWithMenu>>
+>;
+export type GetCafeteriasWithMenuSuspenseQueryError = unknown;
+
+export function useGetCafeteriasWithMenuSuspense<
+  TData = Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+  TError = unknown,
+>(
+  params: undefined | GetCafeteriasWithMenuParams,
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCafeteriasWithMenuSuspense<
+  TData = Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+  TError = unknown,
+>(
+  params?: GetCafeteriasWithMenuParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCafeteriasWithMenuSuspense<
+  TData = Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+  TError = unknown,
+>(
+  params?: GetCafeteriasWithMenuParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 특정 날짜 구내식당 식단표 조회 (무한 스크롤)
+ */
+
+export function useGetCafeteriasWithMenuSuspense<
+  TData = Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+  TError = unknown,
+>(
+  params?: GetCafeteriasWithMenuParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriasWithMenu>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetCafeteriasWithMenuSuspenseQueryOptions(
+    params,
+    options,
+  );
+
+  const query = useSuspenseQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * ID로 특정 구내식당의 상세 정보를 조회합니다.
+
+**주요 기능:**
+- 구내식당 기본 정보
+- 활성화된 구내식당만 조회 가능
+
+**에러 케이스:**
+- 존재하지 않는 ID: 404 NOT_FOUND
+- 비활성화된 구내식당: 404 NOT_FOUND
+
+ * @summary 특정 구내식당 조회
+ */
+export type getCafeteriaResponse200 = {
+  data: SuccessResponseGetCafeteriaResponse;
+  status: 200;
+};
+
+export type getCafeteriaResponseSuccess = getCafeteriaResponse200 & {
+  headers: Headers;
+};
+
+export type getCafeteriaResponse = getCafeteriaResponseSuccess;
+
+export const getGetCafeteriaUrl = (id: number) => {
+  return `https://dev.nugudi.com/api/v1/cafeterias/${id}`;
+};
+
+export const getCafeteria = async (
+  id: number,
+  options?: RequestInit,
+): Promise<getCafeteriaResponse> => {
+  return http<getCafeteriaResponse>(getGetCafeteriaUrl(id), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetCafeteriaQueryKey = (id?: number) => {
+  return [`https://dev.nugudi.com/api/v1/cafeterias/${id}`] as const;
+};
+
+export const getGetCafeteriaQueryOptions = <
+  TData = Awaited<ReturnType<typeof getCafeteria>>,
+  TError = unknown,
+>(
+  id: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getCafeteria>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetCafeteriaQueryKey(id);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getCafeteria>>> = ({
+    signal,
+  }) => getCafeteria(id, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getCafeteria>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetCafeteriaQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getCafeteria>>
+>;
+export type GetCafeteriaQueryError = unknown;
+
+export function useGetCafeteria<
+  TData = Awaited<ReturnType<typeof getCafeteria>>,
+  TError = unknown,
+>(
+  id: number,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getCafeteria>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getCafeteria>>,
+          TError,
+          Awaited<ReturnType<typeof getCafeteria>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCafeteria<
+  TData = Awaited<ReturnType<typeof getCafeteria>>,
+  TError = unknown,
+>(
+  id: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getCafeteria>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getCafeteria>>,
+          TError,
+          Awaited<ReturnType<typeof getCafeteria>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCafeteria<
+  TData = Awaited<ReturnType<typeof getCafeteria>>,
+  TError = unknown,
+>(
+  id: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getCafeteria>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 특정 구내식당 조회
+ */
+
+export function useGetCafeteria<
+  TData = Awaited<ReturnType<typeof getCafeteria>>,
+  TError = unknown,
+>(
+  id: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getCafeteria>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetCafeteriaQueryOptions(id, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * @summary 특정 구내식당 조회
+ */
+export const prefetchGetCafeteriaQuery = async <
+  TData = Awaited<ReturnType<typeof getCafeteria>>,
+  TError = unknown,
+>(
+  queryClient: QueryClient,
+  id: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getCafeteria>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+): Promise<QueryClient> => {
+  const queryOptions = getGetCafeteriaQueryOptions(id, options);
+
+  await queryClient.prefetchQuery(queryOptions);
+
+  return queryClient;
+};
+
+export const getGetCafeteriaSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getCafeteria>>,
+  TError = unknown,
+>(
+  id: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteria>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetCafeteriaQueryKey(id);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getCafeteria>>> = ({
+    signal,
+  }) => getCafeteria(id, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getCafeteria>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetCafeteriaSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getCafeteria>>
+>;
+export type GetCafeteriaSuspenseQueryError = unknown;
+
+export function useGetCafeteriaSuspense<
+  TData = Awaited<ReturnType<typeof getCafeteria>>,
+  TError = unknown,
+>(
+  id: number,
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteria>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCafeteriaSuspense<
+  TData = Awaited<ReturnType<typeof getCafeteria>>,
+  TError = unknown,
+>(
+  id: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteria>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCafeteriaSuspense<
+  TData = Awaited<ReturnType<typeof getCafeteria>>,
+  TError = unknown,
+>(
+  id: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteria>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 특정 구내식당 조회
+ */
+
+export function useGetCafeteriaSuspense<
+  TData = Awaited<ReturnType<typeof getCafeteria>>,
+  TError = unknown,
+>(
+  id: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteria>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetCafeteriaSuspenseQueryOptions(id, options);
+
+  const query = useSuspenseQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 특정 구내식당의 특정 날짜 식단표를 조회합니다.
+
+**주요 기능:**
+- 해당 날짜의 모든 식사 시간대 식단표 (아침, 점심, 저녁)
+- 식단표가 없으면 빈 배열 반환
+
+**날짜:**
+- date를 지정하지 않으면 오늘 날짜 기준으로 조회
+
+**에러 케이스:**
+- 존재하지 않는 구내식당 ID: 404 NOT_FOUND
+- 비활성화된 구내식당: 404 NOT_FOUND
+
+ * @summary 특정 구내식당의 특정 날짜 식단표 조회
+ */
+export type getCafeteriaMenuByDateResponse200 = {
+  data: SuccessResponseGetCafeteriaMenuResponse;
+  status: 200;
+};
+
+export type getCafeteriaMenuByDateResponseSuccess =
+  getCafeteriaMenuByDateResponse200 & {
+    headers: Headers;
+  };
+
+export type getCafeteriaMenuByDateResponse =
+  getCafeteriaMenuByDateResponseSuccess;
+
+export const getGetCafeteriaMenuByDateUrl = (
+  id: number,
+  params?: GetCafeteriaMenuByDateParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `https://dev.nugudi.com/api/v1/cafeterias/${id}/menus?${stringifiedParams}`
+    : `https://dev.nugudi.com/api/v1/cafeterias/${id}/menus`;
+};
+
+export const getCafeteriaMenuByDate = async (
+  id: number,
+  params?: GetCafeteriaMenuByDateParams,
+  options?: RequestInit,
+): Promise<getCafeteriaMenuByDateResponse> => {
+  return http<getCafeteriaMenuByDateResponse>(
+    getGetCafeteriaMenuByDateUrl(id, params),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+export const getGetCafeteriaMenuByDateQueryKey = (
+  id?: number,
+  params?: GetCafeteriaMenuByDateParams,
+) => {
+  return [
+    `https://dev.nugudi.com/api/v1/cafeterias/${id}/menus`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetCafeteriaMenuByDateQueryOptions = <
+  TData = Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+  TError = unknown,
+>(
+  id: number,
+  params?: GetCafeteriaMenuByDateParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetCafeteriaMenuByDateQueryKey(id, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getCafeteriaMenuByDate>>
+  > = ({ signal }) =>
+    getCafeteriaMenuByDate(id, params, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetCafeteriaMenuByDateQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getCafeteriaMenuByDate>>
+>;
+export type GetCafeteriaMenuByDateQueryError = unknown;
+
+export function useGetCafeteriaMenuByDate<
+  TData = Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+  TError = unknown,
+>(
+  id: number,
+  params: undefined | GetCafeteriaMenuByDateParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+          TError,
+          Awaited<ReturnType<typeof getCafeteriaMenuByDate>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCafeteriaMenuByDate<
+  TData = Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+  TError = unknown,
+>(
+  id: number,
+  params?: GetCafeteriaMenuByDateParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+          TError,
+          Awaited<ReturnType<typeof getCafeteriaMenuByDate>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCafeteriaMenuByDate<
+  TData = Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+  TError = unknown,
+>(
+  id: number,
+  params?: GetCafeteriaMenuByDateParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 특정 구내식당의 특정 날짜 식단표 조회
+ */
+
+export function useGetCafeteriaMenuByDate<
+  TData = Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+  TError = unknown,
+>(
+  id: number,
+  params?: GetCafeteriaMenuByDateParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetCafeteriaMenuByDateQueryOptions(
+    id,
+    params,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * @summary 특정 구내식당의 특정 날짜 식단표 조회
+ */
+export const prefetchGetCafeteriaMenuByDateQuery = async <
+  TData = Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+  TError = unknown,
+>(
+  queryClient: QueryClient,
+  id: number,
+  params?: GetCafeteriaMenuByDateParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+): Promise<QueryClient> => {
+  const queryOptions = getGetCafeteriaMenuByDateQueryOptions(
+    id,
+    params,
+    options,
+  );
+
+  await queryClient.prefetchQuery(queryOptions);
+
+  return queryClient;
+};
+
+export const getGetCafeteriaMenuByDateSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+  TError = unknown,
+>(
+  id: number,
+  params?: GetCafeteriaMenuByDateParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetCafeteriaMenuByDateQueryKey(id, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getCafeteriaMenuByDate>>
+  > = ({ signal }) =>
+    getCafeteriaMenuByDate(id, params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetCafeteriaMenuByDateSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getCafeteriaMenuByDate>>
+>;
+export type GetCafeteriaMenuByDateSuspenseQueryError = unknown;
+
+export function useGetCafeteriaMenuByDateSuspense<
+  TData = Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+  TError = unknown,
+>(
+  id: number,
+  params: undefined | GetCafeteriaMenuByDateParams,
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCafeteriaMenuByDateSuspense<
+  TData = Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+  TError = unknown,
+>(
+  id: number,
+  params?: GetCafeteriaMenuByDateParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCafeteriaMenuByDateSuspense<
+  TData = Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+  TError = unknown,
+>(
+  id: number,
+  params?: GetCafeteriaMenuByDateParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 특정 구내식당의 특정 날짜 식단표 조회
+ */
+
+export function useGetCafeteriaMenuByDateSuspense<
+  TData = Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+  TError = unknown,
+>(
+  id: number,
+  params?: GetCafeteriaMenuByDateParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriaMenuByDate>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetCafeteriaMenuByDateSuspenseQueryOptions(
+    id,
+    params,
+    options,
+  );
+
+  const query = useSuspenseQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 특정 구내식당의 특정 월에 식단표가 있는 일자 목록을 조회합니다.
+
+**주요 기능:**
+- 지정한 연도/월에 식단표가 등록된 일자 목록 반환
+- 달력 UI에서 식단표 유무 표시에 활용
+
+**조회 가능 범위:**
+- 시작: 2025년 10월
+- 종료: 현재 월
+- 범위를 벗어나면 400 에러
+
+**응답 예시:**
+```json
+{
+  "year": 2025,
+  "month": 10,
+  "daysWithMenu": [1, 3, 5, 12, 15, 20, 25]
+}
+```
+
+**에러 케이스:**
+- 존재하지 않는 구내식당 ID: 404 NOT_FOUND
+- 조회 범위 벗어남: 400 BAD_REQUEST
+
+ * @summary 특정 구내식당의 특정 월 일자별 식단표 유무 조회
+ */
+export type getCafeteriaMenuAvailabilityResponse200 = {
+  data: SuccessResponseGetCafeteriaMenuAvailabilityResponse;
+  status: 200;
+};
+
+export type getCafeteriaMenuAvailabilityResponseSuccess =
+  getCafeteriaMenuAvailabilityResponse200 & {
+    headers: Headers;
+  };
+
+export type getCafeteriaMenuAvailabilityResponse =
+  getCafeteriaMenuAvailabilityResponseSuccess;
+
+export const getGetCafeteriaMenuAvailabilityUrl = (
+  id: number,
+  params: GetCafeteriaMenuAvailabilityParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `https://dev.nugudi.com/api/v1/cafeterias/${id}/menus/availability?${stringifiedParams}`
+    : `https://dev.nugudi.com/api/v1/cafeterias/${id}/menus/availability`;
+};
+
+export const getCafeteriaMenuAvailability = async (
+  id: number,
+  params: GetCafeteriaMenuAvailabilityParams,
+  options?: RequestInit,
+): Promise<getCafeteriaMenuAvailabilityResponse> => {
+  return http<getCafeteriaMenuAvailabilityResponse>(
+    getGetCafeteriaMenuAvailabilityUrl(id, params),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+export const getGetCafeteriaMenuAvailabilityQueryKey = (
+  id?: number,
+  params?: GetCafeteriaMenuAvailabilityParams,
+) => {
+  return [
+    `https://dev.nugudi.com/api/v1/cafeterias/${id}/menus/availability`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetCafeteriaMenuAvailabilityQueryOptions = <
+  TData = Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+  TError = unknown,
+>(
+  id: number,
+  params: GetCafeteriaMenuAvailabilityParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetCafeteriaMenuAvailabilityQueryKey(id, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>
+  > = ({ signal }) =>
+    getCafeteriaMenuAvailability(id, params, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetCafeteriaMenuAvailabilityQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>
+>;
+export type GetCafeteriaMenuAvailabilityQueryError = unknown;
+
+export function useGetCafeteriaMenuAvailability<
+  TData = Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+  TError = unknown,
+>(
+  id: number,
+  params: GetCafeteriaMenuAvailabilityParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+          TError,
+          Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCafeteriaMenuAvailability<
+  TData = Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+  TError = unknown,
+>(
+  id: number,
+  params: GetCafeteriaMenuAvailabilityParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+          TError,
+          Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCafeteriaMenuAvailability<
+  TData = Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+  TError = unknown,
+>(
+  id: number,
+  params: GetCafeteriaMenuAvailabilityParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 특정 구내식당의 특정 월 일자별 식단표 유무 조회
+ */
+
+export function useGetCafeteriaMenuAvailability<
+  TData = Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+  TError = unknown,
+>(
+  id: number,
+  params: GetCafeteriaMenuAvailabilityParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetCafeteriaMenuAvailabilityQueryOptions(
+    id,
+    params,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * @summary 특정 구내식당의 특정 월 일자별 식단표 유무 조회
+ */
+export const prefetchGetCafeteriaMenuAvailabilityQuery = async <
+  TData = Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+  TError = unknown,
+>(
+  queryClient: QueryClient,
+  id: number,
+  params: GetCafeteriaMenuAvailabilityParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+): Promise<QueryClient> => {
+  const queryOptions = getGetCafeteriaMenuAvailabilityQueryOptions(
+    id,
+    params,
+    options,
+  );
+
+  await queryClient.prefetchQuery(queryOptions);
+
+  return queryClient;
+};
+
+export const getGetCafeteriaMenuAvailabilitySuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+  TError = unknown,
+>(
+  id: number,
+  params: GetCafeteriaMenuAvailabilityParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetCafeteriaMenuAvailabilityQueryKey(id, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>
+  > = ({ signal }) =>
+    getCafeteriaMenuAvailability(id, params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetCafeteriaMenuAvailabilitySuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>
+>;
+export type GetCafeteriaMenuAvailabilitySuspenseQueryError = unknown;
+
+export function useGetCafeteriaMenuAvailabilitySuspense<
+  TData = Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+  TError = unknown,
+>(
+  id: number,
+  params: GetCafeteriaMenuAvailabilityParams,
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCafeteriaMenuAvailabilitySuspense<
+  TData = Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+  TError = unknown,
+>(
+  id: number,
+  params: GetCafeteriaMenuAvailabilityParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCafeteriaMenuAvailabilitySuspense<
+  TData = Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+  TError = unknown,
+>(
+  id: number,
+  params: GetCafeteriaMenuAvailabilityParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 특정 구내식당의 특정 월 일자별 식단표 유무 조회
+ */
+
+export function useGetCafeteriaMenuAvailabilitySuspense<
+  TData = Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+  TError = unknown,
+>(
+  id: number,
+  params: GetCafeteriaMenuAvailabilityParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCafeteriaMenuAvailability>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof http>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetCafeteriaMenuAvailabilitySuspenseQueryOptions(
+    id,
+    params,
+    options,
+  );
 
   const query = useSuspenseQuery(
     queryOptions,

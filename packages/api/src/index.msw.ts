@@ -10,8 +10,12 @@ import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
 import type {
+  PageResponseGetCafeteriaWithMenuResponse,
   SendEmailVerificationCode200,
   SuccessResponseEmailVerifyResponse,
+  SuccessResponseGetCafeteriaMenuAvailabilityResponse,
+  SuccessResponseGetCafeteriaMenuResponse,
+  SuccessResponseGetCafeteriaResponse,
   SuccessResponseGetGoogleAuthorizeResponse,
   SuccessResponseGetKakaoAuthorizeResponse,
   SuccessResponseGetMyProfileResponse,
@@ -20,6 +24,8 @@ import type {
   SuccessResponseLogoutResponse,
   SuccessResponseNicknameCheckResponse,
   SuccessResponseRefreshTokenResponse,
+  SuccessResponseRegisterCafeteriaMenuResponse,
+  SuccessResponseRegisterCafeteriaResponse,
   SuccessResponseSignUpResponse,
   SuccessResponseSocialLoginResponse,
 } from "./index.schemas";
@@ -482,6 +488,184 @@ export const getSendEmailVerificationCodeResponseMock = (
   ...overrideResponse,
 });
 
+export const getRegisterCafeteriaResponseMock = (
+  overrideResponse: Partial<SuccessResponseRegisterCafeteriaResponse> = {},
+): SuccessResponseRegisterCafeteriaResponse => ({
+  timestamp: faker.helpers.arrayElement([
+    new Date(`${faker.date.past().toISOString().split(".")[0]}Z`),
+    undefined,
+  ]),
+  success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+  code: faker.helpers.arrayElement([
+    faker.number.int({ min: undefined, max: undefined }),
+    undefined,
+  ]),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  data: faker.helpers.arrayElement([
+    {
+      cafeteriaId: faker.helpers.arrayElement([
+        faker.number.int({ min: undefined, max: undefined }),
+        undefined,
+      ]),
+      name: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      address: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      addressDetail: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      latitude: faker.helpers.arrayElement([
+        faker.number.float({
+          min: undefined,
+          max: undefined,
+          fractionDigits: 2,
+        }),
+        undefined,
+      ]),
+      longitude: faker.helpers.arrayElement([
+        faker.number.float({
+          min: undefined,
+          max: undefined,
+          fractionDigits: 2,
+        }),
+        undefined,
+      ]),
+      phone: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      description: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      oneLineIntro: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      mealTicketPrice: faker.helpers.arrayElement([
+        faker.number.int({ min: undefined, max: undefined }),
+        undefined,
+      ]),
+      mainImageFileId: faker.helpers.arrayElement([
+        faker.number.int({ min: undefined, max: undefined }),
+        undefined,
+      ]),
+      takeoutAvailable: faker.helpers.arrayElement([
+        faker.datatype.boolean(),
+        undefined,
+      ]),
+      createdAt: faker.helpers.arrayElement([
+        new Date(`${faker.date.past().toISOString().split(".")[0]}Z`),
+        undefined,
+      ]),
+    },
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
+export const getRegisterCafeteriaMenuResponseMock = (
+  overrideResponse: Partial<SuccessResponseRegisterCafeteriaMenuResponse> = {},
+): SuccessResponseRegisterCafeteriaMenuResponse => ({
+  timestamp: faker.helpers.arrayElement([
+    new Date(`${faker.date.past().toISOString().split(".")[0]}Z`),
+    undefined,
+  ]),
+  success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+  code: faker.helpers.arrayElement([
+    faker.number.int({ min: undefined, max: undefined }),
+    undefined,
+  ]),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  data: faker.helpers.arrayElement([
+    {
+      menuId: faker.helpers.arrayElement([
+        faker.number.int({ min: undefined, max: undefined }),
+        undefined,
+      ]),
+      restaurantId: faker.helpers.arrayElement([
+        faker.number.int({ min: undefined, max: undefined }),
+        undefined,
+      ]),
+      menuDate: faker.helpers.arrayElement([
+        new Date(faker.date.past().toISOString().split("T")[0]),
+        undefined,
+      ]),
+      mealType: faker.helpers.arrayElement([
+        faker.helpers.arrayElement(["BREAKFAST", "LUNCH", "DINNER"] as const),
+        undefined,
+      ]),
+      menuItems: faker.helpers.arrayElement([
+        Array.from(
+          { length: faker.number.int({ min: 4, max: 4 }) },
+          (_, i) => i + 1,
+        ).map(() => ({
+          name: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          category: faker.helpers.arrayElement([
+            faker.helpers.arrayElement([
+              "RICE",
+              "SOUP",
+              "MAIN_DISH",
+              "SIDE_DISH",
+              "KIMCHI",
+              "SALAD",
+              "DESSERT",
+              "DRINK",
+              "SPECIAL",
+            ] as const),
+            undefined,
+          ]),
+          calories: faker.helpers.arrayElement([
+            faker.number.int({ min: undefined, max: undefined }),
+            undefined,
+          ]),
+          caloriesSource: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          displayOrder: faker.helpers.arrayElement([
+            faker.number.int({ min: undefined, max: undefined }),
+            undefined,
+          ]),
+        })),
+        undefined,
+      ]),
+      totalCalories: faker.helpers.arrayElement([
+        faker.number.int({ min: undefined, max: undefined }),
+        undefined,
+      ]),
+      menuImageFileId: faker.helpers.arrayElement([
+        faker.number.int({ min: undefined, max: undefined }),
+        undefined,
+      ]),
+      specialNote: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      createdAt: faker.helpers.arrayElement([
+        new Date(`${faker.date.past().toISOString().split(".")[0]}Z`),
+        undefined,
+      ]),
+    },
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
 export const getCheckNicknameAvailabilityResponseMock = (
   overrideResponse: Partial<SuccessResponseNicknameCheckResponse> = {},
 ): SuccessResponseNicknameCheckResponse => ({
@@ -587,6 +771,611 @@ export const getGetMyProfileResponseMock = (
             undefined,
           ]),
         },
+        undefined,
+      ]),
+    },
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
+export const getGetCafeteriasWithMenuResponseMock = (
+  overrideResponse: Partial<PageResponseGetCafeteriaWithMenuResponse> = {},
+): PageResponseGetCafeteriaWithMenuResponse => ({
+  timestamp: faker.helpers.arrayElement([
+    new Date(`${faker.date.past().toISOString().split(".")[0]}Z`),
+    undefined,
+  ]),
+  success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+  code: faker.helpers.arrayElement([
+    faker.number.int({ min: undefined, max: undefined }),
+    undefined,
+  ]),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  data: faker.helpers.arrayElement([
+    Array.from(
+      { length: faker.number.int({ min: 4, max: 4 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      cafeteria: faker.helpers.arrayElement([
+        {
+          id: faker.helpers.arrayElement([
+            faker.number.int({ min: undefined, max: undefined }),
+            undefined,
+          ]),
+          name: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          address: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          addressDetail: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          latitude: faker.helpers.arrayElement([
+            faker.number.float({
+              min: undefined,
+              max: undefined,
+              fractionDigits: 2,
+            }),
+            undefined,
+          ]),
+          longitude: faker.helpers.arrayElement([
+            faker.number.float({
+              min: undefined,
+              max: undefined,
+              fractionDigits: 2,
+            }),
+            undefined,
+          ]),
+          phone: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          mealTicketPrice: faker.helpers.arrayElement([
+            faker.number.int({ min: undefined, max: undefined }),
+            undefined,
+          ]),
+          takeoutAvailable: faker.helpers.arrayElement([
+            faker.datatype.boolean(),
+            undefined,
+          ]),
+          businessHours: faker.helpers.arrayElement([
+            {
+              lunch: faker.helpers.arrayElement([
+                {
+                  start: faker.helpers.arrayElement([
+                    {
+                      hour: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                      minute: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                      second: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                      nano: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                    },
+                    undefined,
+                  ]),
+                  end: faker.helpers.arrayElement([
+                    {
+                      hour: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                      minute: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                      second: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                      nano: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                    },
+                    undefined,
+                  ]),
+                },
+                undefined,
+              ]),
+              dinner: faker.helpers.arrayElement([
+                {
+                  start: faker.helpers.arrayElement([
+                    {
+                      hour: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                      minute: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                      second: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                      nano: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                    },
+                    undefined,
+                  ]),
+                  end: faker.helpers.arrayElement([
+                    {
+                      hour: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                      minute: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                      second: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                      nano: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                    },
+                    undefined,
+                  ]),
+                },
+                undefined,
+              ]),
+              note: faker.helpers.arrayElement([
+                faker.string.alpha({ length: { min: 10, max: 20 } }),
+                undefined,
+              ]),
+            },
+            undefined,
+          ]),
+        },
+        undefined,
+      ]),
+      menus: faker.helpers.arrayElement([
+        Array.from(
+          { length: faker.number.int({ min: 4, max: 4 }) },
+          (_, i) => i + 1,
+        ).map(() => ({
+          mealType: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          menuItems: faker.helpers.arrayElement([
+            Array.from(
+              { length: faker.number.int({ min: 4, max: 4 }) },
+              (_, i) => i + 1,
+            ).map(() => ({
+              name: faker.helpers.arrayElement([
+                faker.string.alpha({ length: { min: 10, max: 20 } }),
+                undefined,
+              ]),
+              category: faker.helpers.arrayElement([
+                faker.helpers.arrayElement([
+                  "RICE",
+                  "SOUP",
+                  "MAIN_DISH",
+                  "SIDE_DISH",
+                  "KIMCHI",
+                  "SALAD",
+                  "DESSERT",
+                  "DRINK",
+                  "SPECIAL",
+                ] as const),
+                undefined,
+              ]),
+              calories: faker.helpers.arrayElement([
+                faker.number.int({ min: undefined, max: undefined }),
+                undefined,
+              ]),
+              caloriesSource: faker.helpers.arrayElement([
+                faker.string.alpha({ length: { min: 10, max: 20 } }),
+                undefined,
+              ]),
+              displayOrder: faker.helpers.arrayElement([
+                faker.number.int({ min: undefined, max: undefined }),
+                undefined,
+              ]),
+            })),
+            undefined,
+          ]),
+          specialNote: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          nutritionInfo: faker.helpers.arrayElement([
+            {
+              totalCalories: faker.helpers.arrayElement([
+                faker.number.int({ min: undefined, max: undefined }),
+                undefined,
+              ]),
+              dailyPercentage: faker.helpers.arrayElement([
+                faker.number.int({ min: undefined, max: undefined }),
+                undefined,
+              ]),
+              walkingSteps: faker.helpers.arrayElement([
+                faker.number.int({ min: undefined, max: undefined }),
+                undefined,
+              ]),
+              runningKm: faker.helpers.arrayElement([
+                faker.number.int({ min: undefined, max: undefined }),
+                undefined,
+              ]),
+              cyclingKm: faker.helpers.arrayElement([
+                faker.number.int({ min: undefined, max: undefined }),
+                undefined,
+              ]),
+              stairsFloors: faker.helpers.arrayElement([
+                faker.number.int({ min: undefined, max: undefined }),
+                undefined,
+              ]),
+            },
+            undefined,
+          ]),
+        })),
+        undefined,
+      ]),
+    })),
+    undefined,
+  ]),
+  pageInfo: faker.helpers.arrayElement([
+    {
+      nextCursor: faker.helpers.arrayElement([
+        faker.number.int({ min: undefined, max: undefined }),
+        undefined,
+      ]),
+      size: faker.helpers.arrayElement([
+        faker.number.int({ min: undefined, max: undefined }),
+        undefined,
+      ]),
+      hasNext: faker.helpers.arrayElement([
+        faker.datatype.boolean(),
+        undefined,
+      ]),
+    },
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
+export const getGetCafeteriaResponseMock = (
+  overrideResponse: Partial<SuccessResponseGetCafeteriaResponse> = {},
+): SuccessResponseGetCafeteriaResponse => ({
+  timestamp: faker.helpers.arrayElement([
+    new Date(`${faker.date.past().toISOString().split(".")[0]}Z`),
+    undefined,
+  ]),
+  success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+  code: faker.helpers.arrayElement([
+    faker.number.int({ min: undefined, max: undefined }),
+    undefined,
+  ]),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  data: faker.helpers.arrayElement([
+    {
+      cafeteria: faker.helpers.arrayElement([
+        {
+          id: faker.helpers.arrayElement([
+            faker.number.int({ min: undefined, max: undefined }),
+            undefined,
+          ]),
+          name: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          address: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          addressDetail: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          latitude: faker.helpers.arrayElement([
+            faker.number.float({
+              min: undefined,
+              max: undefined,
+              fractionDigits: 2,
+            }),
+            undefined,
+          ]),
+          longitude: faker.helpers.arrayElement([
+            faker.number.float({
+              min: undefined,
+              max: undefined,
+              fractionDigits: 2,
+            }),
+            undefined,
+          ]),
+          phone: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          mealTicketPrice: faker.helpers.arrayElement([
+            faker.number.int({ min: undefined, max: undefined }),
+            undefined,
+          ]),
+          takeoutAvailable: faker.helpers.arrayElement([
+            faker.datatype.boolean(),
+            undefined,
+          ]),
+          businessHours: faker.helpers.arrayElement([
+            {
+              lunch: faker.helpers.arrayElement([
+                {
+                  start: faker.helpers.arrayElement([
+                    {
+                      hour: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                      minute: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                      second: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                      nano: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                    },
+                    undefined,
+                  ]),
+                  end: faker.helpers.arrayElement([
+                    {
+                      hour: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                      minute: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                      second: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                      nano: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                    },
+                    undefined,
+                  ]),
+                },
+                undefined,
+              ]),
+              dinner: faker.helpers.arrayElement([
+                {
+                  start: faker.helpers.arrayElement([
+                    {
+                      hour: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                      minute: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                      second: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                      nano: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                    },
+                    undefined,
+                  ]),
+                  end: faker.helpers.arrayElement([
+                    {
+                      hour: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                      minute: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                      second: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                      nano: faker.helpers.arrayElement([
+                        faker.number.int({ min: undefined, max: undefined }),
+                        undefined,
+                      ]),
+                    },
+                    undefined,
+                  ]),
+                },
+                undefined,
+              ]),
+              note: faker.helpers.arrayElement([
+                faker.string.alpha({ length: { min: 10, max: 20 } }),
+                undefined,
+              ]),
+            },
+            undefined,
+          ]),
+        },
+        undefined,
+      ]),
+    },
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
+export const getGetCafeteriaMenuByDateResponseMock = (
+  overrideResponse: Partial<SuccessResponseGetCafeteriaMenuResponse> = {},
+): SuccessResponseGetCafeteriaMenuResponse => ({
+  timestamp: faker.helpers.arrayElement([
+    new Date(`${faker.date.past().toISOString().split(".")[0]}Z`),
+    undefined,
+  ]),
+  success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+  code: faker.helpers.arrayElement([
+    faker.number.int({ min: undefined, max: undefined }),
+    undefined,
+  ]),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  data: faker.helpers.arrayElement([
+    {
+      menuDate: faker.helpers.arrayElement([
+        new Date(faker.date.past().toISOString().split("T")[0]),
+        undefined,
+      ]),
+      menus: faker.helpers.arrayElement([
+        Array.from(
+          { length: faker.number.int({ min: 4, max: 4 }) },
+          (_, i) => i + 1,
+        ).map(() => ({
+          mealType: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          menuItems: faker.helpers.arrayElement([
+            Array.from(
+              { length: faker.number.int({ min: 4, max: 4 }) },
+              (_, i) => i + 1,
+            ).map(() => ({
+              name: faker.helpers.arrayElement([
+                faker.string.alpha({ length: { min: 10, max: 20 } }),
+                undefined,
+              ]),
+              category: faker.helpers.arrayElement([
+                faker.helpers.arrayElement([
+                  "RICE",
+                  "SOUP",
+                  "MAIN_DISH",
+                  "SIDE_DISH",
+                  "KIMCHI",
+                  "SALAD",
+                  "DESSERT",
+                  "DRINK",
+                  "SPECIAL",
+                ] as const),
+                undefined,
+              ]),
+              calories: faker.helpers.arrayElement([
+                faker.number.int({ min: undefined, max: undefined }),
+                undefined,
+              ]),
+              caloriesSource: faker.helpers.arrayElement([
+                faker.string.alpha({ length: { min: 10, max: 20 } }),
+                undefined,
+              ]),
+              displayOrder: faker.helpers.arrayElement([
+                faker.number.int({ min: undefined, max: undefined }),
+                undefined,
+              ]),
+            })),
+            undefined,
+          ]),
+          specialNote: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          nutritionInfo: faker.helpers.arrayElement([
+            {
+              totalCalories: faker.helpers.arrayElement([
+                faker.number.int({ min: undefined, max: undefined }),
+                undefined,
+              ]),
+              dailyPercentage: faker.helpers.arrayElement([
+                faker.number.int({ min: undefined, max: undefined }),
+                undefined,
+              ]),
+              walkingSteps: faker.helpers.arrayElement([
+                faker.number.int({ min: undefined, max: undefined }),
+                undefined,
+              ]),
+              runningKm: faker.helpers.arrayElement([
+                faker.number.int({ min: undefined, max: undefined }),
+                undefined,
+              ]),
+              cyclingKm: faker.helpers.arrayElement([
+                faker.number.int({ min: undefined, max: undefined }),
+                undefined,
+              ]),
+              stairsFloors: faker.helpers.arrayElement([
+                faker.number.int({ min: undefined, max: undefined }),
+                undefined,
+              ]),
+            },
+            undefined,
+          ]),
+        })),
+        undefined,
+      ]),
+    },
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
+export const getGetCafeteriaMenuAvailabilityResponseMock = (
+  overrideResponse: Partial<SuccessResponseGetCafeteriaMenuAvailabilityResponse> = {},
+): SuccessResponseGetCafeteriaMenuAvailabilityResponse => ({
+  timestamp: faker.helpers.arrayElement([
+    new Date(`${faker.date.past().toISOString().split(".")[0]}Z`),
+    undefined,
+  ]),
+  success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+  code: faker.helpers.arrayElement([
+    faker.number.int({ min: undefined, max: undefined }),
+    undefined,
+  ]),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  data: faker.helpers.arrayElement([
+    {
+      year: faker.helpers.arrayElement([
+        faker.number.int({ min: undefined, max: undefined }),
+        undefined,
+      ]),
+      month: faker.helpers.arrayElement([
+        faker.number.int({ min: undefined, max: undefined }),
+        undefined,
+      ]),
+      daysWithMenu: faker.helpers.arrayElement([
+        Array.from(
+          { length: faker.number.int({ min: 4, max: 4 }) },
+          (_, i) => i + 1,
+        ).map(() => faker.number.int({ min: undefined, max: undefined })),
         undefined,
       ]),
     },
@@ -979,6 +1768,66 @@ export const getSendEmailVerificationCodeMockHandler = (
   );
 };
 
+export const getRegisterCafeteriaMockHandler = (
+  overrideResponse?:
+    | SuccessResponseRegisterCafeteriaResponse
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) =>
+        | Promise<SuccessResponseRegisterCafeteriaResponse>
+        | SuccessResponseRegisterCafeteriaResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.post(
+    "*/api/v1/admin/cafeterias",
+    async (info) => {
+      await delay(500);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getRegisterCafeteriaResponseMock(),
+        ),
+        { status: 201, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getRegisterCafeteriaMenuMockHandler = (
+  overrideResponse?:
+    | SuccessResponseRegisterCafeteriaMenuResponse
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) =>
+        | Promise<SuccessResponseRegisterCafeteriaMenuResponse>
+        | SuccessResponseRegisterCafeteriaMenuResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.post(
+    "*/api/v1/admin/cafeterias/menus",
+    async (info) => {
+      await delay(500);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getRegisterCafeteriaMenuResponseMock(),
+        ),
+        { status: 201, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getCheckNicknameAvailabilityMockHandler = (
   overrideResponse?:
     | SuccessResponseNicknameCheckResponse
@@ -1031,6 +1880,126 @@ export const getGetMyProfileMockHandler = (
               ? await overrideResponse(info)
               : overrideResponse
             : getGetMyProfileResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetCafeteriasWithMenuMockHandler = (
+  overrideResponse?:
+    | PageResponseGetCafeteriaWithMenuResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<PageResponseGetCafeteriaWithMenuResponse>
+        | PageResponseGetCafeteriaWithMenuResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/cafeterias",
+    async (info) => {
+      await delay(500);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetCafeteriasWithMenuResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetCafeteriaMockHandler = (
+  overrideResponse?:
+    | SuccessResponseGetCafeteriaResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<SuccessResponseGetCafeteriaResponse>
+        | SuccessResponseGetCafeteriaResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/cafeterias/:id",
+    async (info) => {
+      await delay(500);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetCafeteriaResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetCafeteriaMenuByDateMockHandler = (
+  overrideResponse?:
+    | SuccessResponseGetCafeteriaMenuResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<SuccessResponseGetCafeteriaMenuResponse>
+        | SuccessResponseGetCafeteriaMenuResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/cafeterias/:id/menus",
+    async (info) => {
+      await delay(500);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetCafeteriaMenuByDateResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetCafeteriaMenuAvailabilityMockHandler = (
+  overrideResponse?:
+    | SuccessResponseGetCafeteriaMenuAvailabilityResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<SuccessResponseGetCafeteriaMenuAvailabilityResponse>
+        | SuccessResponseGetCafeteriaMenuAvailabilityResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/cafeterias/:id/menus/availability",
+    async (info) => {
+      await delay(500);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetCafeteriaMenuAvailabilityResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -1139,8 +2108,14 @@ export const getApiMock = () => [
   getGoogleLoginMockHandler(),
   getVerifyEmailCodeMockHandler(),
   getSendEmailVerificationCodeMockHandler(),
+  getRegisterCafeteriaMockHandler(),
+  getRegisterCafeteriaMenuMockHandler(),
   getCheckNicknameAvailabilityMockHandler(),
   getGetMyProfileMockHandler(),
+  getGetCafeteriasWithMenuMockHandler(),
+  getGetCafeteriaMockHandler(),
+  getGetCafeteriaMenuByDateMockHandler(),
+  getGetCafeteriaMenuAvailabilityMockHandler(),
   getGetNaverAuthorizeUrlMockHandler(),
   getGetKakaoAuthorizeUrlMockHandler(),
   getGetGoogleAuthorizeUrlMockHandler(),

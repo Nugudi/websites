@@ -15,10 +15,12 @@
   ],
   "tags": [
     { "name": "사용자 프로필", "description": "유저 프로필 관련 API" },
+    { "name": "구내식당", "description": "구내식당 관련 API" },
     {
       "name": "사용자 인증",
       "description": "회원가입, 로그인, 로그아웃 등 인증 관련 API"
-    }
+    },
+    { "name": "관리자: 식당", "description": "관리자 식당 관련 API" }
   ],
   "paths": {
     "/api/v1/auth/signup/social": {
@@ -320,6 +322,66 @@
         }
       }
     },
+    "/api/v1/admin/cafeterias": {
+      "post": {
+        "tags": ["관리자: 식당"],
+        "summary": "구내식당 등록",
+        "description": "새로운 구내식당을 등록합니다.\n\n필수 정보:\n- 이름 (2~100자)\n- 주소 (최대 255자)\n- 상세 주소 (최대 100자)\n- 영업 요일 (businessHours.operatingDays)\n- 포장 가능 여부 (takeoutAvailable)\n\n선택 정보:\n- 위도/경도\n- 전화번호 (형식: 02-1234-5678)\n- 설명 (최대 1000자)\n- 한 줄 소개 (최대 200자)\n- 식권 가격 (0~50,000원)\n- 대표 이미지 파일 ID\n- 영업시간 정보 (businessHours)\n  - 점심 시간 (lunchStartTime, lunchEndTime)\n  - 저녁 시간 (dinnerStartTime, dinnerEndTime)\n  - 특별 휴무일 (specialHolidays)\n  - 비고 (note)\n\n등록 완료 시:\n- 구내식당 ID 반환\n- 등록된 모든 정보 반환\n- 생성 일시 반환",
+        "operationId": "registerCafeteria",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterCafeteriaRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponseRegisterCafeteriaResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/cafeterias/menus": {
+      "post": {
+        "tags": ["관리자: 식당"],
+        "summary": "식단표 등록",
+        "description": "특정 구내식당의 특정 날짜의 식단표를 등록합니다.\n\n필수 정보:\n- 구내식당 ID\n- 식단 날짜\n- 식사 시간대 (BREAKFAST, LUNCH, DINNER)\n- 메뉴 항목 목록 (1~30개)\n\n선택 정보:\n- 가격 (0~50,000원)\n- 메뉴 이미지 파일 ID\n- 특이사항 (최대 200자)\n\n중복 검증:\n- 동일한 구내식당의 동일한 날짜, 동일한 식사 시간대에는 하나의 식단표만 등록 가능\n- 예: 2025-10-09 점심 식단표가 이미 있으면 같은 날짜 점심 식단표 추가 등록 불가\n\n등록 완료 시:\n- 식단표 ID 반환\n- 자동 계산된 총 칼로리 반환\n- 등록된 모든 정보 반환",
+        "operationId": "registerCafeteriaMenu",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterCafeteriaMenuRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponseRegisterCafeteriaMenuResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/users/nickname/availability": {
       "get": {
         "tags": ["사용자 프로필"],
@@ -368,6 +430,162 @@
           }
         },
         "security": [{ "bearerAuth": [] }]
+      }
+    },
+    "/api/v1/cafeterias": {
+      "get": {
+        "tags": ["구내식당"],
+        "summary": "특정 날짜 구내식당 식단표 조회 (무한 스크롤)",
+        "description": "너구디에 등록된 구내식당 목록과 특정 날짜의 식단표를 조회합니다.\n\n**주요 기능:**\n- 구내식당 기본 정보\n- 특정 날짜의 식단표 (menuItems, 칼로리, 가격 등)\n- 식단표가 없는 구내식당은 menu 필드가 null\n\n**페이징:**\n- 커서 기반 무한 스크롤 지원\n- cursor: 다음 페이지를 조회하려면 이전 응답의 pageInfo.nextCursor 값 전달\n- size: 한 번에 조회할 개수 (기본 10개)\n\n**날짜:**\n- date를 지정하지 않으면 오늘 날짜 기준으로 조회\n",
+        "operationId": "getCafeteriasWithMenu",
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "description": "커서 (이전 페이지의 마지막 구내식당 ID, 첫 페이지는 null)",
+            "required": false,
+            "schema": { "type": "integer", "format": "int64" }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "조회할 개수 (기본 10개)",
+            "required": false,
+            "schema": { "type": "integer", "format": "int32", "default": 10 }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "조회할 식단표 날짜 (null이면 오늘)",
+            "required": false,
+            "schema": { "type": "string", "format": "date" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseGetCafeteriaWithMenuResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cafeterias/{id}": {
+      "get": {
+        "tags": ["구내식당"],
+        "summary": "특정 구내식당 조회",
+        "description": "ID로 특정 구내식당의 상세 정보를 조회합니다.\n\n**주요 기능:**\n- 구내식당 기본 정보\n- 활성화된 구내식당만 조회 가능\n\n**에러 케이스:**\n- 존재하지 않는 ID: 404 NOT_FOUND\n- 비활성화된 구내식당: 404 NOT_FOUND\n",
+        "operationId": "getCafeteria",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "구내식당 ID",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponseGetCafeteriaResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cafeterias/{id}/menus": {
+      "get": {
+        "tags": ["구내식당"],
+        "summary": "특정 구내식당의 특정 날짜 식단표 조회",
+        "description": "특정 구내식당의 특정 날짜 식단표를 조회합니다.\n\n**주요 기능:**\n- 해당 날짜의 모든 식사 시간대 식단표 (아침, 점심, 저녁)\n- 식단표가 없으면 빈 배열 반환\n\n**날짜:**\n- date를 지정하지 않으면 오늘 날짜 기준으로 조회\n\n**에러 케이스:**\n- 존재하지 않는 구내식당 ID: 404 NOT_FOUND\n- 비활성화된 구내식당: 404 NOT_FOUND\n",
+        "operationId": "getCafeteriaMenuByDate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "구내식당 ID",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "조회할 식단표 날짜 (null이면 오늘)",
+            "required": false,
+            "schema": { "type": "string", "format": "date" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponseGetCafeteriaMenuResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cafeterias/{id}/menus/availability": {
+      "get": {
+        "tags": ["구내식당"],
+        "summary": "특정 구내식당의 특정 월 일자별 식단표 유무 조회",
+        "description": "특정 구내식당의 특정 월에 식단표가 있는 일자 목록을 조회합니다.\n\n**주요 기능:**\n- 지정한 연도/월에 식단표가 등록된 일자 목록 반환\n- 달력 UI에서 식단표 유무 표시에 활용\n\n**조회 가능 범위:**\n- 시작: 2025년 10월\n- 종료: 현재 월\n- 범위를 벗어나면 400 에러\n\n**응답 예시:**\n```json\n{\n  \"year\": 2025,\n  \"month\": 10,\n  \"daysWithMenu\": [1, 3, 5, 12, 15, 20, 25]\n}\n```\n\n**에러 케이스:**\n- 존재하지 않는 구내식당 ID: 404 NOT_FOUND\n- 조회 범위 벗어남: 400 BAD_REQUEST\n",
+        "operationId": "getCafeteriaMenuAvailability",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "구내식당 ID",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "description": "조회할 년도 (2025 이상)",
+            "required": true,
+            "schema": { "minimum": 2025, "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "month",
+            "in": "query",
+            "description": "조회할 월 (1-12)",
+            "required": true,
+            "schema": {
+              "maximum": 12,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponseGetCafeteriaMenuAvailabilityResponse"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/v1/auth/login/naver/authorize-url": {
@@ -990,6 +1208,244 @@
           "data": { "$ref": "#/components/schemas/EmailVerificationResponse" }
         }
       },
+      "BusinessHoursRequest": {
+        "required": ["operatingDays"],
+        "type": "object",
+        "properties": {
+          "lunchStartTime": { "$ref": "#/components/schemas/LocalTime" },
+          "lunchEndTime": { "$ref": "#/components/schemas/LocalTime" },
+          "dinnerStartTime": { "$ref": "#/components/schemas/LocalTime" },
+          "dinnerEndTime": { "$ref": "#/components/schemas/LocalTime" },
+          "operatingDays": {
+            "type": "array",
+            "description": "영업 요일 (예: 평일만 영업하는 경우)",
+            "example": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"],
+            "items": {
+              "type": "string",
+              "description": "영업 요일 (예: 평일만 영업하는 경우)",
+              "example": "[\"MONDAY\",\"TUESDAY\",\"WEDNESDAY\",\"THURSDAY\",\"FRIDAY\"]",
+              "enum": [
+                "MONDAY",
+                "TUESDAY",
+                "WEDNESDAY",
+                "THURSDAY",
+                "FRIDAY",
+                "SATURDAY",
+                "SUNDAY"
+              ]
+            }
+          },
+          "specialHolidays": {
+            "type": "array",
+            "description": "특별 휴무일 (공휴일 등)",
+            "example": ["2025-01-01", "2025-03-01", "2025-05-05"],
+            "items": {
+              "type": "string",
+              "description": "특별 휴무일 (공휴일 등)",
+              "format": "date"
+            }
+          },
+          "note": {
+            "type": "string",
+            "description": "영업시간 비고",
+            "example": "공휴일 휴무"
+          }
+        },
+        "description": "구내식당 영업시간 정보"
+      },
+      "LocalTime": {
+        "type": "object",
+        "properties": {
+          "hour": { "type": "integer", "format": "int32" },
+          "minute": { "type": "integer", "format": "int32" },
+          "second": { "type": "integer", "format": "int32" },
+          "nano": { "type": "integer", "format": "int32" }
+        },
+        "description": "저녁 종료 시간",
+        "example": "19:30:00"
+      },
+      "RegisterCafeteriaRequest": {
+        "required": ["address", "addressDetail", "name", "takeoutAvailable"],
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "address": { "type": "string" },
+          "addressDetail": { "type": "string" },
+          "latitude": { "type": "number" },
+          "longitude": { "type": "number" },
+          "phone": { "type": "string" },
+          "description": { "type": "string" },
+          "oneLineIntro": { "type": "string" },
+          "mealTicketPrice": { "type": "integer", "format": "int32" },
+          "mainImageFileId": { "type": "integer", "format": "int64" },
+          "businessHours": {
+            "$ref": "#/components/schemas/BusinessHoursRequest"
+          },
+          "takeoutAvailable": { "type": "boolean" }
+        }
+      },
+      "RegisterCafeteriaResponse": {
+        "type": "object",
+        "properties": {
+          "cafeteriaId": { "type": "integer", "format": "int64" },
+          "name": { "type": "string" },
+          "address": { "type": "string" },
+          "addressDetail": { "type": "string" },
+          "latitude": { "type": "number" },
+          "longitude": { "type": "number" },
+          "phone": { "type": "string" },
+          "description": { "type": "string" },
+          "oneLineIntro": { "type": "string" },
+          "mealTicketPrice": { "type": "integer", "format": "int32" },
+          "mainImageFileId": { "type": "integer", "format": "int64" },
+          "takeoutAvailable": { "type": "boolean" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "SuccessResponseRegisterCafeteriaResponse": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "success": { "type": "boolean" },
+          "code": { "type": "integer", "format": "int32" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/RegisterCafeteriaResponse" }
+        }
+      },
+      "MenuItemDto": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": [
+              "RICE",
+              "SOUP",
+              "MAIN_DISH",
+              "SIDE_DISH",
+              "KIMCHI",
+              "SALAD",
+              "DESSERT",
+              "DRINK",
+              "SPECIAL"
+            ]
+          },
+          "calories": { "type": "integer", "format": "int32" },
+          "caloriesSource": { "type": "string" },
+          "displayOrder": { "type": "integer", "format": "int32" }
+        },
+        "description": "메뉴 항목 목록"
+      },
+      "RegisterCafeteriaMenuRequest": {
+        "required": ["mealType", "menuDate", "menuItems", "restaurantId"],
+        "type": "object",
+        "properties": {
+          "restaurantId": {
+            "type": "integer",
+            "description": "구내식당 ID",
+            "format": "int64",
+            "example": 1
+          },
+          "menuDate": {
+            "type": "string",
+            "description": "식단 날짜",
+            "format": "date",
+            "example": "2024-01-15"
+          },
+          "mealType": {
+            "type": "string",
+            "description": "식사 시간대 (BREAKFAST, LUNCH, DINNER)",
+            "example": "LUNCH",
+            "enum": ["BREAKFAST", "LUNCH", "DINNER"]
+          },
+          "menuItems": {
+            "type": "array",
+            "description": "메뉴 항목 목록",
+            "items": { "$ref": "#/components/schemas/MenuItemDto" }
+          },
+          "menuImageFileId": {
+            "type": "integer",
+            "description": "메뉴 이미지 파일 ID",
+            "format": "int64",
+            "example": 123
+          },
+          "specialNote": {
+            "type": "string",
+            "description": "특이사항 (예: 알레르기 정보, 추가 안내사항)",
+            "example": "견과류 포함"
+          }
+        },
+        "description": "구내식당 식단표 등록 요청"
+      },
+      "RegisterCafeteriaMenuResponse": {
+        "type": "object",
+        "properties": {
+          "menuId": {
+            "type": "integer",
+            "description": "식단표 ID",
+            "format": "int64",
+            "example": 1
+          },
+          "restaurantId": {
+            "type": "integer",
+            "description": "구내식당 ID",
+            "format": "int64",
+            "example": 1
+          },
+          "menuDate": {
+            "type": "string",
+            "description": "식단 날짜",
+            "format": "date",
+            "example": "2024-01-15"
+          },
+          "mealType": {
+            "type": "string",
+            "description": "식사 시간대",
+            "example": "LUNCH",
+            "enum": ["BREAKFAST", "LUNCH", "DINNER"]
+          },
+          "menuItems": {
+            "type": "array",
+            "description": "메뉴 항목 목록",
+            "items": { "$ref": "#/components/schemas/MenuItemDto" }
+          },
+          "totalCalories": {
+            "type": "integer",
+            "description": "총 칼로리",
+            "format": "int32",
+            "example": 850
+          },
+          "menuImageFileId": {
+            "type": "integer",
+            "description": "메뉴 이미지 파일 ID",
+            "format": "int64",
+            "example": 123
+          },
+          "specialNote": {
+            "type": "string",
+            "description": "특이사항",
+            "example": "견과류 포함"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "등록 일시",
+            "format": "date-time"
+          }
+        },
+        "description": "구내식당 식단표 등록 응답"
+      },
+      "SuccessResponseRegisterCafeteriaMenuResponse": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "success": { "type": "boolean" },
+          "code": { "type": "integer", "format": "int32" },
+          "message": { "type": "string" },
+          "data": {
+            "$ref": "#/components/schemas/RegisterCafeteriaMenuResponse"
+          }
+        }
+      },
       "NicknameCheckResponse": {
         "type": "object",
         "properties": {
@@ -1058,6 +1514,152 @@
           "nickname": { "type": "string" },
           "profileImageUrl": { "type": "string" },
           "joinDate": { "type": "string", "format": "date" }
+        }
+      },
+      "BusinessHoursDTO": {
+        "type": "object",
+        "properties": {
+          "lunch": { "$ref": "#/components/schemas/TimeRangeDTO" },
+          "dinner": { "$ref": "#/components/schemas/TimeRangeDTO" },
+          "note": { "type": "string" }
+        }
+      },
+      "CafeteriaInfoDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "name": { "type": "string" },
+          "address": { "type": "string" },
+          "addressDetail": { "type": "string" },
+          "latitude": { "type": "number" },
+          "longitude": { "type": "number" },
+          "phone": { "type": "string" },
+          "mealTicketPrice": { "type": "integer", "format": "int32" },
+          "takeoutAvailable": { "type": "boolean" },
+          "businessHours": { "$ref": "#/components/schemas/BusinessHoursDTO" }
+        }
+      },
+      "GetCafeteriaWithMenuResponse": {
+        "type": "object",
+        "properties": {
+          "cafeteria": { "$ref": "#/components/schemas/CafeteriaInfoDTO" },
+          "menus": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/MenuInfoDTO" }
+          }
+        }
+      },
+      "MenuInfoDTO": {
+        "type": "object",
+        "properties": {
+          "mealType": { "type": "string" },
+          "menuItems": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/MenuItemDto" }
+          },
+          "specialNote": { "type": "string" },
+          "nutritionInfo": { "$ref": "#/components/schemas/NutritionInfoDTO" }
+        }
+      },
+      "NutritionInfoDTO": {
+        "type": "object",
+        "properties": {
+          "totalCalories": { "type": "integer", "format": "int32" },
+          "dailyPercentage": { "type": "integer", "format": "int32" },
+          "walkingSteps": { "type": "integer", "format": "int32" },
+          "runningKm": { "type": "integer", "format": "int32" },
+          "cyclingKm": { "type": "integer", "format": "int32" },
+          "stairsFloors": { "type": "integer", "format": "int32" }
+        }
+      },
+      "PageInfo": {
+        "type": "object",
+        "properties": {
+          "nextCursor": { "type": "integer", "format": "int64" },
+          "size": { "type": "integer", "format": "int32" },
+          "hasNext": { "type": "boolean" }
+        }
+      },
+      "PageResponseGetCafeteriaWithMenuResponse": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "success": { "type": "boolean" },
+          "code": { "type": "integer", "format": "int32" },
+          "message": { "type": "string" },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GetCafeteriaWithMenuResponse"
+            }
+          },
+          "pageInfo": { "$ref": "#/components/schemas/PageInfo" }
+        }
+      },
+      "TimeRangeDTO": {
+        "type": "object",
+        "properties": {
+          "start": { "$ref": "#/components/schemas/LocalTime" },
+          "end": { "$ref": "#/components/schemas/LocalTime" }
+        }
+      },
+      "GetCafeteriaResponse": {
+        "type": "object",
+        "properties": {
+          "cafeteria": { "$ref": "#/components/schemas/CafeteriaInfoDTO" }
+        }
+      },
+      "SuccessResponseGetCafeteriaResponse": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "success": { "type": "boolean" },
+          "code": { "type": "integer", "format": "int32" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/GetCafeteriaResponse" }
+        }
+      },
+      "GetCafeteriaMenuResponse": {
+        "type": "object",
+        "properties": {
+          "menuDate": { "type": "string", "format": "date" },
+          "menus": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/MenuInfoDTO" }
+          }
+        }
+      },
+      "SuccessResponseGetCafeteriaMenuResponse": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "success": { "type": "boolean" },
+          "code": { "type": "integer", "format": "int32" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/GetCafeteriaMenuResponse" }
+        }
+      },
+      "GetCafeteriaMenuAvailabilityResponse": {
+        "type": "object",
+        "properties": {
+          "year": { "type": "integer", "format": "int32" },
+          "month": { "type": "integer", "format": "int32" },
+          "daysWithMenu": {
+            "type": "array",
+            "items": { "type": "integer", "format": "int32" }
+          }
+        }
+      },
+      "SuccessResponseGetCafeteriaMenuAvailabilityResponse": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "success": { "type": "boolean" },
+          "code": { "type": "integer", "format": "int32" },
+          "message": { "type": "string" },
+          "data": {
+            "$ref": "#/components/schemas/GetCafeteriaMenuAvailabilityResponse"
+          }
         }
       },
       "GetNaverAuthorizeResponse": {
