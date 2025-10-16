@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { auth } from "@/src/domains/auth";
+import { auth } from "@/src/domains/auth/auth-server";
 import { SESSION_COOKIE_MAX_AGE } from "@/src/domains/auth/constants/session";
 import { AuthError } from "@/src/domains/auth/errors/auth-error";
 import { isTokenExpired } from "@/src/domains/auth/utils/jwt";
