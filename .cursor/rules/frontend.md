@@ -19,15 +19,36 @@ Page (Server Component) → View → Section (with Suspense/ErrorBoundary) → C
 
 ```
 domains/
-├── auth/                    # Complex domain with sub-features
-│   ├── sign-up/
-│   ├── sign-in/
-│   ├── login/
-│   ├── profile/
-│   └── forgot-password/
-├── benefit/                 # Simple domain without sub-features
+├── auth/                          # Complex domain (flat structure)
+│   ├── constants/                 # Constants (session, sign-up, etc.)
+│   ├── errors/                    # Auth error classes
+│   ├── hooks/
+│   │   ├── queries/               # TanStack Query options (미래)
+│   │   └── use-*.ts               # 일반 커스텀 훅
+│   ├── providers/                 # OAuth providers
+│   ├── schemas/                   # Zod validation schemas
+│   ├── stores/                    # Zustand stores
+│   ├── types/                     # TypeScript types
+│   ├── ui/
+│   │   ├── components/
+│   │   ├── sections/
+│   │   └── views/
+│   ├── utils/                     # Utility functions
+│   ├── auth-actions.ts            # Server Actions
+│   └── auth-server.ts             # Server-only auth client
+├── benefit/                       # Simple domain
+│   ├── hooks/
+│   │   └── queries/               # TanStack Query options
 │   └── ui/
-└── cafeteria/               # Simple domain without sub-features
+├── cafeteria/                     # Simple domain
+│   ├── hooks/
+│   │   └── queries/               # TanStack Query options
+│   └── ui/
+└── user/                          # Simple domain
+    ├── constants/
+    │   └── query-keys.ts          # Query Key constants ONLY
+    ├── hooks/
+    │   └── queries/               # TanStack Query options
     └── ui/
 ```
 
@@ -48,23 +69,25 @@ domains/
 // NEVER: Use hooks or browser APIs
 
 // Example: app/page.tsx (home page shows cafeteria)
-import { HydrationBoundary } from "@tanstack/react-query";
-import { CafeteriaHomeView } from "@/src/domains/cafeteria/ui/views/cafeteria-home-view";
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
+import { auth } from '@/src/domains/auth/auth-server';
+import { CafeteriaHomeView } from '@/src/domains/cafeteria/ui/views/cafeteria-home-view';
+import { userProfileQueryServer } from '@/src/domains/user/hooks/queries/user-profile.query';
+import getQueryClient from '@/src/shared/configs/tanstack-query/get-query-client';
 
 const Page = async ({ params, searchParams }) => {
-  // 1. Extract parameters
-  const { filter } = searchParams;
+  const queryClient = getQueryClient();
+  const session = await auth.getSession({ refresh: false });
 
-  // 2. Prefetch data on server
-  await queryClient.prefetchQuery({
-    queryKey: ["cafeterias", filter],
-    queryFn: () => api.cafeterias.getList({ filter }),
-  });
+  // Prefetch data using Server Query Factory (토큰 자동 주입)
+  await queryClient.prefetchQuery(
+    userProfileQueryServer(session!.tokenSet.accessToken)
+  );
 
-  // 3. Return View wrapped in HydrationBoundary
+  // Return View wrapped in HydrationBoundary
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <CafeteriaHomeView filter={filter} />
+      <CafeteriaHomeView />
     </HydrationBoundary>
   );
 };
@@ -160,10 +183,8 @@ const CafeteriaBrowseMenuSectionError = ({ error }) => {
 
 // Content Component (actual data fetching and rendering)
 const CafeteriaBrowseMenuSectionContent = ({ filter }) => {
-  const { data } = useSuspenseQuery({
-    queryKey: ['cafeterias', filter],
-    queryFn: () => api.cafeterias.getList({ filter }),
-  });
+  // Use Client Query Options (토큰은 HTTP 클라이언트가 자동 주입)
+  const { data } = useSuspenseQuery(userProfileQueryClient);
 
   return <CafeteriaMenuList cafeteriaList={data} />;
 };
@@ -235,44 +256,26 @@ components/
 ```
 apps/web/src/
 └── domains/
-    └── auth/                              # Domain (unified structure)
+    └── user/                              # Domain (simple structure)
         ├── constants/
-        │   ├── social-sign-up.ts          # Social sign-up constants
-        │   └── terms.ts                   # Terms and conditions
-        ├── schemas/
-        │   ├── credentials-sign-in-schema.ts
-        │   └── social-sign-up-schema.ts   # Zod validation schemas
-        ├── errors/
-        │   └── auth-error.ts              # Auth error class
-        ├── providers/
-        │   ├── base-oauth-provider.ts     # Base OAuth provider
-        │   ├── google-provider.ts
-        │   ├── naver-provider.ts
-        │   └── registry.ts                # Provider registry
-        ├── stores/
-        │   └── use-social-sign-up-store.ts # Zustand store
+        │   └── query-keys.ts              # Query Key 상수만 정의 (NOT Query Options)
+        ├── hooks/
+        │   └── queries/                   # TanStack Query Options 정의
+        │       └── user-profile.query.ts  # Server/Client Query Factory
         ├── types/
         │   └── index.ts                   # TypeScript types
         ├── utils/
-        │   └── device.ts                  # Device info utilities
+        │   └── format-points.ts           # Utility functions
         └── ui/
             ├── views/
-            │   ├── credentials-sign-in-view/
-            │   │   ├── index.tsx
-            │   │   └── index.css.ts
-            │   └── social-sign-up-view/
+            │   └── user-profile-view/
             │       ├── index.tsx
             │       └── index.css.ts
             ├── sections/
-            │   ├── credentials-sign-in-section/
-            │   │   └── index.tsx
-            │   └── social-sign-up-section/
+            │   └── user-profile-section/
             │       └── index.tsx
             └── components/
-                ├── credentials-sign-in-form/
-                │   ├── index.tsx
-                │   └── index.css.ts
-                └── social-sign-up-form/
+                └── user-profile-card/
                     ├── index.tsx
                     └── index.css.ts
 ```
@@ -302,6 +305,95 @@ export const EmailForm = () => {};
 // ✅ Sub-components also use named export
 ```
 
+## Hooks Folder Structure
+
+### Query vs. General Hooks 분리
+
+**IMPORTANT**: `hooks/` 폴더 내에서 TanStack Query Options와 일반 커스텀 훅을 명확히 분리합니다.
+
+```
+hooks/
+├── queries/                        # TanStack Query Options만 정의
+│   ├── user-profile.query.ts      # Query Factory (Server/Client)
+│   └── user-settings.query.ts
+└── use-*.ts                        # 일반 커스텀 훅
+    ├── use-user-actions.ts        # UI 로직, 상태 관리
+    └── use-user-validation.ts     # Side effects (데이터 fetching 제외)
+```
+
+### Query Options 파일 작성 규칙
+
+1. **파일명**: `[feature].query.ts` 형식 사용
+2. **Import**: Query Key는 `constants/query-keys.ts`에서 import
+3. **Export**: Server Factory (`xxxQueryServer`) + Client Options (`xxxQueryClient`)
+4. **캐싱**: 데이터 특성에 맞는 캐싱 전략 설정 (staleTime, gcTime, refetch options)
+5. **DRY**: 공통 옵션은 `baseQuery`로 추출하여 재사용
+
+```typescript
+// ✅ CORRECT - hooks/queries/user-profile.query.ts
+import { getMyProfile } from '@nugudi/api';
+import { USER_PROFILE_QUERY_KEY } from '../../constants/query-keys';
+
+// Private: 캐싱 옵션
+const USER_PROFILE_QUERY_OPTIONS = {
+  staleTime: 10 * 60 * 1000,
+  gcTime: 30 * 60 * 1000,
+  refetchOnWindowFocus: false,
+  refetchOnMount: false,
+  refetchOnReconnect: false,
+} as const;
+
+// Private: Base Query (공통 부분)
+const baseUserProfileQuery = {
+  queryKey: USER_PROFILE_QUERY_KEY,
+  ...USER_PROFILE_QUERY_OPTIONS,
+} as const;
+
+// Public: Server Factory
+export const userProfileQueryServer = (accessToken: string) => ({
+  ...baseUserProfileQuery,
+  queryFn: () =>
+    getMyProfile({
+      headers: { Authorization: `Bearer ${accessToken}` },
+    }),
+});
+
+// Public: Client Options
+export const userProfileQueryClient = {
+  ...baseUserProfileQuery,
+  queryFn: () => getMyProfile(),
+} as const;
+```
+
+### 일반 커스텀 훅 작성 규칙
+
+1. **파일명**: `use-[feature].ts` 형식 사용
+2. **Export**: Named export로 `use` prefix 필수
+3. **책임**: UI 로직, 상태 관리, Side effects (데이터 fetching은 Query Options에서 처리)
+4. **위치**: `hooks/` 폴더 루트 (queries 폴더 밖)
+
+```typescript
+// ✅ CORRECT - hooks/use-user-actions.ts
+import { useRouter } from 'next/navigation';
+
+export const useUserActions = () => {
+  const router = useRouter();
+
+  const navigateToProfile = () => {
+    router.push('/profile');
+  };
+
+  return { navigateToProfile };
+};
+
+// ❌ WRONG - 데이터 fetching은 Query Options에서
+export const useUserProfile = () => {
+  // Don't fetch data here, use useSuspenseQuery with xxxQueryClient instead
+  const response = await fetch('/api/user/profile'); // NO!
+  return response.json();
+};
+```
+
 ## Import Patterns
 
 ### Within the Same Domain - MUST Use Relative Imports
@@ -309,19 +401,19 @@ export const EmailForm = () => {};
 ```typescript
 // ✅ CORRECT - Use relative imports + named exports within same domain
 // In: apps/web/src/domains/auth/sign-up/ui/views/sign-up-view/index.tsx
-import { SignUpSection } from "../../sections/sign-up-section";
+import { SignUpSection } from '../../sections/sign-up-section';
 
 // In: apps/web/src/domains/auth/sign-up/ui/sections/sign-up-section/index.tsx
-import { SignUpForm } from "../../components/sign-up-form";
-import { useSignUpStore } from "../../../stores/use-sign-up-store"; // Named export for hooks
-import type { SignUpFormData } from "../../../types/sign-up";
+import { SignUpForm } from '../../components/sign-up-form';
+import { useSignUpStore } from '../../../stores/use-sign-up-store'; // Named export for hooks
+import type { SignUpFormData } from '../../../types/sign-up';
 
 // In: apps/web/src/domains/auth/sign-up/ui/components/sign-up-form/index.tsx
-import { EmailForm } from "./steps/email-form";
-import { PasswordForm } from "./steps/password-form";
+import { EmailForm } from './steps/email-form';
+import { PasswordForm } from './steps/password-form';
 
 // ❌ WRONG - Don't use absolute imports within same domain
-import { SignUpSection } from "@/src/domains/auth/sign-up/ui/sections/sign-up-section"; // NO!
+import { SignUpSection } from '@/src/domains/auth/sign-up/ui/sections/sign-up-section'; // NO!
 ```
 
 ### From Page to View - MUST Use Absolute Imports
@@ -330,14 +422,14 @@ import { SignUpSection } from "@/src/domains/auth/sign-up/ui/sections/sign-up-se
 // ✅ CORRECT - Pages use absolute imports for views
 // Public route example
 // In: app/(public)/auth/sign-up/page.tsx
-import { SignUpView } from "@/src/domains/auth/sign-up/ui/views/sign-up-view";
+import { SignUpView } from '@/src/domains/auth/sign-up/ui/views/sign-up-view';
 
 // Protected route example
 // In: app/(auth)/profile/page.tsx
-import { ProfilePageView } from "@/src/domains/auth/profile/ui/views/profile-page-view";
+import { ProfilePageView } from '@/src/domains/auth/profile/ui/views/profile-page-view';
 
 // In: app/page.tsx (home page shows cafeteria)
-import { CafeteriaHomeView } from "@/src/domains/cafeteria/ui/views/cafeteria-home-view";
+import { CafeteriaHomeView } from '@/src/domains/cafeteria/ui/views/cafeteria-home-view';
 ```
 
 ### Cross-Domain Imports - MUST Use Absolute Imports
@@ -345,45 +437,45 @@ import { CafeteriaHomeView } from "@/src/domains/cafeteria/ui/views/cafeteria-ho
 ```typescript
 // ✅ CORRECT - Use absolute imports for cross-domain
 // In: apps/web/src/domains/cafeteria/...
-import { useAuth } from "@/src/domains/auth/hooks/use-auth";
-import { LoginWelcome } from "@/src/domains/auth/login/ui/components/login-welcome";
+import { useAuth } from '@/src/domains/auth/hooks/use-auth';
+import { LoginWelcome } from '@/src/domains/auth/login/ui/components/login-welcome';
 
 // In: apps/web/src/shared/ui/components/...
-import { ProfileSection } from "@/src/domains/auth/profile/ui/sections/profile-section";
+import { ProfileSection } from '@/src/domains/auth/profile/ui/sections/profile-section';
 
 // ❌ WRONG - Don't use relative imports for cross-domain
-import { useAuth } from "../../../auth/hooks/use-auth"; // NO!
+import { useAuth } from '../../../auth/hooks/use-auth'; // NO!
 ```
 
 ### Using Monorepo Packages - Package Import Rules
 
 ```typescript
 // Individual component packages - Named exports
-import { Button } from "@nugudi/react-components-button"; // ✅ Named
-import { Input } from "@nugudi/react-components-input"; // ✅ Named
-import { Switch } from "@nugudi/react-components-switch"; // ✅ Named
+import { Button } from '@nugudi/react-components-button'; // ✅ Named
+import { Input } from '@nugudi/react-components-input'; // ✅ Named
+import { Switch } from '@nugudi/react-components-switch'; // ✅ Named
 
 // Layout package - Named exports
-import { Box, Flex, VStack, HStack } from "@nugudi/react-components-layout"; // ✅ Named
+import { Box, Flex, VStack, HStack } from '@nugudi/react-components-layout'; // ✅ Named
 import {
   Heading,
   Title,
   Body,
   Emphasis,
-} from "@nugudi/react-components-layout"; // ✅ Named
+} from '@nugudi/react-components-layout'; // ✅ Named
 
 // Hooks - Named exports
-import { useToggle } from "@nugudi/react-hooks-toggle"; // ✅ Named
-import { useStepper } from "@nugudi/react-hooks-use-stepper"; // ✅ Named
+import { useToggle } from '@nugudi/react-hooks-toggle'; // ✅ Named
+import { useStepper } from '@nugudi/react-hooks-use-stepper'; // ✅ Named
 
 // Themes - Named exports
-import { vars, classes } from "@nugudi/themes"; // ✅ Named
+import { vars, classes } from '@nugudi/themes'; // ✅ Named
 
 // Icons - Named exports
-import { AppleIcon, HeartIcon, ArrowRightIcon } from "@nugudi/assets-icons"; // ✅ Named
+import { AppleIcon, HeartIcon, ArrowRightIcon } from '@nugudi/assets-icons'; // ✅ Named
 
 // API - Named export
-import { api } from "@nugudi/api"; // ✅ Named
+import { api } from '@nugudi/api'; // ✅ Named
 ```
 
 ## Data Flow Rules
@@ -391,14 +483,23 @@ import { api } from "@nugudi/api"; // ✅ Named
 ### Server → Client Data Flow
 
 ```typescript
-// 1. Page prefetches data
-await queryClient.prefetchQuery({ queryKey: ["data"] });
+// 1. Page prefetches data using Server Query
+// File: app/page.tsx
+import { userProfileQueryServer } from '@/src/domains/user/hooks/queries/user-profile.query';
+
+const session = await auth.getSession({ refresh: false });
+await queryClient.prefetchQuery(
+  userProfileQueryServer(session!.tokenSet.accessToken)
+);
 
 // 2. View receives props
-<FeatureView initialData={data} />;
+<FeatureView />;
 
-// 3. Section fetches/uses prefetched data
-const { data } = useSuspenseQuery({ queryKey: ["data"] });
+// 3. Section fetches/uses prefetched data using Client Query
+// File: domains/user/ui/sections/user-profile-section/index.tsx
+import { userProfileQueryClient } from '@/src/domains/user/hooks/queries/user-profile.query';
+
+const { data } = useSuspenseQuery(userProfileQueryClient);
 
 // 4. Component receives data as props
 <Component data={data} />;
@@ -421,7 +522,7 @@ export const DataSection = () => {
   return (
     <ErrorBoundary
       fallback={<DataSectionError />}
-      onError={(error) => console.error("DataSection error:", error)}
+      onError={(error) => console.error('DataSection error:', error)}
     >
       <Suspense fallback={<DataSectionSkeleton />}>
         <DataSectionContent />
@@ -432,7 +533,7 @@ export const DataSection = () => {
 
 // Internal components - NOT exported
 const DataSectionSkeleton = () => {
-  return <div className="animate-pulse">Loading...</div>;
+  return <div className='animate-pulse'>Loading...</div>;
 };
 
 const DataSectionError = ({ error }) => {
@@ -447,21 +548,82 @@ const DataSectionContent = () => {
 // Only export the main section with named export
 ```
 
-## Query Hooks Pattern
+## TanStack Query Pattern
+
+### Query Key와 Query Options 분리 규칙
+
+**IMPORTANT**: Query Key와 Query Options는 명확히 분리하여 관리합니다.
 
 ```typescript
-// In Section Content components:
-const SectionContent = ({ param }) => {
-  // For single data fetch
-  const { data } = useSuspenseQuery({
-    queryKey: ["resource", param],
-    queryFn: () => api.fetch(param),
-  });
+// ✅ CORRECT - constants/query-keys.ts (Query Key만 정의)
+export const USER_PROFILE_QUERY_KEY = ['user', 'profile', 'me'] as const;
 
-  // For infinite scroll
+// ✅ CORRECT - hooks/queries/user-profile.query.ts (Query Options 정의)
+import { getMyProfile } from '@nugudi/api';
+import { USER_PROFILE_QUERY_KEY } from '../../constants/query-keys';
+
+// 캐싱 옵션 (private, 재사용)
+const USER_PROFILE_QUERY_OPTIONS = {
+  staleTime: 10 * 60 * 1000,
+  gcTime: 30 * 60 * 1000,
+  refetchOnWindowFocus: false,
+  refetchOnMount: false,
+  refetchOnReconnect: false,
+} as const;
+
+// Base Query (공통 부분 추출)
+const baseUserProfileQuery = {
+  queryKey: USER_PROFILE_QUERY_KEY,
+  ...USER_PROFILE_QUERY_OPTIONS,
+} as const;
+
+// Server-side용: 토큰 주입 Factory
+export const userProfileQueryServer = (accessToken: string) => ({
+  ...baseUserProfileQuery,
+  queryFn: () =>
+    getMyProfile({
+      headers: { Authorization: `Bearer ${accessToken}` },
+    }),
+});
+
+// Client-side용: 토큰 자동 주입 (HTTP 클라이언트가 처리)
+export const userProfileQueryClient = {
+  ...baseUserProfileQuery,
+  queryFn: () => getMyProfile(),
+} as const;
+```
+
+### 사용 패턴
+
+```typescript
+// Page (Server Component) - userProfileQueryServer 사용
+import { userProfileQueryServer } from '@/src/domains/user/hooks/queries/user-profile.query';
+
+const Page = async () => {
+  const session = await auth.getSession({ refresh: false });
+
+  await queryClient.prefetchQuery(
+    userProfileQueryServer(session!.tokenSet.accessToken)
+  );
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>...</HydrationBoundary>
+  );
+};
+
+// Section Content (Client Component) - userProfileQueryClient 사용
+import { userProfileQueryClient } from '@/src/domains/user/hooks/queries/user-profile.query';
+
+const SectionContent = () => {
+  const { data } = useSuspenseQuery(userProfileQueryClient);
+  return <Component data={data} />;
+};
+
+// Infinite Scroll 패턴
+const SectionContent = () => {
   const { data, fetchNextPage, hasNextPage } = useSuspenseInfiniteQuery({
-    queryKey: ["resources", param],
-    queryFn: ({ pageParam }) => api.fetchPage({ param, page: pageParam }),
+    queryKey: ['resources'],
+    queryFn: ({ pageParam }) => api.fetchPage({ page: pageParam }),
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.nextPage,
   });
@@ -469,6 +631,13 @@ const SectionContent = ({ param }) => {
   return <ComponentList data={data} onLoadMore={fetchNextPage} />;
 };
 ```
+
+### 네이밍 규칙
+
+- **Query Key 상수**: `[DOMAIN]_[FEATURE]_QUERY_KEY`
+- **Server Factory**: `[feature]QueryServer(token)` - 함수
+- **Client Options**: `[feature]QueryClient` - 객체
+- **Base Query**: `base[Feature]Query` - private
 
 ## Best Practices Summary
 
@@ -480,7 +649,7 @@ const SectionContent = ({ param }) => {
 6. **Always use** Suspense + ErrorBoundary in Sections
 7. **Never skip** the hierarchy (Page → View → Section → Component)
 8. **Keep components** pure and reusable
-9. **Domain Structure**: Use sub-features for complex domains (auth), direct UI for simple domains (benefit)
+9. **Domain Structure**: Complex domains CAN use flat structure (auth) OR sub-features. Simple domains use flat structure (benefit, user)
 10. **Name consistently** following the patterns above
 11. **Separate concerns** strictly between layers
 12. **Each component** must be in its own folder with `index.tsx` and `index.css.ts`
@@ -489,6 +658,9 @@ const SectionContent = ({ param }) => {
 15. **Always prefer** existing packages from `@nugudi/*` namespace
 16. **Client Components**: Add `"use client"` when using event handlers or hooks
 17. **Follow monorepo** import conventions from packages.md
+18. **TanStack Query**: Separate Query Keys (`constants/`) from Query Options (`hooks/queries/`)
+19. **Query Naming**: Use `xxxQueryServer(token)` for Server, `xxxQueryClient` for Client
+20. **Query Structure**: Extract common parts to `baseQuery`, use factory pattern for token injection
 
 ## TypeScript Interface Rules
 
@@ -542,28 +714,28 @@ interface [Component]Props {
 ```typescript
 // ✅ CORRECT Examples
 // Within same domain (auth/sign-up)
-import { SignUpSection } from "../../sections/sign-up-section";
-import { useSignUpStore } from "../../../stores/use-sign-up-store";
+import { SignUpSection } from '../../sections/sign-up-section';
+import { useSignUpStore } from '../../../stores/use-sign-up-store';
 
 // Cross-domain
-import { LoginWelcome } from "@/src/domains/auth/login/ui/components/login-welcome";
+import { LoginWelcome } from '@/src/domains/auth/login/ui/components/login-welcome';
 
 // Shared components
-import { AppHeader } from "@/src/shared/ui/components/app-header";
+import { AppHeader } from '@/src/shared/ui/components/app-header';
 
 // Packages
-import { Button } from "@nugudi/react-components-button";
-import { Box, Flex } from "@nugudi/react-components-layout";
+import { Button } from '@nugudi/react-components-button';
+import { Box, Flex } from '@nugudi/react-components-layout';
 
 // ❌ WRONG Examples
 // Using absolute path within same domain
-import { SignUpSection } from "@/src/domains/auth/sign-up/ui/sections/sign-up-section";
+import { SignUpSection } from '@/src/domains/auth/sign-up/ui/sections/sign-up-section';
 
 // Using relative path for cross-domain
-import { LoginWelcome } from "../../../auth/login/ui/components/login-welcome";
+import { LoginWelcome } from '../../../auth/login/ui/components/login-welcome';
 
 // Wrong export pattern for packages
-import Button from "@nugudi/react-components-button"; // Should be named export
+import Button from '@nugudi/react-components-button'; // Should be named export
 ```
 
 This architecture ensures:
