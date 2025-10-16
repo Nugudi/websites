@@ -1,6 +1,27 @@
 "use server";
 
-import { cookies } from "next/headers";
+import { auth } from "./auth-server";
+import type { ClientSession } from "./types";
+
+/**
+ * 클라이언트용 세션 조회 (Server Action)
+ *
+ * Client Component에서 세션 정보를 가져올 때 사용합니다.
+ * Middleware에서 이미 토큰 갱신을 처리하므로 refresh: false로 설정됩니다.
+ *
+ * @returns ClientSession | null
+ *
+ * @example
+ * ```tsx
+ * "use client";
+ *
+ * const session = await getClientSession();
+ * console.log(session?.accessToken);
+ * ```
+ */
+export async function getClientSession(): Promise<ClientSession | null> {
+  return await auth.getClientSession();
+}
 
 /**
  * Server-Side에서 Device ID를 가져오거나 생성합니다.
@@ -14,6 +35,7 @@ import { cookies } from "next/headers";
  * ```
  */
 export async function getOrCreateDeviceId(): Promise<string> {
+  const { cookies } = await import("next/headers");
   const cookieStore = await cookies();
   let deviceId = cookieStore.get("x-device-id")?.value;
 

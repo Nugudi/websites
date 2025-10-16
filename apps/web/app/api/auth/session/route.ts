@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/src/domains/auth";
+import { auth } from "@/src/domains/auth/auth-server";
 
 /**
  * 세션 조회 API

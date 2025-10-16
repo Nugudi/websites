@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { auth } from "@/src/domains/auth";
+import { auth } from "@/src/domains/auth/auth-server";
 import type { Session } from "@/src/domains/auth/types";
 import { handleAuthError } from "@/src/domains/auth/utils/error-handler";
 
