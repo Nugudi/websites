@@ -1,8 +1,9 @@
 import { Box, VStack } from "@nugudi/react-components-layout";
+import type { Route } from "next";
 import { UserProfileNavigationLink } from "../../components/user-profile-navigation-link";
 import * as styles from "./index.css";
 
-export const menuItems = [
+export const menuItems: Array<{ href: Route; label: string }> = [
   { href: "/profile/settings/notifications", label: "알림 설정" },
   { href: "/profile/settings/privacy", label: "개인정보 약관" },
 ];

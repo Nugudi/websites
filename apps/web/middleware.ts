@@ -48,7 +48,7 @@ function setSessionCookie(
   });
 }
 
-export async function middleware(request: NextRequest) {
+export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Public 경로는 인증 체크 생략

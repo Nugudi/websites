@@ -1,6 +1,7 @@
 "use client";
 
 import { GiftIcon, HomeIcon, PersonIcon } from "@nugudi/assets-icons";
+import type { Route } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
@@ -10,7 +11,7 @@ interface TabItem {
   id: string;
   label: string;
   icon: React.ComponentType;
-  path: string;
+  path: Route;
 }
 
 const tabs: TabItem[] = [

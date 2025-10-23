@@ -1,11 +1,12 @@
 import { ArrowRightIcon } from "@nugudi/assets-icons";
 import { NavigationItem } from "@nugudi/react-components-navigation-item";
+import type { Route } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import * as styles from "./index.css";
 
 interface UserProfileNavigationLinkProps {
-  href: string;
+  href: Route;
   children: ReactNode;
   rightIcon?: ReactNode;
 }

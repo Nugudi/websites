@@ -5,8 +5,6 @@ class SentryExampleAPIError extends Error {
   }
 }
 
-export const dynamic = "force-dynamic";
-
 export const GET = () => {
   throw new SentryExampleAPIError(
     "This error is raised on the backend called by the example page.",

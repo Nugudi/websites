@@ -2,6 +2,7 @@
 
 import { Button } from "@nugudi/react-components-button";
 import { Body, Title, VStack } from "@nugudi/react-components-layout";
+import type { Route } from "next";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import * as styles from "./index.css";
@@ -18,7 +19,7 @@ interface NotFoundViewProps {
   };
   buttonText?: string;
   onButtonClick?: () => void;
-  redirectPath?: string;
+  redirectPath?: Route;
   showButton?: boolean;
 }
 
