@@ -48,7 +48,7 @@ function setSessionCookie(
   });
 }
 
-export default async function proxy(request: NextRequest) {
+export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Public 경로는 인증 체크 생략
@@ -86,7 +86,7 @@ export default async function proxy(request: NextRequest) {
     // 예외 발생 시 로그 기록 후 로그인 페이지로
     if (error instanceof AuthError) {
       // 구조화된 AuthError는 상세 정보와 함께 로깅
-      logger.error("Authentication error in proxy", {
+      logger.error("Authentication error in middleware", {
         code: error.code,
         message: error.message,
         context: error.context,
@@ -94,7 +94,7 @@ export default async function proxy(request: NextRequest) {
       });
     } else {
       // 일반 에러는 기존 방식대로 로깅
-      logger.error("Unexpected error in proxy", {
+      logger.error("Unexpected error in middleware", {
         error: error instanceof Error ? error.message : String(error),
         pathname,
       });
