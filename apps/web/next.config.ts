@@ -17,6 +17,16 @@ const nextConfig: NextConfig = {
   // React Compiler - 리액트 컴파일러 활성화
   reactCompiler: true,
 
+  // 모노레포 외부 패키지 사용 허용 및 트랜스파일 설정
+  // - externalDir: 패키지 외부(모노레포 루트)의 소스 접근 허용
+  // - transpilePackages: 워크스페이스 패키지 트랜스파일 (ex. @nugudi/themes)
+  experimental: {
+    externalDir: true,
+  },
+
+  // 워크스페이스 패키지 트랜스파일 (pnpm + 모노레포 환경 호환)
+  transpilePackages: ["@nugudi/themes", "@nugudi/assets-icons", "@nugudi/ui"],
+
   images: {
     formats: ["image/avif", "image/webp"],
   },
