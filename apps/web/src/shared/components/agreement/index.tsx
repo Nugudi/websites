@@ -1,5 +1,4 @@
 import { Box, Flex, Title } from "@nugudi/react-components-layout";
-import Link from "next/link";
 import type { MouseEvent, PropsWithChildren } from "react";
 import * as styles from "./index.css";
 
@@ -66,7 +65,12 @@ const AgreementDescription = ({
         </Title>
       </Flex>
       {link && (
-        <Link href={link} target="_blank" onClick={(e) => e.stopPropagation()}>
+        <a
+          href={link}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+        >
           <Box className={styles.arrowIcon}>
             <svg
               width="24"
@@ -85,7 +89,7 @@ const AgreementDescription = ({
               />
             </svg>
           </Box>
-        </Link>
+        </a>
       )}
     </Flex>
   );

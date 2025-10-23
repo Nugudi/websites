@@ -3,6 +3,7 @@
 import { BusIcon, ExitIcon, FolderIcon } from "@nugudi/assets-icons";
 import { Body, Box, VStack } from "@nugudi/react-components-layout";
 import { NavigationItem } from "@nugudi/react-components-navigation-item";
+import type { Route } from "next";
 import Link from "next/link";
 import * as styles from "./index.css";
 
@@ -11,7 +12,7 @@ interface MenuItem {
   title: string;
   description: string;
   icon: React.ReactNode;
-  href: string;
+  href: Route;
 }
 
 export const BenefitMenuList = () => {
