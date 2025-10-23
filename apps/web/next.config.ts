@@ -38,9 +38,12 @@ const plugins = [
       silent: !process.env.CI,
       sourcemaps: {
         deleteSourcemapsAfterUpload: true,
+        // 소스맵 업로드 시 존재하지 않는 파일 에러 무시
+        ignore: ["proxy.js"],
       },
       telemetry: false,
       tunnelRoute: "/monitoring",
+      // widenClientFileUpload 제거하여 안정성 향상
       widenClientFileUpload: true,
     }),
 ];
