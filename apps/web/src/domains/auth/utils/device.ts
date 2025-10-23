@@ -1,28 +1,31 @@
-import type { UserDeviceInfoDTO } from "@nugudi/api/schemas";
+import type { components } from "@nugudi/types";
 import type { NextRequest } from "next/server";
 import { UAParser } from "ua-parser-js";
 
-/**
- * User Agent를 파싱하여 디바이스 정보 생성
- *
- * @param userAgent - User Agent 문자열
- * @param deviceId - Device ID (서버에서 관리되는 고유 식별자)
- * @param request - (Optional) NextRequest 객체 (서버 사이드에서만 사용)
- *
- * @example
- * ```tsx
- * // 클라이언트에서 사용 (Server Action으로 deviceId 가져오기)
- * const deviceId = await getOrCreateDeviceId();
- * const deviceInfo = createDeviceInfo(navigator.userAgent, deviceId);
- * ```
- *
- * @example
- * ```tsx
- * // 서버에서 사용 (OAuth Provider 등)
- * const deviceId = request.cookies.get("x-device-id")?.value || crypto.randomUUID();
- * const deviceInfo = createDeviceInfo(userAgent, deviceId, request);
- * ```
- */
+type UserDeviceInfoDTO = components["schemas"]["UserDeviceInfoDTO"];
+
+const OS_TO_DEVICE_TYPE = {
+  iOS: "IOS",
+  Android: "ANDROID",
+} as const;
+
+const DEFAULT_DEVICE_TYPE = "WEB" as const;
+
+export const mapOsToDeviceType = (osName: string | undefined) => {
+  if (!osName) return DEFAULT_DEVICE_TYPE;
+  return (
+    OS_TO_DEVICE_TYPE[osName as keyof typeof OS_TO_DEVICE_TYPE] ??
+    DEFAULT_DEVICE_TYPE
+  );
+};
+
+export const createDeviceName = (
+  device: ReturnType<UAParser["getDevice"]>,
+  osName: string | undefined,
+) => {
+  return device.model || device.vendor || `${osName || "Unknown"} Device`;
+};
+
 export const createDeviceInfo = (
   userAgent: string,
   deviceId: string,
@@ -32,18 +35,10 @@ export const createDeviceInfo = (
   const device = parser.getDevice();
   const os = parser.getOS();
 
-  let deviceType: UserDeviceInfoDTO["deviceType"] = "WEB";
-  if (os.name === "iOS") {
-    deviceType = "IOS";
-  } else if (os.name === "Android") {
-    deviceType = "ANDROID";
-  }
-
   return {
-    deviceType,
+    deviceType: mapOsToDeviceType(os.name),
     deviceUniqueId: deviceId,
-    deviceName:
-      device.model || device.vendor || `${os.name || "Unknown"} Device`,
+    deviceName: createDeviceName(device, os.name),
     deviceModel: device.model || "Unknown",
     osVersion: os.version || "Unknown",
     appVersion: "1.0.0",

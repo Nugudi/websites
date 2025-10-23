@@ -1,49 +1,38 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { auth } from "@/src/domains/auth/auth-server";
-import type { Session } from "@/src/domains/auth/types";
+import { createAuthServerContainer } from "@/src/di/auth-server-container";
 import { handleAuthError } from "@/src/domains/auth/utils/error-handler";
 
 /**
  * 소셜 회원가입 완료 후 세션 설정 API
  * /api/auth/sign-up/social
+ *
+ * Note: 이 API는 회원가입 완료 후 세션을 설정하는데 사용되나,
+ * 실제로는 signUpWithSocial 서버 액션에서 이미 세션이 저장되므로
+ * 이 엔드포인트는 레거시 호환성을 위해 유지됨
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { userId, nickname, accessToken, refreshToken, deviceId, provider } =
-      body;
+    const { userId, nickname, accessToken, refreshToken } = body;
 
     // 필수 필드 검증
-    if (
-      !userId ||
-      !nickname ||
-      !accessToken ||
-      !refreshToken ||
-      !deviceId ||
-      !provider
-    ) {
+    if (!userId || !nickname || !accessToken || !refreshToken) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 },
       );
     }
 
-    // 세션 생성
-    const session: Session = {
-      user: {
-        userId,
-        nickname,
-      },
-      tokenSet: {
-        accessToken,
-        refreshToken,
-      },
-      provider,
-      deviceId,
-    };
+    const container = createAuthServerContainer();
+    const authService = container.getAuthService();
 
-    // 세션 저장 (setSession 내부에서 deviceId도 쿠키로 저장됨)
-    await auth.setSession(session);
+    // 세션 저장
+    await authService.sessionManager.saveSession({
+      userId,
+      nickname,
+      accessToken,
+      refreshToken,
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {

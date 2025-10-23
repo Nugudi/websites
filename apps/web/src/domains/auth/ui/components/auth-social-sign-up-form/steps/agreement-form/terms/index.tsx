@@ -1,5 +1,5 @@
 import type { MouseEvent } from "react";
-import Agreement from "@/src/shared/components/agreement";
+import Agreement from "@/src/shared/interface-adapters/components/agreement";
 import { SOCIAL_TERMS_LIST } from "../../../../../../constants/social-sign-up";
 import type { TermsComponentProps } from "../../../../../../types/social-sign-up";
 

@@ -1,12 +1,14 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { auth } from "@/src/domains/auth/auth-server";
-import { PROVIDERS, type ProviderType } from "@/src/domains/auth/types";
+import { createAuthServerContainer } from "@/src/di/auth-server-container";
 import { handleAuthError } from "@/src/domains/auth/utils/error-handler";
+import { state } from "@/src/domains/auth/utils/url";
+
+type OAuthProvider = "google" | "kakao" | "naver";
+const OAUTH_PROVIDERS: OAuthProvider[] = ["google", "kakao", "naver"];
 
 /**
  * 동적 인증 라우트 핸들러
  * /api/auth/[provider]/login
- * /api/auth/[provider]/callback
  * /api/auth/logout
  * /api/auth/session
  */
@@ -18,9 +20,12 @@ const handler = async (
     const { auth: segments } = await params;
     const [providerOrAction, action] = segments;
 
+    const container = createAuthServerContainer();
+    const authService = container.getAuthService();
+
     // /api/auth/session - 클라이언트용 세션 조회
     if (providerOrAction === "session" && !action) {
-      const session = await auth.getClientSession();
+      const session = await authService.getCurrentSession();
       if (!session) {
         return NextResponse.json(null, { status: 401 });
       }
@@ -29,12 +34,14 @@ const handler = async (
 
     // /api/auth/logout - 로그아웃
     if (providerOrAction === "logout" && !action) {
-      return auth.logout(request);
+      await authService.logout();
+      const to = request.nextUrl.searchParams.get("to") || "/";
+      return NextResponse.redirect(new URL(to, request.url));
     }
 
     // Provider 타입 검증
-    const providerType = providerOrAction as ProviderType;
-    if (!PROVIDERS.includes(providerType)) {
+    const providerType = providerOrAction as OAuthProvider;
+    if (!OAUTH_PROVIDERS.includes(providerType)) {
       return NextResponse.json(
         { error: `Invalid provider: ${providerType}` },
         { status: 400 },
@@ -43,12 +50,22 @@ const handler = async (
 
     // /api/auth/[provider]/login - OAuth 로그인 시작
     if (action === "login") {
-      return auth.authorize(request, providerType);
-    }
+      const to = request.nextUrl.searchParams.get("to") || "/";
+      const baseUrl = new URL(request.url).origin;
+      const redirectUri = new URL(
+        `/api/auth/callback/${providerType}`,
+        baseUrl,
+      ).toString();
 
-    // /api/auth/[provider]/callback - OAuth 콜백 처리
-    if (action === "callback") {
-      return auth.callback(request, providerType);
+      const authorizeUrl = await authService.getOAuthAuthorizeUrl(
+        providerType,
+        redirectUri,
+      );
+
+      const authorizeUrlWithState = new URL(authorizeUrl);
+      authorizeUrlWithState.searchParams.set("state", state.encode({ to }));
+
+      return NextResponse.redirect(authorizeUrlWithState.toString());
     }
 
     // 잘못된 경로

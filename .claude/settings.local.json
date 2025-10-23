@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:openapi-ts.dev)",
+      "Bash(pnpm codegen:*)",
+      "Bash(pnpm:*)",
+      "Bash(cat:*)",
+      "Bash(while read f)",
+      "Bash(do grep \"from.*@/src/domains\" \"$f\")",
+      "Bash(done)",
+      "Bash(awk:*)",
+      "Bash(do echo \"=== $f ===\")",
+      "Bash(find:*)",
+      "Bash(tree:*)",
+      "Bash(for domain in auth user notification stamp benefit)",
+      "Bash(do)",
+      "Bash(for layer in components sections views)",
+      "Bash(dir=\"/Users/kim-yongmin/Workspace/personal/nugudi/apps/web/src/domains/$domain/ui/$layer\")",
+      "Bash(if [ -d \"$dir\" ])",
+      "Bash(then)",
+      "Bash(if [ -f \"$dir/index.ts\" ])",
+      "Bash([ -f \"$dir/index.tsx\" ])",
+      "Bash(echo:*)",
+      "Bash(else)",
+      "Bash(fi)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

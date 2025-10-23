@@ -1,0 +1,19 @@
+{
+  "name": "@nugudi/types",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/openapi.d.ts"
+    }
+  },
+  "types": "dist/openapi.d.ts",
+  "scripts": {
+    "build": "pnpm codegen",
+    "codegen": "openapi-typescript https://dev.nugudi.com/v3/api-docs -o ./dist/openapi.d.ts"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^7.4.6"
+  }
+}

@@ -4,14 +4,17 @@
   "tasks": {
     "dev": {
       "cache": false,
-      "dependsOn": ["@nugudi/nugudi-ui#build"],
+      "dependsOn": ["@nugudi/types#build", "@nugudi/nugudi-ui#build"],
       "with": ["test:watch"],
       "persistent": true
     },
     "test:watch": {
       "cache": false,
-      "dependsOn": ["@nugudi/nugudi-ui#build"],
+      "dependsOn": ["@nugudi/types#build", "@nugudi/nugudi-ui#build"],
       "persistent": true
+    },
+    "build": {
+      "dependsOn": ["@nugudi/types#build"]
     }
   }
 }

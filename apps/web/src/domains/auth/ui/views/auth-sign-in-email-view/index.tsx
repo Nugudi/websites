@@ -1,4 +1,4 @@
-import { NavBar } from "@/src/shared/components/nav-bar";
+import { NavBar } from "@/src/shared/interface-adapters/components/nav-bar";
 import { AuthLoginWelcome } from "../../components/auth-login-welcome";
 import { AuthSignInEmailSection } from "../../sections/auth-sign-in-email-section";
 import * as styles from "./index.css";

@@ -1,5 +1,5 @@
 import { MenuCard } from "@nugudi/react-components-menu-card";
-import SwiperWithCounter from "@/src/shared/components/swiper-with-counter";
+import SwiperWithCounter from "@/src/shared/interface-adapters/components/swiper-with-counter";
 import type { Cafeteria } from "../../../types/cafeteria";
 
 interface CafeteriaMenuListProps {
