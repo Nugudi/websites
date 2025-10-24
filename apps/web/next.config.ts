@@ -17,6 +17,9 @@ const nextConfig: NextConfig = {
   // React Compiler - 리액트 컴파일러 활성화
   reactCompiler: true,
 
+  // 워크스페이스 패키지 트랜스파일 (Vercel 빌드 환경 호환)
+  transpilePackages: ["@nugudi/themes"],
+
   images: {
     formats: ["image/avif", "image/webp"],
   },
