@@ -17,6 +17,7 @@
     "clean": "rm -rf dist",
     "dev": "tsx watch build.config.ts"
   },
+  "dependencies": {},
   "devDependencies": {
     "esbuild": "^0.20.0",
     "tsx": "^4.19.2",
