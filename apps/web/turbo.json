@@ -12,9 +12,6 @@
       "cache": false,
       "dependsOn": ["@nugudi/types#build", "@nugudi/nugudi-ui#build"],
       "persistent": true
-    },
-    "build": {
-      "dependsOn": ["@nugudi/types#build"]
     }
   }
 }
