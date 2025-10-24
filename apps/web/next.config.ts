@@ -1,12 +1,8 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { withSentryConfig } from "@sentry/nextjs";
 import { createVanillaExtractPlugin } from "@vanilla-extract/next-plugin";
 import type { NextConfig } from "next";
 
 const withVanillaExtract = createVanillaExtractPlugin();
-
-const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -33,18 +29,6 @@ const nextConfig: NextConfig = {
 
   images: {
     formats: ["image/avif", "image/webp"],
-  },
-
-  // 모듈 해석 안정화를 위한 별칭 설정 (Vercel + pnpm 워크스페이스)
-  webpack(config) {
-    config.resolve = config.resolve || {};
-    config.resolve.alias = config.resolve.alias || {};
-    config.resolve.alias["@nugudi/themes"] = path.resolve(
-      __dirname,
-      "../../packages/themes",
-    );
-    config.resolve.symlinks = true;
-    return config;
   },
 };
 
