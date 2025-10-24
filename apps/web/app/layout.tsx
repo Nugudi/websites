@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import Providers from "../src/shared/providers";
-import "../src/shared/styles/globals.css";
-import MobileFirstLayout from "@/src/shared/components/mobile-first-layout";
+import { MobileFirstLayout } from "@/src/shared/interface-adapters/components";
+import Providers from "../src/shared/interface-adapters/providers/providers";
+import "../src/shared/interface-adapters/styles/globals.css";
 
 const Pretendard = localFont({
   src: "../node_modules/pretendard/dist/web/variable/woff2/PretendardVariable.woff2",

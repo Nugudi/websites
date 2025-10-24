@@ -12,13 +12,234 @@ Our goal is to maintain efficient test coverage while preventing productivity lo
 
 All modules that are not directly related to UI rendering **must** have comprehensive test coverage:
 
+- **🆕 Services (DDD)**: Business logic orchestration, domain operations
+- **🆕 Repositories (DDD)**: Data access layer, API integration
 - **Business Logic**: Domain services, state management, data transformations
 - **Utility Functions**: Helper functions, formatters, validators, parsers
 - **API Handlers**: Request/response processing, error handling, data mapping
 - **Hooks**: Custom React hooks with complex logic
 - **Server Actions**: Next.js server actions and data fetching logic
 
-#### Example: Testing Business Logic
+### 🆕 2. DDD Layer Testing Patterns
+
+#### Repository Testing (Data Access Layer)
+
+**목적**: Repository는 순수 데이터 접근만 담당하므로, HttpClient mock을 사용하여 API 통신을 테스트합니다.
+
+```typescript
+// domains/auth/repositories/__tests__/auth-repository.test.ts
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { AuthRepositoryImpl } from '../auth-repository';
+import type { HttpClient, HttpResponse } from '@/src/shared/infrastructure/http';
+
+describe('AuthRepository', () => {
+  let mockHttpClient: HttpClient;
+  let authRepository: AuthRepositoryImpl;
+
+  beforeEach(() => {
+    // HttpClient Mock 생성
+    mockHttpClient = {
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      patch: vi.fn(),
+      delete: vi.fn(),
+    };
+
+    authRepository = new AuthRepositoryImpl(mockHttpClient);
+  });
+
+  describe('loginWithGoogle', () => {
+    it('should call HttpClient with correct parameters', async () => {
+      // Arrange
+      const mockResponse: HttpResponse<GoogleLoginResponse> = {
+        status: 200,
+        data: {
+          status: 'EXISTING_USER',
+          userId: 'user-123',
+          accessToken: 'access-token',
+          refreshToken: 'refresh-token',
+        },
+        headers: new Headers(),
+      };
+
+      vi.mocked(mockHttpClient.post).mockResolvedValue(mockResponse);
+
+      const params = {
+        code: 'auth-code-123',
+        redirectUri: 'http://localhost:3000/callback',
+      };
+
+      // Act
+      const result = await authRepository.loginWithGoogle(params);
+
+      // Assert
+      expect(mockHttpClient.post).toHaveBeenCalledWith(
+        '/api/v1/auth/login/google',
+        params
+      );
+      expect(result).toEqual({
+        status: 200,
+        data: mockResponse.data,
+      });
+    });
+
+    it('should handle API errors correctly', async () => {
+      // Arrange
+      const error = new Error('Network error');
+      vi.mocked(mockHttpClient.post).mockRejectedValue(error);
+
+      // Act & Assert
+      await expect(
+        authRepository.loginWithGoogle({
+          code: 'invalid',
+          redirectUri: 'http://localhost:3000/callback',
+        })
+      ).rejects.toThrow('Network error');
+    });
+  });
+});
+```
+
+**핵심 포인트**:
+- ✅ HttpClient를 Mock하여 실제 API 호출 없이 테스트
+- ✅ 파라미터가 올바르게 전달되는지 검증
+- ✅ 응답 데이터가 올바르게 반환되는지 검증
+- ✅ 에러 상황 처리 검증
+- ❌ 비즈니스 로직 테스트 금지 (Service에서 담당)
+
+#### Service Testing (Business Logic Layer)
+
+**목적**: Service는 비즈니스 로직을 담당하므로, Repository와 SessionManager를 Mock하여 순수 로직만 테스트합니다.
+
+```typescript
+// domains/auth/services/__tests__/auth-service.test.ts
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { AuthServiceImpl } from '../auth-service';
+import type { AuthRepository } from '../../repositories/auth-repository';
+import type { SessionManager } from '@/src/shared/infrastructure/storage';
+
+describe('AuthService', () => {
+  let mockRepository: AuthRepository;
+  let mockSessionManager: SessionManager;
+  let authService: AuthServiceImpl;
+
+  beforeEach(() => {
+    // Repository Mock
+    mockRepository = {
+      loginWithGoogle: vi.fn(),
+      loginWithKakao: vi.fn(),
+      loginWithNaver: vi.fn(),
+      refreshToken: vi.fn(),
+      logout: vi.fn(),
+    };
+
+    // SessionManager Mock
+    mockSessionManager = {
+      saveSession: vi.fn(),
+      getSession: vi.fn(),
+      clearSession: vi.fn(),
+    };
+
+    authService = new AuthServiceImpl(mockRepository, mockSessionManager);
+  });
+
+  describe('loginWithOAuth', () => {
+    it('should save session for existing user and return user data', async () => {
+      // Arrange
+      const mockResponse = {
+        status: 200,
+        data: {
+          status: 'EXISTING_USER' as const,
+          userId: 'user-123',
+          accessToken: 'access-token',
+          refreshToken: 'refresh-token',
+        },
+      };
+
+      vi.mocked(mockRepository.loginWithGoogle).mockResolvedValue(mockResponse);
+
+      // Act
+      const result = await authService.loginWithOAuth(
+        'google',
+        'auth-code-123',
+        'http://localhost:3000/callback'
+      );
+
+      // Assert
+      expect(mockRepository.loginWithGoogle).toHaveBeenCalledWith({
+        code: 'auth-code-123',
+        redirectUri: 'http://localhost:3000/callback',
+      });
+
+      expect(mockSessionManager.saveSession).toHaveBeenCalledWith({
+        accessToken: 'access-token',
+        refreshToken: 'refresh-token',
+      });
+
+      expect(result).toEqual({
+        type: 'EXISTING_USER',
+        userId: 'user-123',
+      });
+    });
+
+    it('should return registration token for new user without saving session', async () => {
+      // Arrange
+      const mockResponse = {
+        status: 200,
+        data: {
+          status: 'NEW_USER' as const,
+          registrationToken: 'reg-token-123',
+        },
+      };
+
+      vi.mocked(mockRepository.loginWithGoogle).mockResolvedValue(mockResponse);
+
+      // Act
+      const result = await authService.loginWithOAuth(
+        'google',
+        'auth-code-123',
+        'http://localhost:3000/callback'
+      );
+
+      // Assert
+      expect(mockSessionManager.saveSession).not.toHaveBeenCalled();
+      expect(result).toEqual({
+        type: 'NEW_USER',
+        registrationToken: 'reg-token-123',
+      });
+    });
+
+    it('should handle repository errors gracefully', async () => {
+      // Arrange
+      vi.mocked(mockRepository.loginWithGoogle).mockRejectedValue(
+        new Error('OAuth provider unavailable')
+      );
+
+      // Act & Assert
+      await expect(
+        authService.loginWithOAuth(
+          'google',
+          'auth-code-123',
+          'http://localhost:3000/callback'
+        )
+      ).rejects.toThrow('OAuth provider unavailable');
+
+      // Session should not be saved on error
+      expect(mockSessionManager.saveSession).not.toHaveBeenCalled();
+    });
+  });
+});
+```
+
+**핵심 포인트**:
+- ✅ Repository와 SessionManager를 Mock하여 순수 비즈니스 로직만 테스트
+- ✅ 여러 시나리오 테스트 (기존 사용자, 신규 사용자, 에러 상황)
+- ✅ Mock 호출 여부와 파라미터 검증
+- ✅ 반환 값이 비즈니스 규칙에 맞는지 검증
+- ❌ 실제 API 호출 금지 (Repository가 담당)
+
+#### Example: Testing Business Logic (Legacy - 참고용)
 
 ```typescript
 // domains/auth/services/auth.service.test.ts
@@ -532,9 +753,36 @@ component-name/
 
 ### Test Location Strategy
 
+- **🆕 Repository tests**: In `domains/[domain]/repositories/__tests__/` directory
+- **🆕 Service tests**: In `domains/[domain]/services/__tests__/` directory
 - **Unit tests**: Co-located with source files
 - **Integration tests**: In `__tests__` directories
 - **E2E tests**: In root `e2e/` directory
+
+### 🆕 DDD Test File Organization
+
+```
+domains/
+└── auth/
+    ├── repositories/
+    │   ├── auth-repository.ts
+    │   └── __tests__/
+    │       └── auth-repository.test.ts       # Repository unit tests
+    ├── services/
+    │   ├── auth-service.ts
+    │   └── __tests__/
+    │       └── auth-service.test.ts          # Service unit tests
+    └── ui/
+        ├── components/
+        │   └── auth-form/
+        │       ├── index.tsx
+        │       ├── index.test.tsx             # Component tests
+        │       └── index.css.ts
+        └── sections/
+            └── auth-section/
+                ├── index.tsx
+                └── index.test.tsx             # Section tests
+```
 
 ## Writing Effective Tests
 
@@ -710,6 +958,17 @@ pnpm test:e2e
 
 ### DO's ✅
 
+#### 🆕 DDD Layer Testing (NEW)
+
+- **Repository Tests**: Mock HttpClient to test API integration
+- **Service Tests**: Mock Repository and SessionManager to test business logic
+- **Test all scenarios**: Success cases, error cases, edge cases
+- **Verify mock calls**: Check correct parameters are passed
+- **Isolated testing**: Each layer tested independently with mocks
+- **Test error handling**: Ensure errors propagate correctly
+
+#### General Testing
+
 - Write tests for all business logic
 - Test user-facing behavior
 - Use MSW for API mocking
@@ -720,6 +979,17 @@ pnpm test:e2e
 - Mock system time for date-dependent tests
 
 ### DON'Ts ❌
+
+#### 🆕 DDD Layer Testing (NEW)
+
+- **NEVER test Repository with real API calls**: Always mock HttpClient
+- **NEVER test Service with real Repository**: Always mock dependencies
+- **NEVER test business logic in Repository**: Repository는 순수 데이터 접근만
+- **NEVER test data access in Service**: Service는 비즈니스 로직만
+- **NEVER test DI Containers directly**: Container는 설정일 뿐, 로직 없음
+- **NEVER skip error scenario tests**: 에러 처리는 필수 테스트 항목
+
+#### General Testing
 
 - Don't test implementation details
 - Don't test third-party libraries (TanStack Query, React Hook Form, Zod, etc.)

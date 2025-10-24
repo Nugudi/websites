@@ -9,7 +9,9 @@
       "@application/*": ["./src/application/*"],
       "@infrastructure/*": ["./src/infrastructure/*"],
       "@interface-adapters/*": ["./src/interface-adapters/*"],
-      "@shared/*": ["./src/shared/*"]
+      "@shared/*": ["./src/shared/*"],
+      "@shared/interface-adapters/*": ["./src/shared/interface-adapters/*"],
+      "@shared/infrastructure/*": ["./src/shared/infrastructure/*"]
     },
     "plugins": [{ "name": "next" }]
   },
@@ -20,5 +22,12 @@
     ".next/types/**/*.ts",
     ".next/routes.d.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "**/__tests__/**",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
+  ]
 }

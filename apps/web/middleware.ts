@@ -1,14 +1,10 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { auth } from "@/src/domains/auth/auth-server";
-import { SESSION_COOKIE_MAX_AGE } from "@/src/domains/auth/constants/session";
-import { AuthError } from "@/src/domains/auth/errors/auth-error";
-import { isTokenExpired } from "@/src/domains/auth/utils/jwt";
-import { logger } from "@/src/shared/utils/logger";
+import { createAuthServerContainer } from "@/src/di/auth-server-container";
+import { logger } from "@/src/shared/infrastructure/logging/logger";
 
 const PUBLIC_PATHS = ["/auth", "/api/auth"];
 const LOGIN_PATH = "/auth/login";
-const SESSION_COOKIE_NAME = "nugudi.session";
 
 /**
  * 인증이 필요 없는 public 경로인지 확인
@@ -28,24 +24,30 @@ function redirectToLogin(request: NextRequest): NextResponse {
     loginUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
   }
 
-  const response = NextResponse.redirect(loginUrl);
-  response.cookies.delete(SESSION_COOKIE_NAME);
-  return response;
+  return NextResponse.redirect(loginUrl);
 }
 
 /**
- * 세션 쿠키 설정
+ * Access Token이 만료되었는지 확인
+ * JWT 디코딩하여 exp 필드 확인
  */
-function setSessionCookie(
-  response: NextResponse,
-  encryptedSession: string,
-): void {
-  response.cookies.set(SESSION_COOKIE_NAME, encryptedSession, {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    maxAge: SESSION_COOKIE_MAX_AGE,
-  });
+function isTokenExpired(token: string): boolean {
+  try {
+    const [, payload] = token.split(".");
+    if (!payload) return true;
+
+    const decoded = JSON.parse(
+      Buffer.from(payload, "base64url").toString("utf-8"),
+    );
+    const exp = decoded.exp;
+
+    if (!exp) return true;
+
+    // exp는 초 단위, Date.now()는 밀리초 단위
+    return Date.now() >= exp * 1000;
+  } catch {
+    return true;
+  }
 }
 
 export default async function middleware(request: NextRequest) {
@@ -57,8 +59,11 @@ export default async function middleware(request: NextRequest) {
   }
 
   try {
-    // 세션 조회 (갱신하지 않음)
-    const session = await auth.getSession({ refresh: false });
+    const container = createAuthServerContainer();
+    const authService = container.getAuthService();
+
+    // 세션 조회
+    const session = await authService.getCurrentSession();
 
     // 세션이 없으면 로그인 페이지로
     if (!session) {
@@ -66,39 +71,26 @@ export default async function middleware(request: NextRequest) {
     }
 
     // Access Token이 유효하면 통과
-    if (!isTokenExpired(session.tokenSet.accessToken)) {
+    if (!isTokenExpired(session.accessToken)) {
       return NextResponse.next();
     }
 
     // Access Token 만료 시 갱신 시도
-    const encryptedSession = await auth.refreshAndGetEncryptedSession(session);
+    const refreshed = await authService.refreshToken();
 
     // 갱신 실패 시 로그인 페이지로
-    if (!encryptedSession) {
+    if (!refreshed) {
       return redirectToLogin(request);
     }
 
-    // 갱신 성공 시 새 쿠키 설정 후 통과
-    const response = NextResponse.next();
-    setSessionCookie(response, encryptedSession);
-    return response;
+    // 갱신 성공 시 통과
+    return NextResponse.next();
   } catch (error) {
     // 예외 발생 시 로그 기록 후 로그인 페이지로
-    if (error instanceof AuthError) {
-      // 구조화된 AuthError는 상세 정보와 함께 로깅
-      logger.error("Authentication error in middleware", {
-        code: error.code,
-        message: error.message,
-        context: error.context,
-        pathname,
-      });
-    } else {
-      // 일반 에러는 기존 방식대로 로깅
-      logger.error("Unexpected error in middleware", {
-        error: error instanceof Error ? error.message : String(error),
-        pathname,
-      });
-    }
+    logger.error("Unexpected error in middleware", {
+      error: error instanceof Error ? error.message : String(error),
+      pathname,
+    });
     return redirectToLogin(request);
   }
 }

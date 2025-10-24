@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Flex, VStack } from "@nugudi/react-components-layout";
-import { NavBar } from "@/src/shared/components/nav-bar";
+import { NavBar } from "@/src/shared/interface-adapters/components/nav-bar";
 import { useCommentReply } from "../../../hooks/use-comment";
 import { CafeteriaReviewCommentInputSection } from "../../sections/cafeteria-review-comment-input-section";
 import { CafeteriaReviewCommentsSection } from "../../sections/cafeteria-review-comments-section";

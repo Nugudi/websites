@@ -1,5 +1,5 @@
 import { Flex } from "@nugudi/react-components-layout";
-import { NavBar } from "@/src/shared/components/nav-bar";
+import { NavBar } from "@/src/shared/interface-adapters/components/nav-bar";
 import { CafeteriaReviewInfoSection } from "../../sections/cafeteria-review-info-section";
 import { CafeteriaReviewWriteSection } from "../../sections/cafeteria-review-write-section";
 import * as styles from "./index.css";

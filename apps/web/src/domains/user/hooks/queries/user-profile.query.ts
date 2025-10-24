@@ -1,4 +1,4 @@
-import { getMyProfile } from "@nugudi/api";
+import { authClientContainer } from "@/src/di/auth-client-container";
 import { USER_PROFILE_QUERY_KEY } from "../../constants/query-keys";
 
 /**
@@ -28,46 +28,23 @@ const baseUserProfileQuery = {
 } as const;
 
 /**
- * Server-side용 User Profile Query Factory
- *
- * Page 컴포넌트에서 prefetch할 때 사용합니다.
- * Access Token을 명시적으로 주입하여 서버에서 안전하게 API를 호출합니다.
- *
- * @param accessToken - 사용자 인증 토큰
- * @returns TanStack Query options with token-injected queryFn
- *
- * @example
- * ```typescript
- * // app/page.tsx (Server Component)
- * const session = await auth.getSession({ refresh: false });
- * await queryClient.prefetchQuery(
- *   userProfileQueryServer(session.tokenSet.accessToken)
- * );
- * ```
- */
-export const userProfileQueryServer = (accessToken: string) => ({
-  ...baseUserProfileQuery,
-  queryFn: () =>
-    getMyProfile({
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }),
-});
-
-/**
  * Client-side용 User Profile Query Options
  *
  * Client Component에서 useSuspenseQuery와 함께 사용합니다.
- * HTTP 클라이언트가 자동으로 토큰을 헤더에 추가합니다.
+ * UserService를 통해 비즈니스 로직을 처리하고 자동으로 토큰이 주입됩니다.
  *
  * @example
  * ```typescript
  * // Section Component (Client Component)
  * const { data } = useSuspenseQuery(userProfileQueryClient);
+ * // data는 실제 프로필 데이터: { profile, account, health }
  * ```
  */
 export const userProfileQueryClient = {
   ...baseUserProfileQuery,
-  queryFn: () => getMyProfile(),
+  queryFn: () => {
+    // UserService를 통해 비즈니스 로직 처리 (자동 토큰 주입)
+    const userService = authClientContainer.getUserService();
+    return userService.getMyProfile();
+  },
 } as const;

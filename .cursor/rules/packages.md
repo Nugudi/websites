@@ -1,6 +1,6 @@
 ## 🏗️ Monorepo Architecture Overview
 
-This is a **Turbo-powered pnpm workspace monorepo** with a **Design System-first approach** and **domain-driven architecture**.
+This is a **Turbo-powered pnpm workspace monorepo** with a **Design System-first approach** and **DDD (Domain-Driven Design) architecture**.
 
 ### Repository Structure
 
@@ -8,17 +8,42 @@ This is a **Turbo-powered pnpm workspace monorepo** with a **Design System-first
 nugudi/
 ├── apps/                    # Applications
 │   └── web/                # Next.js 15 + React 19 (Main Web App)
-│       └── app/           # Next.js App Router
-│           ├── (auth)/    # 🔒 Protected routes - Require authentication
-│           │   └── profile/      # Profile page (authenticated users only)
-│           └── (public)/  # 🌍 Public routes - No authentication required
-│               └── auth/        # Auth-related public pages
-│                   ├── sign-in/  # Sign in with credentials page
-│                   └── sign-up/  # Sign up pages
-│                       └── social/ # Social sign up page
+│       ├── app/           # Next.js App Router
+│       │   ├── (auth)/    # 🔒 Protected routes - Require authentication
+│       │   │   └── profile/      # Profile page (authenticated users only)
+│       │   └── (public)/  # 🌍 Public routes - No authentication required
+│       │       └── auth/        # Auth-related public pages
+│       │           ├── sign-in/  # Sign in with credentials page
+│       │           └── sign-up/  # Sign up pages
+│       └── src/
+│           ├── di/        # 🆕 Dependency Injection Containers
+│           │   ├── auth-server-container.ts  # Server-side DI
+│           │   └── auth-client-container.ts  # Client-side DI (Singleton)
+│           ├── domains/   # 🆕 DDD Domain Layer
+│           │   ├── auth/
+│           │   │   ├── repositories/  # Data Access Layer
+│           │   │   ├── services/      # Business Logic Layer
+│           │   │   ├── types/
+│           │   │   ├── actions/       # Server Actions
+│           │   │   └── ui/           # Presentation Layer
+│           │   ├── user/
+│           │   │   ├── repositories/
+│           │   │   ├── services/
+│           │   │   └── ui/
+│           │   └── [other-domains]/
+│           └── shared/    # Shared Infrastructure & Interface Adapters
+│               ├── infrastructure/  # 🆕 Infrastructure Layer
+│               │   ├── http/       # HttpClient, TokenProvider
+│               │   ├── storage/    # SessionManager
+│               │   ├── logging/    # Logger
+│               │   └── configs/    # TanStack Query, PWA
+│               └── interface-adapters/  # 🆕 UI Components & Providers
+│                   ├── components/
+│                   ├── providers/
+│                   └── sections/
 ├── packages/               # Shared packages (ALWAYS use these!)
 │   ├── ui/                # Aggregated UI library with Storybook
-│   ├── api/               # OpenAPI client + MSW mocks
+│   ├── types/             # 🆕 Shared TypeScript types
 │   ├── themes/            # Design tokens system
 │   ├── assets/            # Icons and static assets
 │   └── react/             # Component packages (button, input, etc.)
@@ -39,6 +64,323 @@ Next.js 15 route groups organize pages by authentication requirements:
   - Examples: `/auth/login`, `/auth/sign-in/email`, `/auth/sign-up`, etc.
 
 **Note**: Route groups (parentheses folders) don't affect the URL structure - they're purely for organization.
+
+---
+
+## 🏛️ DDD Architecture & Clean Architecture
+
+This project follows **Domain-Driven Design (DDD)** principles with **Clean Architecture** layers:
+
+### Architecture Layers
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     Presentation Layer                      │
+│                    (app/, domains/*/ui/)                    │
+│              Pages → Views → Sections → Components          │
+└─────────────────────────────────────────────────────────────┘
+                            ↓ depends on
+┌─────────────────────────────────────────────────────────────┐
+│                   Application Layer                         │
+│              (domains/*/services/, actions/)                │
+│             Business Logic & Orchestration                  │
+└─────────────────────────────────────────────────────────────┘
+                            ↓ depends on
+┌─────────────────────────────────────────────────────────────┐
+│                      Domain Layer                           │
+│              (domains/*/repositories/, types/)              │
+│                  Data Access Interface                      │
+└─────────────────────────────────────────────────────────────┘
+                            ↓ depends on
+┌─────────────────────────────────────────────────────────────┐
+│                  Infrastructure Layer                       │
+│      (shared/infrastructure/http/, storage/, logging/)      │
+│         HttpClient, SessionManager, External APIs           │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Key Principles
+
+1. **Dependency Rule**: Dependencies flow inward (Presentation → Application → Domain → Infrastructure)
+2. **Interface Segregation**: Each layer defines interfaces that outer layers implement
+3. **Dependency Inversion**: High-level modules don't depend on low-level modules; both depend on abstractions
+
+### Layer Responsibilities
+
+| Layer               | Location                          | Responsibility                                                              | Examples                                              |
+| ------------------- | --------------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------- |
+| **Presentation**    | `app/`, `domains/*/ui/`           | User interface, user interactions, routing                                  | Pages, Views, Sections, Components                    |
+| **Application**     | `domains/*/services/`, `actions/` | Business logic, orchestration, use cases                                    | AuthService, UserService, Server Actions              |
+| **Domain**          | `domains/*/repositories/`         | Data access interfaces, domain models                                       | AuthRepository, UserRepository                        |
+| **Infrastructure**  | `shared/infrastructure/`          | External systems, frameworks, databases                                     | HttpClient, SessionManager, Logger                    |
+| **DI Container**    | `src/di/`                         | Dependency injection, object creation, lifecycle management                 | AuthServerContainer, AuthClientContainer              |
+| **Interface Adapt** | `shared/interface-adapters/`      | Shared UI components, providers (connects Infrastructure to Presentation)   | AppHeader, Providers                                  |
+
+---
+
+## 📦 Dependency Injection (DI) Container Pattern
+
+### Why DI Containers?
+
+DI Containers manage dependencies and their lifecycles, making code:
+
+- **Testable**: Easy to mock dependencies
+- **Flexible**: Easy to swap implementations
+- **Maintainable**: Centralized dependency configuration
+- **Type-safe**: Full TypeScript support
+
+### Container Types
+
+#### 1. Server Container (`auth-server-container.ts`)
+
+**Use in**: Server Components, API Routes, Server Actions
+
+```typescript
+import { createAuthServerContainer } from '@/src/di/auth-server-container';
+
+// Page (Server Component)
+const Page = async () => {
+  const container = createAuthServerContainer();  // ✅ Create new instance
+  const authService = container.getAuthService();
+  const userService = container.getUserService();
+
+  // Use services...
+};
+```
+
+**특징:**
+- **Stateless**: 매 요청마다 새로운 인스턴스 생성
+- **SessionManager**: `ServerSessionManager` (cookies 사용)
+- **TokenProvider**: `ServerTokenProvider` (cookies에서 토큰 조회)
+- **HttpClient**: 서버사이드 fetch 사용
+
+#### 2. Client Container (`auth-client-container.ts`)
+
+**Use in**: Client Components, Event Handlers, Client Hooks
+
+```typescript
+'use client';
+import { authClientContainer } from '@/src/di/auth-client-container';
+
+// Client Component
+const Component = () => {
+  const handleLogin = async () => {
+    const authService = authClientContainer.getAuthService();  // ✅ Use singleton
+    const result = await authService.loginWithOAuth(...);
+  };
+};
+```
+
+**특징:**
+- **Singleton**: 앱 전체에서 하나의 인스턴스 재사용
+- **SessionManager**: `ClientSessionManager` (localStorage 사용)
+- **TokenProvider**: `ClientTokenProvider` (localStorage에서 토큰 조회)
+- **HttpClient**: 브라우저 fetch 사용
+
+### Available Services
+
+```typescript
+// Auth Domain Services
+container.getAuthService()
+  - getOAuthAuthorizeUrl()
+  - loginWithOAuth()
+  - signUpWithSocial()
+  - logout()
+  - refreshToken()
+  - getCurrentSession()
+
+// User Domain Services
+container.getUserService()
+  - getProfile()
+  - updateProfile()
+  // ... user-related methods
+```
+
+---
+
+## 🔧 Infrastructure Layer
+
+### HttpClient Architecture
+
+```typescript
+// HttpClient 인터페이스 (추상화)
+interface HttpClient {
+  get<T>(url: string, options?: RequestOptions): Promise<HttpResponse<T>>;
+  post<T>(url: string, body?: unknown, options?: RequestOptions): Promise<HttpResponse<T>>;
+  // ... put, patch, delete
+}
+
+// 구현체 1: FetchHttpClient (기본 HTTP 클라이언트)
+class FetchHttpClient implements HttpClient {
+  // Fetch API 기반 구현
+}
+
+// 구현체 2: AuthenticatedHttpClient (Decorator 패턴)
+class AuthenticatedHttpClient implements HttpClient {
+  constructor(
+    private baseClient: HttpClient,
+    private tokenProvider: TokenProvider
+  ) {}
+
+  // 모든 요청에 자동으로 Authorization 헤더 주입
+}
+```
+
+### HttpClient Usage Pattern
+
+```typescript
+// ❌ WRONG - Don't use HttpClient directly
+import { FetchHttpClient } from '@/src/shared/infrastructure/http';
+const client = new FetchHttpClient({ baseUrl: '...' });
+
+// ✅ CORRECT - Use through DI Container
+const container = createAuthServerContainer();
+const authService = container.getAuthService();
+// AuthService internally uses AuthenticatedHttpClient
+```
+
+### SessionManager (Server vs Client)
+
+**Server-side (`ServerSessionManager`)**:
+```typescript
+import { ServerSessionManager } from '@/src/shared/infrastructure/storage';
+
+// 내부 구현: Next.js cookies() 사용
+class ServerSessionManager implements SessionManager {
+  async saveSession(data: SessionData) {
+    cookies().set('session', JSON.stringify(data), {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict'
+    });
+  }
+
+  async getSession() {
+    const session = cookies().get('session');
+    return session ? JSON.parse(session.value) : null;
+  }
+}
+```
+
+**Client-side (`ClientSessionManager`)**:
+```typescript
+import { ClientSessionManager } from '@/src/shared/infrastructure/storage';
+
+// 내부 구현: localStorage 사용
+class ClientSessionManager implements SessionManager {
+  async saveSession(data: SessionData) {
+    localStorage.setItem('session', JSON.stringify(data));
+  }
+
+  async getSession() {
+    const session = localStorage.getItem('session');
+    return session ? JSON.parse(session) : null;
+  }
+}
+```
+
+### TokenProvider Pattern
+
+```typescript
+// TokenProvider 인터페이스
+interface TokenProvider {
+  getToken(): Promise<string | null>;
+}
+
+// Server-side: Cookies에서 토큰 조회
+class ServerTokenProvider implements TokenProvider {
+  async getToken() {
+    const session = await this.sessionManager.getSession();
+    return session?.accessToken ?? null;
+  }
+}
+
+// Client-side: LocalStorage에서 토큰 조회
+class ClientTokenProvider implements TokenProvider {
+  async getToken() {
+    const session = await this.sessionManager.getSession();
+    return session?.accessToken ?? null;
+  }
+}
+```
+
+---
+
+## 🏗️ Repository & Service Pattern
+
+### Repository Layer (Data Access)
+
+**역할**: 데이터 소스와의 통신을 담당 (HTTP API, Database 등)
+
+```typescript
+// Repository Interface
+export interface AuthRepository {
+  loginWithGoogle(params: GoogleLoginRequest): Promise<OAuthLoginResponse>;
+  loginWithKakao(params: KakaoLoginRequest): Promise<OAuthLoginResponse>;
+  refreshToken(refreshToken: string, deviceId: string): Promise<TokenResponse>;
+  logout(refreshToken: string, deviceId: string): Promise<LogoutResponse>;
+}
+
+// Repository Implementation
+export class AuthRepositoryImpl implements AuthRepository {
+  constructor(private readonly httpClient: HttpClient) {}
+
+  async loginWithGoogle(params: GoogleLoginRequest) {
+    const response = await this.httpClient.post<GoogleLoginResponse>(
+      '/api/v1/auth/login/google',
+      params
+    );
+    return { status: response.status, data: response.data };
+  }
+}
+```
+
+**특징:**
+- HttpClient를 통해 API 호출
+- 순수 데이터 접근 로직만 포함
+- 비즈니스 로직 없음
+
+### Service Layer (Business Logic)
+
+**역할**: 비즈니스 로직과 여러 Repository를 조합하여 복잡한 플로우 처리
+
+```typescript
+export interface AuthService {
+  loginWithOAuth(provider, code, redirectUri): Promise<LoginResult>;
+  signUpWithSocial(token, data): Promise<SignUpResult>;
+  logout(): Promise<void>;
+}
+
+export class AuthServiceImpl implements AuthService {
+  constructor(
+    private readonly repository: AuthRepository,
+    private readonly sessionManager: SessionManager
+  ) {}
+
+  async loginWithOAuth(provider, code, redirectUri) {
+    // 1. Repository를 통해 로그인
+    const response = await this.repository.loginWithGoogle({ code, redirectUri });
+
+    // 2. 비즈니스 로직: 기존 회원 vs 신규 회원 분기
+    if (response.data.status === 'EXISTING_USER') {
+      // 3. SessionManager를 통해 세션 저장
+      await this.sessionManager.saveSession({
+        accessToken: response.data.accessToken,
+        refreshToken: response.data.refreshToken
+      });
+
+      return { type: 'EXISTING_USER', userId: response.data.userId };
+    }
+
+    return { type: 'NEW_USER', registrationToken: response.data.registrationToken };
+  }
+}
+```
+
+**특징:**
+- Repository와 SessionManager를 조합
+- 복잡한 비즈니스 로직 처리
+- 도메인 규칙 적용
 
 ---
 
@@ -405,23 +747,34 @@ import { useToggle } from "@nugudi/react-hooks-toggle";
 import { useStepper } from "@nugudi/react-hooks-use-stepper";
 ```
 
-### API Client (`@nugudi/api`)
+### ~~API Client~~ → DI Container + Services
+
+**DEPRECATED**: `@nugudi/api` has been removed. Use **DI Containers** and **Services** instead.
 
 ```typescript
-// Use auto-generated API client from OpenAPI spec
+// ❌ OLD (Removed)
 import { api } from "@nugudi/api";
-import { useQuery } from "@tanstack/react-query";
+const response = await api.users.getProfile(userId);
 
-// API hooks with TanStack Query
-export function useUserProfile(userId: string) {
-  return useQuery({
-    queryKey: ["user", userId],
-    queryFn: () => api.users.getProfile(userId),
-  });
-}
+// ✅ NEW - Server-side (in Page/Server Action)
+import { createAuthServerContainer } from '@/src/di/auth-server-container';
+const container = createAuthServerContainer();
+const userService = container.getUserService();
+const profile = await userService.getProfile();
 
-// MSW mocks available for testing
-import { handlers } from "@nugudi/api/index.msw";
+// ✅ NEW - Client-side (in Client Component)
+import { authClientContainer } from '@/src/di/auth-client-container';
+const userService = authClientContainer.getUserService();
+const profile = await userService.getProfile();
+```
+
+### Types Package (`@nugudi/types`)
+
+**NEW**: Shared TypeScript types across the monorepo
+
+```typescript
+// Shared types for multiple packages
+import type { ApiResponse, ErrorResponse } from "@nugudi/types";
 ```
 
 ### Themes (`@nugudi/themes`)
@@ -511,62 +864,72 @@ import { CoinIcon } from '@nugudi/assets-icons';
 
 ## 🏛️ Architecture Patterns
 
-### Domain-Based Structure in Next.js App
+### Domain-Based DDD Structure
 
 ```
 apps/web/
-├── app/                    # Next.js App Router
-│   ├── (auth)/            # Protected routes
-│   │   └── profile/      # Profile page (authenticated users only)
-│   └── (public)/          # Public routes
+├── app/                           # Next.js App Router
+│   ├── (auth)/                   # Protected routes
+│   │   └── profile/             # Profile page
+│   └── (public)/                 # Public routes
 │       └── auth/
-│           ├── login/     # Login page
-│           ├── sign-in/   # Sign in with email page
-│           └── sign-up/   # Sign up page
+│           ├── sign-in/         # Sign in page
+│           └── sign-up/         # Sign up page
 ├── src/
-│   ├── domains/           # Domain logic
-│   │   ├── auth/          # Auth domain (unified)
-│   │   │   ├── constants/
-│   │   │   ├── schemas/
-│   │   │   ├── errors/
-│   │   │   ├── providers/
+│   ├── di/                       # 🆕 Dependency Injection Containers
+│   │   ├── auth-server-container.ts    # Server DI (Stateless)
+│   │   └── auth-client-container.ts    # Client DI (Singleton)
+│   ├── domains/                  # 🆕 DDD Domain Layer
+│   │   ├── auth/                # Auth domain
+│   │   │   ├── repositories/   # 🆕 Data Access Layer
+│   │   │   │   └── auth-repository.ts
+│   │   │   ├── services/       # 🆕 Business Logic Layer
+│   │   │   │   └── auth-service.ts
+│   │   │   ├── actions/        # Server Actions
+│   │   │   ├── types/          # Domain types
+│   │   │   ├── hooks/          # Domain hooks
+│   │   │   └── ui/             # Presentation Layer
+│   │   │       ├── views/
+│   │   │       ├── sections/
+│   │   │       └── components/
+│   │   ├── user/               # User domain
+│   │   │   ├── repositories/   # 🆕
+│   │   │   ├── services/       # 🆕
 │   │   │   ├── types/
-│   │   │   ├── utils/
+│   │   │   ├── hooks/
 │   │   │   └── ui/
-│   │   │       ├── views/
-│   │   │       ├── sections/
-│   │   │       └── components/
-│   │   ├── user/          # User domain (profile, points)
-│   │   │   ├── constants/
-│   │   │   ├── utils/
+│   │   ├── benefit/            # Simple domain (no repositories/services yet)
 │   │   │   └── ui/
-│   │   │       ├── views/
-│   │   │       ├── sections/
-│   │   │       └── components/
-│   │   ├── benefit/       # Simple domain
-│   │   │   └── ui/
-│   │   │       ├── views/
-│   │   │       ├── sections/
-│   │   │       └── components/
-│   │   ├── cafeteria/     # Cafeteria domain (multi-feature)
+│   │   ├── cafeteria/          # Cafeteria domain
 │   │   │   ├── home/
-│   │   │   │   ├── types/
-│   │   │   │   ├── mocks/
-│   │   │   │   └── ui/
 │   │   │   ├── detail/
-│   │   │   ├── register-request/
 │   │   │   └── review/
-│   │   └── stamp/         # Stamp domain
-│   │       ├── constants/
+│   │   └── stamp/
 │   │       └── ui/
-│   └── shared/            # Shared utilities
-│       ├── configs/       # Configuration
-│       ├── providers/     # React providers
-│       ├── styles/        # Global styles
-│       ├── ui/            # App-specific shared components
-│       ├── utils/         # Utility functions
-│       └── types/         # Global type definitions
-└── tests/                 # Test files
+│   └── shared/                  # Shared Infrastructure & Adapters
+│       ├── infrastructure/     # 🆕 Infrastructure Layer
+│       │   ├── http/          # HttpClient, AuthenticatedHttpClient
+│       │   │   ├── http-client.interface.ts
+│       │   │   ├── fetch-http-client.ts
+│       │   │   ├── authenticated-http-client.ts
+│       │   │   ├── token-provider.interface.ts
+│       │   │   ├── server-token-provider.ts
+│       │   │   └── client-token-provider.ts
+│       │   ├── storage/       # SessionManager
+│       │   │   ├── session-manager.ts (interface)
+│       │   │   ├── server-session-manager.ts
+│       │   │   └── client-session-manager.ts
+│       │   ├── logging/       # Logger
+│       │   │   └── logger.ts
+│       │   └── configs/       # TanStack Query, PWA
+│       │       ├── tanstack-query/
+│       │       └── pwa/
+│       └── interface-adapters/ # 🆕 UI Interface Adapters
+│           ├── components/    # Shared components (AppHeader, etc)
+│           ├── providers/     # Providers
+│           ├── sections/      # Shared sections
+│           └── styles/        # Global styles
+└── tests/                      # Test files
 ```
 
 ### Component Organization Pattern
@@ -688,22 +1051,75 @@ import * as styles from "./index.css";
 
 ---
 
-## 🔌 Backend Integration
+## 🔌 Backend Integration with DI Containers
 
-### API Connection
+### Server-Side Data Fetching (Pages, Server Actions)
 
 ```typescript
-// Use @nugudi/api for all backend communication
-import { api } from "@nugudi/api";
+// app/(auth)/profile/page.tsx
+import { createAuthServerContainer } from '@/src/di/auth-server-container';
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
+import getQueryClient from '@/src/shared/infrastructure/configs/tanstack-query/get-query-client';
 
-// TanStack Query for data fetching
-import { useQuery } from "@tanstack/react-query";
+const ProfilePage = async () => {
+  // 1. DI Container로 서비스 획득
+  const container = createAuthServerContainer();
+  const userService = container.getUserService();
 
-export function useMenuData(date: string) {
-  return useQuery({
-    queryKey: ["menu", date],
-    queryFn: () => api.menu.getByDate(date),
+  // 2. 서버사이드에서 데이터 prefetch
+  const queryClient = getQueryClient();
+  await queryClient.prefetchQuery({
+    queryKey: ['user', 'profile'],
+    queryFn: () => userService.getProfile()
   });
+
+  // 3. HydrationBoundary로 클라이언트에 전달
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <ProfileView />
+    </HydrationBoundary>
+  );
+};
+
+export default ProfilePage;
+```
+
+### Client-Side Data Fetching (Client Components)
+
+```typescript
+// domains/user/ui/sections/user-profile-section/index.tsx
+'use client';
+import { authClientContainer } from '@/src/di/auth-client-container';
+import { useSuspenseQuery } from '@tanstack/react-query';
+
+const UserProfileSectionContent = () => {
+  // 1. 클라이언트 컨테이너 사용 (Singleton)
+  const userService = authClientContainer.getUserService();
+
+  // 2. TanStack Query로 데이터 조회 (Page에서 prefetch한 데이터 재사용)
+  const { data } = useSuspenseQuery({
+    queryKey: ['user', 'profile'],
+    queryFn: () => userService.getProfile()
+  });
+
+  return <div>{data.profile.nickname}</div>;
+};
+```
+
+### Server Action with DI Container
+
+```typescript
+// domains/auth/actions/auth-actions.ts
+'use server';
+import { createAuthServerContainer } from '@/src/di/auth-server-container';
+
+export async function loginWithGoogle(code: string) {
+  const container = createAuthServerContainer();
+  const authService = container.getAuthService();
+
+  const result = await authService.loginWithOAuth('google', code, '/auth/callback/google');
+
+  return result;
 }
 ```
 
@@ -874,13 +1290,16 @@ pnpm storybook --filter=ui
 ### DON'Ts ❌
 
 - **NEVER** use ESLint or Prettier (use Biome)
-- **NEVER** create new API clients (use @nugudi/api)
+- **NEVER** bypass DI Containers (직접 Service/Repository 인스턴스 생성하지 말것)
+- **NEVER** use HttpClient directly (always use through DI Container)
 - **NEVER** create components that exist in packages
 - **NEVER** use PascalCase for file/folder names (except index.tsx)
 - **NEVER** use inline styles (use Vanilla Extract)
 - **NEVER** add Co-Author lines in commits
 - **NEVER** use any type in TypeScript
 - **NEVER** skip tests for new features
+- **NEVER** mix server and client containers (서버는 서버 컨테이너, 클라이언트는 클라이언트 컨테이너)
+- **NEVER** create new instances of Client Container (항상 singleton 사용)
 
 ---
 
@@ -911,7 +1330,7 @@ pnpm storybook --filter=ui
 @nugudi/react-hooks-use-stepper
 
 // Core Packages
-@nugudi/api                  // API client + mocks
+@nugudi/types                // 🆕 Shared TypeScript types
 @nugudi/themes               // Design tokens
 @nugudi/assets-icons         // Icon components
 @nugudi/ui                   // Storybook UI documentation
@@ -928,14 +1347,21 @@ import { Box, Flex } from "@nugudi/react-components-layout";
 import { useToggle } from "@nugudi/react-hooks-toggle";
 import { useStepper } from "@nugudi/react-hooks-use-stepper";
 
-// API usage
-import { api } from "@nugudi/api";
+// Types usage
+import type { ApiResponse } from "@nugudi/types";
 
 // Theme usage
 import { vars } from "@nugudi/themes";
 
 // Icon usage - Import individual icons
 import { AppleIcon, HeartIcon, ArrowRightIcon } from "@nugudi/assets-icons";
+
+// DI Container usage
+// Server-side
+import { createAuthServerContainer } from '@/src/di/auth-server-container';
+
+// Client-side
+import { authClientContainer } from '@/src/di/auth-client-container';
 ```
 
 ---
@@ -1199,22 +1625,68 @@ export const useCafeteriaList = () => {};
 export type CafeteriaData = {};
 ```
 
-## 💡 Tips for Claude Code
+## 💡 Best Practices & Development Tips
 
-When working in this repository:
+### DDD Development Guidelines
 
-1. **Always check `packages/` first** before creating new code
-2. **Use Biome commands** for formatting and linting
-3. **Follow domain structure** for organizing code
-4. **Leverage TypeScript** strict mode for type safety
-5. **Test with MSW mocks** from `@nugudi/api`
-6. **Use Vanilla Extract** for component styles
-7. **Follow the established patterns** in existing domains
-8. **Complete package setup** when using any `@nugudi` components
-9. **Maintain naming consistency** within each domain
-10. **Use relative imports** within same domain, absolute for cross-domain
+1. **Use DI Containers**: Always access services through DI containers
+   - Server: `createAuthServerContainer()` (새 인스턴스)
+   - Client: `authClientContainer` (Singleton)
 
-Remember: This is a **package-first monorepo** - maximize reuse of existing packages!
+2. **Layer Separation**: Respect architectural boundaries
+   - Presentation → Application → Domain → Infrastructure
+   - Never skip layers or reverse dependencies
+
+3. **Repository Pattern**: Data access only
+   - Pure API calls
+   - No business logic
+   - Returns raw data
+
+4. **Service Pattern**: Business logic orchestration
+   - Combines multiple repositories
+   - Handles complex workflows
+   - Manages session/state
+
+5. **Infrastructure Abstraction**: Use interfaces
+   - HttpClient interface (not direct fetch)
+   - SessionManager interface (not direct localStorage/cookies)
+   - TokenProvider interface (environment-agnostic)
+
+### Server vs Client Development
+
+#### Server-Side (Pages, Server Actions)
+```typescript
+// ✅ DO
+const container = createAuthServerContainer();  // New instance per request
+const service = container.getAuthService();
+
+// ❌ DON'T
+import { AuthServiceImpl } from '@/src/domains/auth/services/auth-service';
+const service = new AuthServiceImpl(...);  // Never instantiate directly
+```
+
+#### Client-Side (Client Components, Hooks)
+```typescript
+// ✅ DO
+import { authClientContainer } from '@/src/di/auth-client-container';
+const service = authClientContainer.getAuthService();  // Use singleton
+
+// ❌ DON'T
+const container = new AuthClientContainer();  // Never create new instance
+```
+
+### General Development Tips
+
+1. **Package-First**: Always check `packages/` before creating new code
+2. **Biome for Code Quality**: Use Biome commands for formatting and linting
+3. **TypeScript Strict Mode**: Leverage full type safety
+4. **Vanilla Extract for Styles**: Use design tokens from `@nugudi/themes`
+5. **Complete Package Setup**: Add to package.json + import styles
+6. **Naming Consistency**: Maintain consistent naming within domains
+7. **Import Conventions**: Relative within domain, absolute cross-domain
+8. **Test All Layers**: Unit tests for all Repository/Service/Infrastructure layers
+
+Remember: This is a **DDD-based, package-first monorepo** - maximize reuse and respect architectural boundaries!
 
 # important-instruction-reminders
 

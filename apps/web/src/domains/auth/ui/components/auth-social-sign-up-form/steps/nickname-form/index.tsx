@@ -1,7 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { checkNicknameAvailability } from "@nugudi/api";
 import { SuccessIcon } from "@nugudi/assets-icons";
 import { Button } from "@nugudi/react-components-button";
 import { Input } from "@nugudi/react-components-input";
@@ -9,6 +8,7 @@ import { Box, Flex, Heading, HStack } from "@nugudi/react-components-layout";
 import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
+import { authClientContainer } from "@/src/di/auth-client-container";
 import {
   type SocialSignUpNicknameSchema,
   socialSignUpNicknameSchema,
@@ -34,10 +34,13 @@ export const NicknameForm = () => {
     data: checkResult,
     error,
   } = useMutation({
-    mutationFn: (nickname: string) => checkNicknameAvailability({ nickname }),
+    mutationFn: (nickname: string) => {
+      const userService = authClientContainer.getUserService();
+      return userService.checkNicknameAvailability(nickname);
+    },
   });
 
-  const isAvailable = checkResult?.data.data?.available;
+  const isAvailable = checkResult?.available;
   const isDuplicateChecked = isSuccess && isAvailable;
   const duplicateError =
     isSuccess && !isAvailable

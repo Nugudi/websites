@@ -88,16 +88,31 @@ Next.js 15 route groups organize pages by authentication requirements:
 
 ## Next.js App Router Specific Patterns
 
-### 1. Server Components by Default
+### 1. Server Components by Default (🆕 with DI Container)
+
 ```typescript
 // app/(auth)/benefits/page.tsx - Server Component by default
+import { getQueryClient } from '@/src/shared/infrastructure/configs/tanstack-query';
+import { createBenefitServerContainer } from '@/src/di';
+import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
+import { BenefitPageView } from '@/src/domains/benefit/ui/views/benefit-page-view';
+
 const BenefitsPage = async ({ searchParams }) => {
-  // Server-side data fetching
-  const benefits = await getBenefits();
-  
+  const queryClient = getQueryClient();
+
+  // 🆕 Server Container로 Service 획득 (매번 새 인스턴스)
+  const container = createBenefitServerContainer();
+  const benefitService = container.getBenefitService();
+
+  // Service를 통한 데이터 prefetch (자동 토큰 주입)
+  await queryClient.prefetchQuery({
+    queryKey: ['benefits', 'list'],
+    queryFn: () => benefitService.getBenefits()
+  });
+
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <BenefitPageView benefits={benefits} />
+      <BenefitPageView />
     </HydrationBoundary>
   );
 };
@@ -105,9 +120,21 @@ const BenefitsPage = async ({ searchParams }) => {
 export default BenefitsPage; // Pages use default export
 ```
 
-### 2. Route Parameters
+**🆕 핵심 포인트**:
+- **Server Container**: 매 요청마다 새로운 컨테이너 인스턴스 생성
+- **Service 획득**: Container에서 필요한 Service를 주입받음
+- **자동 토큰 주입**: Service 내부의 Repository가 AuthenticatedHttpClient를 통해 자동으로 토큰 주입
+- **NEVER**: Client Container (`xxxClientContainer`) 사용 금지 - Server에서는 항상 `createXXXServerContainer()` 사용
+
+### 2. Route Parameters (🆕 with DI Container)
+
 ```typescript
 // app/(auth)/cafeterias/[cafeteriaId]/page.tsx
+import { getQueryClient } from '@/src/shared/infrastructure/configs/tanstack-query';
+import { createCafeteriaServerContainer } from '@/src/di';
+import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
+import { CafeteriaDetailView } from '@/src/domains/cafeteria/detail/ui/views/cafeteria-detail-view';
+
 interface PageProps {
   params: { cafeteriaId: string };
   searchParams: { [key: string]: string | string[] | undefined };
@@ -116,23 +143,55 @@ interface PageProps {
 const CafeteriaDetailPage = async ({ params, searchParams }: PageProps) => {
   const { cafeteriaId } = params;
   const { tab = 'menu' } = searchParams;
-  
-  return <CafeteriaDetailView cafeteriaId={cafeteriaId} activeTab={tab} />;
+
+  const queryClient = getQueryClient();
+
+  // 🆕 Server Container로 Service 획득
+  const container = createCafeteriaServerContainer();
+  const cafeteriaService = container.getCafeteriaService();
+
+  // Dynamic route parameter를 Service 메서드에 전달
+  await queryClient.prefetchQuery({
+    queryKey: ['cafeteria', 'detail', cafeteriaId],
+    queryFn: () => cafeteriaService.getCafeteriaDetail(cafeteriaId)
+  });
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <CafeteriaDetailView cafeteriaId={cafeteriaId} activeTab={tab} />
+    </HydrationBoundary>
+  );
 };
+
+export default CafeteriaDetailPage;
 ```
 
-### 3. Metadata Generation
+### 3. Metadata Generation (🆕 with DI Container)
+
 ```typescript
 // app/(auth)/cafeterias/[cafeteriaId]/page.tsx
+import { Metadata } from 'next';
+import { createCafeteriaServerContainer } from '@/src/di';
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const cafeteria = await getCafeteria(params.cafeteriaId);
-  
+  // 🆕 Server Container로 Service 획득
+  const container = createCafeteriaServerContainer();
+  const cafeteriaService = container.getCafeteriaService();
+
+  // Service 메서드로 데이터 조회
+  const cafeteria = await cafeteriaService.getCafeteriaDetail(params.cafeteriaId);
+
   return {
     title: cafeteria.name,
     description: `${cafeteria.name}의 메뉴와 리뷰를 확인하세요`,
   };
 }
 ```
+
+**🆕 중요**:
+- `generateMetadata`에서도 Server Container 사용
+- 각 함수마다 새로운 Container 인스턴스 생성 (stateless)
+- Service는 자동으로 인증 토큰 주입 처리
 
 ### 4. Loading and Error UI
 ```typescript

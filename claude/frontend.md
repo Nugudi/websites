@@ -15,74 +15,92 @@ Page (Server Component) → View → Section (with Suspense/ErrorBoundary) → C
 - Radius: Use `vars.box.radii.lg` NOT `12px`
 - Shadows: Use `vars.box.shadows.sm` NOT custom shadows
 
-## Domain Structure Patterns
+## Domain Structure Patterns (DDD Architecture)
 
 ```
 domains/
-├── auth/                          # Complex domain (flat structure)
-│   ├── constants/                 # Constants (session, sign-up, etc.)
-│   ├── errors/                    # Auth error classes
+├── auth/                          # Auth Domain (DDD Layered)
+│   ├── repositories/             # 🆕 Data Access Layer
+│   │   └── auth-repository.ts   #     HTTP API 호출
+│   ├── services/                 # 🆕 Business Logic Layer
+│   │   └── auth-service.ts      #     비즈니스 로직 + Repository 조합
+│   ├── actions/                  # Server Actions
+│   │   └── auth-actions.ts      #     Next.js Server Actions
+│   ├── types/                    # Domain Types
+│   │   └── auth.type.ts
+│   ├── hooks/                    # React Hooks
+│   │   ├── queries/             # TanStack Query Options
+│   │   └── use-*.ts             # Custom Hooks
+│   └── ui/                       # Presentation Layer
+│       ├── components/
+│       ├── sections/
+│       └── views/
+├── user/                          # User Domain (DDD Layered)
+│   ├── repositories/             # 🆕 Data Access Layer
+│   │   └── user-repository.ts
+│   ├── services/                 # 🆕 Business Logic Layer
+│   │   └── user-service.ts
+│   ├── types/
+│   │   └── user.type.ts
 │   ├── hooks/
-│   │   ├── queries/               # TanStack Query options (미래)
-│   │   └── use-*.ts               # 일반 커스텀 훅
-│   ├── providers/                 # OAuth providers
-│   ├── schemas/                   # Zod validation schemas
-│   ├── stores/                    # Zustand stores
-│   ├── types/                     # TypeScript types
-│   ├── ui/
-│   │   ├── components/
-│   │   ├── sections/
-│   │   └── views/
-│   ├── utils/                     # Utility functions
-│   ├── auth-actions.ts            # Server Actions
-│   └── auth-server.ts             # Server-only auth client
-├── benefit/                       # Simple domain
-│   ├── hooks/
-│   │   └── queries/               # TanStack Query options
+│   │   └── queries/
+│   │       └── user-profile.query.ts  # Server/Client Query Factories
 │   └── ui/
-├── cafeteria/                     # Simple domain
-│   ├── hooks/
-│   │   └── queries/               # TanStack Query options
+├── benefit/                       # Simple Domain (no services yet)
 │   └── ui/
-└── user/                          # Simple domain
-    ├── constants/
-    │   └── query-keys.ts          # Query Key constants ONLY
-    ├── hooks/
-    │   └── queries/               # TanStack Query options
+├── cafeteria/                     # Cafeteria Domain
+│   ├── home/
+│   ├── detail/
+│   └── review/
+└── stamp/
     └── ui/
 ```
+
+**DDD Layer Responsibilities:**
+
+- **repositories/**: HTTP API 호출, 순수 데이터 접근
+- **services/**: 비즈니스 로직, Repository 조합, 세션 관리
+- **actions/**: Next.js Server Actions (Page/Component에서 호출)
+- **types/**: Domain 타입 정의
+- **hooks/**: React Hooks (TanStack Query 포함)
+- **ui/**: Presentation Layer (Views/Sections/Components)
 
 ## Layer-by-Layer Rules
 
 ### 1. Page Layer (`app/[domain]/[feature]/page.tsx`)
 
 **Type**: Server Component
-**Purpose**: Route entry point, data prefetching, metadata setup
+**Purpose**: Route entry point, data prefetching with DI Container, metadata setup
 
 ```typescript
 // MUST: Server Component
-// MUST: Handle URL/search params
+// MUST: Use Server DI Container for services
 // MUST: Prefetch data for SSR
 // MUST: Wrap with HydrationBoundary
 // MAY: Set metadata for SEO
 // NEVER: Contain UI logic directly
 // NEVER: Use hooks or browser APIs
+// NEVER: Use Client Container on server
 
 // Example: app/page.tsx (home page shows cafeteria)
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { auth } from "@/src/domains/auth/auth-server";
+import { createAuthServerContainer } from "@/src/di/auth-server-container";  // 🆕 DI Container
 import { CafeteriaHomeView } from "@/src/domains/cafeteria/ui/views/cafeteria-home-view";
 import { userProfileQueryServer } from "@/src/domains/user/hooks/queries/user-profile.query";
-import getQueryClient from "@/src/shared/configs/tanstack-query/get-query-client";
+import getQueryClient from "@/src/shared/infrastructure/configs/tanstack-query/get-query-client";
 
 const Page = async ({ params, searchParams }) => {
   const queryClient = getQueryClient();
-  const session = await auth.getSession({ refresh: false });
 
-  // Prefetch data using Server Query Factory (토큰 자동 주입)
-  await queryClient.prefetchQuery(
-    userProfileQueryServer(session!.tokenSet.accessToken)
-  );
+  // 🆕 DI Container로 서비스 획득
+  const container = createAuthServerContainer();
+  const userService = container.getUserService();
+
+  // Prefetch data using Service (DI Container가 자동으로 토큰 주입)
+  await queryClient.prefetchQuery({
+    queryKey: ['user', 'profile'],
+    queryFn: () => userService.getProfile()
+  });
 
   // Return View wrapped in HydrationBoundary
   return (
@@ -94,6 +112,13 @@ const Page = async ({ params, searchParams }) => {
 
 export default Page; // Pages MUST use default export
 ```
+
+**🔑 Key Points:**
+- ✅ Use `createAuthServerContainer()` (creates new instance per request)
+- ✅ Get services from container: `container.getUserService()`
+- ✅ Services automatically handle token injection via `AuthenticatedHttpClient`
+- ❌ Never instantiate services directly
+- ❌ Never use client container (`authClientContainer`) on server
 
 ### 2. View Layer (`ui/views/`)
 
@@ -209,12 +234,18 @@ const UserWelcomeSectionError = () => {
 
 // Content Component (actual data fetching)
 const UserWelcomeSectionContent = () => {
-  // Page에서 prefetch한 데이터를 동일한 Query로 재사용 (캐시 hit!)
-  // HTTP 클라이언트가 자동으로 인증 토큰을 헤더에 추가
-  const { data } = useSuspenseQuery(userProfileQueryClient);
+  // 🆕 Client-side DI Container에서 서비스 획득 (Singleton 패턴)
+  const userService = authClientContainer.getUserService();
 
-  const nickname = data.data.data?.profile?.nickname ?? "손님";
-  const profileImageUrl = data.data.data?.profile?.profileImageUrl;
+  // Page에서 prefetch한 데이터를 동일한 Query로 재사용 (캐시 hit!)
+  // DI Container가 자동으로 인증 토큰을 주입
+  const { data } = useSuspenseQuery({
+    queryKey: ['user', 'profile'],
+    queryFn: () => userService.getProfile()
+  });
+
+  const nickname = data.profile?.nickname ?? "손님";
+  const profileImageUrl = data.profile?.profileImageUrl;
 
   return (
     <Box borderRadius="xl" className={styles.container}>
@@ -366,15 +397,17 @@ hooks/
 
 ### Query Options 파일 작성 규칙
 
-1. **파일명**: `[feature].query.ts` 형식 사용
+1. **파일명**: `[feature].query.ts` 형식 사용 (`[feature].query.server.ts`는 Server 전용)
 2. **Import**: Query Key는 `constants/query-keys.ts`에서 import
-3. **Export**: Server Factory (`xxxQueryServer`) + Client Options (`xxxQueryClient`)
+3. **🆕 Service 사용**: DI Container에서 Service를 획득하여 queryFn에 사용
 4. **캐싱**: 데이터 특성에 맞는 캐싱 전략 설정 (staleTime, gcTime, refetch options)
 5. **DRY**: 공통 옵션은 `baseQuery`로 추출하여 재사용
 
+**🆕 Server-side Query (Page Layer용)**
+
 ```typescript
-// ✅ CORRECT - hooks/queries/user-profile.query.ts
-import { getMyProfile } from "@nugudi/api";
+// ✅ CORRECT - hooks/queries/user-profile.query.server.ts
+import { createUserServerContainer } from "@/src/di";
 import { USER_PROFILE_QUERY_KEY } from "../../constants/query-keys";
 
 // Private: 캐싱 옵션
@@ -386,26 +419,54 @@ const USER_PROFILE_QUERY_OPTIONS = {
   refetchOnReconnect: false,
 } as const;
 
-// Private: Base Query (공통 부분)
-const baseUserProfileQuery = {
-  queryKey: USER_PROFILE_QUERY_KEY,
-  ...USER_PROFILE_QUERY_OPTIONS,
+// Public: Server Query Factory (Page에서 prefetch 시 사용)
+export const userProfileQueryServer = () => {
+  // 🆕 Server Container에서 Service 획득 (매번 새 인스턴스)
+  const container = createUserServerContainer();
+  const userService = container.getUserService();
+
+  return {
+    queryKey: USER_PROFILE_QUERY_KEY,
+    queryFn: () => userService.getProfile(), // Service가 토큰 주입 처리
+    ...USER_PROFILE_QUERY_OPTIONS,
+  };
+};
+```
+
+**🆕 Client-side Query (Section Layer용)**
+
+```typescript
+// ✅ CORRECT - hooks/queries/user-profile.query.ts
+import { userClientContainer } from "@/src/di";
+import { USER_PROFILE_QUERY_KEY } from "../../constants/query-keys";
+
+// Private: 캐싱 옵션
+const USER_PROFILE_QUERY_OPTIONS = {
+  staleTime: 10 * 60 * 1000,
+  gcTime: 30 * 60 * 1000,
+  refetchOnWindowFocus: false,
+  refetchOnMount: false,
+  refetchOnReconnect: false,
 } as const;
 
-// Public: Server Factory
-export const userProfileQueryServer = (accessToken: string) => ({
-  ...baseUserProfileQuery,
-  queryFn: () =>
-    getMyProfile({
-      headers: { Authorization: `Bearer ${accessToken}` },
-    }),
-});
+// Public: Client Query Options (Section/Component에서 사용)
+export const userProfileQueryClient = () => {
+  // 🆕 Client Container에서 Service 획득 (Singleton)
+  const userService = userClientContainer.getUserService();
 
-// Public: Client Options
-export const userProfileQueryClient = {
-  ...baseUserProfileQuery,
-  queryFn: () => getMyProfile(),
-} as const;
+  return {
+    queryKey: USER_PROFILE_QUERY_KEY,
+    queryFn: () => userService.getProfile(), // Service가 토큰 주입 처리
+    ...USER_PROFILE_QUERY_OPTIONS,
+  };
+};
+
+// ❌ DEPRECATED - 직접 API 호출하지 말 것 (@nugudi/api는 제거됨)
+// import { getMyProfile } from "@nugudi/api";
+// export const userProfileQueryClient = {
+//   queryKey: USER_PROFILE_QUERY_KEY,
+//   queryFn: () => getMyProfile(), // NO!
+// };
 ```
 
 ### 일반 커스텀 훅 작성 규칙
@@ -523,23 +584,28 @@ import { api } from "@nugudi/api"; // ✅ Named
 
 ## Data Flow Rules
 
-### Server → Client Data Flow
+### Server → Client Data Flow (🆕 DDD Architecture)
 
 **실제 UserProfile 데이터 흐름 예시**:
 
 ```typescript
-// 1. Page: Server Query Factory로 Prefetch (SSR)
+// 1. Page: Server Container + Service로 Prefetch (SSR)
 // File: app/page.tsx
-import { userProfileQueryServer } from "@/src/domains/user/hooks/queries/user-profile.query";
+import { createUserServerContainer } from "@/src/di";
+import { userProfileQueryServer } from "@/src/domains/user/hooks/queries/user-profile.query.server";
 
 const HomePage = async () => {
   const queryClient = getQueryClient();
-  const session = await auth.getSession({ refresh: false });
 
-  // Server Query Factory 사용 (토큰 명시적 주입)
-  await queryClient.prefetchQuery(
-    userProfileQueryServer(session!.tokenSet.accessToken)
-  );
+  // 🆕 Server Container로 Service 획득 (매번 새 인스턴스, 자동 토큰 주입)
+  const container = createUserServerContainer();
+  const userService = container.getUserService();
+
+  // Server Query Factory 사용 (Service가 자동으로 토큰 주입)
+  await queryClient.prefetchQuery({
+    queryKey: ['user', 'profile'],
+    queryFn: () => userService.getProfile()
+  });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
@@ -548,7 +614,7 @@ const HomePage = async () => {
   );
 };
 
-// 2. View: Section 조합
+// 2. View: Section 조합 (변경 없음)
 // File: domains/cafeteria/home/ui/views/cafeteria-home-view/index.tsx
 export const CafeteriaHomeView = () => {
   return (
@@ -559,30 +625,49 @@ export const CafeteriaHomeView = () => {
   );
 };
 
-// 3. Section: Client Query Options로 캐시 재사용
-// File: shared/ui/sections/user-welcome-section/index.tsx
-import { userProfileQueryClient } from "@/src/domains/user/hooks/queries/user-profile.query";
+// 3. Section: Client Container + Service로 캐시 재사용
+// File: shared/interface-adapters/sections/user-welcome-section/index.tsx
+import { userClientContainer } from "@/src/di";
 
 const UserWelcomeSectionContent = () => {
-  // Page에서 prefetch한 데이터를 동일한 Query Key로 조회 (캐시 hit!)
-  const { data } = useSuspenseQuery(userProfileQueryClient);
+  // 🆕 Client Container에서 Service 획득 (Singleton, 자동 토큰 주입)
+  const userService = userClientContainer.getUserService();
 
-  const nickname = data.data.data?.profile?.nickname ?? "손님";
+  // Page에서 prefetch한 데이터를 동일한 Query Key로 조회 (캐시 hit!)
+  const { data } = useSuspenseQuery({
+    queryKey: ['user', 'profile'],
+    queryFn: () => userService.getProfile()
+  });
+
+  const nickname = data.profile?.nickname ?? "손님";
 
   return <WelcomeMessage nickname={nickname} />;
 };
 
-// 4. Component: Pure UI rendering
-// File: shared/ui/components/welcome-message/index.tsx
+// 4. Component: Pure UI rendering (변경 없음)
+// File: shared/interface-adapters/components/welcome-message/index.tsx
 export const WelcomeMessage = ({ nickname }: { nickname: string }) => {
   return <span>{nickname}님 환영합니다</span>;
 };
 ```
 
-**핵심 포인트**:
-- Page에서 1번의 API 호출 (prefetch)
-- Section에서 캐시 재사용 (추가 네트워크 요청 없음)
-- Component는 순수 UI만 담당
+**🆕 핵심 포인트**:
+- **Server Container**: Page Layer에서 `createXXXServerContainer()` 사용 (매번 새 인스턴스)
+- **Client Container**: Section/Component에서 `xxxClientContainer` 사용 (Singleton)
+- **Service Layer**: Repository 호출 + 비즈니스 로직 처리
+- **자동 토큰 주입**: DI Container가 AuthenticatedHttpClient를 통해 자동 처리
+- **캐시 재사용**: Page에서 1번의 API 호출, Section에서 캐시 재사용 (추가 네트워크 요청 없음)
+- **Component는 순수 UI만 담당**: Props로 데이터 받아 렌더링만
+
+**🆕 DDD 레이어별 책임**:
+
+| Layer | 환경 | DI Container | 책임 |
+|-------|------|--------------|------|
+| **Page** | Server | `createXXXServerContainer()` | SSR 데이터 prefetch |
+| **Service** | Both | Container에서 주입 | 비즈니스 로직 + Repository 호출 |
+| **Repository** | Both | Container에서 주입 | 순수 데이터 접근 (HttpClient 사용) |
+| **Section** | Client | `xxxClientContainer` | 캐시 재사용 + UI 상태 관리 |
+| **Component** | Both | - | 순수 UI 렌더링 (Props만) |
 
 ### State Management Rules
 
@@ -732,26 +817,47 @@ const CafeteriaListSectionContent = ({ filter }: { filter: string }) => {
 
 ## Best Practices Summary
 
-1. **Route Groups**: Use `(auth)` for protected pages, `(public)` for public pages
-2. **Page**: Server-side data prefetching only (`app/(auth|public)/[domain]/page.tsx`)
-3. **View**: Layout composition only (`domains/[domain]/[feature?]/ui/views/`)
-4. **Section**: Business logic + Error/Loading boundaries (`ui/sections/`)
-5. **Component**: Pure UI components (`ui/components/`)
-6. **Always use** Suspense + ErrorBoundary in Sections
-7. **Never skip** the hierarchy (Page → View → Section → Component)
-8. **Keep components** pure and reusable
-9. **Domain Structure**: Complex domains CAN use flat structure (auth) OR sub-features. Simple domains use flat structure (benefit, user)
-10. **Name consistently** following the patterns above
-11. **Separate concerns** strictly between layers
-12. **Each component** must be in its own folder with `index.tsx` and `index.css.ts`
-13. **Domain logic** (stores, schemas, types) stays outside the `ui/` folder
-14. **Use Vanilla Extract** with `vars` and `classes` from `@nugudi/themes`
-15. **Always prefer** existing packages from `@nugudi/*` namespace
-16. **Client Components**: Add `"use client"` when using event handlers or hooks
-17. **Follow monorepo** import conventions from packages.md
-18. **TanStack Query**: Separate Query Keys (`constants/`) from Query Options (`hooks/queries/`)
-19. **Query Naming**: Use `xxxQueryServer(token)` for Server, `xxxQueryClient` for Client
-20. **Query Structure**: Extract common parts to `baseQuery`, use factory pattern for token injection
+### 🆕 DDD Architecture (NEW)
+
+1. **DI Containers**: ALWAYS use DI containers to get Services
+   - Server: `createXXXServerContainer()` (매번 새 인스턴스)
+   - Client: `xxxClientContainer` (Singleton)
+2. **Service Layer**: Business logic + Repository 호출 (직접 API 호출 금지)
+3. **Repository Layer**: Pure data access using HttpClient (비즈니스 로직 금지)
+4. **Infrastructure Layer**: HttpClient, SessionManager, TokenProvider (환경 무관 추상화)
+5. **NEVER**: 직접 Repository/Service 인스턴스화 (Container에서만 주입)
+6. **NEVER**: Page에서 Client Container 사용 (Singleton은 Client 전용)
+7. **NEVER**: `@nugudi/api` 사용 (deprecated, Service 사용)
+
+### Component Hierarchy
+
+8. **Route Groups**: Use `(auth)` for protected pages, `(public)` for public pages
+9. **Page**: Server Container + Service로 data prefetching (`app/(auth|public)/[domain]/page.tsx`)
+10. **View**: Layout composition only (`domains/[domain]/[feature?]/ui/views/`)
+11. **Section**: Client Container + Service로 data fetching + Error/Loading boundaries (`ui/sections/`)
+12. **Component**: Pure UI components (`ui/components/`)
+13. **Always use** Suspense + ErrorBoundary in Sections
+14. **Never skip** the hierarchy (Page → View → Section → Component)
+15. **Keep components** pure and reusable
+
+### Code Organization
+
+16. **Domain Structure**: Complex domains CAN use flat structure (auth) OR sub-features. Simple domains use flat structure (benefit, user)
+17. **Name consistently** following the patterns above
+18. **Separate concerns** strictly between layers
+19. **Each component** must be in its own folder with `index.tsx` and `index.css.ts`
+20. **Domain logic** (repositories, services, stores, schemas, types) stays outside the `ui/` folder
+21. **Use Vanilla Extract** with `vars` and `classes` from `@nugudi/themes`
+22. **Always prefer** existing packages from `@nugudi/*` namespace
+23. **Client Components**: Add `"use client"` when using event handlers or hooks
+24. **Follow monorepo** import conventions from packages.md
+
+### Data Fetching
+
+25. **TanStack Query**: Separate Query Keys (`constants/`) from Query Options (`hooks/queries/`)
+26. **Query Naming**: Use `xxxQueryServer()` for Server (factory), `xxxQueryClient()` for Client (factory)
+27. **Query Structure**: Use DI Container to get Service, call Service methods in queryFn
+28. **NEVER**: 직접 API 함수 호출 (Service 메서드 사용)
 
 ## TypeScript Interface Rules
 
