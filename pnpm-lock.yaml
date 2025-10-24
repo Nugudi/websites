@@ -173,9 +173,6 @@ importers:
       '@nugudi/react-hooks-use-stepper':
         specifier: workspace:*
         version: link:../../packages/react/hooks/use-stepper
-      '@nugudi/themes':
-        specifier: workspace:*
-        version: link:../../packages/themes
       '@nugudi/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -234,6 +231,9 @@ importers:
         specifier: ^5.0.8
         version: 5.0.8(@types/react@19.2.2)(immer@9.0.21)(react@19.2.0)
     devDependencies:
+      '@nugudi/themes':
+        specifier: workspace:*
+        version: link:../../packages/themes
       '@tanstack/react-query-devtools':
         specifier: ^5.90.2
         version: 5.90.2(@tanstack/react-query@5.90.5(react@19.2.0))(react@19.2.0)
