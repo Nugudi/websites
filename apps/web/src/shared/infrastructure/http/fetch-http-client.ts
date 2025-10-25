@@ -5,9 +5,6 @@ import type {
   RequestOptions,
 } from "./http-client.interface";
 
-/**
- * Native Fetch API를 사용한 HttpClient 구현
- */
 export class FetchHttpClient implements HttpClient {
   private readonly baseUrl: string;
   private readonly timeout: number;
@@ -15,7 +12,7 @@ export class FetchHttpClient implements HttpClient {
 
   constructor(config: HttpClientConfig) {
     this.baseUrl = config.baseUrl;
-    this.timeout = config.timeout ?? 30000; // 기본 30초
+    this.timeout = config.timeout ?? 30000;
     this.defaultHeaders = config.headers ?? {};
   }
 
@@ -75,9 +72,6 @@ export class FetchHttpClient implements HttpClient {
     });
   }
 
-  /**
-   * 실제 HTTP 요청을 수행하는 내부 메서드
-   */
   private async request<T>(
     url: string,
     options: RequestInit & RequestOptions,
@@ -97,7 +91,6 @@ export class FetchHttpClient implements HttpClient {
 
       clearTimeout(timeoutId);
 
-      // Content-Type 확인하여 JSON 파싱
       const contentType = response.headers.get("content-type");
       const isJson = contentType?.includes("application/json");
 
@@ -105,11 +98,9 @@ export class FetchHttpClient implements HttpClient {
       if (isJson) {
         data = await response.json();
       } else {
-        // JSON이 아닌 경우 text로 파싱
         data = (await response.text()) as T;
       }
 
-      // HTTP 에러 상태 코드 처리
       if (!response.ok) {
         throw new HttpError(
           `HTTP Error: ${response.status} ${response.statusText}`,
@@ -141,20 +132,15 @@ export class FetchHttpClient implements HttpClient {
     }
   }
 
-  /**
-   * URL 빌드 (baseUrl과 상대 경로 결합, query parameter 추가)
-   */
   private buildUrl(
     url: string,
     params?: Record<string, string | number | boolean>,
   ): string {
     let fullUrl: string;
 
-    // 절대 URL이면 그대로 사용
     if (url.startsWith("http://") || url.startsWith("https://")) {
       fullUrl = url;
     } else {
-      // 상대 경로면 baseUrl과 결합
       const base = this.baseUrl.endsWith("/")
         ? this.baseUrl.slice(0, -1)
         : this.baseUrl;
@@ -162,7 +148,6 @@ export class FetchHttpClient implements HttpClient {
       fullUrl = `${base}${path}`;
     }
 
-    // query parameter가 있으면 추가
     if (params && Object.keys(params).length > 0) {
       const searchParams = new URLSearchParams();
       for (const [key, value] of Object.entries(params)) {
@@ -174,9 +159,6 @@ export class FetchHttpClient implements HttpClient {
     return fullUrl;
   }
 
-  /**
-   * 기본 헤더와 요청별 헤더를 병합
-   */
   private mergeHeaders(
     requestHeaders?: Record<string, string>,
   ): Record<string, string> {
@@ -188,9 +170,6 @@ export class FetchHttpClient implements HttpClient {
   }
 }
 
-/**
- * HTTP 에러 클래스
- */
 export class HttpError extends Error {
   constructor(
     message: string,

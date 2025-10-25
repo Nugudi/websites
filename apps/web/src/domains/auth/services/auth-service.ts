@@ -198,12 +198,11 @@ export class AuthServiceImpl implements AuthService {
         throw new Error("Invalid login response");
       }
 
-      // 세션 저장
+      // 세션 저장 (Token + userId)
       await this.sessionManager.saveSession({
         accessToken: data.accessToken,
         refreshToken: data.refreshToken,
         userId: data.userId,
-        nickname: data.nickname,
       });
 
       return {
@@ -314,14 +313,13 @@ export class AuthServiceImpl implements AuthService {
         return false;
       }
 
-      // 기존 세션 정보 유지하면서 토큰만 갱신
+      // 토큰 갱신 (기존 userId 유지)
       const currentSession = await this.sessionManager.getSession();
 
       await this.sessionManager.saveSession({
         accessToken: data.accessToken,
         refreshToken: data.refreshToken,
         userId: currentSession?.userId,
-        nickname: currentSession?.nickname,
       });
 
       return true;
@@ -336,7 +334,6 @@ export class AuthServiceImpl implements AuthService {
    */
   async getCurrentSession(): Promise<{
     userId?: number;
-    nickname?: string;
     accessToken: string;
   } | null> {
     const session = await this.sessionManager.getSession();
@@ -347,7 +344,6 @@ export class AuthServiceImpl implements AuthService {
 
     return {
       userId: session.userId,
-      nickname: session.nickname,
       accessToken: session.accessToken,
     };
   }

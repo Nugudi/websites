@@ -94,13 +94,9 @@ export class ClientSessionManager implements SessionManager {
   }
 
   /**
-   * UUID v4 형식의 디바이스 ID 생성
+   * UUID v4 생성 (crypto.randomUUID 사용)
    */
   private generateDeviceId(): string {
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
-      const r = (Math.random() * 16) | 0;
-      const v = c === "x" ? r : (r & 0x3) | 0x8;
-      return v.toString(16);
-    });
+    return crypto.randomUUID();
   }
 }

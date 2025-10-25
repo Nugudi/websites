@@ -5,12 +5,20 @@ import { logger } from "@/src/shared/infrastructure/logging/logger";
 
 const PUBLIC_PATHS = ["/auth", "/api/auth"];
 const LOGIN_PATH = "/auth/login";
+const HOME_PATH = "/";
 
 /**
  * 인증이 필요 없는 public 경로인지 확인
  */
 function isPublicPath(pathname: string): boolean {
   return PUBLIC_PATHS.some((path) => pathname.startsWith(path));
+}
+
+/**
+ * Auth 페이지 경로인지 확인 (로그인한 사용자는 접근 불가)
+ */
+function isAuthPage(pathname: string): boolean {
+  return pathname.startsWith("/auth");
 }
 
 /**
@@ -28,63 +36,130 @@ function redirectToLogin(request: NextRequest): NextResponse {
 }
 
 /**
- * Access Token이 만료되었는지 확인
- * JWT 디코딩하여 exp 필드 확인
+ * Next.js Middleware (Authentication Guard + Preventive Refresh + Auth Page Protection)
+ *
+ * 책임 (SRP):
+ * - SSR에 적합한 인증 상태 준비
+ *   1. Refresh Token 존재 여부 확인 (Guard)
+ *   2. Access Token 없으면 미리 갱신 (Preventive Refresh)
+ *   3. 로그인 사용자가 /auth 페이지 접근 시 홈으로 리다이렉트
+ *
+ * Why Preventive Refresh?
+ * - Server Component에서는 Cookie 수정 불가
+ * - SSR Prefetch 전에 Token을 미리 갱신하면 401 방지
+ * - Middleware는 Cookie 수정 가능 (Route Handler와 동일한 권한)
+ *
+ * 책임이 아닌 것 (다른 레이어로 위임):
+ * - Token 갱신 로직: RefreshTokenService가 담당
+ * - BFF 호출: RefreshTokenService가 Spring API 직접 호출
+ * - Client-side 401 처리: AuthenticatedHttpClient의 401 Interceptor가 담당
+ *
+ * 동작 흐름:
+ * 1. /auth 페이지 접근 시 → Refresh Token 있으면 홈으로 리다이렉트 ✅
+ * 2. Protected 페이지 → Refresh Token 체크 → Access Token 없으면 갱신 ✅
+ * 3. HomePage SSR Prefetch: Token 이미 준비됨 → UserService.getMyProfile() 성공 ✅
+ * 4. 초기 렌더링: "매튜" 표시 ✅
+ * 5. Client-side 요청 시 401 발생: AuthenticatedHttpClient가 자동 재시도 (Fallback)
  */
-function isTokenExpired(token: string): boolean {
-  try {
-    const [, payload] = token.split(".");
-    if (!payload) return true;
-
-    const decoded = JSON.parse(
-      Buffer.from(payload, "base64url").toString("utf-8"),
-    );
-    const exp = decoded.exp;
-
-    if (!exp) return true;
-
-    // exp는 초 단위, Date.now()는 밀리초 단위
-    return Date.now() >= exp * 1000;
-  } catch {
-    return true;
-  }
-}
-
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Public 경로는 인증 체크 생략
+  const container = createAuthServerContainer();
+  const sessionManager = container.getSessionManager();
+  const refreshToken = await sessionManager.getRefreshToken();
+
+  // 1. Auth 페이지 접근 시: 로그인한 사용자는 홈으로 리다이렉트
+  if (isAuthPage(pathname)) {
+    if (refreshToken) {
+      logger.info(
+        "Logged-in user tried to access auth page, redirecting to home",
+        {
+          pathname,
+        },
+      );
+      return NextResponse.redirect(new URL(HOME_PATH, request.url));
+    }
+    // 비로그인 사용자는 /auth 접근 허용
+    return NextResponse.next();
+  }
+
+  // 2. Public 경로 (API Routes 등)는 인증 체크 생략
   if (isPublicPath(pathname)) {
     return NextResponse.next();
   }
 
+  // 3. Protected 경로: 인증 상태 확인 및 Token 갱신
   try {
-    const container = createAuthServerContainer();
-    const authService = container.getAuthService();
-
-    // 세션 조회
-    const session = await authService.getCurrentSession();
-
-    // 세션이 없으면 로그인 페이지로
-    if (!session) {
+    if (!refreshToken) {
+      logger.info("Refresh Token not found, redirecting to login", {
+        pathname,
+      });
       return redirectToLogin(request);
     }
 
-    // Access Token이 유효하면 통과
-    if (!isTokenExpired(session.accessToken)) {
+    // 2. Access Token 체크 (Preventive Refresh)
+    let accessToken = await sessionManager.getAccessToken();
+
+    if (!accessToken) {
+      logger.info("Access Token not found, attempting preventive refresh", {
+        pathname,
+      });
+
+      // RefreshTokenService로 즉시 갱신 (Middleware는 Cookie 수정 가능)
+      const refreshTokenService = container.getRefreshTokenService();
+      const result = await refreshTokenService.refresh();
+
+      if (!result.success) {
+        logger.warn("Preventive refresh failed, redirecting to login", {
+          pathname,
+          error: result.error,
+        });
+
+        // Issue #4 해결: 무효한 토큰 삭제하여 무한 루프 방지
+        const loginResponse = redirectToLogin(request);
+        loginResponse.cookies.delete("access_token");
+        loginResponse.cookies.delete("refresh_token");
+        loginResponse.cookies.delete("user_id");
+
+        logger.debug("Deleted invalid cookies to prevent redirect loop", {
+          pathname,
+        });
+
+        return loginResponse;
+      }
+
+      logger.info("Preventive refresh succeeded, proceeding to SSR", {
+        pathname,
+      });
+
+      // 갱신된 Token을 다시 조회 (Cookie에 저장됨)
+      accessToken = await sessionManager.getAccessToken();
+    }
+
+    // Access Token이 준비되었으므로 SSR Prefetch 진행
+    // IMPORTANT: Cookie 스냅샷 문제로 인해 Request Headers에 Token 추가
+    // Server Component는 요청 시작 시점의 Cookie만 읽으므로,
+    // Middleware에서 갱신한 Token을 Headers로 전달
+    //
+    // Issue #3 해결: 응답 헤더가 아닌 요청 헤더에 토큰 추가
+    if (!accessToken) {
       return NextResponse.next();
     }
 
-    // Access Token 만료 시 갱신 시도
-    const refreshed = await authService.refreshToken();
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set("x-access-token", accessToken);
 
-    // 갱신 실패 시 로그인 페이지로
-    if (!refreshed) {
-      return redirectToLogin(request);
-    }
+    const response = NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
 
-    // 갱신 성공 시 통과
-    return NextResponse.next();
+    logger.debug("Added access token to request headers for SSR", {
+      pathname,
+    });
+
+    return response;
   } catch (error) {
     // 예외 발생 시 로그 기록 후 로그인 페이지로
     logger.error("Unexpected error in middleware", {
