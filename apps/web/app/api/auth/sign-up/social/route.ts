@@ -26,12 +26,11 @@ export async function POST(request: NextRequest) {
     const container = createAuthServerContainer();
     const authService = container.getAuthService();
 
-    // 세션 저장
+    // 세션 저장 (Token + userId)
     await authService.sessionManager.saveSession({
-      userId,
-      nickname,
       accessToken,
       refreshToken,
+      userId,
     });
 
     return NextResponse.json({ success: true });

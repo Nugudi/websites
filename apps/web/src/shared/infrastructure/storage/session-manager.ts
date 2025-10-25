@@ -14,7 +14,6 @@ export interface SessionData {
   accessToken: string;
   refreshToken: string;
   userId?: number;
-  nickname?: string;
 }
 
 /**
