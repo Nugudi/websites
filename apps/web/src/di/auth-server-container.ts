@@ -42,6 +42,7 @@ class AuthServerContainer {
       this._authenticatedHttpClient = new AuthenticatedHttpClient(
         baseClient,
         tokenProvider,
+        undefined, // Server-side: SessionManager 불필요 (Cookie 기반)
         refreshTokenService, // Server-side용: RefreshTokenService 주입
       );
     }

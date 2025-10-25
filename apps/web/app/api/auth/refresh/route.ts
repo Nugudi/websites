@@ -44,7 +44,15 @@ export async function POST() {
     }
 
     logger.info("Token refreshed successfully via RefreshTokenService");
-    return NextResponse.json({ success: true });
+
+    // Client-side localStorage 동기화를 위해 토큰 데이터 반환
+    return NextResponse.json({
+      success: true,
+      data: {
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
+      },
+    });
   } catch (error) {
     logger.error("Unexpected error in refresh BFF route", {
       error: error instanceof Error ? error.message : String(error),

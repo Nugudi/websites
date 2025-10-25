@@ -15,7 +15,12 @@ export interface RefreshTokenProvider {
   /**
    * Refresh Token 실행
    *
-   * @returns { success: boolean, error?: string }
+   * @returns { success: boolean, accessToken?: string, refreshToken?: string, error?: string }
    */
-  refresh(): Promise<{ success: boolean; error?: string }>;
+  refresh(): Promise<{
+    success: boolean;
+    accessToken?: string;
+    refreshToken?: string;
+    error?: string;
+  }>;
 }

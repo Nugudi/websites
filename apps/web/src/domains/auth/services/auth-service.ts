@@ -313,10 +313,13 @@ export class AuthServiceImpl implements AuthService {
         return false;
       }
 
-      // 토큰만 갱신
+      // 토큰 갱신 (기존 userId 유지)
+      const currentSession = await this.sessionManager.getSession();
+
       await this.sessionManager.saveSession({
         accessToken: data.accessToken,
         refreshToken: data.refreshToken,
+        userId: currentSession?.userId,
       });
 
       return true;

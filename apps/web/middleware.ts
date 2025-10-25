@@ -114,7 +114,18 @@ export default async function middleware(request: NextRequest) {
           pathname,
           error: result.error,
         });
-        return redirectToLogin(request);
+
+        // Issue #4 해결: 무효한 토큰 삭제하여 무한 루프 방지
+        const loginResponse = redirectToLogin(request);
+        loginResponse.cookies.delete("access_token");
+        loginResponse.cookies.delete("refresh_token");
+        loginResponse.cookies.delete("user_id");
+
+        logger.debug("Deleted invalid cookies to prevent redirect loop", {
+          pathname,
+        });
+
+        return loginResponse;
       }
 
       logger.info("Preventive refresh succeeded, proceeding to SSR", {
@@ -129,14 +140,24 @@ export default async function middleware(request: NextRequest) {
     // IMPORTANT: Cookie 스냅샷 문제로 인해 Request Headers에 Token 추가
     // Server Component는 요청 시작 시점의 Cookie만 읽으므로,
     // Middleware에서 갱신한 Token을 Headers로 전달
-    const response = NextResponse.next();
-
-    if (accessToken) {
-      response.headers.set("x-access-token", accessToken);
-      logger.debug("Added access token to request headers for SSR", {
-        pathname,
-      });
+    //
+    // Issue #3 해결: 응답 헤더가 아닌 요청 헤더에 토큰 추가
+    if (!accessToken) {
+      return NextResponse.next();
     }
+
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set("x-access-token", accessToken);
+
+    const response = NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
+
+    logger.debug("Added access token to request headers for SSR", {
+      pathname,
+    });
 
     return response;
   } catch (error) {

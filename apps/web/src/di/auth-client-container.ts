@@ -47,6 +47,7 @@ class AuthClientContainer {
    * Client-side에서는 RefreshTokenService를 주입하지 않습니다.
    * - BFF 호출 (/api/auth/refresh)을 사용
    * - 브라우저가 자동으로 Cookie 전달
+   * - SessionManager를 주입하여 BFF 응답 토큰으로 localStorage 동기화
    */
   private getAuthenticatedHttpClient(): AuthenticatedHttpClient {
     if (!this._authenticatedHttpClient) {
@@ -59,6 +60,7 @@ class AuthClientContainer {
       this._authenticatedHttpClient = new AuthenticatedHttpClient(
         baseClient,
         tokenProvider,
+        sessionManager, // Client-side: localStorage 동기화를 위해 SessionManager 주입
         undefined, // Client-side: BFF 사용, RefreshTokenService 불필요
       );
     }

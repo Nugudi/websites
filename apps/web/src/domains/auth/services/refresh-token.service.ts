@@ -32,9 +32,14 @@ export class RefreshTokenService implements RefreshTokenProvider {
   /**
    * Refresh Token 실행
    *
-   * @returns { success: boolean, error?: string }
+   * @returns { success: boolean, accessToken?: string, refreshToken?: string, error?: string }
    */
-  async refresh(): Promise<{ success: boolean; error?: string }> {
+  async refresh(): Promise<{
+    success: boolean;
+    accessToken?: string;
+    refreshToken?: string;
+    error?: string;
+  }> {
     try {
       // 1. SessionManager에서 Refresh Token과 Device ID 조회
       const refreshToken = await this.sessionManager.getRefreshToken();
@@ -105,7 +110,11 @@ export class RefreshTokenService implements RefreshTokenProvider {
 
       logger.info("Token refreshed successfully via Spring API");
 
-      return { success: true };
+      return {
+        success: true,
+        accessToken,
+        refreshToken: newRefreshToken,
+      };
     } catch (error) {
       logger.error("Unexpected error during token refresh", {
         error: error instanceof Error ? error.message : String(error),
