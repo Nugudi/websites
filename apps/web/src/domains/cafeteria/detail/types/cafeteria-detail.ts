@@ -5,6 +5,10 @@ export interface CafeteriaDetail {
   operatingHours: string;
   isLiked: boolean;
   isPackagingAvailable: boolean;
+  price: number;
+  rating: number;
+  reviewCount: number;
+  date: string;
   menus: {
     breakfast: MenuItem[];
     lunch: MenuItem[];

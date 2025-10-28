@@ -1,7 +1,14 @@
 "use client";
 
-import { Body, Box, Emphasis, VStack } from "@nugudi/react-components-layout";
-import { MenuCard } from "@nugudi/react-components-menu-card";
+import { InfoIcon } from "@nugudi/assets-icons";
+import {
+  Body,
+  Box,
+  HStack,
+  Title,
+  VStack,
+} from "@nugudi/react-components-layout";
+import { formatPrice } from "@/src/domains/user/utils/format-points";
 import { getMockCafeteriaData } from "../../../mocks/cafeteria-mock-data";
 import type { CafeteriaDetail } from "../../../types/cafeteria-detail";
 import * as styles from "./index.css";
@@ -15,80 +22,101 @@ export const CafeteriaInfoTab = ({ cafeteriaId }: CafeteriaInfoTabProps) => {
 
   return (
     <VStack gap={32} pt={16} pb={24}>
-      <Menu cafeteria={cafeteria} />
-      <NutritionInfoCard />
-      <LocationMapCard address={cafeteria.location} />
+      <BusinessInfo cafeteria={cafeteria} />
+      <LocationInfo address={cafeteria.location} />
+      <EtcInfo />
     </VStack>
   );
 };
 
-export const Menu = ({ cafeteria }: { cafeteria: CafeteriaDetail }) => {
-  return (
-    <VStack gap={12}>
-      <VStack gap={4}>
-        <Emphasis fontSize="e1" color="main" colorShade={500}>
-          오늘 & 이전
-        </Emphasis>
-        <Body fontSize="b3b" colorShade={600}>
-          식단 확인하기
-        </Body>
-      </VStack>
-      <MenuCard
-        title={cafeteria.name}
-        subtitle={cafeteria.location}
-        timeRange={cafeteria.operatingHours}
-        items={cafeteria.menus.lunch}
-        isPackagingAvailable={cafeteria.isPackagingAvailable}
-      />
-    </VStack>
-  );
-};
+interface BusinessInfoProps {
+  cafeteria: CafeteriaDetail;
+}
 
-const NutritionInfoCard = () => {
+const BusinessInfo = ({ cafeteria }: BusinessInfoProps) => {
   return (
     <VStack gap={12}>
-      <Body fontSize="b3b" colorShade={600}>
-        오늘의 식단 칼로리
-      </Body>
+      <Title fontSize="t3" colorShade={800}>
+        영업정보
+      </Title>
       <VStack
-        gap={12}
-        padding={20}
-        borderRadius="lg"
-        className={styles.nutritionSection}
+        gap={8}
+        padding={16}
+        borderRadius="md"
+        className={styles.infoSection}
       >
-        <CalorieInfo />
+        <InfoRow icon="🗓" label="영업 중 · 오전 8시 ~ 오후 1시" />
+        <InfoRow icon="📦" label="포장 가능" />
+        <InfoRow icon="💰" label={`가격 ${formatPrice(cafeteria.price)}원`} />
       </VStack>
     </VStack>
   );
 };
 
-const CalorieInfo = () => {
-  return (
-    <VStack gap={8}>
-      <Body fontSize="b3">오늘 점심은 약 840kcal로 추정해요! 🔥</Body>
-      <Body fontSize="b3">하루 권장 섭취량의 38%입니다.</Body>
-    </VStack>
-  );
-};
+interface LocationInfoProps {
+  address: string;
+}
 
-const LocationMapCard = ({ address }: { address: string }) => {
+const LocationInfo = ({ address }: LocationInfoProps) => {
   return (
     <VStack gap={12}>
-      <Body fontSize="b3b" colorShade={600}>
-        식당 지도
-      </Body>
-      <MapCard address={address} />
+      <Title fontSize="t3" colorShade={800}>
+        위치정보
+      </Title>
+      <VStack gap={12}>
+        <Box height={180} borderRadius="lg" className={styles.mapPlaceholder}>
+          <Body fontSize="b3" colorShade={500}>
+            지도 들어갈 자리
+          </Body>
+        </Box>
+        <VStack
+          gap={4}
+          padding={16}
+          borderRadius="md"
+          className={styles.infoSection}
+        >
+          <Body fontSize="b3" colorShade={700}>
+            {address}
+          </Body>
+        </VStack>
+      </VStack>
     </VStack>
   );
 };
 
-const MapCard = ({ address }: { address: string }) => {
+const EtcInfo = () => {
   return (
-    <VStack gap={8}>
-      <Box height={180} borderRadius="lg" className={styles.mapPlaceholder}>
-        <Body fontSize="b3">지도 들어갈 자리</Body>
-      </Box>
-      <Body fontSize="b3">📍 {address}</Body>
+    <VStack gap={12}>
+      <Title fontSize="t3" colorShade={800}>
+        기타정보
+      </Title>
+      <VStack
+        gap={8}
+        padding={16}
+        borderRadius="md"
+        className={styles.infoSection}
+      >
+        <InfoRow
+          icon={<InfoIcon width={16} height={16} />}
+          label="상기 식단은 식자재 수급 상황에 따라 변경될 수 있어요"
+        />
+      </VStack>
     </VStack>
+  );
+};
+
+interface InfoRowProps {
+  icon: React.ReactNode;
+  label: string;
+}
+
+const InfoRow = ({ icon, label }: InfoRowProps) => {
+  return (
+    <HStack gap={8} align="center">
+      <Box className={styles.infoIcon}>{icon}</Box>
+      <Body fontSize="b3" colorShade={700}>
+        {label}
+      </Body>
+    </HStack>
   );
 };

@@ -1,4 +1,4 @@
-import type { CafeteriaDetail } from "../types/cafeteria-detail";
+import type { CafeteriaDetail, MenuItem } from "../types/cafeteria-detail";
 
 export const getMockCafeteriaData = (cafeteriaId: string): CafeteriaDetail => ({
   id: cafeteriaId,
@@ -7,6 +7,10 @@ export const getMockCafeteriaData = (cafeteriaId: string): CafeteriaDetail => ({
   operatingHours: "오전 8시 ~ 오후 14시",
   isLiked: false,
   isPackagingAvailable: true,
+  rating: 4.5,
+  reviewCount: 100,
+  price: 7000,
+  date: "2025-10-18",
   menus: {
     breakfast: [{ name: "식단 확인하기", category: "OTHER" }],
     lunch: [
@@ -23,6 +27,57 @@ export const getMockCafeteriaData = (cafeteriaId: string): CafeteriaDetail => ({
     ],
   },
 });
+
+export const getMockMenuData = (): Array<{
+  date: string;
+  items: MenuItem[];
+}> => [
+  {
+    date: "2025.10.18 (금)",
+    items: [
+      { name: "현미밥", category: "RICE" },
+      { name: "잔치국수", category: "NOODLE" },
+      { name: "김치찌개", category: "SOUP" },
+      { name: "돈까스", category: "MAIN_DISH" },
+      { name: "멸치볶음", category: "SIDE_DISH" },
+      { name: "배추김치", category: "KIMCHI" },
+      { name: "크로와상", category: "BREAD_SANDWICH" },
+      { name: "과일샐러드", category: "SALAD_FRUIT" },
+      { name: "아이스크림", category: "DRINK" },
+      { name: "견과류", category: "OTHER" },
+    ],
+  },
+  {
+    date: "2025.10.19 (토)",
+    items: [
+      { name: "흰밥", category: "RICE" },
+      { name: "우동", category: "NOODLE" },
+      { name: "미역국", category: "SOUP" },
+      { name: "치킨너겟", category: "MAIN_DISH" },
+      { name: "무나물", category: "SIDE_DISH" },
+      { name: "오이소박이", category: "KIMCHI" },
+      { name: "토스트", category: "BREAD_SANDWICH" },
+      { name: "사과", category: "SALAD_FRUIT" },
+      { name: "요거트", category: "DRINK" },
+      { name: "땅콩", category: "OTHER" },
+    ],
+  },
+  {
+    date: "2025.10.20 (일)",
+    items: [
+      { name: "보리밥", category: "RICE" },
+      { name: "라면", category: "NOODLE" },
+      { name: "된장찌개", category: "SOUP" },
+      { name: "갈비찜", category: "MAIN_DISH" },
+      { name: "시금치나물", category: "SIDE_DISH" },
+      { name: "깍두기", category: "KIMCHI" },
+      { name: "샌드위치", category: "BREAD_SANDWICH" },
+      { name: "포도", category: "SALAD_FRUIT" },
+      { name: "우유", category: "DRINK" },
+      { name: "김", category: "OTHER" },
+    ],
+  },
+];
 
 export const getMockReviews = () => [
   {

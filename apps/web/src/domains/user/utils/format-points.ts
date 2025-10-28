@@ -14,3 +14,9 @@ export const formatPointBalance = (balance: number): string => {
 
   return `${balance.toLocaleString()} P`;
 };
+
+export const formatPrice = (price: number): string => {
+  if (!Number.isFinite(price)) return "0";
+
+  return price.toLocaleString();
+};
