@@ -8,7 +8,7 @@ import {
   Title,
   VStack,
 } from "@nugudi/react-components-layout";
-import { formatPrice } from "@/src/domains/user/utils/format-points";
+import { formatPriceWithCurrency } from "@/src/domains/user/utils/format-points";
 import { getMockCafeteriaData } from "../../../mocks/cafeteria-mock-data";
 import type { CafeteriaDetail } from "../../../types/cafeteria-detail";
 import * as styles from "./index.css";
@@ -46,7 +46,10 @@ const BusinessInfo = ({ cafeteria }: BusinessInfoProps) => {
         className={styles.infoSection}
       >
         <InfoRow icon="🗓" label={`영업 중 · ${cafeteria.operatingHours}`} />
-        <InfoRow icon="💰" label={`가격 ${formatPrice(cafeteria.price)}원`} />
+        <InfoRow
+          icon="💰"
+          label={`가격 ${formatPriceWithCurrency(cafeteria.price)}`}
+        />
         {cafeteria.isPackagingAvailable && (
           <InfoRow icon="📦" label="포장 가능" />
         )}
