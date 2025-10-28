@@ -45,9 +45,11 @@ const BusinessInfo = ({ cafeteria }: BusinessInfoProps) => {
         borderRadius="md"
         className={styles.infoSection}
       >
-        <InfoRow icon="🗓" label="영업 중 · 오전 8시 ~ 오후 1시" />
-        <InfoRow icon="📦" label="포장 가능" />
+        <InfoRow icon="🗓" label={`영업 중 · ${cafeteria.operatingHours}`} />
         <InfoRow icon="💰" label={`가격 ${formatPrice(cafeteria.price)}원`} />
+        {cafeteria.isPackagingAvailable && (
+          <InfoRow icon="📦" label="포장 가능" />
+        )}
       </VStack>
     </VStack>
   );

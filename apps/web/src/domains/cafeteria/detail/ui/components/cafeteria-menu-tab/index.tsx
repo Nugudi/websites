@@ -37,7 +37,11 @@ export const CafeteriaMenuTab = ({
 
       {menuData.map((menu) => (
         <VStack key={menu.date} gap={8}>
-          <DateHeader date={menu.date} cafeteriaId={cafeteriaId} />
+          <DateHeader
+            date={menu.date}
+            reviewId={menu.id}
+            cafeteriaId={cafeteriaId}
+          />
           <MenuCard
             title="🌞 점심"
             subtitle={`일반 성인 기준 점심 칼로리는 256 kcal 이에요 !`}
@@ -100,16 +104,17 @@ const CharacterImage = () => {
 
 interface DateHeaderProps {
   date: string;
+  reviewId: string;
   cafeteriaId: string;
 }
 
-const DateHeader = ({ date, cafeteriaId }: DateHeaderProps) => {
+const DateHeader = ({ date, reviewId, cafeteriaId }: DateHeaderProps) => {
   return (
     <HStack justify="space-between" align="center" width="100%" pX={4}>
       <Body fontSize="b3b" colorShade={600}>
         {date}
       </Body>
-      <Link href={`/cafeterias/${cafeteriaId}/reviews/1`}>
+      <Link href={`/cafeterias/${cafeteriaId}/reviews/${reviewId}`}>
         <Chip size="sm" label="리뷰 보기" />
       </Link>
     </HStack>

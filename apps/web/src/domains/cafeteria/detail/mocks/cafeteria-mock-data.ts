@@ -29,10 +29,12 @@ export const getMockCafeteriaData = (cafeteriaId: string): CafeteriaDetail => ({
 });
 
 export const getMockMenuData = (): Array<{
+  id: string;
   date: string;
   items: MenuItem[];
 }> => [
   {
+    id: "1",
     date: "2025.10.18 (금)",
     items: [
       { name: "현미밥", category: "RICE" },
@@ -48,6 +50,7 @@ export const getMockMenuData = (): Array<{
     ],
   },
   {
+    id: "2",
     date: "2025.10.19 (토)",
     items: [
       { name: "흰밥", category: "RICE" },
@@ -63,6 +66,7 @@ export const getMockMenuData = (): Array<{
     ],
   },
   {
+    id: "3",
     date: "2025.10.20 (일)",
     items: [
       { name: "보리밥", category: "RICE" },
