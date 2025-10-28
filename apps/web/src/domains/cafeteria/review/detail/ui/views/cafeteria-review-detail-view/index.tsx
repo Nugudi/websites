@@ -14,9 +14,7 @@ export const CafeteriaReviewDetailView = () => {
 
   return (
     <Flex direction="column" h={"100dvh"}>
-      <Box className={styles.navBarWrapper} pt={16} pX={16}>
-        <NavBar />
-      </Box>
+      <NavBar />
 
       <Box className={styles.content} pX={16}>
         <VStack gap={16}>
