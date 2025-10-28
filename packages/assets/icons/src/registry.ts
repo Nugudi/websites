@@ -19,6 +19,7 @@ import EyeOffIcon from "./svg/eye_off.svg?react";
 import FailIcon from "./svg/failure.svg?react";
 import FillHeartIcon from "./svg/fill-heart.svg?react";
 import FillNuguriStamp from "./svg/fill-nuguri-stamp.svg?react";
+import FillStarIcon from "./svg/fill-star.svg?react";
 import FolderIcon from "./svg/folder.svg?react";
 import GiftIcon from "./svg/gift.svg?react";
 import GoogleIcon from "./svg/google.svg?react";
@@ -48,7 +49,6 @@ import TeaIcon from "./svg/tea.svg?react";
 import UserFillIcon from "./svg/user_fill.svg?react";
 import XIcon from "./svg/x.svg?react";
 import type { IconRegistry } from "./types/icon";
-
 // 아이콘 레지스트리
 export const iconRegistry: IconRegistry = {
   LogoText: {
@@ -246,6 +246,10 @@ export const iconRegistry: IconRegistry = {
   X: {
     component: XIcon,
     tags: ["x", "x", "취소", "닫기"],
+  },
+  FillStar: {
+    component: FillStarIcon,
+    tags: ["star", "fill", "별"],
   },
 };
 
