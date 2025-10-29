@@ -12,6 +12,7 @@ coverage
 out/
 build
 dist
+!packages/types/dist
 
 # misc
 .DS_Store
