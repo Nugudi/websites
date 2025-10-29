@@ -19,6 +19,7 @@ export { default as EyeOffIcon } from "./svg/eye_off.svg?react";
 export { default as FailIcon } from "./svg/failure.svg?react";
 export { default as FillHeartIcon } from "./svg/fill-heart.svg?react";
 export { default as FillNuguriStamp } from "./svg/fill-nuguri-stamp.svg?react";
+export { default as FillStarIcon } from "./svg/fill-star.svg?react";
 export { default as FolderIcon } from "./svg/folder.svg?react";
 export { default as GiftIcon } from "./svg/gift.svg?react";
 export { default as GoogleIcon } from "./svg/google.svg?react";

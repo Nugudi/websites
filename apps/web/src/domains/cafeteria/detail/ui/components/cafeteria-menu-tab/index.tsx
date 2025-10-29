@@ -1,35 +1,54 @@
 "use client";
 
 import { Button } from "@nugudi/react-components-button";
-import { Body, Box, Title, VStack } from "@nugudi/react-components-layout";
-import type { Badge } from "@nugudi/react-components-review-card";
-import { ReviewCard } from "@nugudi/react-components-review-card";
+import { Chip } from "@nugudi/react-components-chip";
+import {
+  Body,
+  Box,
+  HStack,
+  Title,
+  VStack,
+} from "@nugudi/react-components-layout";
+import { MenuCard } from "@nugudi/react-components-menu-card";
 import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
-import { getMockReviews } from "../../../mocks/cafeteria-mock-data";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { getMockMenuData } from "../../../mocks/cafeteria-mock-data";
+import type { CafeteriaDetail } from "../../../types/cafeteria-detail";
 import * as styles from "./index.css";
 
-interface Review {
-  id: string;
-  imageUrl?: string;
-  imageAlt?: string;
-  date: string;
-  reviewText: string;
-  badges: Badge[];
+interface CafeteriaMenuTabProps {
+  cafeteria: CafeteriaDetail;
+  cafeteriaId: string;
 }
 
-export const CafeteriaReviewTab = () => {
-  const reviews = getMockReviews();
-  const { cafeteriaId } = useParams();
-  const cafeteriaName = "더애옹푸드"; // TODO: Get from actual data
+export const CafeteriaMenuTab = ({
+  cafeteria,
+  cafeteriaId,
+}: CafeteriaMenuTabProps) => {
+  const menuData = getMockMenuData();
 
   return (
-    <VStack gap={16}>
+    <VStack gap={24} pt={16} pb={24}>
       <ReviewPromptCard
-        cafeteriaId={cafeteriaId as string}
-        cafeteriaName={cafeteriaName}
+        cafeteriaId={cafeteriaId}
+        cafeteriaName={cafeteria.name}
       />
-      <ReviewsList reviews={reviews} />
+
+      {menuData.map((menu) => (
+        <VStack key={menu.date} gap={8}>
+          <DateHeader
+            date={menu.date}
+            reviewId={menu.id}
+            cafeteriaId={cafeteriaId}
+          />
+          <MenuCard
+            title="🌞 점심"
+            subtitle={`일반 성인 기준 점심 칼로리는 256 kcal 이에요 !`}
+            items={menu.items}
+          />
+        </VStack>
+      ))}
     </VStack>
   );
 };
@@ -83,6 +102,25 @@ const CharacterImage = () => {
   );
 };
 
+interface DateHeaderProps {
+  date: string;
+  reviewId: string;
+  cafeteriaId: string;
+}
+
+const DateHeader = ({ date, reviewId, cafeteriaId }: DateHeaderProps) => {
+  return (
+    <HStack justify="space-between" align="center" width="100%" pX={4}>
+      <Body fontSize="b3b" colorShade={600}>
+        {date}
+      </Body>
+      <Link href={`/cafeterias/${cafeteriaId}/reviews/${reviewId}`}>
+        <Chip size="sm" label="리뷰 보기" />
+      </Link>
+    </HStack>
+  );
+};
+
 interface WriteReviewButtonProps {
   cafeteriaId: string;
 }
@@ -103,22 +141,5 @@ const WriteReviewButton = ({ cafeteriaId }: WriteReviewButtonProps) => {
     >
       리뷰 쓰기
     </Button>
-  );
-};
-
-const ReviewsList = ({ reviews }: { reviews: Review[] }) => {
-  return (
-    <>
-      {reviews.map((review) => (
-        <ReviewCard
-          key={review.id}
-          imageUrl={review.imageUrl}
-          imageAlt={review.imageAlt}
-          date={review.date}
-          reviewText={review.reviewText}
-          badges={review.badges}
-        />
-      ))}
-    </>
   );
 };
