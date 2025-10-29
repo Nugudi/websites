@@ -154,8 +154,8 @@ export class AuthenticatedHttpClient implements HttpClient {
     this.refreshPromise = this.performRefresh();
 
     try {
-      const result = await this.refreshPromise;
-      return result;
+      const refreshResult = await this.refreshPromise;
+      return refreshResult;
     } finally {
       this.isRefreshing = false;
       this.refreshPromise = null;
@@ -200,16 +200,16 @@ export class AuthenticatedHttpClient implements HttpClient {
         return { success: false };
       }
 
-      const data = await response.json();
+      const refreshResponseData = await response.json();
 
       // Client-side localStorage 동기화 (Issue #1 해결)
       if (
         isClientSide &&
-        data.success === true &&
-        data.data &&
+        refreshResponseData.success === true &&
+        refreshResponseData.data &&
         this.sessionManager
       ) {
-        const { accessToken, refreshToken } = data.data;
+        const { accessToken, refreshToken } = refreshResponseData.data;
         if (accessToken && refreshToken) {
           const currentSession = await this.sessionManager.getSession();
           await this.sessionManager.saveSession({
@@ -226,7 +226,7 @@ export class AuthenticatedHttpClient implements HttpClient {
         }
       }
 
-      return { success: data.success === true };
+      return { success: refreshResponseData.success === true };
     } catch (error) {
       console.error("Token refresh failed:", error);
       return { success: false };

@@ -185,42 +185,48 @@ export class AuthServiceImpl implements AuthService {
       throw new Error("Login failed");
     }
 
-    const data = response.data.data;
+    const loginResponseData = response.data.data;
 
     // 기존 회원
-    if ("status" in data && data.status === "EXISTING_USER") {
+    if (
+      "status" in loginResponseData &&
+      loginResponseData.status === "EXISTING_USER"
+    ) {
       if (
-        !data.accessToken ||
-        !data.refreshToken ||
-        !data.userId ||
-        !data.nickname
+        !loginResponseData.accessToken ||
+        !loginResponseData.refreshToken ||
+        !loginResponseData.userId ||
+        !loginResponseData.nickname
       ) {
         throw new Error("Invalid login response");
       }
 
       // 세션 저장 (Token + userId)
       await this.sessionManager.saveSession({
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken,
-        userId: data.userId,
+        accessToken: loginResponseData.accessToken,
+        refreshToken: loginResponseData.refreshToken,
+        userId: loginResponseData.userId,
       });
 
       return {
         type: "EXISTING_USER",
-        userId: data.userId,
-        nickname: data.nickname,
+        userId: loginResponseData.userId,
+        nickname: loginResponseData.nickname,
       };
     }
 
     // 신규 회원
-    if ("status" in data && data.status === "NEW_USER") {
-      if (!data.registrationToken) {
+    if (
+      "status" in loginResponseData &&
+      loginResponseData.status === "NEW_USER"
+    ) {
+      if (!loginResponseData.registrationToken) {
         throw new Error("Invalid registration response");
       }
 
       return {
         type: "NEW_USER",
-        registrationToken: data.registrationToken,
+        registrationToken: loginResponseData.registrationToken,
       };
     }
 
@@ -307,9 +313,9 @@ export class AuthServiceImpl implements AuthService {
         return false;
       }
 
-      const data = response.data.data;
+      const refreshedTokens = response.data.data;
 
-      if (!data.accessToken || !data.refreshToken) {
+      if (!refreshedTokens.accessToken || !refreshedTokens.refreshToken) {
         return false;
       }
 
@@ -317,8 +323,8 @@ export class AuthServiceImpl implements AuthService {
       const currentSession = await this.sessionManager.getSession();
 
       await this.sessionManager.saveSession({
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken,
+        accessToken: refreshedTokens.accessToken,
+        refreshToken: refreshedTokens.refreshToken,
         userId: currentSession?.userId,
       });
 
