@@ -23,7 +23,9 @@
       "Bash([ -f \"$dir/index.tsx\" ])",
       "Bash(echo:*)",
       "Bash(else)",
-      "Bash(fi)"
+      "Bash(fi)",
+      "Bash(for pkg in avatar backdrop badge bottom-sheet button chip comment image-card input-otp input layout menu-card navigation-item review-card step-indicator switch tab textarea)",
+      "Bash(do echo \"=== $pkg ===\")"
     ],
     "deny": [],
     "ask": []

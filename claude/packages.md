@@ -7,7 +7,7 @@ This is a **Turbo-powered pnpm workspace monorepo** with a **Design System-first
 ```
 nugudi/
 ├── apps/                    # Applications
-│   └── web/                # Next.js 15 + React 19 (Main Web App)
+│   └── web/                # Next.js 16 + React 19 (Main Web App)
 │       ├── app/           # Next.js App Router
 │       │   ├── (auth)/    # 🔒 Protected routes - Require authentication
 │       │   │   └── profile/      # Profile page (authenticated users only)
@@ -54,7 +54,7 @@ nugudi/
 
 ### 🔐 Route Groups: Authentication Structure
 
-Next.js 15 route groups organize pages by authentication requirements:
+Next.js 16 route groups organize pages by authentication requirements:
 
 - **(auth)**: Protected pages requiring user authentication
   - All pages inside this group require a logged-in user
@@ -459,7 +459,9 @@ Co-Authored-By: Claude <noreply@anthropic.com>"  # NO!
 
 ### Core Technologies
 
-- **Framework**: Next.js 15 (App Router)
+- **Framework**: Next.js 16 (App Router)
+  - ⚠️ **Note**: `cacheComponents` is disabled due to Sentry compatibility issues
+  - Will be re-enabled when Sentry fully supports Next.js 16
 - **React Version**: 19.x
 - **TypeScript**: 5.8.3 with strict configuration
 - **Package Manager**: pnpm with workspaces
@@ -1370,7 +1372,7 @@ import { authClientContainer } from '@/src/di/auth-client-container';
 
 ### Project Structure
 
-- **Apps**: `web` (Next.js 15)
+- **Apps**: `web` (Next.js 16)
 - **Architecture**: Domain-based
 - **Styling**: Vanilla Extract + CSS Modules
 - **State**: TanStack Query + Zustand

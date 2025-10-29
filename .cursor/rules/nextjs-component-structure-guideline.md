@@ -58,7 +58,7 @@ apps/web/
 
 ## Route Groups: Authentication Structure
 
-Next.js 15 route groups organize pages by authentication requirements:
+Next.js 16 route groups organize pages by authentication requirements:
 
 - **(auth)**: Protected pages requiring user authentication
   - All pages inside this group require a logged-in user

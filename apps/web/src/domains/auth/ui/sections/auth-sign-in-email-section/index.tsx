@@ -1,4 +1,4 @@
-import AuthSignInEmailForm from "../../components/auth-sign-in-email-form";
+import { AuthSignInEmailForm } from "../../components/auth-sign-in-email-form";
 import * as styles from "./index.css";
 
 export const AuthSignInEmailSection = () => {

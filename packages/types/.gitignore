@@ -1,2 +1,2 @@
 # Generated types
-dist/
+# dist/ — Commented out: OpenAPI types are committed for reliable Vercel builds
