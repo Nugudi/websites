@@ -18,7 +18,7 @@ export const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-const AuthSignInEmailForm = () => {
+export const AuthSignInEmailForm = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -98,5 +98,3 @@ const AuthSignInEmailForm = () => {
     </form>
   );
 };
-
-export default AuthSignInEmailForm;

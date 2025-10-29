@@ -17,7 +17,7 @@ export const FORGOT_PASSWORD_STEPS = [
   "새_비밀번호_입력",
 ] as const;
 
-const AuthForgotPasswordForm = () => {
+export const AuthForgotPasswordForm = () => {
   const router = useRouter();
 
   const { setStep, Step, Stepper, step } = useStepper<ForgotPasswordStep>(
@@ -62,5 +62,3 @@ const AuthForgotPasswordForm = () => {
     </Flex>
   );
 };
-
-export default AuthForgotPasswordForm;
