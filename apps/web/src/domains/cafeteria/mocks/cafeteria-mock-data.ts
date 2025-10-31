@@ -143,7 +143,7 @@ export const getMockCafeteriaData = (
 export const getMockMenuData = (): MenuDataForUI[] => [
   {
     id: "1",
-    date: "2025.10.18.금",
+    date: "2025-10-18",
     items: [
       { name: "현미밥", category: "RICE" },
       { name: "잔치국수", category: "NOODLE" },
@@ -161,7 +161,7 @@ export const getMockMenuData = (): MenuDataForUI[] => [
   },
   {
     id: "2",
-    date: "2025.10.19.토",
+    date: "2025-10-19",
     items: [
       { name: "흰밥", category: "RICE" },
       { name: "우동", category: "NOODLE" },
@@ -179,7 +179,7 @@ export const getMockMenuData = (): MenuDataForUI[] => [
   },
   {
     id: "3",
-    date: "2025.10.20.일",
+    date: "2025-10-20",
     items: [
       { name: "보리밥", category: "RICE" },
       { name: "라면", category: "NOODLE" },
@@ -197,7 +197,7 @@ export const getMockMenuData = (): MenuDataForUI[] => [
   },
   {
     id: "4",
-    date: "2025.10.21.월",
+    date: "2025-10-21",
     items: [
       { name: "잡곡밥", category: "RICE" },
       { name: "칼국수", category: "NOODLE" },
@@ -215,7 +215,7 @@ export const getMockMenuData = (): MenuDataForUI[] => [
   },
   {
     id: "5",
-    date: "2025.10.22.화",
+    date: "2025-10-22",
     items: [
       { name: "쌀밥", category: "RICE" },
       { name: "비빔밥", category: "NOODLE" },

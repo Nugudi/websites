@@ -22,7 +22,7 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite build --watch",
-    "lint": "eslint .",
+    "lint": "biome check .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {},

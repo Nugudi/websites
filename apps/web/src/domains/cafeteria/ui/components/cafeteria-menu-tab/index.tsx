@@ -118,7 +118,7 @@ const DateHeader = ({ date, reviewId, cafeteriaId }: DateHeaderProps) => {
       <Body fontSize="b3b" colorShade={600}>
         {date}
       </Body>
-      <Link href={`/cafeterias/${cafeteriaId}/reviews/${reviewId}`}>
+      <Link href={`/cafeterias/${cafeteriaId}/menus/${date}/reviews`}>
         <Chip size="sm" label="리뷰 보기" />
       </Link>
     </HStack>
