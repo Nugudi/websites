@@ -82,14 +82,17 @@ export class RefreshTokenService implements RefreshTokenProvider {
       }
 
       // 3. 응답 검증
-      const data = await response.json();
+      const refreshApiResponse = await response.json();
 
-      if (!data.success || !data.data) {
-        logger.error("Invalid response structure from Spring API", { data });
+      if (!refreshApiResponse.success || !refreshApiResponse.data) {
+        logger.error("Invalid response structure from Spring API", {
+          data: refreshApiResponse,
+        });
         return { success: false, error: "Invalid response structure" };
       }
 
-      const { accessToken, refreshToken: newRefreshToken } = data.data;
+      const { accessToken, refreshToken: newRefreshToken } =
+        refreshApiResponse.data;
 
       if (!accessToken || !newRefreshToken) {
         logger.error("Missing tokens in Spring API response", {

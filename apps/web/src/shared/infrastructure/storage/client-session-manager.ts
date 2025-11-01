@@ -36,13 +36,13 @@ export class ClientSessionManager implements SessionManager {
       return null;
     }
 
-    const data = localStorage.getItem(SESSION_KEY);
-    if (!data) {
+    const sessionJson = localStorage.getItem(SESSION_KEY);
+    if (!sessionJson) {
       return null;
     }
 
     try {
-      return JSON.parse(data) as SessionData;
+      return JSON.parse(sessionJson) as SessionData;
     } catch {
       return null;
     }

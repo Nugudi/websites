@@ -32,12 +32,13 @@ export class UserServiceImpl implements UserService {
     nickname: string,
   ): Promise<NicknameAvailabilityResult> {
     try {
-      const data = await this.userRepository.checkNicknameAvailability({
-        nickname,
-      });
+      const nicknameCheckResponse =
+        await this.userRepository.checkNicknameAvailability({
+          nickname,
+        });
 
       return {
-        available: data.data?.available ?? false,
+        available: nicknameCheckResponse.data?.available ?? false,
       };
     } catch (error) {
       return {
