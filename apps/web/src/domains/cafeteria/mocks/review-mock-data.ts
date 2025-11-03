@@ -4,6 +4,8 @@ import type { CafeteriaReviewCommentData } from "../features/cafeteria-review-co
 export const MOCK_CAFETERIA_REVIEW = {
   id: "1",
   cafeteriaId: "1",
+  username: "애웅웅웅",
+  userLevel: 7,
   imageUrl: "/mocks/test-meal.png",
   date: "2025.7.7.화",
   reviewText:
@@ -28,6 +30,20 @@ export const MOCK_CAFETERIA_REVIEW_COMMENTS: CafeteriaReviewCommentData[] = [
         level: 1,
         timeAgo: "3분전",
         content: "구내식당 싫어.",
+      },
+      {
+        id: "2-1",
+        username: "김용민",
+        level: 12,
+        timeAgo: "2분전",
+        content: "나는 좋던데 ㅎㅎ",
+      },
+      {
+        id: "2-2",
+        username: "정혜원",
+        level: 25,
+        timeAgo: "1분전",
+        content: "맛은 개취지!",
       },
     ],
   },

@@ -1,7 +1,7 @@
 import type { SemanticTone, SemanticVariant } from "@nugudi/themes";
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
 
-export type BadgeSize = "sm" | "md" | "lg";
+export type BadgeSize = "xs" | "sm" | "md" | "lg";
 
 export interface BadgeProps extends ComponentPropsWithoutRef<"span"> {
   children: ReactNode;

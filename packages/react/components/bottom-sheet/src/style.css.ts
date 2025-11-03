@@ -38,7 +38,7 @@ export const modalContent = recipe({
     willChange: "height",
     display: "flex",
     flexDirection: "column",
-    zIndex: 1001,
+    zIndex: 10001,
     boxSizing: "border-box",
     overflowX: "hidden",
     touchAction: "none", // Prevent browser touch gestures interfering
@@ -122,7 +122,7 @@ export const modalBody = style({
   width: "100%",
   flex: 1,
   overflowY: "auto",
-  padding: "15px 0 40px 0",
+  paddingTop: vars.box.spacing[3],
   minHeight: 0,
 });
 
