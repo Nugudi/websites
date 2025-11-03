@@ -3,15 +3,14 @@ import type { MenuCategory, MenuItem } from "../types";
 
 const CATEGORY_ORDER: MenuCategory[] = [
   "RICE",
-  "NOODLE",
   "SOUP",
   "MAIN_DISH",
   "SIDE_DISH",
   "KIMCHI",
-  "BREAD_SANDWICH",
-  "SALAD_FRUIT",
+  "SALAD",
+  "DESSERT",
   "DRINK",
-  "OTHER",
+  "SPECIAL",
 ];
 
 /**
@@ -48,14 +47,16 @@ const CATEGORY_ORDER: MenuCategory[] = [
  */
 const useMenuGrouping = (items: MenuItem[]) => {
   return useMemo(() => {
-    const grouped = new Map<MenuCategory, MenuItem[]>();
+    const grouped = new Map<string, MenuItem[]>();
 
     items.forEach((item) => {
+      if (!item.category) return;
+
       const existing = grouped.get(item.category) || [];
       grouped.set(item.category, [...existing, item]);
     });
 
-    const orderedGrouped = new Map<MenuCategory, MenuItem[]>();
+    const orderedGrouped = new Map<string, MenuItem[]>();
     CATEGORY_ORDER.forEach((category) => {
       const items = grouped.get(category);
       if (items) {

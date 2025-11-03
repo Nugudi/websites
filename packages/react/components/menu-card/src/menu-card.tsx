@@ -10,11 +10,12 @@ const MenuCard = ({
   timeRange,
   items,
   isPackagingAvailable,
+  variant = "default",
 }: MenuCardProps) => {
   const groupedItems = useMenuGrouping(items);
 
   return (
-    <div className={styles.menuCardWrapper}>
+    <div className={styles.menuCardWrapper[variant]}>
       <div className={styles.menuCardHeader}>
         <div className={styles.menuCardTitleContainer}>
           <h2 className={styles.menuCardTitle}>{title}</h2>

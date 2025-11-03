@@ -16,7 +16,7 @@ import '@nugudi/react-components-menu-card/style.css';
 
 const menuItems = [
   { name: 'Grilled Chicken', category: 'MAIN_DISH' },
-  { name: 'Caesar Salad', category: 'SALAD_FRUIT' },
+  { name: 'Caesar Salad', category: 'SALAD' },
   { name: 'Tomato Soup', category: 'SOUP' },
   { name: 'White Rice', category: 'RICE' }
 ];
@@ -38,6 +38,27 @@ const menuItems = [
   timeRange="12:00 PM - 3:00 PM"
   items={menuItems}
   isPackagingAvailable={true}
+  variant="default"  // or "subtle"
+/>
+```
+
+## Card Variants
+
+The MenuCard component supports two visual variants:
+
+```tsx
+// Default variant - White background
+<MenuCard
+  title="Today's Menu"
+  items={menuItems}
+  variant="default"  // White background (default)
+/>
+
+// Subtle variant - Gray background
+<MenuCard
+  title="Today's Menu"
+  items={menuItems}
+  variant="subtle"  // zinc-50 background with zinc-100 border
 />
 ```
 
@@ -573,6 +594,7 @@ function MealPlanning() {
 | timeRange | `string` | - | Service time information |
 | items | `MenuItem[]` | - | **Required.** Array of menu items |
 | isPackagingAvailable | `boolean` | `false` | Show packaging/takeout availability |
+| variant | `"default" \| "subtle"` | `"default"` | Visual style variant |
 
 ### MenuItem Type
 

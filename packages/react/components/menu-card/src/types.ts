@@ -1,18 +1,17 @@
 export type MenuCategory =
   | "RICE"
-  | "NOODLE"
   | "SOUP"
   | "MAIN_DISH"
   | "SIDE_DISH"
   | "KIMCHI"
-  | "BREAD_SANDWICH"
-  | "SALAD_FRUIT"
+  | "SALAD"
+  | "DESSERT"
   | "DRINK"
-  | "OTHER";
+  | "SPECIAL";
 
 export interface MenuItem {
-  name: string;
-  category: MenuCategory;
+  name?: string;
+  category?: string;
 }
 
 export interface MenuCardProps {
@@ -21,4 +20,5 @@ export interface MenuCardProps {
   timeRange?: string;
   items: MenuItem[];
   isPackagingAvailable?: boolean;
+  variant?: "default" | "subtle";
 }
