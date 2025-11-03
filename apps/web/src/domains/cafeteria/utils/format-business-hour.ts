@@ -1,5 +1,6 @@
 import type { CafeteriaInfoDTO } from "../types";
 
+// TODO: OpenAPI 타입 옵셔널 수정 후 변경 필요
 type TimeInfo = {
   hour?: number;
   minute?: number;

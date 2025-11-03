@@ -67,7 +67,7 @@ const MenuItem = ({ menu, cafeteriaId }: MenuItemProps) => {
       <VStack gap={8} grow={1}>
         <DateHeader date={menu.menuDate || ""} cafeteriaId={cafeteriaId} />
         {(menu.menus || []).map((menuInfo, index) => {
-          const title = getMealTypeTitle(menuInfo.mealType);
+          const title = getMealTypeTitle(menuInfo.mealType) || "메뉴";
 
           return (
             <MenuCard
