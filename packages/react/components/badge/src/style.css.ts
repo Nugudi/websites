@@ -10,7 +10,7 @@ export const badgeBase = style({
   whiteSpace: "nowrap",
   verticalAlign: "middle",
   gap: vars.box.spacing[2],
-  padding: `${vars.box.spacing[2]} ${vars.box.spacing[4]}`,
+  padding: `${vars.box.spacing[2]} ${vars.box.spacing[3]}`,
 });
 
 export const badgeIcon = style({
@@ -25,6 +25,11 @@ export const badgeText = style({
 });
 
 export const badgeSize = styleVariants({
+  xs: {
+    ...classes.typography.emphasis.e2,
+    padding: `${vars.box.spacing[1]} ${vars.box.spacing[2]}`,
+    borderRadius: vars.box.radii.md,
+  },
   sm: {
     ...classes.typography.emphasis.e2,
   },
