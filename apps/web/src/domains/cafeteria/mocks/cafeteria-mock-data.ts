@@ -1,253 +1,206 @@
-import type { MenuItem } from "@nugudi/react-components-menu-card";
 import type { CafeteriaInfoDTO, GetCafeteriaResponse } from "../types";
 
-/**
- * 임시 타입: UI에서 사용하는 메뉴 아이템
- * TODO: API 구조 변경 시 제거 예정
- */
-type MenuItemForUI = MenuItem & {
+export type MenuItemDTO = {
+  name?: string;
+  category?: string;
   calories?: number;
 };
 
-/**
- * 임시 타입: UI에서 사용하는 확장된 식당 정보
- * TODO: API 구조 변경 시 제거 예정
- */
-type CafeteriaWithMenus = GetCafeteriaResponse & {
-  // UI 호환성을 위한 추가 필드들
-  name: string;
-  location: string;
-  operatingHours: string;
-  price: number;
-  isPackagingAvailable: boolean;
-  rating: number;
-  reviewCount: number;
-  menus: {
-    breakfast: MenuItemForUI[];
-    lunch: MenuItemForUI[];
-  };
+export type MenuDTO = {
+  menuDate?: string;
+  mealType?: string;
+  menuItems?: MenuItemDTO[];
+  specialNote?: string;
+  totalCalories?: number;
 };
 
-/**
- * 임시 타입: UI에서 사용하는 메뉴 데이터 형식
- * TODO: API 구조 변경 시 제거 예정
- */
-type MenuDataForUI = {
-  id: string;
-  date: string;
-  items: MenuItemForUI[];
-  reviewCount: number;
-  averageRating: number;
+export type GetCafeteriaMenuTimelineResponse = {
+  menuDate?: string;
+  menus?: MenuDTO[];
+  reviewCount?: number;
 };
 
-/**
- * Mock: 여러 식당 데이터
- */
-const MOCK_CAFETERIAS: Record<string, CafeteriaInfoDTO> = {
-  "1": {
-    id: 1,
-    name: "더애옹푸드",
-    address: "천안 포스트 지하 1층",
-    phone: "041-1234-5678",
-    businessHours: {
-      lunch: {
-        start: { hour: 11, minute: 0, second: 0, nano: 0 },
-        end: { hour: 14, minute: 0, second: 0, nano: 0 },
-      },
-      dinner: {
-        start: { hour: 17, minute: 0, second: 0, nano: 0 },
-        end: { hour: 20, minute: 0, second: 0, nano: 0 },
-      },
+const MOCK_CAFETERIA: CafeteriaInfoDTO = {
+  id: 1,
+  name: "더애옹푸드",
+  address: "천안 포스트 지하 1층",
+  phone: "041-550-1234",
+  takeoutAvailable: true,
+  latitude: 36.8065,
+  longitude: 127.1522,
+  mealTicketPrice: 6000,
+  businessHours: {
+    lunch: {
+      start: { hour: 11, minute: 30, second: 0, nano: 0 },
+      end: { hour: 13, minute: 30, second: 0, nano: 0 },
     },
-    takeoutAvailable: true,
-  },
-  "2": {
-    id: 2,
-    name: "너구리 키친",
-    address: "천안 시티 2층",
-    phone: "041-2345-6789",
-    businessHours: {
-      lunch: {
-        start: { hour: 11, minute: 30, second: 0, nano: 0 },
-        end: { hour: 14, minute: 30, second: 0, nano: 0 },
-      },
-      dinner: {
-        start: { hour: 17, minute: 30, second: 0, nano: 0 },
-        end: { hour: 20, minute: 30, second: 0, nano: 0 },
-      },
+    dinner: {
+      start: { hour: 17, minute: 30, second: 0, nano: 0 },
+      end: { hour: 19, minute: 30, second: 0, nano: 0 },
     },
-    takeoutAvailable: false,
-  },
-  "3": {
-    id: 3,
-    name: "행복한 식당",
-    address: "천안역 3번 출구",
-    phone: "041-3456-7890",
-    businessHours: {
-      lunch: {
-        start: { hour: 12, minute: 0, second: 0, nano: 0 },
-        end: { hour: 15, minute: 0, second: 0, nano: 0 },
-      },
-      dinner: {
-        start: { hour: 18, minute: 0, second: 0, nano: 0 },
-        end: { hour: 21, minute: 0, second: 0, nano: 0 },
-      },
-    },
-    takeoutAvailable: true,
   },
 };
 
-/**
- * Mock: 식당 상세 정보 (메뉴 포함)
- * @param cafeteriaId 식당 ID
- * @returns CafeteriaWithMenus 타입의 식당 상세 정보 (메뉴 포함)
- */
-export const getMockCafeteriaData = (
-  cafeteriaId: string,
-): CafeteriaWithMenus => {
-  const cafeteria = MOCK_CAFETERIAS[cafeteriaId] || MOCK_CAFETERIAS["1"];
-
-  // UI 호환성을 위한 필드 변환
+export const getMockCafeteriaData = (): GetCafeteriaResponse => {
   return {
-    cafeteria,
-    // UI에서 사용하는 필드들
-    name: cafeteria.name || "식당 이름 없음",
-    location: cafeteria.address || "주소 정보 없음",
-    operatingHours: "11:00 - 20:00",
-    price: 5000,
-    isPackagingAvailable: cafeteria.takeoutAvailable ?? false,
-    rating: 4.5,
-    reviewCount: 120,
-    menus: {
-      breakfast: [{ name: "식단 확인하기", category: "OTHER" }],
-      lunch: [
-        { name: "밥류", category: "RICE" },
-        { name: "면류", category: "NOODLE" },
-        { name: "국/탕/찌개", category: "SOUP" },
-        { name: "주요 반찬", category: "MAIN_DISH" },
-        { name: "사브반찬", category: "SIDE_DISH" },
-        { name: "김치 샐러드", category: "KIMCHI" },
-        { name: "빵/토스트/샌드위치 미니", category: "BREAD_SANDWICH" },
-        { name: "샐러드 / 과일", category: "SALAD_FRUIT" },
-        { name: "음료 후식류", category: "DRINK" },
-        { name: "기타", category: "OTHER" },
-      ],
-    },
+    cafeteria: MOCK_CAFETERIA,
   };
 };
 
-/**
- * Mock: 메뉴 타임라인 데이터 (UI 형식)
- * @returns MenuDataForUI[] 타입의 메뉴 타임라인 리스트
- */
-export const getMockMenuData = (): MenuDataForUI[] => [
+export const getMockMenuData = (): GetCafeteriaMenuTimelineResponse[] => [
   {
-    id: "1",
-    date: "2025-10-18",
-    items: [
-      { name: "현미밥", category: "RICE" },
-      { name: "잔치국수", category: "NOODLE" },
-      { name: "김치찌개", category: "SOUP" },
-      { name: "돈까스", category: "MAIN_DISH" },
-      { name: "멸치볶음", category: "SIDE_DISH" },
-      { name: "배추김치", category: "KIMCHI" },
-      { name: "크로와상", category: "BREAD_SANDWICH" },
-      { name: "과일샐러드", category: "SALAD_FRUIT" },
-      { name: "아이스크림", category: "DRINK" },
-      { name: "견과류", category: "OTHER" },
+    menuDate: "2025-10-18",
+    menus: [
+      {
+        mealType: "LUNCH",
+        menuItems: [
+          { name: "현미밥", category: "RICE", calories: 210 },
+          { name: "김치찌개", category: "SOUP", calories: 35 },
+          { name: "돈까스", category: "MAIN_DISH", calories: 320 },
+          { name: "시금치무침", category: "SIDE_DISH", calories: 25 },
+          { name: "배추김치", category: "KIMCHI", calories: 15 },
+          { name: "양상추샐러드", category: "SALAD", calories: 45 },
+          { name: "초코케이크", category: "DESSERT", calories: 180 },
+          { name: "요거트", category: "DRINK", calories: 80 },
+        ],
+        specialNote: "견과류 알러지 주의",
+        totalCalories: 910,
+      },
     ],
     reviewCount: 15,
-    averageRating: 4.5,
   },
   {
-    id: "2",
-    date: "2025-10-19",
-    items: [
-      { name: "흰밥", category: "RICE" },
-      { name: "우동", category: "NOODLE" },
-      { name: "미역국", category: "SOUP" },
-      { name: "치킨너겟", category: "MAIN_DISH" },
-      { name: "무나물", category: "SIDE_DISH" },
-      { name: "오이소박이", category: "KIMCHI" },
-      { name: "토스트", category: "BREAD_SANDWICH" },
-      { name: "사과", category: "SALAD_FRUIT" },
-      { name: "요거트", category: "DRINK" },
-      { name: "땅콩", category: "OTHER" },
+    menuDate: "2025-10-19",
+    menus: [
+      {
+        mealType: "LUNCH",
+        menuItems: [
+          { name: "흑미밥", category: "RICE", calories: 220 },
+          { name: "된장찌개", category: "SOUP", calories: 40 },
+          { name: "불고기", category: "MAIN_DISH", calories: 280 },
+          { name: "김치전", category: "SIDE_DISH", calories: 90 },
+          { name: "깍두기", category: "KIMCHI", calories: 20 },
+          { name: "과일샐러드", category: "SALAD", calories: 65 },
+          { name: "티라미수", category: "DESSERT", calories: 145 },
+          { name: "우유", category: "DRINK", calories: 100 },
+        ],
+        specialNote: "오늘의 추천 메뉴는 불고기입니다",
+        totalCalories: 960,
+      },
+    ],
+    reviewCount: 22,
+  },
+  {
+    menuDate: "2025-10-20",
+    menus: [
+      {
+        mealType: "LUNCH",
+        menuItems: [
+          { name: "백미밥", category: "RICE", calories: 205 },
+          { name: "미역국", category: "SOUP", calories: 30 },
+          { name: "닭갈비", category: "MAIN_DISH", calories: 350 },
+          { name: "콩나물무침", category: "SIDE_DISH", calories: 20 },
+          { name: "파김치", category: "KIMCHI", calories: 18 },
+          { name: "토마토샐러드", category: "SALAD", calories: 55 },
+          { name: "바나나푸딩", category: "DESSERT", calories: 120 },
+          { name: "오렌지주스", category: "DRINK", calories: 110 },
+        ],
+        specialNote: undefined,
+        totalCalories: 908,
+      },
     ],
     reviewCount: 12,
-    averageRating: 4.2,
   },
   {
-    id: "3",
-    date: "2025-10-20",
-    items: [
-      { name: "보리밥", category: "RICE" },
-      { name: "라면", category: "NOODLE" },
-      { name: "된장찌개", category: "SOUP" },
-      { name: "갈비찜", category: "MAIN_DISH" },
-      { name: "시금치나물", category: "SIDE_DISH" },
-      { name: "깍두기", category: "KIMCHI" },
-      { name: "샌드위치", category: "BREAD_SANDWICH" },
-      { name: "포도", category: "SALAD_FRUIT" },
-      { name: "우유", category: "DRINK" },
-      { name: "김", category: "OTHER" },
-    ],
-    reviewCount: 20,
-    averageRating: 4.8,
-  },
-  {
-    id: "4",
-    date: "2025-10-21",
-    items: [
-      { name: "잡곡밥", category: "RICE" },
-      { name: "칼국수", category: "NOODLE" },
-      { name: "부대찌개", category: "SOUP" },
-      { name: "제육볶음", category: "MAIN_DISH" },
-      { name: "계란찜", category: "SIDE_DISH" },
-      { name: "총각김치", category: "KIMCHI" },
-      { name: "베이글", category: "BREAD_SANDWICH" },
-      { name: "딸기", category: "SALAD_FRUIT" },
-      { name: "커피", category: "DRINK" },
-      { name: "치즈", category: "OTHER" },
+    menuDate: "2025-10-21",
+    menus: [
+      {
+        mealType: "LUNCH",
+        menuItems: [
+          { name: "잡곡밥", category: "RICE", calories: 215 },
+          { name: "부대찌개", category: "SOUP", calories: 95 },
+          { name: "제육볶음", category: "MAIN_DISH", calories: 310 },
+          { name: "계란찜", category: "SIDE_DISH", calories: 60 },
+          { name: "총각김치", category: "KIMCHI", calories: 15 },
+          { name: "코울슬로", category: "SALAD", calories: 70 },
+          { name: "과일젤리", category: "DESSERT", calories: 85 },
+          { name: "아메리카노", category: "DRINK", calories: 5 },
+        ],
+        specialNote: "제육볶음은 매운 맛입니다",
+        totalCalories: 855,
+      },
     ],
     reviewCount: 8,
-    averageRating: 4.0,
   },
   {
-    id: "5",
-    date: "2025-10-22",
-    items: [
-      { name: "쌀밥", category: "RICE" },
-      { name: "비빔밥", category: "NOODLE" },
-      { name: "육개장", category: "SOUP" },
-      { name: "삼겹살구이", category: "MAIN_DISH" },
-      { name: "콩나물무침", category: "SIDE_DISH" },
-      { name: "깍두기", category: "KIMCHI" },
-      { name: "핫도그", category: "BREAD_SANDWICH" },
-      { name: "수박", category: "SALAD_FRUIT" },
-      { name: "주스", category: "DRINK" },
-      { name: "젤리", category: "OTHER" },
+    menuDate: "2025-10-22",
+    menus: [
+      {
+        mealType: "DINNER",
+        menuItems: [
+          { name: "비빔밥", category: "RICE", calories: 380 },
+          { name: "육개장", category: "SOUP", calories: 85 },
+          { name: "삼겹살구이", category: "MAIN_DISH", calories: 330 },
+          { name: "도토리묵", category: "SIDE_DISH", calories: 30 },
+          { name: "오이소박이", category: "KIMCHI", calories: 12 },
+          { name: "그린샐러드", category: "SALAD", calories: 45 },
+          { name: "수박화채", category: "DESSERT", calories: 75 },
+          { name: "식혜", category: "DRINK", calories: 90 },
+        ],
+        specialNote: undefined,
+        totalCalories: 1047,
+      },
     ],
     reviewCount: 18,
-    averageRating: 4.6,
   },
 ];
 
-/**
- * TODO: OpenAPI ReviewInfo, ReviewerInfo 타입이 생성되면 활성화
- */
-// export const getMockReviews = () => [
-//   {
-//     id: "1",
-//     imageUrl: "/images/cafeterias-test.png",
-//     imageAlt: "식당 음식 사진",
-//     date: "2025.7.7.화",
-//     reviewText:
-//       "고기가 아주 맛있고, 미트볼 듬뿍이었어요 그런데 ..\n줄마다 미트볼이 없는 줄이 있을 수 있습니다. 랜덤핑",
-//     badges: [
-//       { emoji: "😋", label: "맛있어요" },
-//       { emoji: "🤩", label: "달달해요" },
-//     ],
-//   },
-//   // ... 추가 리뷰 데이터
-// ];
+export type ReviewMockData = {
+  id: string;
+  userId: string;
+  userName: string;
+  content: string;
+  imageUrl?: string;
+  date: string;
+  badges: Array<{ emoji: string; label: string }>;
+  commentCount: number;
+};
+
+export const getMockReviews = (): ReviewMockData[] => [
+  {
+    id: "1",
+    userId: "user1",
+    userName: "안예원",
+    content: "오늘 점심 정말 맛있었어요! 김치찌개가 진짜 최고였습니다.",
+    imageUrl: "/images/cafeterias-test.png",
+    date: "2025-10-18",
+    badges: [
+      { emoji: "⭐", label: "맛있어요" },
+      { emoji: "👍", label: "추천해요" },
+    ],
+    commentCount: 5,
+  },
+  {
+    id: "2",
+    userId: "user2",
+    userName: "김용민",
+    content: "보통이었어요. 양은 충분했는데 맛이 조금 아쉬웠습니다.",
+    imageUrl: undefined,
+    date: "2025-10-18",
+    badges: [{ emoji: "😐", label: "보통이에요" }],
+    commentCount: 2,
+  },
+  {
+    id: "3",
+    userId: "user3",
+    userName: "정혜원",
+    content: "완벽한 한 끼였습니다! 가격 대비 최고예요.",
+    imageUrl: undefined,
+    date: "2025-10-18",
+    badges: [
+      { emoji: "⭐", label: "맛있어요" },
+      { emoji: "💰", label: "가성비" },
+    ],
+    commentCount: 8,
+  },
+];

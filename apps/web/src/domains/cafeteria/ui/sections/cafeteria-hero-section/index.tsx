@@ -11,13 +11,18 @@ interface CafeteriaHeroSectionProps {
 }
 
 export const CafeteriaHeroSection = ({
-  cafeteriaId,
+  cafeteriaId: _cafeteriaId,
 }: CafeteriaHeroSectionProps) => {
-  const cafeteria = getMockCafeteriaData(cafeteriaId);
+  const cafeteriaData = getMockCafeteriaData();
+  const cafeteria = cafeteriaData.cafeteria;
+
+  if (!cafeteria) {
+    return null;
+  }
 
   return (
     <VStack width="full">
-      <HeroImage cafeteriaName={cafeteria.name} />
+      <HeroImage cafeteriaName={cafeteria.name || ""} />
       <CafeteriaInfoCard cafeteria={cafeteria} />
     </VStack>
   );

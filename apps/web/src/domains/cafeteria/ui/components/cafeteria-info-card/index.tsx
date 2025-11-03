@@ -1,4 +1,4 @@
-import { FillStarIcon, HeartIcon, ShareIcon } from "@nugudi/assets-icons";
+import { HeartIcon, ShareIcon } from "@nugudi/assets-icons";
 import {
   Body,
   Box,
@@ -7,20 +7,11 @@ import {
   Title,
   VStack,
 } from "@nugudi/react-components-layout";
-import { vars } from "@nugudi/themes";
+import type { CafeteriaInfoDTO } from "../../../types";
 import * as styles from "./index.css";
 
-// TODO: Phase 4 - Replace with proper OpenAPI types
-type CafeteriaDetail = {
-  isPackagingAvailable: boolean;
-  name: string;
-  rating: number;
-  reviewCount: number;
-  location: string;
-};
-
 interface CafeteriaInfoCardProps {
-  cafeteria: CafeteriaDetail;
+  cafeteria: CafeteriaInfoDTO;
 }
 
 export const CafeteriaInfoCard = ({ cafeteria }: CafeteriaInfoCardProps) => {
@@ -28,14 +19,10 @@ export const CafeteriaInfoCard = ({ cafeteria }: CafeteriaInfoCardProps) => {
     <Box className={styles.infoCard} marginTop={-64} mX={16}>
       <VStack align="center" gap={16} padding={24}>
         <VStack gap={8} align="center" width="100%">
-          {cafeteria.isPackagingAvailable && <PackagingAvailableNotice />}
-          <CafeteriaNameWithActions name={cafeteria.name} />
-          <RatingAndReviewCountInfo
-            rating={cafeteria.rating}
-            reviewCount={cafeteria.reviewCount}
-          />
+          {cafeteria.takeoutAvailable && <PackagingAvailableNotice />}
+          <CafeteriaNameWithActions name={cafeteria.name || ""} />
           <Divider />
-          <LocationInfo address={cafeteria.location} />
+          <LocationInfo address={cafeteria.address || ""} />
         </VStack>
       </VStack>
     </Box>
@@ -83,36 +70,5 @@ const LocationInfo = ({ address }: LocationInfoProps) => {
     <Body fontSize="b3" colorShade={500}>
       {address}
     </Body>
-  );
-};
-
-interface RatingAndReviewCountInfoProps {
-  rating: number;
-  reviewCount: number;
-}
-
-const RatingAndReviewCountInfo = ({
-  rating,
-  reviewCount,
-}: RatingAndReviewCountInfoProps) => {
-  return (
-    <HStack gap={8} align="center">
-      <HStack gap={4} align="center">
-        <FillStarIcon
-          width={14}
-          height={14}
-          color={vars.colors.$scale.yellow[200]}
-        />
-        <Body fontSize="b3" colorShade={500}>
-          {rating}
-        </Body>
-      </HStack>
-      <Body fontSize="b3" colorShade={500}>
-        •
-      </Body>
-      <Body fontSize="b3" colorShade={500}>
-        방문자 리뷰 {reviewCount}개
-      </Body>
-    </HStack>
   );
 };

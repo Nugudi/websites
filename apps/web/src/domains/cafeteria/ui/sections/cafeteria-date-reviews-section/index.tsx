@@ -8,6 +8,7 @@ import type { CafeteriaReviewReplyingTo } from "../../../features/cafeteria-revi
 import { CafeteriaDateReviewsList } from "../../components/cafeteria-date-reviews-list";
 import { CafeteriaReviewCommentInputSection } from "../cafeteria-review-comment-input-section";
 import { CafeteriaReviewCommentsSection } from "../cafeteria-review-comments-section";
+import * as styles from "./index.css";
 
 interface CafeteriaDateReviewsSectionProps {
   cafeteriaId: string;
@@ -46,7 +47,7 @@ export const CafeteriaDateReviewsSection = ({
 
   return (
     <>
-      <VStack gap={16} w={"100%"}>
+      <VStack gap={16} w={"100%"} pX={16} className={styles.reviewsWrapper}>
         <CafeteriaDateReviewsList
           cafeteriaId={cafeteriaId}
           date={date}

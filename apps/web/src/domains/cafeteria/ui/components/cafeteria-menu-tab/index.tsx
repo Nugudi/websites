@@ -13,18 +13,18 @@ import { MenuCard } from "@nugudi/react-components-menu-card";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { getMockMenuData } from "../../../mocks/cafeteria-mock-data";
+import {
+  type GetCafeteriaMenuTimelineResponse,
+  getMockMenuData,
+} from "../../../mocks/cafeteria-mock-data";
+import type { CafeteriaInfoDTO } from "../../../types";
+import { getMealTypeTitle } from "../../../utils";
 import * as styles from "./index.css";
 
-// TODO: Phase 4 - Replace with proper OpenAPI types
-type CafeteriaDetail = {
-  name: string;
-};
-
-interface CafeteriaMenuTabProps {
-  cafeteria: CafeteriaDetail;
+type CafeteriaMenuTabProps = {
+  cafeteria: CafeteriaInfoDTO;
   cafeteriaId: string;
-}
+};
 
 export const CafeteriaMenuTab = ({
   cafeteria,
@@ -33,41 +33,67 @@ export const CafeteriaMenuTab = ({
   const menuData = getMockMenuData();
 
   return (
-    <VStack gap={24} pt={16} pb={24}>
+    <VStack gap={0} pt={16} pb={24}>
       <ReviewPromptCard
         cafeteriaId={cafeteriaId}
-        cafeteriaName={cafeteria.name}
+        cafeteriaName={cafeteria.name || ""}
       />
 
-      {menuData.map((menu) => (
-        <VStack key={menu.date} gap={8}>
-          <DateHeader
-            date={menu.date}
-            reviewId={menu.id}
-            cafeteriaId={cafeteriaId}
-          />
-          <MenuCard
-            title="🌞 점심"
-            subtitle={`일반 성인 기준 점심 칼로리는 256 kcal 이에요 !`}
-            items={menu.items}
-          />
-        </VStack>
-      ))}
+      <div className={styles.timelineContainer}>
+        {menuData.map((menu) => (
+          <MenuItem key={menu.menuDate} menu={menu} cafeteriaId={cafeteriaId} />
+        ))}
+      </div>
     </VStack>
   );
 };
 
-interface ReviewPromptCardProps {
+type MenuItemProps = {
+  menu: GetCafeteriaMenuTimelineResponse;
   cafeteriaId: string;
-  cafeteriaName: string;
-}
+};
+
+const MenuItem = ({ menu, cafeteriaId }: MenuItemProps) => {
+  return (
+    <HStack
+      key={menu.menuDate}
+      className={styles.timelineItem}
+      gap={4}
+      pb={24}
+      align="start"
+    >
+      <div className={styles.timelineLine} />
+      <div className={styles.circle} />
+      <VStack gap={8} grow={1}>
+        <DateHeader date={menu.menuDate || ""} cafeteriaId={cafeteriaId} />
+        {(menu.menus || []).map((menuInfo, index) => {
+          const title = getMealTypeTitle(menuInfo.mealType);
+
+          return (
+            <MenuCard
+              variant="subtle"
+              key={`${menu.menuDate}-${index}`}
+              title={title}
+              items={menuInfo.menuItems || []}
+            />
+          );
+        })}
+      </VStack>
+    </HStack>
+  );
+};
+
+type ReviewPromptCardProps = {
+  cafeteriaId: string;
+  cafeteriaName: NonNullable<CafeteriaInfoDTO["name"]>;
+};
 
 const ReviewPromptCard = ({
   cafeteriaId,
   cafeteriaName,
 }: ReviewPromptCardProps) => {
   return (
-    <VStack gap={32} pY={16} className={styles.reviewPromptCard}>
+    <VStack gap={32} pY={16} mb={32} className={styles.reviewPromptCard}>
       <ReviewPromptText cafeteriaName={cafeteriaName} />
       <Box className={styles.buttonBox}>
         <CharacterImage />
@@ -77,9 +103,7 @@ const ReviewPromptCard = ({
   );
 };
 
-interface ReviewPromptTextProps {
-  cafeteriaName: string;
-}
+type ReviewPromptTextProps = Pick<ReviewPromptCardProps, "cafeteriaName">;
 
 const ReviewPromptText = ({ cafeteriaName }: ReviewPromptTextProps) => {
   return (
@@ -106,16 +130,15 @@ const CharacterImage = () => {
   );
 };
 
-interface DateHeaderProps {
-  date: string;
-  reviewId: string;
+type DateHeaderProps = {
+  date: NonNullable<GetCafeteriaMenuTimelineResponse["menuDate"]>;
   cafeteriaId: string;
-}
+};
 
-const DateHeader = ({ date, reviewId, cafeteriaId }: DateHeaderProps) => {
+const DateHeader = ({ date, cafeteriaId }: DateHeaderProps) => {
   return (
     <HStack justify="space-between" align="center" width="100%" pX={4}>
-      <Body fontSize="b3b" colorShade={600}>
+      <Body fontSize="b2" colorShade={500}>
         {date}
       </Body>
       <Link href={`/cafeterias/${cafeteriaId}/menus/${date}/reviews`}>
@@ -125,9 +148,7 @@ const DateHeader = ({ date, reviewId, cafeteriaId }: DateHeaderProps) => {
   );
 };
 
-interface WriteReviewButtonProps {
-  cafeteriaId: string;
-}
+type WriteReviewButtonProps = Pick<CafeteriaMenuTabProps, "cafeteriaId">;
 
 const WriteReviewButton = ({ cafeteriaId }: WriteReviewButtonProps) => {
   const router = useRouter();
