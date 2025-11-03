@@ -9,12 +9,19 @@ import {
 } from "@nugudi/react-components-layout";
 import { clsx } from "clsx";
 import React from "react";
-import { cardContainer, imageStyle } from "./style.css";
+import {
+  badgeScrollContainer,
+  cardContainer,
+  imageStyle,
+  rightIconContainer,
+} from "./style.css";
 import type { ReviewCardProps } from "./types";
 
 export const ReviewCard = React.forwardRef<HTMLDivElement, ReviewCardProps>(
   function ReviewCard(props, ref) {
     const {
+      username,
+      userLevel,
       imageUrl,
       imageAs,
       imageAlt = "리뷰 이미지",
@@ -23,6 +30,7 @@ export const ReviewCard = React.forwardRef<HTMLDivElement, ReviewCardProps>(
       className,
       onClick,
       date,
+      rightIcon,
       // Extract color to prevent conflict with Box's color prop
       color: _color,
       ...rest
@@ -48,6 +56,24 @@ export const ReviewCard = React.forwardRef<HTMLDivElement, ReviewCardProps>(
         }
       >
         <VStack gap={16} p="4">
+          {/* User Header */}
+          {(username || userLevel || date) && (
+            <HStack justify="space-between" align="center" width="100%">
+              <HStack gap={8} align="center">
+                <Body fontSize="b3" color="zinc" colorShade={800}>
+                  {username}
+                </Body>
+                <Badge tone="positive" variant="weak" size="xs">
+                  Lv.{userLevel}
+                </Badge>
+              </HStack>
+              <Emphasis fontSize="e1" color="zinc" colorShade={500} as="span">
+                {date}
+              </Emphasis>
+            </HStack>
+          )}
+
+          {/* Main Content */}
           <VStack gap={8}>
             {imageUrl && (
               <ImageCard
@@ -57,24 +83,36 @@ export const ReviewCard = React.forwardRef<HTMLDivElement, ReviewCardProps>(
                 alt={imageAlt}
               />
             )}
-            <Emphasis fontSize="e1" color="zinc" colorShade={500} as="span">
-              {date}
-            </Emphasis>
             <Body fontSize="b3" color="zinc" colorShade={700}>
               {review}
             </Body>
           </VStack>
 
-          {badges.length > 0 && (
-            <HStack gap={4}>
-              {badges.map((badgeItem) => (
-                <Badge
-                  key={`${badgeItem.emoji}-${badgeItem.label}`}
-                  icon={<span>{badgeItem.emoji}</span>}
-                >
-                  {badgeItem.label}
-                </Badge>
-              ))}
+          {/* Badges and Right Icon */}
+          {(badges.length > 0 || rightIcon) && (
+            <HStack
+              justify="space-between"
+              align="center"
+              width="100%"
+              gap={32}
+            >
+              {badges.length > 0 ? (
+                <Box className={badgeScrollContainer}>
+                  {badges.map((badgeItem) => (
+                    <Badge
+                      key={`${badgeItem.emoji}-${badgeItem.label}`}
+                      icon={<span>{badgeItem.emoji}</span>}
+                    >
+                      {badgeItem.label}
+                    </Badge>
+                  ))}
+                </Box>
+              ) : (
+                <div />
+              )}
+              {rightIcon && (
+                <Box className={rightIconContainer}>{rightIcon}</Box>
+              )}
             </HStack>
           )}
         </VStack>
