@@ -129,7 +129,11 @@ export const replyButton = style({
     },
     "&:focus": {
       color: vars.colors.$scale.zinc[700],
-      outline: "none",
+    },
+    "&:focus-visible": {
+      outline: `2px solid ${vars.colors.$scale.main[500]}`,
+      outlineOffset: "2px",
+      borderRadius: vars.box.radii.sm,
     },
   },
 });

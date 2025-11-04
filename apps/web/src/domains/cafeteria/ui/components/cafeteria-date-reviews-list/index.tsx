@@ -3,22 +3,22 @@
 import { CommentIcon } from "@nugudi/assets-icons";
 import { Body, VStack } from "@nugudi/react-components-layout";
 import { ReviewCard } from "@nugudi/react-components-review-card";
-import { getMockReviews } from "../../../mocks/cafeteria-mock-data";
+import type { ReviewMockData } from "../../../mocks/cafeteria-mock-data";
 import * as styles from "./index.css";
 
 interface CafeteriaDateReviewsListProps {
   cafeteriaId: string;
   date: string;
+  reviews: ReviewMockData[];
   onCommentClick: (reviewId: string) => void;
 }
 
 export const CafeteriaDateReviewsList = ({
   cafeteriaId: _cafeteriaId,
   date: _date,
+  reviews,
   onCommentClick,
 }: CafeteriaDateReviewsListProps) => {
-  const reviews = getMockReviews();
-
   return (
     <VStack width="100%">
       {reviews.length === 0 ? (

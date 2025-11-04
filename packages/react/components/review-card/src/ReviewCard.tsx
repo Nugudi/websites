@@ -57,21 +57,19 @@ export const ReviewCard = React.forwardRef<HTMLDivElement, ReviewCardProps>(
       >
         <VStack gap={16} p="4">
           {/* User Header */}
-          {(username || userLevel || date) && (
-            <HStack justify="space-between" align="center" width="100%">
-              <HStack gap={8} align="center">
-                <Body fontSize="b3" color="zinc" colorShade={800}>
-                  {username}
-                </Body>
-                <Badge tone="positive" variant="weak" size="xs">
-                  Lv.{userLevel}
-                </Badge>
-              </HStack>
-              <Emphasis fontSize="e1" color="zinc" colorShade={500} as="span">
-                {date}
-              </Emphasis>
+          <HStack justify="space-between" align="center" width="100%">
+            <HStack gap={8} align="center">
+              <Body fontSize="b3" color="zinc" colorShade={800}>
+                {username}
+              </Body>
+              <Badge tone="positive" variant="weak" size="xs">
+                Lv.{userLevel}
+              </Badge>
             </HStack>
-          )}
+            <Emphasis fontSize="e1" color="zinc" colorShade={500} as="span">
+              {date}
+            </Emphasis>
+          </HStack>
 
           {/* Main Content */}
           <VStack gap={8}>
