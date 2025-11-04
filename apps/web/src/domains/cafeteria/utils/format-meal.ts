@@ -1,11 +1,17 @@
-// OpenAPI에 정의된 MealType
-type MealType = "BREAKFAST" | "LUNCH" | "DINNER";
+import type { MenuInfoDTO } from "../types";
 
-/**
- * 주어진 값이 유효한 MealType인지 확인
- */
+type MealType = NonNullable<MenuInfoDTO["mealType"]>;
+
+const MEAL_TYPES = ["BREAKFAST", "LUNCH", "DINNER"] as const;
+
+const MEAL_TYPE_LABELS: Record<(typeof MEAL_TYPES)[number], string> = {
+  BREAKFAST: "🌅 아침",
+  LUNCH: "🌞 점심",
+  DINNER: "🌙 저녁",
+} as const;
+
 const isMealType = (value?: string): value is MealType => {
-  return value === "BREAKFAST" || value === "LUNCH" || value === "DINNER";
+  return MEAL_TYPES.includes(value as (typeof MEAL_TYPES)[number]);
 };
 
 /**
@@ -18,12 +24,5 @@ export const getMealTypeTitle = (mealType?: string) => {
     return undefined;
   }
 
-  switch (mealType) {
-    case "BREAKFAST":
-      return "🌅 아침";
-    case "LUNCH":
-      return "🌞 점심";
-    case "DINNER":
-      return "🌙 저녁";
-  }
+  return MEAL_TYPE_LABELS[mealType as keyof typeof MEAL_TYPE_LABELS];
 };
