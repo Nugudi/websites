@@ -212,17 +212,19 @@ export class AuthenticatedHttpClient implements HttpClient {
         const { accessToken, refreshToken } = refreshResponseData.data;
         if (accessToken && refreshToken) {
           const currentSession = await this.sessionManager.getSession();
-          await this.sessionManager.saveSession({
-            accessToken,
-            refreshToken,
-            userId: currentSession?.userId,
-          });
+          if (currentSession?.userId) {
+            await this.sessionManager.saveSession({
+              accessToken,
+              refreshToken,
+              userId: currentSession.userId,
+            });
 
-          return {
-            success: true,
-            accessToken,
-            refreshToken,
-          };
+            return {
+              success: true,
+              accessToken,
+              refreshToken,
+            };
+          }
         }
       }
 

@@ -7,6 +7,8 @@
  * - Middleware에서 갱신한 Token을 Headers로 전달받아 우선 사용
  */
 
+import "server-only";
+
 import { cookies, headers } from "next/headers";
 import type { SessionData, SessionManager } from "./session-manager";
 
@@ -84,17 +86,16 @@ export class ServerSessionManager implements SessionManager {
     }
 
     const refreshToken = cookieStore.get(REFRESH_TOKEN_COOKIE)?.value;
+    const userId = cookieStore.get(USER_ID_COOKIE)?.value;
 
-    if (!accessToken || !refreshToken) {
+    if (!accessToken || !refreshToken || !userId) {
       return null;
     }
-
-    const userIdStr = cookieStore.get(USER_ID_COOKIE)?.value;
 
     return {
       accessToken,
       refreshToken,
-      userId: userIdStr ? Number(userIdStr) : undefined,
+      userId,
     };
   }
 
