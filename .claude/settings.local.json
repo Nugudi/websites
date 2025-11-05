@@ -37,7 +37,12 @@
       "Bash(git checkout:*)",
       "Bash(git mv:*)",
       "Bash(for folder in sections components views constants hooks stores types)",
-      "Bash(do git mv src/domains/auth/ui/$folder src/domains/auth/presentation/ui/$folder)"
+      "Bash(do git mv src/domains/auth/ui/$folder src/domains/auth/presentation/ui/$folder)",
+      "Bash(for img in bobpool-nuguri.webp cafeterias-test.png level-2-nuguri.png nuguri.webp point-nuguri.png sleep-nuguri.png spoon_nuguri.png thanks-nuguri.png)",
+      "Bash(do echo \"=== $img ===\" git log --all --full-history --oneline -- \"apps/web/public/images/$img\")",
+      "Bash(git ls-tree:*)",
+      "Bash(git log:*)",
+      "Bash(do grep \"from.*\\.\\.\" \"$f\")"
     ],
     "deny": [],
     "ask": []

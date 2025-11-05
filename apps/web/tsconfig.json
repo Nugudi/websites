@@ -25,7 +25,9 @@
       "@auth/presentation/*": ["./src/domains/auth/presentation/*"],
       "@auth/presentation": ["./src/domains/auth/presentation/index.ts"],
       "@benefit/ui/*": ["./src/domains/benefit/ui/*"],
-      "@benefit/ui": ["./src/domains/benefit/ui/index.ts"]
+      "@benefit/ui": ["./src/domains/benefit/ui/index.ts"],
+      "@stamp/presentation/*": ["./src/domains/stamp/presentation/*"],
+      "@stamp/presentation": ["./src/domains/stamp/presentation/index.ts"]
     },
     "plugins": [{ "name": "next" }]
   },
