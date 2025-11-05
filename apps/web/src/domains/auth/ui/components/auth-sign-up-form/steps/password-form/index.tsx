@@ -10,8 +10,8 @@ import { useForm } from "react-hook-form";
 import {
   type SignUpPasswordSchema,
   signUpPasswordSchema,
-} from "../../../../../schemas/sign-up-schema";
-import { useSignUpStore } from "../../../../../stores/use-sign-up-store";
+} from "../../../../schemas/sign-up-schema";
+import { useSignUpStore } from "../../../../stores/use-sign-up-store";
 import * as styles from "./index.css";
 
 export const PasswordForm = () => {

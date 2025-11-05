@@ -8,8 +8,8 @@ import { useForm } from "react-hook-form";
 import {
   type SignUpEmailSchema,
   signUpEmailSchema,
-} from "../../../../../schemas/sign-up-schema";
-import { useSignUpStore } from "../../../../../stores/use-sign-up-store";
+} from "../../../../schemas/sign-up-schema";
+import { useSignUpStore } from "../../../../stores/use-sign-up-store";
 import * as styles from "./index.css";
 
 export const EmailForm = () => {

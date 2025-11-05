@@ -3,8 +3,8 @@
 import { Flex } from "@nugudi/react-components-layout";
 import { StepIndicator } from "@nugudi/react-components-step-indicator";
 import { useEffect } from "react";
-import { TOTAL_SIGN_UP_STEPS } from "../../../constants/sign-up";
-import { useSignUpStore } from "../../../stores/use-sign-up-store";
+import { TOTAL_SIGN_UP_STEPS } from "../../constants/sign-up";
+import { useSignUpStore } from "../../stores/use-sign-up-store";
 import * as styles from "./index.css";
 import { AgreementForm } from "./steps/agreement-form";
 import { EmailForm } from "./steps/email-form";

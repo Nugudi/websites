@@ -6,13 +6,13 @@ import { Body, Box, Heading } from "@nugudi/react-components-layout";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { TERMS_AND_CONDITIONS_LIST } from "../../../../../constants/sign-up";
+import { TERMS_AND_CONDITIONS_LIST } from "../../../../constants/sign-up";
 import {
   type SignUpAgreementSchema,
   signUpAgreementSchema,
-} from "../../../../../schemas/sign-up-schema";
-import { useSignUpStore } from "../../../../../stores/use-sign-up-store";
-import type { TermsAgreementState } from "../../../../../types/terms";
+} from "../../../../schemas/sign-up-schema";
+import { useSignUpStore } from "../../../../stores/use-sign-up-store";
+import type { TermsAgreementState } from "../../../../types/terms";
 import * as styles from "./index.css";
 import { Terms } from "./terms";
 

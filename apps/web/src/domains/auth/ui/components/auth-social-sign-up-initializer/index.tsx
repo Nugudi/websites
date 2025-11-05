@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-import { useSocialSignUpStore } from "../../../stores/use-social-sign-up-store";
+import { useSocialSignUpStore } from "../../stores/use-social-sign-up-store";
 
 export const AuthSocialSignUpInitializer = ({
   children,

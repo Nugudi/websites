@@ -12,8 +12,8 @@ import { authClientContainer } from "@/src/di/auth-client-container";
 import {
   type SocialSignUpNicknameSchema,
   socialSignUpNicknameSchema,
-} from "../../../../../schemas/social-sign-up-schema";
-import { useSocialSignUpStore } from "../../../../../stores/use-social-sign-up-store";
+} from "../../../../schemas/social-sign-up-schema";
+import { useSocialSignUpStore } from "../../../../stores/use-social-sign-up-store";
 import * as styles from "./index.css";
 
 export const NicknameForm = () => {

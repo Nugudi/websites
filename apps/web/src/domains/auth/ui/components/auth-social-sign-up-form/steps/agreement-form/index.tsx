@@ -5,14 +5,14 @@ import { Button } from "@nugudi/react-components-button";
 import { Body, Box, Heading } from "@nugudi/react-components-layout";
 import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { SOCIAL_TERMS_LIST } from "../../../../../constants/social-sign-up";
-import { useSocialSignUpSubmit } from "../../../../../hooks/use-social-sign-up-submit";
+import { SOCIAL_TERMS_LIST } from "../../../../constants/social-sign-up";
+import { useSocialSignUpSubmit } from "../../../../hooks/use-social-sign-up-submit";
 import {
   type SocialSignUpAgreementSchema,
   socialSignUpAgreementSchema,
-} from "../../../../../schemas/social-sign-up-schema";
-import { useSocialSignUpStore } from "../../../../../stores/use-social-sign-up-store";
-import type { TermsAgreementState } from "../../../../../types/social-sign-up";
+} from "../../../../schemas/social-sign-up-schema";
+import { useSocialSignUpStore } from "../../../../stores/use-social-sign-up-store";
+import type { TermsAgreementState } from "../../../../types/social-sign-up";
 import * as styles from "./index.css";
 import { SocialTerms } from "./terms";
 
