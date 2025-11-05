@@ -14,11 +14,12 @@ export const CafeteriaHeroSection = ({
   cafeteriaId: _cafeteriaId,
 }: CafeteriaHeroSectionProps) => {
   const cafeteriaData = getMockCafeteriaData();
-  const cafeteria = cafeteriaData.cafeteria;
 
-  if (!cafeteria) {
+  if (!cafeteriaData || !cafeteriaData.cafeteria) {
     return null;
   }
+
+  const cafeteria = cafeteriaData.cafeteria;
 
   return (
     <VStack width="full">

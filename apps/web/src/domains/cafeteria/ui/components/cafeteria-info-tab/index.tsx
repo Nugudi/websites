@@ -20,11 +20,12 @@ type CafeteriaInfoTabProps = {
 
 export const CafeteriaInfoTab = (_props: CafeteriaInfoTabProps) => {
   const cafeteriaData = getMockCafeteriaData();
-  const cafeteria = cafeteriaData.cafeteria;
 
-  if (!cafeteria) {
+  if (!cafeteriaData || !cafeteriaData.cafeteria) {
     return null;
   }
+
+  const cafeteria = cafeteriaData.cafeteria;
 
   return (
     <VStack gap={32} pt={16} pb={24}>

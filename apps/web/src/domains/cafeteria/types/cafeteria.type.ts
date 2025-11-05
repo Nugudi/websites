@@ -57,7 +57,7 @@ export type MenuItemDTO = components["schemas"]["MenuItemDTO"];
  * 메뉴 아이템 Dto (등록/수정용)
  * - category enum 포함
  */
-export type MenuItemDto = components["schemas"]["MenuItemDto"];
+export type MenuItemDto = components["schemas"]["MenuItemDTO"];
 
 /**
  * 영양 정보 DTO

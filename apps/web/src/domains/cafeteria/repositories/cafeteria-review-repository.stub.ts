@@ -22,12 +22,18 @@ import type { CafeteriaReviewRepository } from "./cafeteria-review-repository";
 export class CafeteriaReviewRepositoryStub
   implements CafeteriaReviewRepository
 {
-  async createReview(
-    _data: CreateReviewRequest,
-  ): Promise<CreateReviewResponse> {
+  async createReview(data: CreateReviewRequest): Promise<CreateReviewResponse> {
     // TODO: Phase 4 - Replace with proper mock data
     return {
       reviewId: Date.now(),
+      restaurantId: data.restaurantId,
+      reviewDate: data.reviewDate,
+      mealType: data.mealType,
+      tasteTypeId: data.tasteTypeId,
+      content: data.content,
+      mainImageUrl: null, // Converted from mainImageFileId on backend
+      likeCount: 0,
+      createdAt: new Date().toISOString(),
     };
   }
 
@@ -45,7 +51,7 @@ export class CafeteriaReviewRepositoryStub
     return {
       data: [],
       pageInfo: {
-        nextCursor: undefined,
+        nextCursor: null,
         size: 0,
         hasNext: false,
       },
@@ -76,23 +82,33 @@ export class CafeteriaReviewRepositoryStub
   // }
 
   async createReviewComment(
-    _reviewId: string,
-    _data: CreateReviewCommentRequest,
+    reviewId: string,
+    data: CreateReviewCommentRequest,
   ): Promise<CreateReviewCommentResponse> {
     // TODO: Phase 4 - Replace with proper mock data
     return {
       commentId: Date.now(),
+      reviewId: Number(reviewId),
+      parentCommentId: data.parentCommentId ?? null,
+      content: data.content,
+      commentStatus: "ACTIVE",
+      createdAt: new Date().toISOString(),
     };
   }
 
   async createReviewCommentReply(
-    _reviewId: string,
-    _commentId: string,
-    _data: CreateReviewCommentRequest,
+    reviewId: string,
+    commentId: string,
+    data: CreateReviewCommentRequest,
   ): Promise<CreateReviewCommentResponse> {
     // TODO: Phase 4 - Replace with proper mock data
     return {
       commentId: Date.now(),
+      reviewId: Number(reviewId),
+      parentCommentId: Number(commentId),
+      content: data.content,
+      commentStatus: "ACTIVE",
+      createdAt: new Date().toISOString(),
     };
   }
 

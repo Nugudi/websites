@@ -156,7 +156,14 @@ export class CafeteriaReviewRepositoryImpl
         "/api/v1/reviews",
         data,
       );
-    return response.data.data!;
+
+    if (!response.data.data) {
+      throw new Error(
+        `Failed to create review: ${response.data.message || "No data returned"}`,
+      );
+    }
+
+    return response.data.data;
   }
 
   async getReviewComments(
@@ -221,7 +228,14 @@ export class CafeteriaReviewRepositoryImpl
         `/api/v1/reviews/${reviewId}/comments`,
         data,
       );
-    return response.data.data!;
+
+    if (!response.data.data) {
+      throw new Error(
+        `Failed to create review comment: ${response.data.message || "No data returned"}`,
+      );
+    }
+
+    return response.data.data;
   }
 
   async createReviewCommentReply(
@@ -234,7 +248,14 @@ export class CafeteriaReviewRepositoryImpl
         `/api/v1/reviews/${reviewId}/comments/${commentId}/replies`,
         data,
       );
-    return response.data.data!;
+
+    if (!response.data.data) {
+      throw new Error(
+        `Failed to create review comment reply: ${response.data.message || "No data returned"}`,
+      );
+    }
+
+    return response.data.data;
   }
 
   // TODO: OpenAPI 타입 추가되면 활성화

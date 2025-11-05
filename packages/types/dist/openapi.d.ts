@@ -592,7 +592,7 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * 식단표 등록
+         * 구내식당 식단표 등록
          * @description 특정 구내식당의 특정 날짜의 식단표를 등록합니다.
          *
          *     **필수 정보:**
@@ -666,7 +666,7 @@ export interface paths {
         options?: never;
         head?: never;
         /**
-         * 댓글 수정
+         * 리뷰 댓글 수정
          * @description 댓글(또는 대댓글)을 수정합니다.
          *
          *     **주요 기능:**
@@ -1197,31 +1197,91 @@ export interface components {
              * @description 리뷰 이미지 파일 ID (선택)
              * @example 123
              */
-            mainImageFileId?: number;
+            mainImageFileId?: number | null;
         };
-        /** @description 리뷰 작성 응답 */
+        /** @description 식단표 리뷰 작성 응답 */
         CreateReviewResponse: {
             /**
              * Format: int64
              * @description 리뷰 ID
              * @example 1
              */
-            reviewId?: number;
-        };
+            reviewId: number;
+            /**
+             * Format: int64
+             * @description 구내식당 ID
+             * @example 1
+             */
+            restaurantId: number;
+            /**
+             * Format: date
+             * @description 리뷰 날짜
+             * @example 2025-10-24
+             */
+            reviewDate: string;
+            /**
+             * @description 식사 시간대
+             * @example LUNCH
+             * @enum {string}
+             */
+            mealType: "BREAKFAST" | "LUNCH" | "DINNER";
+            /**
+             * Format: int64
+             * @description 맛 평가 타입 ID
+             * @example 1
+             */
+            tasteTypeId: number;
+            /**
+             * @description 리뷰 내용
+             * @example 묵은지 김치찜 최고..
+             */
+            content: string;
+            /**
+             * @description 메인 이미지 URL (선택)
+             * @example https://nugudi-bucket.s3.ap-northeast-2.amazonaws.com/images/review/main-123.jpg
+             */
+            mainImageUrl: string | null;
+            /**
+             * Format: int32
+             * @description 좋아요 수
+             * @example 0
+             */
+            likeCount: number;
+            /**
+             * Format: date-time
+             * @description 작성 일시
+             */
+            createdAt: string;
+        } | null;
         SuccessResponseCreateReviewResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 요청이 성공적으로 처리되었습니다
+             */
+            message: string;
             data?: components["schemas"]["CreateReviewResponse"];
         };
         /** @description 리뷰 댓글 작성 요청 */
         CreateReviewCommentRequest: {
             /**
              * @description 댓글 내용
-             * @example 정말 맛있어 보이네요!
+             * @example 제육볶음은 국물 자작한 제육인가요 숯불 제육인가요??
              */
             content: string;
             /**
@@ -1229,7 +1289,7 @@ export interface components {
              * @description 부모 댓글 ID (대댓글인 경우만 입력, 일반 댓글은 null)
              * @example 123
              */
-            parentCommentId?: number;
+            parentCommentId?: number | null;
         };
         /** @description 리뷰 댓글 작성 응답 */
         CreateReviewCommentResponse: {
@@ -1238,21 +1298,65 @@ export interface components {
              * @description 생성된 댓글 ID
              * @example 1
              */
-            commentId?: number;
-        };
+            commentId: number;
+            /**
+             * Format: int64
+             * @description 리뷰 ID
+             * @example 1
+             */
+            reviewId: number;
+            /**
+             * Format: int64
+             * @description 부모 댓글 ID (대댓글인 경우)
+             * @example 123
+             */
+            parentCommentId: number | null;
+            /**
+             * @description 댓글 내용
+             * @example 정말 맛있어 보이네요!
+             */
+            content: string;
+            /**
+             * @description 댓글 상태
+             * @example ACTIVE
+             * @enum {string}
+             */
+            commentStatus: "ACTIVE" | "USER_DELETED" | "OWNER_WITHDRAWN" | "ADMIN_DELETED" | "BLOCKED" | "REPORTED";
+            /**
+             * Format: date-time
+             * @description 작성 시간
+             */
+            createdAt: string;
+        } | null;
         SuccessResponseCreateReviewCommentResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 요청이 성공적으로 처리되었습니다
+             */
+            message: string;
             data?: components["schemas"]["CreateReviewCommentResponse"];
         };
+        /** @description 소셜 계정 회원가입 요청 */
         SignUpSocialRequest: {
             /**
              * @description 닉네임
-             * @example 너구디유저
+             * @example 너구딩링
              */
             nickname: string;
             /** @description 개인정보 처리방침 약관 동의 여부 */
@@ -1262,7 +1366,7 @@ export interface components {
             /** @description 위치정보 수집·이용약관 동의 여부 */
             locationInfo: boolean;
             /** @description 마케팅 이메일 수신 동의 여부 (선택적, 기본값: false) */
-            marketingEmail?: boolean;
+            marketingEmail?: boolean | null;
             deviceInfo: components["schemas"]["UserDeviceInfoDTO"];
         };
         /** @description 디바이스 정보 (일반/소셜 공통) */
@@ -1279,89 +1383,104 @@ export interface components {
              */
             deviceUniqueId: string;
             /**
-             * @description 디바이스 이름
+             * @description 디바이스 이름 (선택)
              * @example iPhone 15 Pro
              */
-            deviceName?: string;
+            deviceName?: string | null;
             /**
-             * @description 디바이스 모델
+             * @description 디바이스 모델 (선택)
              * @example iPhone15,2
              */
-            deviceModel?: string;
+            deviceModel?: string | null;
             /**
-             * @description OS 버전
+             * @description OS 버전 (선택)
              * @example 17.1.1
              */
-            osVersion?: string;
+            osVersion?: string | null;
             /**
-             * @description 앱 버전
+             * @description 앱 버전 (선택)
              * @example 1.0.0
              */
-            appVersion?: string;
+            appVersion?: string | null;
             /**
-             * @description 푸시 토큰 (알림 동의시에만 필수)
+             * @description 푸시 토큰 (알림 동의시에만 필수, 선택)
              * @example dHJhbnNhY3Rpb25faWQ6MTIzNDU2Nzg5MA==
              */
-            pushToken?: string;
+            pushToken?: string | null;
         };
-        /** @description 회원가입 성공 응답 (일반/소셜 공통) */
-        SignUpResponse: {
+        /** @description 소셜 회원가입 성공 응답 */
+        SocialSignUpResponse: {
             /**
              * Format: int64
              * @description 사용자 ID
              * @example 123
              */
-            userId?: number;
+            userId: number;
             /**
-             * @description 사용자 이메일
-             * @example user@nugudi.com
+             * @description 사용자 이메일 (소셜 제공자가 이메일을 제공하지 않는 경우 null)
+             * @example user@gmail.com
              */
-            email?: string;
+            email: string | null;
             /**
              * @description 사용자 닉네임
              * @example 너구디유저
              */
-            nickname?: string;
+            nickname: string;
             /**
              * @description 액세스 토큰
              * @example eyJhbGciOiJIUzI1NiJ9...
              */
-            accessToken?: string;
+            accessToken: string;
             /**
              * @description 리프레시 토큰
              * @example eyJhbGciOiJIUzI1NiJ9...
              */
-            refreshToken?: string;
+            refreshToken: string;
             /**
              * Format: date-time
              * @description 액세스 토큰 만료 시간
              */
-            accessTokenExpiresAt?: string;
+            accessTokenExpiresAt: string;
             /**
              * Format: date-time
              * @description 리프레시 토큰 만료 시간
              */
-            refreshTokenExpiresAt?: string;
-        };
-        SuccessResponseSignUpResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
-            data?: components["schemas"]["SignUpResponse"];
+            refreshTokenExpiresAt: string;
+        } | null;
+        SuccessResponseSocialSignUpResponse: {
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 요청이 성공적으로 처리되었습니다
+             */
+            message: string;
+            data?: components["schemas"]["SocialSignUpResponse"];
         };
         /** @description 일반 회원가입 요청 정보 */
         SignUpLocalRequest: {
             /**
              * @description 닉네임
-             * @example 너구디유저
+             * @example 너구딩링
              */
             nickname: string;
             /**
              * @description 이메일
-             * @example user@nugudi.com
+             * @example user@gmail.com
              */
             email: string;
             /**
@@ -1376,39 +1495,117 @@ export interface components {
             /** @description 위치정보 수집·이용약관 동의 여부 */
             locationInfo: boolean;
             /** @description 마케팅 이메일 수신 동의 여부 (선택적, 기본값: false) */
-            marketingEmail?: boolean;
+            marketingEmail?: boolean | null;
             deviceInfo: components["schemas"]["UserDeviceInfoDTO"];
         };
-        /** @description 토큰 갱신 응답 */
+        /** @description 일반 회원가입 성공 응답 */
+        LocalSignUpResponse: {
+            /**
+             * Format: int64
+             * @description 사용자 ID
+             * @example 123
+             */
+            userId: number;
+            /**
+             * @description 사용자 이메일
+             * @example user@gmail.com
+             */
+            email: string;
+            /**
+             * @description 사용자 닉네임
+             * @example 너구디유저
+             */
+            nickname: string;
+            /**
+             * @description 액세스 토큰
+             * @example eyJhbGciOiJIUzI1NiJ9...
+             */
+            accessToken: string;
+            /**
+             * @description 리프레시 토큰
+             * @example eyJhbGciOiJIUzI1NiJ9...
+             */
+            refreshToken: string;
+            /**
+             * Format: date-time
+             * @description 액세스 토큰 만료 시간
+             */
+            accessTokenExpiresAt: string;
+            /**
+             * Format: date-time
+             * @description 리프레시 토큰 만료 시간
+             */
+            refreshTokenExpiresAt: string;
+        } | null;
+        SuccessResponseLocalSignUpResponse: {
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 요청이 성공적으로 처리되었습니다
+             */
+            message: string;
+            data?: components["schemas"]["LocalSignUpResponse"];
+        };
+        /** @description JWT 토큰 갱신 응답 */
         RefreshTokenResponse: {
             /**
              * @description 새로운 액세스 토큰
              * @example eyJhbGciOiJIUzI1NiJ9...
              */
-            accessToken?: string;
+            accessToken: string;
             /**
              * @description 새로운 리프레시 토큰
              * @example eyJhbGciOiJIUzI1NiJ9...
              */
-            refreshToken?: string;
+            refreshToken: string;
             /**
              * Format: date-time
              * @description 액세스 토큰 만료 시간
              */
-            accessTokenExpiresAt?: string;
+            accessTokenExpiresAt: string;
             /**
              * Format: date-time
              * @description 리프레시 토큰 만료 시간
              */
-            refreshTokenExpiresAt?: string;
-        };
+            refreshTokenExpiresAt: string;
+        } | null;
         SuccessResponseRefreshTokenResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 요청이 성공적으로 처리되었습니다
+             */
+            message: string;
             data?: components["schemas"]["RefreshTokenResponse"];
         };
         /** @description 로그아웃 응답 */
@@ -1417,15 +1614,30 @@ export interface components {
              * Format: date-time
              * @description 로그아웃 처리 시간
              */
-            logoutAt?: string;
-        };
+            logoutAt: string;
+        } | null;
         SuccessResponseLogoutResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 요청이 성공적으로 처리되었습니다
+             */
+            message: string;
             data?: components["schemas"]["LogoutResponse"];
         };
         /** @description 네이버 소셜 로그인 요청 */
@@ -1450,72 +1662,87 @@ export interface components {
         /** @description 소셜 로그인 응답 */
         SocialLoginResponse: {
             /**
-             * @description 카카오 로그인 상태
+             * @description 로그인 상태
              * @example EXISTING_USER
              * @enum {string}
              */
-            status?: "EXISTING_USER" | "NEW_USER";
+            status: "EXISTING_USER" | "NEW_USER";
             /**
              * Format: int64
              * @description 사용자 ID (기존 회원인 경우)
              * @example 1
              */
-            userId?: number;
+            userId: number | null;
             /**
              * @description 사용자 닉네임 (기존 회원인 경우)
-             * @example 너구디유저
+             * @example 너구딩링
              */
-            nickname?: string;
+            nickname: string | null;
             /**
              * @description 프로필 이미지 URL
              * @example https://cdn.nugudi.com/profile/123.jpg
              */
-            profileImageUrl?: string;
+            profileImageUrl: string | null;
             /**
              * @description 액세스 토큰 (기존 회원인 경우)
              * @example eyJhbGciOiJIUzI1NiJ9...
              */
-            accessToken?: string;
+            accessToken: string | null;
             /**
              * @description 리프레시 토큰 (기존 회원인 경우)
              * @example eyJhbGciOiJIUzI1NiJ9...
              */
-            refreshToken?: string;
+            refreshToken: string | null;
             /**
              * Format: date-time
-             * @description 액세스 토큰 만료 시간
+             * @description 액세스 토큰 만료 시간 (기존 회원인 경우)
              */
-            accessTokenExpiresAt?: string;
+            accessTokenExpiresAt: string | null;
             /**
              * Format: date-time
-             * @description 리프레시 토큰 만료 시간
+             * @description 리프레시 토큰 만료 시간 (기존 회원인 경우)
              */
-            refreshTokenExpiresAt?: string;
+            refreshTokenExpiresAt: string | null;
             /**
-             * @description 등록 토큰 (신규 회원인 경우)
+             * @description 회원가입 토큰 (신규 회원인 경우)
              * @example eyJhbGciOiJIUzI1NiJ9...
              */
-            registrationToken?: string;
+            registrationToken: string | null;
             /**
              * Format: date-time
-             * @description 등록 토큰 만료 시간 (신규 회원인 경우)
+             * @description 회원가입 토큰 만료 시간 (신규 회원인 경우)
              */
-            registrationTokenExpiresAt?: string;
-        };
+            registrationTokenExpiresAt: string | null;
+        } | null;
         SuccessResponseSocialLoginResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 요청이 성공적으로 처리되었습니다
+             */
+            message: string;
             data?: components["schemas"]["SocialLoginResponse"];
         };
         /** @description 일반 로그인 요청 */
         LocalLoginRequest: {
             /**
              * @description 이메일
-             * @example user@nugudi.com
+             * @example user@gmail.com
              */
             email: string;
             /**
@@ -1532,50 +1759,65 @@ export interface components {
              * @description 사용자 ID
              * @example 1
              */
-            userId?: number;
+            userId: number;
             /**
              * @description 사용자 이메일
-             * @example user@nugudi.com
+             * @example user@gmail.com
              */
-            email?: string;
+            email: string;
             /**
              * @description 사용자 닉네임
-             * @example 너구디유저
+             * @example 너구딩링
              */
-            nickname?: string;
+            nickname: string;
             /**
-             * @description 프로필 이미지 URL
+             * @description 프로필 이미지 URL (선택)
              * @example https://cdn.nugudi.com/profile/123.jpg
              */
-            profileImageUrl?: string;
+            profileImageUrl: string | null;
             /**
              * @description 액세스 토큰
              * @example eyJhbGciOiJIUzI1NiJ9...
              */
-            accessToken?: string;
+            accessToken: string;
             /**
              * @description 리프레시 토큰
              * @example eyJhbGciOiJIUzI1NiJ9...
              */
-            refreshToken?: string;
+            refreshToken: string;
             /**
              * Format: date-time
              * @description 액세스 토큰 만료 시간
              */
-            accessTokenExpiresAt?: string;
+            accessTokenExpiresAt: string;
             /**
              * Format: date-time
              * @description 리프레시 토큰 만료 시간
              */
-            refreshTokenExpiresAt?: string;
-        };
+            refreshTokenExpiresAt: string;
+        } | null;
         SuccessResponseLocalLoginResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 요청이 성공적으로 처리되었습니다
+             */
+            message: string;
             data?: components["schemas"]["LocalLoginResponse"];
         };
         /** @description 카카오 소셜 로그인 요청 */
@@ -1610,7 +1852,7 @@ export interface components {
         EmailVerifyRequest: {
             /**
              * @description 이메일
-             * @example user@nugudi.com
+             * @example user@gmail.com
              */
             email: string;
             /**
@@ -1631,22 +1873,37 @@ export interface components {
              * @description 인증 성공 여부
              * @example true
              */
-            verified?: boolean;
-        };
+            verified: boolean;
+        } | null;
         SuccessResponseEmailVerifyResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 요청이 성공적으로 처리되었습니다
+             */
+            message: string;
             data?: components["schemas"]["EmailVerifyResponse"];
         };
         /** @description 이메일 인증 코드 발송 요청 */
         EmailVerificationRequest: {
             /**
              * @description 이메일
-             * @example user@nugudi.com
+             * @example user@gmail.com
              */
             email: string;
             /**
@@ -1663,15 +1920,30 @@ export interface components {
              * @description 만료 시간(초)
              * @example 300
              */
-            expiresInSeconds?: number;
-        };
+            expiresInSeconds: number;
+        } | null;
         SuccessResponseEmailVerificationResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 요청이 성공적으로 처리되었습니다
+             */
+            message: string;
             data?: components["schemas"]["EmailVerificationResponse"];
         };
         /** @description 구내식당 영업시간 정보 */
@@ -1681,7 +1953,7 @@ export interface components {
             dinnerStartTime?: components["schemas"]["LocalTime"];
             dinnerEndTime?: components["schemas"]["LocalTime"];
             /**
-             * @description 영업 요일 (예: 평일만 영업하는 경우)
+             * @description 영업 요일
              * @example [
              *       "MONDAY",
              *       "TUESDAY",
@@ -1690,7 +1962,7 @@ export interface components {
              *       "FRIDAY"
              *     ]
              */
-            operatingDays: ("MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY")[];
+            operatingDays?: ("MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY" | null)[] | null;
             /**
              * @description 특별 휴무일 (공휴일 등)
              * @example [
@@ -1699,13 +1971,13 @@ export interface components {
              *       "2025-05-05"
              *     ]
              */
-            specialHolidays?: string[];
+            specialHolidays?: (string | null)[] | null;
             /**
              * @description 영업시간 비고
              * @example 공휴일 휴무
              */
-            note?: string;
-        };
+            note?: string | null;
+        } | null;
         /**
          * @description 저녁 종료 시간
          * @example 19:30:00
@@ -1719,64 +1991,235 @@ export interface components {
             second?: number;
             /** Format: int32 */
             nano?: number;
-        };
+        } | null;
+        /** @description 구내식당 등록 요청 */
         RegisterCafeteriaRequest: {
+            /**
+             * @description 구내식당 이름
+             * @example 너구디푸드
+             */
             name: string;
+            /**
+             * @description 주소
+             * @example 서울시 구로구 너구디로10길 38
+             */
             address: string;
+            /**
+             * @description 상세 주소 (건물명, 층수 등)
+             * @example 너구디타워 1층
+             */
             addressDetail: string;
-            latitude?: number;
-            longitude?: number;
-            phone?: string;
-            description?: string;
-            oneLineIntro?: string;
-            /** Format: int32 */
-            mealTicketPrice?: number;
-            /** Format: int64 */
-            mainImageFileId?: number;
-            businessHours?: components["schemas"]["BusinessHoursRequest"];
+            /**
+             * @description 포장 가능 여부
+             * @example true
+             */
             takeoutAvailable: boolean;
+            /**
+             * @description 위도 (GPS 좌표)
+             * @example 37.4851
+             */
+            latitude?: number | null;
+            /**
+             * @description 경도 (GPS 좌표)
+             * @example 126.8983
+             */
+            longitude?: number | null;
+            /**
+             * @description 구내식당 연락처
+             * @example 02-1234-5678
+             */
+            phone?: string | null;
+            /**
+             * @description 식당 상세 설명
+             * @example 너구디역 인근 구내식당입니다. 매일 신선한 재료로 조리합니다.
+             */
+            description?: string | null;
+            /**
+             * @description 한 줄 소개
+             * @example 신선한 재료로 만드는 건강한 식사
+             */
+            oneLineIntro?: string | null;
+            /**
+             * Format: int32
+             * @description 식권 가격 (원)
+             * @example 7000
+             */
+            mealTicketPrice?: number | null;
+            /**
+             * Format: int64
+             * @description 메인 이미지 파일 ID
+             * @example 123
+             */
+            mainImageFileId?: number | null;
+            businessHours?: components["schemas"]["BusinessHoursRequest"];
         };
+        /** @description 구내식당 등록 응답 */
         RegisterCafeteriaResponse: {
-            /** Format: int64 */
-            cafeteriaId?: number;
-            name?: string;
-            address?: string;
-            addressDetail?: string;
-            latitude?: number;
-            longitude?: number;
-            phone?: string;
-            description?: string;
-            oneLineIntro?: string;
-            /** Format: int32 */
-            mealTicketPrice?: number;
-            /** Format: int64 */
-            mainImageFileId?: number;
-            takeoutAvailable?: boolean;
-            /** Format: date-time */
-            createdAt?: string;
-        };
+            /**
+             * Format: int64
+             * @description 구내식당 ID
+             * @example 1
+             */
+            cafeteriaId: number;
+            /**
+             * @description 구내식당 이름
+             * @example 너구디푸드
+             */
+            name: string;
+            /**
+             * @description 주소
+             * @example 서울시 구로구 너구디로10길 38
+             */
+            address: string;
+            /**
+             * @description 상세 주소
+             * @example 너구디타워 1층
+             */
+            addressDetail: string;
+            /**
+             * @description 위도 (선택)
+             * @example 37.123456
+             */
+            latitude: number | null;
+            /**
+             * @description 경도 (선택)
+             * @example 127.123456
+             */
+            longitude: number | null;
+            /**
+             * @description 전화번호 (선택)
+             * @example 02-1234-5678
+             */
+            phone: string | null;
+            /**
+             * @description 설명 (선택)
+             * @example 너구디역 인근 구내식당입니다. 매일 신선한 재료로 조리합니다.
+             */
+            description: string | null;
+            /**
+             * @description 한 줄 소개 (선택)
+             * @example 신선한 재료로 만드는 건강한 식사
+             */
+            oneLineIntro: string | null;
+            /**
+             * Format: int32
+             * @description 식권 가격 (원, 선택)
+             * @example 7000
+             */
+            mealTicketPrice: number | null;
+            /**
+             * @description 메인 이미지 URL (선택)
+             * @example https://nugudi-bucket.s3.ap-northeast-2.amazonaws.com/images/cafeteria/main-123.jpg
+             */
+            mainImageUrl: string | null;
+            /**
+             * @description 포장 가능 여부 (선택)
+             * @example true
+             */
+            takeoutAvailable: boolean | null;
+            /**
+             * Format: date-time
+             * @description 등록 일시
+             */
+            createdAt: string;
+        } | null;
         SuccessResponseRegisterCafeteriaResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 요청이 성공적으로 처리되었습니다
+             */
+            message: string;
             data?: components["schemas"]["RegisterCafeteriaResponse"];
         };
-        /** @description 메뉴 항목 목록 */
-        MenuItemDto: {
-            name?: string;
-            /** @enum {string} */
-            category?: "RICE" | "SOUP" | "MAIN_DISH" | "SIDE_DISH" | "KIMCHI" | "SALAD" | "DESSERT" | "DRINK" | "SPECIAL";
-            /** Format: int32 */
-            calories?: number;
-            caloriesSource?: string;
-            /** Format: int32 */
-            displayOrder?: number;
+        /** @description 메뉴 항목 정보 */
+        MenuItemDTO: {
+            /**
+             * @description 메뉴명
+             * @example 김치찌개
+             */
+            name: string;
+            /**
+             * @description 메뉴 카테고리 (RICE, SOUP, MAIN_DISH, SIDE_DISH, KIMCHI, SALAD, DESSERT, DRINK, SPECIAL)
+             * @example RICE
+             * @enum {string}
+             */
+            category: "RICE" | "SOUP" | "MAIN_DISH" | "SIDE_DISH" | "KIMCHI" | "SALAD" | "DESSERT" | "DRINK" | "SPECIAL";
+            /**
+             * Format: int32
+             * @description 칼로리
+             * @example 350
+             */
+            calories: number | null;
+            /**
+             * @description 칼로리 출처
+             * @example MANUAL
+             */
+            caloriesSource: string | null;
+            /**
+             * Format: int32
+             * @description 표시 순서
+             * @example 1
+             */
+            displayOrder: number | null;
         };
         /** @description 구내식당 식단표 등록 요청 */
         RegisterCafeteriaMenuRequest: {
+            /**
+             * Format: int64
+             * @description 구내식당 ID
+             * @example 1
+             */
+            restaurantId: number;
+            /**
+             * Format: date
+             * @description 식단 날짜
+             * @example 2025-10-28
+             */
+            menuDate: string;
+            /**
+             * @description 식사 시간대
+             * @example LUNCH
+             * @enum {string}
+             */
+            mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "BREAKFAST" | "LUNCH" | "DINNER";
+            /** @description 메뉴 항목 목록 (반찬, 국, 메인 메뉴 등) */
+            menuItems: components["schemas"]["MenuItemDTO"][];
+            /**
+             * Format: int64
+             * @description 메뉴 사진 파일 ID (파일 업로드 API로 먼저 업로드 후 받은 ID)
+             * @example 123
+             */
+            menuImageFileId?: number | null;
+            /**
+             * @description 특이사항 (알레르기 정보, 추가 안내사항 등)
+             * @example 견과류 포함, 매운맛 강함
+             */
+            specialNote?: string | null;
+        };
+        /** @description 구내식당 식단표 등록 응답 */
+        RegisterCafeteriaMenuResponse: {
+            /**
+             * Format: int64
+             * @description 식단표 ID
+             * @example 1
+             */
+            menuId: number;
             /**
              * Format: int64
              * @description 구내식당 ID
@@ -1790,100 +2233,89 @@ export interface components {
              */
             menuDate: string;
             /**
-             * @description 식사 시간대 (BREAKFAST, LUNCH, DINNER)
+             * @description 식사 시간대
              * @example LUNCH
              * @enum {string}
              */
             mealType: "BREAKFAST" | "LUNCH" | "DINNER";
             /** @description 메뉴 항목 목록 */
-            menuItems: components["schemas"]["MenuItemDto"][];
-            /**
-             * Format: int64
-             * @description 메뉴 이미지 파일 ID
-             * @example 123
-             */
-            menuImageFileId?: number;
-            /**
-             * @description 특이사항 (예: 알레르기 정보, 추가 안내사항)
-             * @example 견과류 포함
-             */
-            specialNote?: string;
-        };
-        /** @description 구내식당 식단표 등록 응답 */
-        RegisterCafeteriaMenuResponse: {
-            /**
-             * Format: int64
-             * @description 식단표 ID
-             * @example 1
-             */
-            menuId?: number;
-            /**
-             * Format: int64
-             * @description 구내식당 ID
-             * @example 1
-             */
-            restaurantId?: number;
-            /**
-             * Format: date
-             * @description 식단 날짜
-             * @example 2024-01-15
-             */
-            menuDate?: string;
-            /**
-             * @description 식사 시간대
-             * @example LUNCH
-             * @enum {string}
-             */
-            mealType?: "BREAKFAST" | "LUNCH" | "DINNER";
-            /** @description 메뉴 항목 목록 */
-            menuItems?: components["schemas"]["MenuItemDto"][];
+            menuItems: components["schemas"]["MenuItemDTO"][];
             /**
              * Format: int32
-             * @description 총 칼로리
+             * @description 총 칼로리 (선택)
              * @example 850
              */
-            totalCalories?: number;
+            totalCalories: number | null;
             /**
-             * Format: int64
-             * @description 메뉴 이미지 파일 ID
-             * @example 123
+             * @description 메뉴 이미지 URL (선택)
+             * @example https://nugudi-bucket.s3.ap-northeast-2.amazonaws.com/images/menu/menu-123.jpg
              */
-            menuImageFileId?: number;
+            menuImageUrl: string | null;
             /**
-             * @description 특이사항
+             * @description 특이사항 (선택)
              * @example 견과류 포함
              */
-            specialNote?: string;
+            specialNote: string | null;
             /**
              * Format: date-time
              * @description 등록 일시
              */
-            createdAt?: string;
-        };
+            createdAt: string;
+        } | null;
         SuccessResponseRegisterCafeteriaMenuResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 요청이 성공적으로 처리되었습니다
+             */
+            message: string;
             data?: components["schemas"]["RegisterCafeteriaMenuResponse"];
         };
         /** @description 리뷰 댓글 수정 요청 */
         UpdateReviewCommentRequest: {
             /**
              * @description 수정할 댓글 내용
-             * @example 수정된 댓글 내용입니다!
+             * @example 댓글을 수정해보았어요
              */
             content: string;
         };
         SuccessResponseUpdateReviewCommentResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 요청이 성공적으로 처리되었습니다
+             */
+            message: string;
             data?: components["schemas"]["UpdateReviewCommentResponse"];
         };
         /** @description 리뷰 댓글 수정 응답 */
@@ -1893,71 +2325,160 @@ export interface components {
              * @description 댓글 ID
              * @example 1
              */
-            commentId?: number;
+            commentId: number;
+            /**
+             * Format: int64
+             * @description 리뷰 ID
+             * @example 1
+             */
+            reviewId: number;
+            /**
+             * Format: int64
+             * @description 부모 댓글 ID (대댓글인 경우)
+             * @example 123
+             */
+            parentCommentId: number | null;
             /**
              * @description 수정된 댓글 내용
-             * @example 수정된 댓글 내용입니다!
+             * @example 댓글을 수정수정
              */
-            content?: string;
+            content: string;
+            /**
+             * @description 댓글 상태
+             * @example ACTIVE
+             * @enum {string}
+             */
+            commentStatus: "ACTIVE" | "USER_DELETED" | "OWNER_WITHDRAWN" | "ADMIN_DELETED" | "BLOCKED" | "REPORTED";
+            /**
+             * Format: date-time
+             * @description 작성 시간
+             */
+            createdAt: string;
             /**
              * Format: date-time
              * @description 수정 시간
              */
-            updatedAt?: string;
-        };
+            updatedAt: string;
+        } | null;
         /** @description 닉네임 사용 가능 여부 확인 응답 */
         NicknameCheckResponse: {
             /**
              * @description 확인한 닉네임
-             * @example 너구디유저
+             * @example 너구딩링
              */
-            nickname?: string;
+            nickname: string;
             /**
              * @description 사용 가능한지 여부
              * @example true
              */
-            available?: boolean;
-        };
+            available: boolean;
+        } | null;
         SuccessResponseNicknameCheckResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 요청이 성공적으로 처리되었습니다
+             */
+            message: string;
             data?: components["schemas"]["NicknameCheckResponse"];
         };
+        /** @description 내 프로필 조회 응답 */
         GetMyProfileResponse: {
-            profile?: components["schemas"]["UserProfileDTO"];
-            account?: components["schemas"]["UserAccountDTO"];
-            health?: components["schemas"]["HealthInfoDTO"];
-        };
+            profile: components["schemas"]["UserProfileDTO"];
+            account: components["schemas"]["UserAccountDTO"];
+            health: components["schemas"]["HealthInfoDTO"];
+        } | null;
+        /** @description 신체 정보 */
         HealthInfoDTO: {
-            /** Format: int32 */
-            height?: number;
-            weight?: number;
-        };
+            /**
+             * Format: int32
+             * @description 키 (cm, 선택)
+             * @example 170
+             */
+            height: number | null;
+            /**
+             * @description 몸무게 (kg, 선택)
+             * @example 65.5
+             */
+            weight: number | null;
+        } | null;
         SuccessResponseGetMyProfileResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 요청이 성공적으로 처리되었습니다
+             */
+            message: string;
             data?: components["schemas"]["GetMyProfileResponse"];
         };
+        /** @description 사용자 계정 정보 */
         UserAccountDTO: {
-            /** @enum {string} */
-            provider?: "LOCAL" | "GOOGLE" | "APPLE" | "KAKAO" | "NAVER";
-            email?: string;
+            /**
+             * @description 로그인 제공자 (LOCAL, KAKAO, GOOGLE, NAVER)
+             * @example LOCAL
+             * @enum {string}
+             */
+            provider: "LOCAL" | "GOOGLE" | "APPLE" | "KAKAO" | "NAVER";
+            /**
+             * @description 이메일 (소셜 로그인의 경우 null일 수 있음)
+             * @example user@gmail.com
+             */
+            email: string | null;
         };
+        /** @description 사용자 프로필 정보 */
         UserProfileDTO: {
-            /** Format: int64 */
-            userId?: number;
-            nickname?: string;
-            profileImageUrl?: string;
-            /** Format: date */
-            joinDate?: string;
+            /**
+             * Format: int64
+             * @description 사용자 ID
+             * @example 1
+             */
+            userId: number;
+            /**
+             * @description 닉네임
+             * @example 너구딩링
+             */
+            nickname: string;
+            /**
+             * @description 프로필 이미지 URL (선택)
+             * @example https://cdn.nugudi.com/profile/123.jpg
+             */
+            profileImageUrl: string | null;
+            /**
+             * Format: date
+             * @description 가입일
+             * @example 2025-01-01
+             */
+            joinDate: string;
         };
         /** @description 작성자 정보 */
         AuthorInfo: {
@@ -1966,17 +2487,17 @@ export interface components {
              * @description 작성자 ID
              * @example 1
              */
-            userId?: number;
+            userId: number;
             /**
              * @description 작성자 닉네임
-             * @example 맛집탐험가
+             * @example 햄버거는맛있어
              */
-            nickname?: string;
+            nickname: string;
             /**
              * @description 프로필 이미지 URL
              * @example https://example.com/profile.jpg
              */
-            profileImageUrl?: string;
+            profileImageUrl: string | null;
         };
         /** @description 댓글 정보 */
         CommentInfo: {
@@ -1985,7 +2506,7 @@ export interface components {
              * @description 댓글 ID
              * @example 1
              */
-            commentId?: number;
+            commentId: number;
             /**
              * @description 댓글 내용 (상태별 메시지)
              *     - ACTIVE: 원본 댓글 내용
@@ -1996,62 +2517,79 @@ export interface components {
              *     - REPORTED: '신고 검토중인 댓글입니다'
              * @example 정말 맛있어 보이네요!
              */
-            content?: string;
+            content: string;
             /**
              * @description 댓글 상태
              * @example ACTIVE
              * @enum {string}
              */
-            commentStatus?: "ACTIVE" | "USER_DELETED" | "OWNER_WITHDRAWN" | "ADMIN_DELETED" | "BLOCKED" | "REPORTED";
+            commentStatus: "ACTIVE" | "USER_DELETED" | "OWNER_WITHDRAWN" | "ADMIN_DELETED" | "BLOCKED" | "REPORTED";
             /**
              * Format: date-time
              * @description 작성 시간
              */
-            createdAt?: string;
+            createdAt: string;
             /**
              * Format: date-time
              * @description 마지막 수정 시간 (수정되지 않았다면 createdAt과 동일)
              */
-            updatedAt?: string;
+            updatedAt: string;
             /**
              * @description 본인 작성 여부 (로그인 안한 경우 항상 false)
              * @example true
              */
-            isAuthor?: boolean;
+            isAuthor: boolean;
         };
         /** @description 리뷰 댓글 조회 응답 */
         GetReviewCommentResponse: {
-            comment?: components["schemas"]["CommentInfo"];
-            author?: components["schemas"]["AuthorInfo"];
-            replyMetadata?: components["schemas"]["ReplyMetadata"];
+            comment: components["schemas"]["CommentInfo"];
+            author: components["schemas"]["AuthorInfo"];
+            replyMetadata: components["schemas"]["ReplyMetadata"];
         };
+        /** @description 페이징 정보 */
         PageInfo: {
             /**
              * @description 다음 페이지 커서 (ID, 날짜 등)
              * @example 123 또는 2025-10-24
              */
-            nextCursor?: string;
+            nextCursor: string | null;
             /**
              * Format: int32
              * @description 현재 페이지의 아이템 개수
              * @example 10
              */
-            size?: number;
+            size: number;
             /**
              * @description 다음 페이지 존재 여부
              * @example true
              */
-            hasNext?: boolean;
+            hasNext: boolean;
         };
         PageResponseGetReviewCommentResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
-            data?: components["schemas"]["GetReviewCommentResponse"][];
-            pageInfo?: components["schemas"]["PageInfo"];
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 조회가 성공적으로 처리되었습니다
+             */
+            message: string;
+            /** @description 응답 데이터 목록 */
+            data: components["schemas"]["GetReviewCommentResponse"][];
+            pageInfo: components["schemas"]["PageInfo"];
         };
         /** @description 대댓글 메타 정보 */
         ReplyMetadata: {
@@ -2060,95 +2598,223 @@ export interface components {
              * @description 전체 대댓글 개수
              * @example 15
              */
-            totalReplyCount?: number;
+            totalReplyCount: number;
             /**
              * @description 대댓글 존재 여부
              * @example true
              */
-            hasReplies?: boolean;
+            hasReplies: boolean;
         };
         PageResponseReplyInfo: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
-            data?: components["schemas"]["ReplyInfo"][];
-            pageInfo?: components["schemas"]["PageInfo"];
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 조회가 성공적으로 처리되었습니다
+             */
+            message: string;
+            /** @description 응답 데이터 목록 */
+            data: components["schemas"]["ReplyInfo"][];
+            pageInfo: components["schemas"]["PageInfo"];
         };
         /** @description 대댓글 정보 */
         ReplyInfo: {
-            comment?: components["schemas"]["CommentInfo"];
-            author?: components["schemas"]["AuthorInfo"];
+            comment: components["schemas"]["CommentInfo"];
+            author: components["schemas"]["AuthorInfo"];
         };
+        /** @description 영업시간 정보 */
         BusinessHoursDTO: {
-            lunch?: components["schemas"]["TimeRangeDTO"];
-            dinner?: components["schemas"]["TimeRangeDTO"];
-            note?: string;
-        };
+            lunch: components["schemas"]["TimeRangeDTO"];
+            dinner: components["schemas"]["TimeRangeDTO"];
+            /**
+             * @description 비고
+             * @example 공휴일 휴무
+             */
+            note: string | null;
+        } | null;
+        /** @description 구내식당 기본 정보 */
         CafeteriaInfoDTO: {
-            /** Format: int64 */
-            id?: number;
-            name?: string;
-            address?: string;
-            addressDetail?: string;
-            latitude?: number;
-            longitude?: number;
-            phone?: string;
-            /** Format: int32 */
-            mealTicketPrice?: number;
-            takeoutAvailable?: boolean;
-            businessHours?: components["schemas"]["BusinessHoursDTO"];
+            /**
+             * Format: int64
+             * @description 구내식당 ID
+             * @example 1
+             */
+            id: number;
+            /**
+             * @description 구내식당 이름
+             * @example 너구디푸드
+             */
+            name: string;
+            /**
+             * @description 주소
+             * @example 서울시 구로구 너구디로10길 38
+             */
+            address: string;
+            /**
+             * @description 상세 주소
+             * @example 너구디타워 1층
+             */
+            addressDetail: string;
+            /**
+             * @description 위도
+             * @example 37.123456
+             */
+            latitude: number | null;
+            /**
+             * @description 경도
+             * @example 127.123456
+             */
+            longitude: number | null;
+            /**
+             * @description 전화번호
+             * @example 02-1234-5678
+             */
+            phone: string | null;
+            /**
+             * Format: int32
+             * @description 식권 가격 (원)
+             * @example 7000
+             */
+            mealTicketPrice: number | null;
+            /**
+             * @description 포장 가능 여부
+             * @example true
+             */
+            takeoutAvailable: boolean;
+            businessHours: components["schemas"]["BusinessHoursDTO"];
         };
+        /** @description 특정 날짜 구내식당 식단표 조회 (무한 스크롤) */
         GetCafeteriaWithMenuResponse: {
-            cafeteria?: components["schemas"]["CafeteriaInfoDTO"];
-            menus?: components["schemas"]["MenuInfoDTO"][];
+            cafeteria: components["schemas"]["CafeteriaInfoDTO"];
+            /** @description 식단 목록 */
+            menus: components["schemas"]["MenuInfoDTO"][];
         };
+        /** @description 식단표 정보 */
         MenuInfoDTO: {
-            mealType?: string;
-            menuItems?: components["schemas"]["MenuItemDto"][];
-            specialNote?: string;
-            nutritionInfo?: components["schemas"]["NutritionInfoDTO"];
+            /**
+             * @description 식사 타입
+             * @example 점심
+             */
+            mealType: string;
+            /** @description 메뉴 항목 목록 */
+            menuItems: components["schemas"]["MenuItemDTO"][];
+            /**
+             * @description 특이사항
+             * @example 견과류 포함
+             */
+            specialNote: string | null;
+            nutritionInfo: components["schemas"]["NutritionInfoDTO"];
         };
+        /** @description 영양 정보 */
         NutritionInfoDTO: {
-            /** Format: int32 */
-            totalCalories?: number;
-            /** Format: int32 */
-            dailyPercentage?: number;
-            /** Format: int32 */
-            walkingSteps?: number;
-            /** Format: int32 */
-            runningKm?: number;
-            /** Format: int32 */
-            cyclingKm?: number;
-            /** Format: int32 */
-            stairsFloors?: number;
-        };
+            /**
+             * Format: int32
+             * @description 총 칼로리
+             * @example 800
+             */
+            totalCalories: number | null;
+            /**
+             * Format: int32
+             * @description 일일 권장량 대비 비율 (%)
+             * @example 40
+             */
+            dailyPercentage: number | null;
+            /**
+             * Format: int32
+             * @description 소모를 위한 걷기 걸음 수
+             * @example 12000
+             */
+            walkingSteps: number | null;
+            /**
+             * Format: int32
+             * @description 소모를 위한 달리기 거리 (km)
+             * @example 8
+             */
+            runningKm: number | null;
+            /**
+             * Format: int32
+             * @description 소모를 위한 자전거 거리 (km)
+             * @example 15
+             */
+            cyclingKm: number | null;
+            /**
+             * Format: int32
+             * @description 소모를 위한 계단 오르기 (층)
+             * @example 120
+             */
+            stairsFloors: number | null;
+        } | null;
         PageResponseGetCafeteriaWithMenuResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
-            data?: components["schemas"]["GetCafeteriaWithMenuResponse"][];
-            pageInfo?: components["schemas"]["PageInfo"];
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 조회가 성공적으로 처리되었습니다
+             */
+            message: string;
+            /** @description 응답 데이터 목록 */
+            data: components["schemas"]["GetCafeteriaWithMenuResponse"][];
+            pageInfo: components["schemas"]["PageInfo"];
         };
+        /** @description 시간 범위 */
         TimeRangeDTO: {
-            start?: components["schemas"]["LocalTime"];
-            end?: components["schemas"]["LocalTime"];
-        };
+            start: components["schemas"]["LocalTime"];
+            end: components["schemas"]["LocalTime"];
+        } | null;
+        /** @description 구내식당 조회 응답 */
         GetCafeteriaResponse: {
-            cafeteria?: components["schemas"]["CafeteriaInfoDTO"];
-        };
+            cafeteria: components["schemas"]["CafeteriaInfoDTO"];
+        } | null;
         SuccessResponseGetCafeteriaResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 요청이 성공적으로 처리되었습니다
+             */
+            message: string;
             data?: components["schemas"]["GetCafeteriaResponse"];
         };
         /** @description 구내식당 정보 */
@@ -2158,33 +2824,49 @@ export interface components {
              * @description 구내식당 ID
              * @example 1
              */
-            restaurantId?: number;
+            restaurantId: number;
             /**
              * @description 구내식당 이름
-             * @example 본관 학생식당
+             * @example 너구디푸드
              */
-            restaurantName?: string;
+            restaurantName: string;
             /**
              * @description 식사 타입
              * @example 점심
              */
-            mealType?: string;
+            mealType: string;
         };
         /** @description 특정 구내식당의 특정 날짜 식단표 리뷰 조회 (무한 스크롤) 응답 */
         GetCafeteriaMenuReviewResponse: {
-            cafeteria?: components["schemas"]["CafeteriaInfo"];
-            review?: components["schemas"]["ReviewInfo"];
-            reviewer?: components["schemas"]["ReviewerInfo"];
+            cafeteria: components["schemas"]["CafeteriaInfo"];
+            review: components["schemas"]["ReviewInfo"];
+            reviewer: components["schemas"]["ReviewerInfo"];
         };
         PageResponseGetCafeteriaMenuReviewResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
-            data?: components["schemas"]["GetCafeteriaMenuReviewResponse"][];
-            pageInfo?: components["schemas"]["PageInfo"];
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 조회가 성공적으로 처리되었습니다
+             */
+            message: string;
+            /** @description 응답 데이터 목록 */
+            data: components["schemas"]["GetCafeteriaMenuReviewResponse"][];
+            pageInfo: components["schemas"]["PageInfo"];
         };
         /** @description 리뷰 정보 */
         ReviewInfo: {
@@ -2193,46 +2875,45 @@ export interface components {
              * @description 리뷰 ID
              * @example 1
              */
-            reviewId?: number;
+            reviewId: number;
             /**
              * Format: date
              * @description 리뷰 날짜
              * @example 2025-10-24
              */
-            reviewDate?: string;
+            reviewDate: string;
             /**
              * @description 리뷰 내용
-             * @example 오늘 메뉴 정말 맛있었어요!
+             * @example 묵은지 김치찜 최고..
              */
-            content?: string;
+            content: string;
             /**
-             * Format: int64
-             * @description 메인 이미지 파일 ID
-             * @example 123
+             * @description 메인 이미지 URL
+             * @example https://nugudi-bucket.s3.ap-northeast-2.amazonaws.com/images/review/main-123.jpg
              */
-            mainImageFileId?: number;
+            mainImageUrl: string | null;
             /**
              * Format: int64
              * @description 맛 평가 타입 ID
              * @example 1
              */
-            tasteTypeId?: number;
+            tasteTypeId: number;
             /**
              * @description 맛 평가 타입 이름
              * @example 맛있어요
              */
-            tasteTypeName?: string;
+            tasteTypeName: string;
             /**
              * Format: int32
              * @description 좋아요 수
              * @example 15
              */
-            likeCount?: number;
+            likeCount: number;
             /**
              * Format: date-time
              * @description 작성일시
              */
-            createdAt?: string;
+            createdAt: string;
         };
         /** @description 리뷰 작성자 정보 */
         ReviewerInfo: {
@@ -2241,40 +2922,71 @@ export interface components {
              * @description 사용자 ID
              * @example 1
              */
-            userId?: number;
+            userId: number;
             /**
              * @description 닉네임
-             * @example 맛집러버
+             * @example 너구딩링
              */
-            nickname?: string;
+            nickname: string;
             /**
              * @description 프로필 이미지 URL
              * @example https://example.com/profile.jpg
              */
-            profileImageUrl?: string;
+            profileImageUrl: string | null;
         };
+        /** @description 특정 구내식당의 특정 날짜 식단표 조회 응답 */
         GetCafeteriaMenuResponse: {
-            /** Format: date */
-            menuDate?: string;
-            menus?: components["schemas"]["MenuInfoDTO"][];
-        };
+            /**
+             * Format: date
+             * @description 식단표 날짜
+             * @example 2025-01-15
+             */
+            menuDate: string;
+            /** @description 식단 목록 */
+            menus: components["schemas"]["MenuInfoDTO"][];
+        } | null;
         SuccessResponseGetCafeteriaMenuResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 요청이 성공적으로 처리되었습니다
+             */
+            message: string;
             data?: components["schemas"]["GetCafeteriaMenuResponse"];
         };
         /** @description 특정 구내식당의 식단표 타임라인 조회 (무한 스크롤) */
         GetCafeteriaMenuTimelineResponse: {
-            /** Format: date */
-            menuDate?: string;
-            menus?: components["schemas"]["MenuDTO"][];
-            /** Format: int64 */
-            reviewCount?: number;
+            /**
+             * Format: date
+             * @description 식단 날짜
+             * @example 2025-01-15
+             */
+            menuDate: string;
+            /** @description 메뉴 목록 */
+            menus: components["schemas"]["MenuDTO"][];
+            /**
+             * Format: int64
+             * @description 리뷰 개수
+             * @example 10
+             */
+            reviewCount: number;
         };
+        /** @description 메뉴 목록 */
         MenuDTO: {
             /** Format: date */
             menuDate?: string;
@@ -2284,72 +2996,176 @@ export interface components {
             /** Format: int32 */
             totalCalories?: number;
         };
-        MenuItemDTO: {
-            name?: string;
-            category?: string;
-            /** Format: int32 */
-            calories?: number;
-        };
         PageResponseGetCafeteriaMenuTimelineResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
-            data?: components["schemas"]["GetCafeteriaMenuTimelineResponse"][];
-            pageInfo?: components["schemas"]["PageInfo"];
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 조회가 성공적으로 처리되었습니다
+             */
+            message: string;
+            /** @description 응답 데이터 목록 */
+            data: components["schemas"]["GetCafeteriaMenuTimelineResponse"][];
+            pageInfo: components["schemas"]["PageInfo"];
         };
+        /** @description 특정 구내식당의 특정 월 일자별 식단표 유무 조회 응답 */
         GetCafeteriaMenuAvailabilityResponse: {
-            /** Format: int32 */
-            year?: number;
-            /** Format: int32 */
-            month?: number;
-            daysWithMenu?: number[];
-        };
+            /**
+             * Format: int32
+             * @description 연도
+             * @example 2025
+             */
+            year: number;
+            /**
+             * Format: int32
+             * @description 월
+             * @example 1
+             */
+            month: number;
+            /**
+             * @description 식단표가 있는 일자 목록
+             * @example [
+             *       1,
+             *       2,
+             *       3,
+             *       15,
+             *       16
+             *     ]
+             */
+            daysWithMenu: number[];
+        } | null;
         SuccessResponseGetCafeteriaMenuAvailabilityResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 요청이 성공적으로 처리되었습니다
+             */
+            message: string;
             data?: components["schemas"]["GetCafeteriaMenuAvailabilityResponse"];
         };
+        /** @description 네이버 OAuth 인가 URL 조회 응답 */
         GetNaverAuthorizeResponse: {
-            authorizeUrl?: string;
-        };
+            /**
+             * @description 네이버 OAuth 인가 URL
+             * @example https://nid.naver.com/oauth2.0/authorize?...
+             */
+            authorizeUrl: string;
+        } | null;
         SuccessResponseGetNaverAuthorizeResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 요청이 성공적으로 처리되었습니다
+             */
+            message: string;
             data?: components["schemas"]["GetNaverAuthorizeResponse"];
         };
+        /** @description 카카오 OAuth 인가 URL 조회 응답 */
         GetKakaoAuthorizeResponse: {
-            authorizeUrl?: string;
-        };
+            /**
+             * @description 카카오 OAuth 인가 URL
+             * @example https://kauth.kakao.com/oauth/authorize?...
+             */
+            authorizeUrl: string;
+        } | null;
         SuccessResponseGetKakaoAuthorizeResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 요청이 성공적으로 처리되었습니다
+             */
+            message: string;
             data?: components["schemas"]["GetKakaoAuthorizeResponse"];
         };
+        /** @description 구글 OAuth 인가 URL 조회 응답 */
         GetGoogleAuthorizeResponse: {
-            authorizeUrl?: string;
-        };
+            /**
+             * @description 구글 OAuth 인가 URL
+             * @example https://accounts.google.com/o/oauth2/v2/auth?...
+             */
+            authorizeUrl: string;
+        } | null;
         SuccessResponseGetGoogleAuthorizeResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 요청이 성공적으로 처리되었습니다
+             */
+            message: string;
             data?: components["schemas"]["GetGoogleAuthorizeResponse"];
         };
         /** @description 리뷰 댓글 삭제 응답 */
@@ -2359,15 +3175,30 @@ export interface components {
              * @description 삭제된 댓글 ID
              * @example 1
              */
-            commentId?: number;
-        };
+            commentId: number;
+        } | null;
         SuccessResponseDeleteReviewCommentResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            success?: boolean;
-            /** Format: int32 */
-            code?: number;
-            message?: string;
+            /**
+             * Format: date-time
+             * @description 응답 시간
+             */
+            timestamp: string;
+            /**
+             * @description 성공 여부
+             * @example true
+             */
+            success: boolean;
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            code: number;
+            /**
+             * @description 응답 메시지
+             * @example 요청이 성공적으로 처리되었습니다
+             */
+            message: string;
             data?: components["schemas"]["DeleteReviewCommentResponse"];
         };
     };
@@ -2495,7 +3326,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["SuccessResponseSignUpResponse"];
+                    "*/*": components["schemas"]["SuccessResponseSocialSignUpResponse"];
                 };
             };
         };
@@ -2519,7 +3350,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["SuccessResponseSignUpResponse"];
+                    "*/*": components["schemas"]["SuccessResponseLocalSignUpResponse"];
                 };
             };
         };

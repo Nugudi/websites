@@ -130,8 +130,8 @@ export class AuthServiceImpl implements AuthService {
         break;
     }
 
-    if (!response.success || !response.data?.authorizeUrl) {
-      throw new Error("Failed to get authorize URL");
+    if (!response.data) {
+      throw new Error("Failed to get OAuth authorize URL: No data returned");
     }
 
     return response.data.authorizeUrl;
@@ -181,8 +181,8 @@ export class AuthServiceImpl implements AuthService {
         break;
     }
 
-    if (!response.data.success || !response.data.data) {
-      throw new Error("Login failed");
+    if (!response.data.data) {
+      throw new Error("Failed to login with OAuth: No data returned");
     }
 
     const loginResponseData = response.data.data;
@@ -198,7 +198,9 @@ export class AuthServiceImpl implements AuthService {
         !loginResponseData.userId ||
         !loginResponseData.nickname
       ) {
-        throw new Error("Invalid login response");
+        throw new Error(
+          "Invalid EXISTING_USER response: missing required fields",
+        );
       }
 
       // 세션 저장 (Token + userId)
@@ -221,7 +223,7 @@ export class AuthServiceImpl implements AuthService {
       loginResponseData.status === "NEW_USER"
     ) {
       if (!loginResponseData.registrationToken) {
-        throw new Error("Invalid registration response");
+        throw new Error("Invalid NEW_USER response: missing registrationToken");
       }
 
       return {
@@ -249,20 +251,11 @@ export class AuthServiceImpl implements AuthService {
       registrationToken,
     );
 
-    if (!response.data.success || !response.data.data) {
-      throw new Error("Sign up failed");
+    if (!response.data.data) {
+      throw new Error("Failed to sign up: No data returned");
     }
 
     const signUpData = response.data.data;
-
-    if (
-      !signUpData.userId ||
-      !signUpData.nickname ||
-      !signUpData.accessToken ||
-      !signUpData.refreshToken
-    ) {
-      throw new Error("Invalid sign up response");
-    }
 
     return {
       userId: signUpData.userId,
@@ -309,13 +302,15 @@ export class AuthServiceImpl implements AuthService {
         deviceId,
       );
 
-      if (!response.data.success || !response.data.data) {
+      if (!response.data.data) {
+        console.error("Token refresh failed: No data returned");
         return false;
       }
 
       const refreshedTokens = response.data.data;
 
       if (!refreshedTokens.accessToken || !refreshedTokens.refreshToken) {
+        console.error("Token refresh failed: Missing access or refresh token");
         return false;
       }
 

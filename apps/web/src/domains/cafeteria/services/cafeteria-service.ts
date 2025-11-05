@@ -170,7 +170,7 @@ export class CafeteriaServiceImpl implements CafeteriaService {
   async getCafeteriaById(id: string): Promise<GetCafeteriaResponse> {
     const response = await this.repository.getCafeteriaById(id);
 
-    if (!response.cafeteria) {
+    if (!response || !response.cafeteria) {
       throw new Error("Cafeteria not found");
     }
 

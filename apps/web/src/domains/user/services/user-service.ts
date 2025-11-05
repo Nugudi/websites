@@ -21,8 +21,8 @@ export class UserServiceImpl implements UserService {
   async getMyProfile(): Promise<UserProfileData> {
     const response = await this.userRepository.getMyProfile();
 
-    if (!response.success || !response.data) {
-      throw new Error(response.message || "Failed to get user profile");
+    if (!response.data) {
+      throw new Error("Failed to fetch user profile: No data returned");
     }
 
     return response.data;
@@ -37,8 +37,15 @@ export class UserServiceImpl implements UserService {
           nickname,
         });
 
+      if (!nicknameCheckResponse.data) {
+        return {
+          available: false,
+          message: "닉네임 확인에 실패했습니다: 데이터를 받지 못했습니다.",
+        };
+      }
+
       return {
-        available: nicknameCheckResponse.data?.available ?? false,
+        available: nicknameCheckResponse.data.available,
       };
     } catch (error) {
       return {

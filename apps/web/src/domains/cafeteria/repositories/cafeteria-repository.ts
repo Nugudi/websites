@@ -188,7 +188,14 @@ export class CafeteriaRepositoryImpl implements CafeteriaRepository {
       await this.httpClient.get<SuccessResponseGetCafeteriaResponse>(
         `/api/v1/cafeterias/${id}`,
       );
-    return response.data.data!;
+
+    if (!response.data.data) {
+      throw new Error(
+        `Failed to fetch cafeteria: ${response.data.message || "No data returned"}`,
+      );
+    }
+
+    return response.data.data;
   }
 
   async getCafeteriaMenuByDate(
@@ -202,7 +209,14 @@ export class CafeteriaRepositoryImpl implements CafeteriaRepository {
           params: { date },
         },
       );
-    return response.data.data!;
+
+    if (!response.data.data) {
+      throw new Error(
+        `Failed to fetch cafeteria menu: ${response.data.message || "No data returned"}`,
+      );
+    }
+
+    return response.data.data;
   }
 
   // async getCafeteriaMenuTimeline(
@@ -243,7 +257,14 @@ export class CafeteriaRepositoryImpl implements CafeteriaRepository {
         `/api/v1/cafeterias/${id}/menus/availability`,
         { params },
       );
-    return response.data.data!;
+
+    if (!response.data.data) {
+      throw new Error(
+        `Failed to fetch menu availability: ${response.data.message || "No data returned"}`,
+      );
+    }
+
+    return response.data.data;
   }
 
   // async getCafeteriaMenuReviews(
@@ -281,7 +302,14 @@ export class CafeteriaRepositoryImpl implements CafeteriaRepository {
         "/api/v1/cafeterias",
         data,
       );
-    return response.data.data!;
+
+    if (!response.data.data) {
+      throw new Error(
+        `Failed to register cafeteria: ${response.data.message || "No data returned"}`,
+      );
+    }
+
+    return response.data.data;
   }
 
   async registerCafeteriaMenu(
@@ -292,6 +320,13 @@ export class CafeteriaRepositoryImpl implements CafeteriaRepository {
         "/api/v1/cafeterias/menus",
         data,
       );
-    return response.data.data!;
+
+    if (!response.data.data) {
+      throw new Error(
+        `Failed to register cafeteria menu: ${response.data.message || "No data returned"}`,
+      );
+    }
+
+    return response.data.data;
   }
 }

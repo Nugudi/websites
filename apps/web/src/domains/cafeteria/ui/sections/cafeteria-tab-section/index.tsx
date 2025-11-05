@@ -14,7 +14,7 @@ export const CafeteriaTabSection = ({
 }: CafeteriaTabSectionProps) => {
   const cafeteriaData = getMockCafeteriaData();
 
-  if (!cafeteriaData.cafeteria) {
+  if (!cafeteriaData || !cafeteriaData.cafeteria) {
     return null;
   }
 

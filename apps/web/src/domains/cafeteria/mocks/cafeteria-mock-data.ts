@@ -24,6 +24,7 @@ const MOCK_CAFETERIA: CafeteriaInfoDTO = {
   id: 1,
   name: "더애옹푸드",
   address: "천안 포스트 지하 1층",
+  addressDetail: "엘리베이터 이용",
   phone: "041-550-1234",
   takeoutAvailable: true,
   latitude: 36.8065,
@@ -38,6 +39,7 @@ const MOCK_CAFETERIA: CafeteriaInfoDTO = {
       start: { hour: 17, minute: 30, second: 0, nano: 0 },
       end: { hour: 19, minute: 30, second: 0, nano: 0 },
     },
+    note: null,
   },
 };
 

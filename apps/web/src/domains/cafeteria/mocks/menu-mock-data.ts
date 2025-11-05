@@ -40,13 +40,13 @@ export const MOCK_MENU_ITEMS: MenuItem[] = [
   { name: "오이소박이", category: "KIMCHI" },
 
   // 샐러드
-  { name: "그린샐러드", category: "SALAD" },
-  { name: "과일샐러드", category: "SALAD" },
+  { name: "그린샐러드", category: "SALAD_FRUIT" },
+  { name: "과일샐러드", category: "SALAD_FRUIT" },
 
   // 디저트
-  { name: "크로와상", category: "DESSERT" },
-  { name: "베이글", category: "DESSERT" },
-  { name: "케이크", category: "DESSERT" },
+  { name: "크로와상", category: "OTHER" },
+  { name: "베이글", category: "OTHER" },
+  { name: "케이크", category: "OTHER" },
 
   // 음료
   { name: "아메리카노", category: "DRINK" },
@@ -54,9 +54,9 @@ export const MOCK_MENU_ITEMS: MenuItem[] = [
   { name: "식혜", category: "DRINK" },
 
   // 특별 메뉴
-  { name: "잔치국수", category: "SPECIAL" },
-  { name: "비빔냉면", category: "SPECIAL" },
-  { name: "견과류", category: "SPECIAL" },
+  { name: "잔치국수", category: "OTHER" },
+  { name: "비빔냉면", category: "OTHER" },
+  { name: "견과류", category: "OTHER" },
 ];
 
 export const MOCK_CAFETERIA_LIST: Cafeteria[] = [
