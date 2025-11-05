@@ -31,17 +31,13 @@ export async function getClientSession(): Promise<Session | null> {
  * OAuth 인증 URL 조회 (Server Action)
  */
 export async function getOAuthAuthorizeUrl(
-  _provider: "google",
+  provider: "google",
   redirectUri: string,
 ): Promise<string> {
   const container = createAuthServerContainer();
-  const loginWithOAuthUseCase = container.getLoginWithOAuth();
+  const getOAuthAuthorizeUrlUseCase = container.getOAuthAuthorizeUrl();
 
-  // Repository에 직접 접근하여 URL 가져오기
-  // TODO: 필요시 별도 UseCase로 분리
-  return await loginWithOAuthUseCase.authRepository.getGoogleAuthorizeUrl(
-    redirectUri,
-  );
+  return await getOAuthAuthorizeUrlUseCase.execute(provider, redirectUri);
 }
 
 /**
