@@ -4,20 +4,13 @@ import { style } from "@vanilla-extract/css";
 export const commentContainer = style({
   display: "flex",
   gap: vars.box.spacing[3],
-  padding: `${vars.box.spacing[4]} 0`,
-  borderBottom: `1px solid ${vars.colors.$scale.zinc[100]}`,
   position: "relative",
-
-  selectors: {
-    "&:last-child": {
-      borderBottom: "none",
-    },
-  },
 });
 
 export const reply = style({
   paddingLeft: vars.box.spacing[12],
   position: "relative",
+  paddingTop: vars.box.spacing[2],
 });
 
 export const replyIconWrapper = style({
@@ -76,13 +69,13 @@ export const level = style({
   ...classes.typography.emphasis.e1,
   color: vars.colors.$scale.zinc[500],
   backgroundColor: vars.colors.$scale.zinc[100],
-  padding: `${vars.box.spacing[0]} ${vars.box.spacing[2]}`,
-  borderRadius: vars.box.radii.sm,
+  padding: `${vars.box.spacing[1]} ${vars.box.spacing[2]}`,
+  borderRadius: vars.box.radii.md,
   flexShrink: 0,
 });
 
 export const username = style({
-  ...classes.typography.emphasis.e1,
+  ...classes.typography.body.b3,
   color: vars.colors.$scale.zinc[900],
   overflow: "hidden",
   textOverflow: "ellipsis",
@@ -108,33 +101,39 @@ export const content = style({
 });
 
 export const replies = style({
-  marginTop: vars.box.spacing[4],
-  borderTop: `1px solid ${vars.colors.$scale.zinc[100]}`,
+  marginTop: vars.box.spacing[2],
 });
 
 export const replyButtonWrapper = style({
   marginTop: vars.box.spacing[2],
   display: "flex",
-  justifyContent: "flex-end",
+  justifyContent: "flex-start",
   alignItems: "center",
   width: "100%",
 });
 
 export const replyButton = style({
-  ...classes.typography.emphasis.e1,
-  padding: `${vars.box.spacing[1]} 0`,
-  color: vars.colors.$scale.zinc[400],
+  ...classes.typography.emphasis.e2,
+  fontWeight: vars.typography.fontWeight[600],
+  padding: `${vars.box.spacing[2]} 0`,
+  color: vars.colors.$scale.zinc[500],
   backgroundColor: "transparent",
   cursor: "pointer",
   transition: "color 0.2s ease",
   border: "none",
+  textAlign: "left",
 
   selectors: {
     "&:hover": {
-      color: vars.colors.$scale.main[500],
+      color: vars.colors.$scale.zinc[700],
     },
-    "&:active": {
-      color: vars.colors.$scale.main[500],
+    "&:focus": {
+      color: vars.colors.$scale.zinc[700],
+    },
+    "&:focus-visible": {
+      outline: `2px solid ${vars.colors.$scale.main[500]}`,
+      outlineOffset: "2px",
+      borderRadius: vars.box.radii.sm,
     },
   },
 });

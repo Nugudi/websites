@@ -10,37 +10,38 @@ import {
 } from "@nugudi/react-components-layout";
 import { formatPriceWithCurrency } from "@/src/domains/user/utils/format-points";
 import { getMockCafeteriaData } from "../../../mocks/cafeteria-mock-data";
+import type { CafeteriaInfoDTO } from "../../../types";
+import { getFullBusinessHours } from "../../../utils";
 import * as styles from "./index.css";
 
-// TODO: Phase 4 - Replace with proper OpenAPI types
-type CafeteriaDetail = {
-  location: string;
-  operatingHours?: string;
-  price?: number;
-  isPackagingAvailable?: boolean;
+type CafeteriaInfoTabProps = {
+  cafeteriaId: string;
 };
 
-interface CafeteriaInfoTabProps {
-  cafeteriaId: string;
-}
+export const CafeteriaInfoTab = (_props: CafeteriaInfoTabProps) => {
+  const cafeteriaData = getMockCafeteriaData();
+  const cafeteria = cafeteriaData.cafeteria;
 
-export const CafeteriaInfoTab = ({ cafeteriaId }: CafeteriaInfoTabProps) => {
-  const cafeteria = getMockCafeteriaData(cafeteriaId);
+  if (!cafeteria) {
+    return null;
+  }
 
   return (
     <VStack gap={32} pt={16} pb={24}>
       <BusinessInfo cafeteria={cafeteria} />
-      <LocationInfo address={cafeteria.location} />
+      <LocationInfo cafeteria={cafeteria} />
       <EtcInfo />
     </VStack>
   );
 };
 
-interface BusinessInfoProps {
-  cafeteria: CafeteriaDetail;
-}
+type BusinessInfoProps = {
+  cafeteria: CafeteriaInfoDTO;
+};
 
 const BusinessInfo = ({ cafeteria }: BusinessInfoProps) => {
+  const fullHours = getFullBusinessHours(cafeteria);
+
   return (
     <VStack gap={12}>
       <Title fontSize="t3" colorShade={800}>
@@ -52,24 +53,25 @@ const BusinessInfo = ({ cafeteria }: BusinessInfoProps) => {
         borderRadius="md"
         className={styles.infoSection}
       >
-        <InfoRow icon="🗓" label={`영업 중 · ${cafeteria.operatingHours}`} />
+        <InfoRow icon="⏰" label={fullHours} />
         <InfoRow
           icon="💰"
-          label={`가격 ${formatPriceWithCurrency(cafeteria.price ?? 0)}`}
+          label={`가격 ${formatPriceWithCurrency(cafeteria.mealTicketPrice ?? 0)}`}
         />
-        {cafeteria.isPackagingAvailable && (
-          <InfoRow icon="📦" label="포장 가능" />
-        )}
+        {cafeteria.takeoutAvailable && <InfoRow icon="📦" label="포장 가능" />}
+        {cafeteria.phone && <InfoRow icon="📞" label={cafeteria.phone} />}
       </VStack>
     </VStack>
   );
 };
 
-interface LocationInfoProps {
-  address: string;
-}
+type LocationInfoProps = {
+  cafeteria: CafeteriaInfoDTO;
+};
 
-const LocationInfo = ({ address }: LocationInfoProps) => {
+const LocationInfo = ({ cafeteria }: LocationInfoProps) => {
+  const hasCoordinates = cafeteria.latitude && cafeteria.longitude;
+
   return (
     <VStack gap={12}>
       <Title fontSize="t3" colorShade={800}>
@@ -78,18 +80,18 @@ const LocationInfo = ({ address }: LocationInfoProps) => {
       <VStack gap={12}>
         <Box height={180} borderRadius="lg" className={styles.mapPlaceholder}>
           <Body fontSize="b3" colorShade={500}>
-            지도 들어갈 자리
+            {hasCoordinates
+              ? `지도 (${cafeteria.latitude}, ${cafeteria.longitude})`
+              : "위치 정보 없음"}
           </Body>
         </Box>
         <VStack
-          gap={4}
+          gap={8}
           padding={16}
           borderRadius="md"
           className={styles.infoSection}
         >
-          <Body fontSize="b3" colorShade={700}>
-            {address}
-          </Body>
+          <InfoRow icon="📍" label={cafeteria.address || "주소 정보 없음"} />
         </VStack>
       </VStack>
     </VStack>

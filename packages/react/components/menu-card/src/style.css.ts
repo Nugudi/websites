@@ -1,13 +1,27 @@
 import { classes, vars } from "@nugudi/themes";
-import { style } from "@vanilla-extract/css";
+import { style, styleVariants } from "@vanilla-extract/css";
 
-export const menuCardWrapper = style({
-  backgroundColor: vars.colors.$static.light.color.white,
+const baseMenuCard = style({
   borderRadius: vars.box.radii.xl,
-  border: `1px solid ${vars.colors.$scale.zinc[100]}`,
   padding: "16px",
   boxSizing: "border-box",
   width: "100%",
+  border: `1px solid ${vars.colors.$scale.zinc[100]}`,
+});
+
+export const menuCardWrapper = styleVariants({
+  default: [
+    baseMenuCard,
+    {
+      backgroundColor: vars.colors.$static.light.color.white,
+    },
+  ],
+  subtle: [
+    baseMenuCard,
+    {
+      backgroundColor: vars.colors.$scale.zinc[50],
+    },
+  ],
 });
 
 export const menuCardHeader = style({

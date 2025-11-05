@@ -3,7 +3,6 @@ import {
   BreadIcon,
   EtcIcon,
   MajorDishIcon,
-  NoodleIcon,
   PicklesIcon,
   RiceIcon,
   SoupIcon,
@@ -28,10 +27,6 @@ export const CATEGORY_CONFIG: Record<
     Icon: RiceIcon,
     label: "밥류",
   },
-  NOODLE: {
-    Icon: NoodleIcon,
-    label: "면류",
-  },
   SOUP: {
     Icon: SoupIcon,
     label: "국/탕/찌개",
@@ -48,20 +43,20 @@ export const CATEGORY_CONFIG: Record<
     Icon: PicklesIcon,
     label: "김치 절임류",
   },
-  BREAD_SANDWICH: {
-    Icon: BreadIcon,
-    label: "빵토스트샌드위치",
-  },
-  SALAD_FRUIT: {
+  SALAD: {
     Icon: AppleIcon,
-    label: "샐러드 / 과일",
+    label: "샐러드",
+  },
+  DESSERT: {
+    Icon: BreadIcon,
+    label: "디저트",
   },
   DRINK: {
     Icon: TeaIcon,
-    label: "음료 후식류",
+    label: "음료",
   },
-  OTHER: {
+  SPECIAL: {
     Icon: EtcIcon,
-    label: "기타",
+    label: "특별 메뉴",
   },
 };

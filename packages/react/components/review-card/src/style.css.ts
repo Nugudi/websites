@@ -14,5 +14,27 @@ export const imageStyle = style({
   aspectRatio: "16/9",
   objectFit: "cover",
   display: "block",
-  borderRadius: vars.box.radii.xl,
+  borderRadius: vars.box.radii["2xl"],
+});
+
+export const rightIconContainer = style({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  width: "20px",
+  height: "20px",
+  overflow: "hidden",
+  flexShrink: 0,
+});
+
+export const badgeScrollContainer = style({
+  display: "flex",
+  gap: "4px",
+  overflowX: "auto",
+  scrollbarWidth: "none",
+  selectors: {
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
+  },
 });

@@ -12,20 +12,17 @@ type Cafeteria = {
 
 // api 연결 후 삭제
 export const MOCK_MENU_ITEMS: MenuItem[] = [
+  // 밥류
   { name: "백미밥", category: "RICE" },
   { name: "잡곡밥", category: "RICE" },
   { name: "현미밥", category: "RICE" },
   { name: "김치볶음밥", category: "RICE" },
 
-  // 면류
-  { name: "잔치국수", category: "NOODLE" },
-  { name: "비빔냉면", category: "NOODLE" },
-  { name: "우동", category: "NOODLE" },
-
   // 국/탕/찌개
   { name: "김치찌개", category: "SOUP" },
   { name: "된장찌개", category: "SOUP" },
   { name: "갈비탕", category: "SOUP" },
+  { name: "우동", category: "SOUP" },
 
   // 주요 반찬
   { name: "제육볶음", category: "MAIN_DISH" },
@@ -42,22 +39,24 @@ export const MOCK_MENU_ITEMS: MenuItem[] = [
   { name: "깍두기", category: "KIMCHI" },
   { name: "오이소박이", category: "KIMCHI" },
 
-  // 빵토스트샌드위치
-  { name: "크로와상", category: "BREAD_SANDWICH" },
-  { name: "햄치즈샌드위치", category: "BREAD_SANDWICH" },
-  { name: "베이글", category: "BREAD_SANDWICH" },
+  // 샐러드
+  { name: "그린샐러드", category: "SALAD" },
+  { name: "과일샐러드", category: "SALAD" },
 
-  // 샐러드/과일
-  { name: "그린샐러드", category: "SALAD_FRUIT" },
-  { name: "과일샐러드", category: "SALAD_FRUIT" },
+  // 디저트
+  { name: "크로와상", category: "DESSERT" },
+  { name: "베이글", category: "DESSERT" },
+  { name: "케이크", category: "DESSERT" },
 
-  // 음료 후식류
+  // 음료
   { name: "아메리카노", category: "DRINK" },
   { name: "요거트", category: "DRINK" },
   { name: "식혜", category: "DRINK" },
 
-  // 기타
-  { name: "견과류", category: "OTHER" },
+  // 특별 메뉴
+  { name: "잔치국수", category: "SPECIAL" },
+  { name: "비빔냉면", category: "SPECIAL" },
+  { name: "견과류", category: "SPECIAL" },
 ];
 
 export const MOCK_CAFETERIA_LIST: Cafeteria[] = [

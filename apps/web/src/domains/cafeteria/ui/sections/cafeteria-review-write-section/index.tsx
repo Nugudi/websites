@@ -15,7 +15,7 @@ interface CafeteriaReviewWriteSectionProps {
 }
 
 export const CafeteriaReviewWriteSection = ({
-  cafeteriaId,
+  cafeteriaId: _cafeteriaId,
 }: CafeteriaReviewWriteSectionProps) => {
   const {
     control,
@@ -41,7 +41,6 @@ export const CafeteriaReviewWriteSection = ({
   };
 
   const onSubmit = async (_data: ReviewFormData) => {
-    // TODO: API 호출 구현
     await new Promise((resolve) => setTimeout(resolve, 1000));
   };
 

@@ -7,6 +7,10 @@ export interface Badge {
 
 export interface ReviewCardProps
   extends Omit<ComponentPropsWithoutRef<"div">, "onClick"> {
+  // User information
+  username: string;
+  userLevel: number;
+
   // Optional props for next Image
   imageUrl?: string;
   imageAs?: React.ElementType;
@@ -14,5 +18,8 @@ export interface ReviewCardProps
   date: string;
   reviewText: string;
   badges?: Badge[];
+
+  // Actions
   onClick?: () => void;
+  rightIcon?: React.ReactNode;
 }

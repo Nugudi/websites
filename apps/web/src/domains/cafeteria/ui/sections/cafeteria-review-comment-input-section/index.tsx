@@ -49,7 +49,6 @@ export const CafeteriaReviewCommentInputSection = ({
       align="center"
       gap={8}
       w="100%"
-      p={16}
       className={styles.inputWrapper}
     >
       {replyingTo && (

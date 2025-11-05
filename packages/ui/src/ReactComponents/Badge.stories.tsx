@@ -47,7 +47,7 @@ const meta: Meta<typeof _Badge> = {
     },
     size: {
       control: "select",
-      options: ["sm", "md", "lg"],
+      options: ["xs", "sm", "md", "lg"],
       description: "Badge 크기",
       table: {
         type: { summary: "BadgeSize" },
@@ -207,6 +207,9 @@ export const PurpleTone: Story = {
 export const Sizes: Story = {
   render: () => (
     <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+      <_Badge size="xs" tone="positive">
+        라벨
+      </_Badge>
       <_Badge size="sm" tone="positive">
         라벨
       </_Badge>

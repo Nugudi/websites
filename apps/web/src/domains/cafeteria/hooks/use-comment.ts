@@ -36,18 +36,21 @@ export const useCommentReply = () => {
   /**
    * 답글 작성 모드를 취소
    */
-  const handleCancelReply = () => {
+  const handleCancelReply = useCallback(() => {
     setReplyingTo(null);
-  };
+  }, []);
 
   /**
    * 특정 댓글이 현재 답글 작성 대상인지 확인
    * @param {string} commentId - 확인할 댓글 ID
    * @returns {boolean} 답글 작성 대상 여부
    */
-  const isCommentSelectedForReply = (commentId: string) => {
-    return replyingTo?.commentId === commentId;
-  };
+  const isCommentSelectedForReply = useCallback(
+    (commentId: string) => {
+      return replyingTo?.commentId === commentId;
+    },
+    [replyingTo?.commentId],
+  );
 
   return {
     replyingTo,

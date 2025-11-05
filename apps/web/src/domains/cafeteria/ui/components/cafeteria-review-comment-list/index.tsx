@@ -1,13 +1,15 @@
 "use client";
 
 import { Avatar } from "@nugudi/react-components-avatar";
+import { Button } from "@nugudi/react-components-button";
 import { Comment } from "@nugudi/react-components-comment";
 import { VStack } from "@nugudi/react-components-layout";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import type {
   CafeteriaReviewCommentData,
   CafeteriaReviewReplyingTo,
 } from "../../../features/cafeteria-review-comment";
+import * as styles from "./index.css";
 
 interface CafeteriaReviewCommentListProps {
   comments: CafeteriaReviewCommentData[];
@@ -21,7 +23,7 @@ export const CafeteriaReviewCommentList = ({
   onReplyClick,
 }: CafeteriaReviewCommentListProps) => {
   return (
-    <VStack>
+    <VStack gap={16}>
       {comments.map((comment) => (
         <CafeteriaReviewCommentItem
           key={comment.id}
@@ -47,11 +49,19 @@ const CafeteriaReviewCommentItem = ({
   onReplyClick,
   isReply = false,
 }: CafeteriaReviewCommentItemProps) => {
+  const [showReplies, setShowReplies] = useState(false);
   const isSelectedForReply = !isReply && replyingTo?.commentId === comment.id;
 
   const handleReplyClick = useCallback(() => {
     onReplyClick?.(comment.id, comment.username);
   }, [onReplyClick, comment.id, comment.username]);
+
+  const handleToggleReplies = () => {
+    setShowReplies(!showReplies);
+  };
+
+  const replies = comment.replies || [];
+  const hasReplies = replies.length > 0;
 
   return (
     <Comment
@@ -65,14 +75,28 @@ const CafeteriaReviewCommentItem = ({
       isHighlighted={isSelectedForReply}
       isReply={isReply}
     >
-      {comment.replies?.map((reply) => (
-        <CafeteriaReviewCommentItem
-          key={reply.id}
-          comment={reply}
-          replyingTo={null}
-          isReply={true}
-        />
-      ))}
+      {hasReplies && !isReply && (
+        <Button
+          size="sm"
+          className={styles.showRepliesButton}
+          onClick={handleToggleReplies}
+        >
+          {showReplies ? "답글 숨기기" : `답글 보기(${replies.length}개)`}
+        </Button>
+      )}
+
+      {showReplies && (
+        <VStack gap={16}>
+          {replies.map((reply) => (
+            <CafeteriaReviewCommentItem
+              key={reply.id}
+              comment={reply}
+              replyingTo={null}
+              isReply={true}
+            />
+          ))}
+        </VStack>
+      )}
     </Comment>
   );
 };

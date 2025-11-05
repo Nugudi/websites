@@ -8,6 +8,6 @@ export const backdropStyle = style({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  zIndex: 1000,
+  zIndex: 10000,
   transition: "opacity 0.3s ease",
 });
