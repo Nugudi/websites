@@ -6,8 +6,8 @@
  */
 
 import { createAuthServerContainer as createNewAuthServerContainer } from "@/src/domains/auth/di/auth-container";
-import { UserRepositoryImpl } from "@/src/domains/user/repositories/user-repository";
-import { UserServiceImpl } from "@/src/domains/user/services/user-service";
+import { UserRepositoryImpl } from "@/src/domains/user/data/repositories/user-repository";
+import { UserServiceImpl } from "@/src/domains/user/data/services/user-service";
 import {
   AuthenticatedHttpClient,
   FetchHttpClient,

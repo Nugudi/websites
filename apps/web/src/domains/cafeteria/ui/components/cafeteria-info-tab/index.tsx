@@ -8,7 +8,7 @@ import {
   Title,
   VStack,
 } from "@nugudi/react-components-layout";
-import { formatPriceWithCurrency } from "@/src/domains/user/utils/format-points";
+import { formatPriceWithCurrency } from "@/src/domains/user/presentation/utils/format-points";
 import { getMockCafeteriaData } from "../../../mocks/cafeteria-mock-data";
 import type { CafeteriaInfoDTO } from "../../../types";
 import { getFullBusinessHours } from "../../../utils";

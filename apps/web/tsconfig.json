@@ -33,7 +33,11 @@
       ],
       "@notification/presentation": [
         "./src/domains/notification/presentation/index.ts"
-      ]
+      ],
+      "@user/data/*": ["./src/domains/user/data/*"],
+      "@user/data": ["./src/domains/user/data/index.ts"],
+      "@user/presentation/*": ["./src/domains/user/presentation/*"],
+      "@user/presentation": ["./src/domains/user/presentation/index.ts"]
     },
     "plugins": [{ "name": "next" }]
   },

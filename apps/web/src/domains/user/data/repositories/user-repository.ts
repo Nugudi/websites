@@ -10,10 +10,6 @@ type CheckNicknameAvailabilityResponse =
 type CheckNicknameAvailabilityParams =
   paths["/api/v1/users/nickname/availability"]["get"]["parameters"]["query"];
 
-export type UserProfileData = NonNullable<
-  NonNullable<GetMyProfileResponse>["data"]
->;
-
 export interface UserRepository {
   getMyProfile(): Promise<GetMyProfileResponse>;
   checkNicknameAvailability(

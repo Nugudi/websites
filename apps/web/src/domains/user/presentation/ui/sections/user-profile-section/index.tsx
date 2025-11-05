@@ -7,7 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { userProfileQueryClient } from "@/src/domains/user/hooks/queries/user-profile.query";
+import { userProfileQueryClient } from "@/src/domains/user/presentation/hooks/queries/user-profile.query";
 import * as styles from "./index.css";
 
 // Main Section Component (with boundaries)

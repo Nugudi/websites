@@ -1,7 +1,5 @@
-import type {
-  UserProfileData,
-  UserRepository,
-} from "../repositories/user-repository";
+import type { UserProfileData } from "../../presentation/types/user.type";
+import type { UserRepository } from "../repositories/user-repository";
 
 export interface NicknameAvailabilityResult {
   available: boolean;
