@@ -107,7 +107,7 @@ export default async function middleware(request: NextRequest) {
 
       // RefreshTokenService로 즉시 갱신 (Middleware는 Cookie 수정 가능)
       const refreshTokenService = container.getRefreshTokenService();
-      const result = await refreshTokenService.refresh();
+      const result = await refreshTokenService.execute();
 
       if (!result.success) {
         logger.warn("Preventive refresh failed, redirecting to login", {

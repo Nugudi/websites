@@ -1,5 +1,12 @@
-import { AuthRepositoryImpl } from "@/src/domains/auth/repositories/auth-repository";
-import { AuthServiceImpl } from "@/src/domains/auth/services/auth-service";
+/**
+ * DEPRECATED: Use @/src/domains/auth/di/auth-container instead
+ *
+ * This file provides backward compatibility for existing code.
+ * New code should use the new Clean Architecture DI container.
+ */
+
+// IMPORTANT: Use dynamic import to avoid bundling server-only code in client
+// import { getAuthClientContainer as getNewAuthClientContainer } from "@/src/domains/auth/di/auth-container";
 import { UserRepositoryImpl } from "@/src/domains/user/repositories/user-repository";
 import { UserServiceImpl } from "@/src/domains/user/services/user-service";
 import {
@@ -12,7 +19,7 @@ import { ClientSessionManager } from "@/src/shared/infrastructure/storage/client
 class AuthClientContainer {
   private static instance: AuthClientContainer;
 
-  private _authService?: AuthServiceImpl;
+  private _authService?: any; // Legacy compatibility
   private _userService?: UserServiceImpl;
   private _authenticatedHttpClient?: AuthenticatedHttpClient;
   private _sessionManager?: ClientSessionManager;
@@ -68,13 +75,22 @@ class AuthClientContainer {
     return this._authenticatedHttpClient;
   }
 
-  getAuthService(): AuthServiceImpl {
+  async getAuthService(): Promise<any> {
     if (!this._authService) {
-      const authenticatedClient = this.getAuthenticatedHttpClient();
-      const sessionManager = this.getSessionManager();
-      const authRepository = new AuthRepositoryImpl(authenticatedClient);
+      // Use dynamic import to avoid bundling server-only code in client
+      const { getAuthClientContainer } = await import(
+        "@/src/domains/auth/di/auth-client-container"
+      );
+      const newContainer = getAuthClientContainer();
 
-      this._authService = new AuthServiceImpl(authRepository, sessionManager);
+      // Wrap UseCases in a service-like interface for backward compatibility
+      this._authService = {
+        loginWithOAuth: newContainer.getLoginWithOAuth(),
+        logout: newContainer.getLogout(),
+        refreshToken: newContainer.getRefreshToken(),
+        signUpWithSocial: newContainer.getSignUpWithSocial(),
+        getCurrentSession: newContainer.getCurrentSession(),
+      };
     }
 
     return this._authService;

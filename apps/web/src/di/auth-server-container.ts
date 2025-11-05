@@ -1,8 +1,11 @@
-import { AuthRepositoryImpl } from "@/src/domains/auth/repositories/auth-repository";
-import {
-  AuthServiceImpl,
-  RefreshTokenService,
-} from "@/src/domains/auth/services";
+/**
+ * DEPRECATED: Use @/src/domains/auth/di/auth-container instead
+ *
+ * This file provides backward compatibility for existing code.
+ * New code should use the new Clean Architecture DI container.
+ */
+
+import { createAuthServerContainer as createNewAuthServerContainer } from "@/src/domains/auth/di/auth-container";
 import { UserRepositoryImpl } from "@/src/domains/user/repositories/user-repository";
 import { UserServiceImpl } from "@/src/domains/user/services/user-service";
 import {
@@ -13,11 +16,11 @@ import {
 import { ServerSessionManager } from "@/src/shared/infrastructure/storage/server-session-manager";
 
 class AuthServerContainer {
-  private _authService?: AuthServiceImpl;
+  private _authService?: any; // Legacy compatibility
   private _userService?: UserServiceImpl;
   private _authenticatedHttpClient?: AuthenticatedHttpClient;
   private _sessionManager?: ServerSessionManager;
-  private _refreshTokenService?: RefreshTokenService;
+  private _refreshTokenService?: any; // Legacy compatibility
 
   /**
    * AuthenticatedHttpClient 획득 (Server-side)
@@ -58,13 +61,26 @@ class AuthServerContainer {
     return this._sessionManager;
   }
 
-  getAuthService(): AuthServiceImpl {
+  getAuthService(): any {
     if (!this._authService) {
-      const authenticatedClient = this.getAuthenticatedHttpClient();
-      const sessionManager = this.getSessionManager();
-      const authRepository = new AuthRepositoryImpl(authenticatedClient);
+      // Create new Clean Architecture container for auth
+      const newContainer = createNewAuthServerContainer();
 
-      this._authService = new AuthServiceImpl(authRepository, sessionManager);
+      // Wrap UseCases in a service-like interface for backward compatibility
+      this._authService = {
+        loginWithOAuth: (provider: string, code: string, redirectUri: string) =>
+          newContainer
+            .getLoginWithOAuth()
+            .execute({ provider: provider as any, code, redirectUri }),
+        logout: () => newContainer.getLogout().execute(),
+        refreshToken: () => newContainer.getRefreshToken().execute(),
+        signUpWithSocial: newContainer.getSignUpWithSocial(),
+        getCurrentSession: () => newContainer.getCurrentSession().execute(),
+        getOAuthAuthorizeUrl: (provider: string, redirectUri: string) =>
+          newContainer
+            .getOAuthAuthorizeUrl()
+            .execute(provider as any, redirectUri),
+      };
     }
 
     return this._authService;
@@ -83,19 +99,16 @@ class AuthServerContainer {
   /**
    * RefreshTokenService 획득 (BFF 전용)
    *
-   * BFF Route에서만 사용
-   * - AuthenticatedHttpClient를 우회하여 무한 루프 방지
-   * - Spring API를 직접 호출
+   * DEPRECATED: Use new Clean Architecture RefreshToken UseCase instead
    */
-  getRefreshTokenService(): RefreshTokenService {
+  getRefreshTokenService(): any {
     if (!this._refreshTokenService) {
-      const sessionManager = this.getSessionManager();
-      const springApiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+      const newContainer = createNewAuthServerContainer();
 
-      this._refreshTokenService = new RefreshTokenService(
-        sessionManager,
-        springApiUrl,
-      );
+      // Wrap RefreshToken UseCase for backward compatibility
+      this._refreshTokenService = {
+        execute: () => newContainer.getRefreshToken().execute(),
+      };
     }
 
     return this._refreshTokenService;

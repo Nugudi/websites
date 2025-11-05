@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { createAuthServerContainer } from "@/src/di/auth-server-container";
-import { handleAuthError } from "@/src/domains/auth/utils/error-handler";
+import { handleAuthError } from "@/src/domains/auth/data/utils/error-handler";
 
 /**
  * 소셜 회원가입 완료 후 세션 설정 API
