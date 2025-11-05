@@ -27,7 +27,13 @@
       "@benefit/ui/*": ["./src/domains/benefit/ui/*"],
       "@benefit/ui": ["./src/domains/benefit/ui/index.ts"],
       "@stamp/presentation/*": ["./src/domains/stamp/presentation/*"],
-      "@stamp/presentation": ["./src/domains/stamp/presentation/index.ts"]
+      "@stamp/presentation": ["./src/domains/stamp/presentation/index.ts"],
+      "@notification/presentation/*": [
+        "./src/domains/notification/presentation/*"
+      ],
+      "@notification/presentation": [
+        "./src/domains/notification/presentation/index.ts"
+      ]
     },
     "plugins": [{ "name": "next" }]
   },

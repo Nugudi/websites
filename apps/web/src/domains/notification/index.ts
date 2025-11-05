@@ -2,4 +2,4 @@
  * Notification Domain Public API
  */
 
-export * from "./types";
+export * from "./presentation/types";
