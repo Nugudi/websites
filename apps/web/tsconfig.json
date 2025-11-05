@@ -22,8 +22,8 @@
       "@auth/infrastructure": ["./src/domains/auth/infrastructure/index.ts"],
       "@auth/di/*": ["./src/domains/auth/di/*"],
       "@auth/di": ["./src/domains/auth/di/index.ts"],
-      "@auth/ui/*": ["./src/domains/auth/ui/*"],
-      "@auth/ui": ["./src/domains/auth/ui/index.ts"],
+      "@auth/presentation/*": ["./src/domains/auth/presentation/*"],
+      "@auth/presentation": ["./src/domains/auth/presentation/index.ts"],
       "@benefit/ui/*": ["./src/domains/benefit/ui/*"],
       "@benefit/ui": ["./src/domains/benefit/ui/index.ts"]
     },

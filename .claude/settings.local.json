@@ -33,7 +33,11 @@
       "Bash(git commit:*)",
       "Bash(if [ -d \"src/domains/auth/infrastructure\" ])",
       "Bash(then find src/domains/auth/infrastructure -type f)",
-      "Bash(else echo \"Infrastructure directory does not exist\")"
+      "Bash(else echo \"Infrastructure directory does not exist\")",
+      "Bash(git checkout:*)",
+      "Bash(git mv:*)",
+      "Bash(for folder in sections components views constants hooks stores types)",
+      "Bash(do git mv src/domains/auth/ui/$folder src/domains/auth/presentation/ui/$folder)"
     ],
     "deny": [],
     "ask": []
