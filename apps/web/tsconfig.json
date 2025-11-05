@@ -11,7 +11,19 @@
       "@interface-adapters/*": ["./src/interface-adapters/*"],
       "@shared/*": ["./src/shared/*"],
       "@shared/interface-adapters/*": ["./src/shared/interface-adapters/*"],
-      "@shared/infrastructure/*": ["./src/shared/infrastructure/*"]
+      "@shared/infrastructure/*": ["./src/shared/infrastructure/*"],
+      "@auth/core/*": ["./src/domains/auth/core/*"],
+      "@auth/core": ["./src/domains/auth/core/index.ts"],
+      "@auth/domain/*": ["./src/domains/auth/domain/*"],
+      "@auth/domain": ["./src/domains/auth/domain/index.ts"],
+      "@auth/data/*": ["./src/domains/auth/data/*"],
+      "@auth/data": ["./src/domains/auth/data/index.ts"],
+      "@auth/infrastructure/*": ["./src/domains/auth/infrastructure/*"],
+      "@auth/infrastructure": ["./src/domains/auth/infrastructure/index.ts"],
+      "@auth/di/*": ["./src/domains/auth/di/*"],
+      "@auth/di": ["./src/domains/auth/di/index.ts"],
+      "@auth/ui/*": ["./src/domains/auth/ui/*"],
+      "@auth/ui": ["./src/domains/auth/ui/index.ts"]
     },
     "plugins": [{ "name": "next" }]
   },
