@@ -1,11 +1,25 @@
-import type {
-  BusinessHoursDTO,
-  CafeteriaInfoDTO,
-  LocalTime,
-  TimeRangeDTO,
-} from "../types";
+export type Time = {
+  hour?: number;
+  minute?: number;
+  second?: number;
+  nano?: number;
+};
 
-type BusinessPeriod = keyof Pick<BusinessHoursDTO, "lunch" | "dinner">;
+export type TimeRange = {
+  start?: Time;
+  end?: Time;
+};
+
+export type BusinessHours = {
+  lunch?: TimeRange;
+  dinner?: TimeRange;
+};
+
+export type CafeteriaForBusinessHours = {
+  businessHours?: BusinessHours;
+};
+
+type BusinessPeriod = "lunch" | "dinner";
 
 const BUSINESS_PERIOD_LABELS: Record<BusinessPeriod, string> = {
   lunch: "점심",
@@ -14,7 +28,7 @@ const BUSINESS_PERIOD_LABELS: Record<BusinessPeriod, string> = {
 
 const EMPTY_BUSINESS_HOURS_MESSAGE = "영업시간 정보 없음";
 
-const formatTime = (time?: LocalTime): string => {
+const formatTime = (time?: Time): string => {
   if (!time || time.hour === undefined || time.minute === undefined) {
     return "";
   }
@@ -24,12 +38,12 @@ const formatTime = (time?: LocalTime): string => {
 };
 
 const isValidTimeRange = (
-  range?: TimeRangeDTO,
-): range is Required<TimeRangeDTO> => {
+  range?: TimeRange,
+): range is { start: Time; end: Time } => {
   return Boolean(range?.start && range?.end);
 };
 
-const formatTimeRange = (start: LocalTime, end: LocalTime): string => {
+const formatTimeRange = (start: Time, end: Time): string => {
   const startTime = formatTime(start);
   const endTime = formatTime(end);
   return `${startTime} - ${endTime}`;
@@ -37,7 +51,7 @@ const formatTimeRange = (start: LocalTime, end: LocalTime): string => {
 
 const formatBusinessPeriod = (
   period: BusinessPeriod,
-  range?: TimeRangeDTO,
+  range?: TimeRange,
 ): string | null => {
   if (!isValidTimeRange(range)) {
     return null;
@@ -49,10 +63,12 @@ const formatBusinessPeriod = (
 
 /**
  * 식당의 영업시간 정보를 포맷팅하여 반환
- * @param cafeteria - 식당 정보 (CafeteriaInfoDTO)
- * @returns 포맷팅된 영업시간 문자열 (예: "점심 11:00 - 14:00& 저녁 17:00 - 20:00"), 영업시간 정보가 없는 경우 "영업시간 정보 없음" 반환
+ * @param cafeteria - 식당 정보 (최소한의 businessHours 필드만 필요)
+ * @returns 포맷팅된 영업시간 문자열 (예: "점심 11:00 - 14:00 & 저녁 17:00 - 20:00"), 영업시간 정보가 없는 경우 "영업시간 정보 없음" 반환
  */
-export const getFullBusinessHours = (cafeteria?: CafeteriaInfoDTO): string => {
+export const getFullBusinessHours = (
+  cafeteria?: CafeteriaForBusinessHours,
+): string => {
   if (!cafeteria?.businessHours) {
     return EMPTY_BUSINESS_HOURS_MESSAGE;
   }
