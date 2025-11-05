@@ -25,7 +25,15 @@
       "Bash(else)",
       "Bash(fi)",
       "Bash(for pkg in avatar backdrop badge bottom-sheet button chip comment image-card input-otp input layout menu-card navigation-item review-card step-indicator switch tab textarea)",
-      "Bash(do echo \"=== $pkg ===\")"
+      "Bash(do echo \"=== $pkg ===\")",
+      "mcp__chrome-devtools__list_pages",
+      "Bash(npx tsc:*)",
+      "Bash(xargs kill:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(if [ -d \"src/domains/auth/infrastructure\" ])",
+      "Bash(then find src/domains/auth/infrastructure -type f)",
+      "Bash(else echo \"Infrastructure directory does not exist\")"
     ],
     "deny": [],
     "ask": []

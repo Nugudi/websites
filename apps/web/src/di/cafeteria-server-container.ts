@@ -12,7 +12,10 @@
  * const service = container.getCafeteriaService();
  */
 
-import { RefreshTokenService } from "@/src/domains/auth/services";
+// DEPRECATED: RefreshTokenService replaced by RefreshToken UseCase in Clean Architecture
+// For backward compatibility, we'll create a wrapper if needed
+// import { RefreshTokenService } from "@/src/domains/auth/services";
+import { createAuthServerContainer } from "@/src/domains/auth/di/auth-container";
 import {
   CafeteriaRepositoryImpl,
   CafeteriaReviewRepositoryImpl,
@@ -35,7 +38,7 @@ class CafeteriaServerContainer {
   private _reviewService?: CafeteriaReviewServiceImpl;
   private _authenticatedHttpClient?: AuthenticatedHttpClient;
   private _sessionManager?: ServerSessionManager;
-  private _refreshTokenService?: RefreshTokenService;
+  private _refreshTokenService?: any; // Legacy compatibility wrapper
 
   /**
    * SessionManager 획득 (Server-side)
@@ -49,19 +52,19 @@ class CafeteriaServerContainer {
   }
 
   /**
-   * RefreshTokenService 획득
+   * RefreshTokenService 획득 (Backward compatibility wrapper)
    *
    * SSR Prefetch 시 사용
+   * DEPRECATED: Use RefreshToken UseCase from Clean Architecture instead
    */
-  getRefreshTokenService(): RefreshTokenService {
+  getRefreshTokenService(): any {
     if (!this._refreshTokenService) {
-      const sessionManager = this.getSessionManager();
-      const springApiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+      const authContainer = createAuthServerContainer();
 
-      this._refreshTokenService = new RefreshTokenService(
-        sessionManager,
-        springApiUrl,
-      );
+      // Wrap RefreshToken UseCase to match old RefreshTokenService interface
+      this._refreshTokenService = {
+        execute: () => authContainer.getRefreshToken().execute(),
+      };
     }
 
     return this._refreshTokenService;

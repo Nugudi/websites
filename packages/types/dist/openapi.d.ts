@@ -1275,7 +1275,7 @@ export interface components {
              * @example 요청이 성공적으로 처리되었습니다
              */
             message: string;
-            data?: components["schemas"]["CreateReviewResponse"];
+            data: components["schemas"]["CreateReviewResponse"];
         };
         /** @description 리뷰 댓글 작성 요청 */
         CreateReviewCommentRequest: {
@@ -1350,7 +1350,7 @@ export interface components {
              * @example 요청이 성공적으로 처리되었습니다
              */
             message: string;
-            data?: components["schemas"]["CreateReviewCommentResponse"];
+            data: components["schemas"]["CreateReviewCommentResponse"];
         };
         /** @description 소셜 계정 회원가입 요청 */
         SignUpSocialRequest: {
@@ -1469,7 +1469,7 @@ export interface components {
              * @example 요청이 성공적으로 처리되었습니다
              */
             message: string;
-            data?: components["schemas"]["SocialSignUpResponse"];
+            data: components["schemas"]["SocialSignUpResponse"];
         };
         /** @description 일반 회원가입 요청 정보 */
         SignUpLocalRequest: {
@@ -1559,7 +1559,7 @@ export interface components {
              * @example 요청이 성공적으로 처리되었습니다
              */
             message: string;
-            data?: components["schemas"]["LocalSignUpResponse"];
+            data: components["schemas"]["LocalSignUpResponse"];
         };
         /** @description JWT 토큰 갱신 응답 */
         RefreshTokenResponse: {
@@ -1606,7 +1606,7 @@ export interface components {
              * @example 요청이 성공적으로 처리되었습니다
              */
             message: string;
-            data?: components["schemas"]["RefreshTokenResponse"];
+            data: components["schemas"]["RefreshTokenResponse"];
         };
         /** @description 로그아웃 응답 */
         LogoutResponse: {
@@ -1638,7 +1638,7 @@ export interface components {
              * @example 요청이 성공적으로 처리되었습니다
              */
             message: string;
-            data?: components["schemas"]["LogoutResponse"];
+            data: components["schemas"]["LogoutResponse"];
         };
         /** @description 네이버 소셜 로그인 요청 */
         NaverLoginRequest: {
@@ -1736,7 +1736,7 @@ export interface components {
              * @example 요청이 성공적으로 처리되었습니다
              */
             message: string;
-            data?: components["schemas"]["SocialLoginResponse"];
+            data: components["schemas"]["SocialLoginResponse"];
         };
         /** @description 일반 로그인 요청 */
         LocalLoginRequest: {
@@ -1818,7 +1818,7 @@ export interface components {
              * @example 요청이 성공적으로 처리되었습니다
              */
             message: string;
-            data?: components["schemas"]["LocalLoginResponse"];
+            data: components["schemas"]["LocalLoginResponse"];
         };
         /** @description 카카오 소셜 로그인 요청 */
         KakaoLoginRequest: {
@@ -1897,7 +1897,7 @@ export interface components {
              * @example 요청이 성공적으로 처리되었습니다
              */
             message: string;
-            data?: components["schemas"]["EmailVerifyResponse"];
+            data: components["schemas"]["EmailVerifyResponse"];
         };
         /** @description 이메일 인증 코드 발송 요청 */
         EmailVerificationRequest: {
@@ -1944,7 +1944,7 @@ export interface components {
              * @example 요청이 성공적으로 처리되었습니다
              */
             message: string;
-            data?: components["schemas"]["EmailVerificationResponse"];
+            data: components["schemas"]["EmailVerificationResponse"];
         };
         /** @description 구내식당 영업시간 정보 */
         BusinessHoursRequest: {
@@ -2145,7 +2145,7 @@ export interface components {
              * @example 요청이 성공적으로 처리되었습니다
              */
             message: string;
-            data?: components["schemas"]["RegisterCafeteriaResponse"];
+            data: components["schemas"]["RegisterCafeteriaResponse"];
         };
         /** @description 메뉴 항목 정보 */
         MenuItemDTO: {
@@ -2284,7 +2284,7 @@ export interface components {
              * @example 요청이 성공적으로 처리되었습니다
              */
             message: string;
-            data?: components["schemas"]["RegisterCafeteriaMenuResponse"];
+            data: components["schemas"]["RegisterCafeteriaMenuResponse"];
         };
         /** @description 리뷰 댓글 수정 요청 */
         UpdateReviewCommentRequest: {
@@ -2316,7 +2316,7 @@ export interface components {
              * @example 요청이 성공적으로 처리되었습니다
              */
             message: string;
-            data?: components["schemas"]["UpdateReviewCommentResponse"];
+            data: components["schemas"]["UpdateReviewCommentResponse"];
         };
         /** @description 리뷰 댓글 수정 응답 */
         UpdateReviewCommentResponse: {
@@ -2395,7 +2395,7 @@ export interface components {
              * @example 요청이 성공적으로 처리되었습니다
              */
             message: string;
-            data?: components["schemas"]["NicknameCheckResponse"];
+            data: components["schemas"]["NicknameCheckResponse"];
         };
         /** @description 내 프로필 조회 응답 */
         GetMyProfileResponse: {
@@ -2439,7 +2439,7 @@ export interface components {
              * @example 요청이 성공적으로 처리되었습니다
              */
             message: string;
-            data?: components["schemas"]["GetMyProfileResponse"];
+            data: components["schemas"]["GetMyProfileResponse"];
         };
         /** @description 사용자 계정 정보 */
         UserAccountDTO: {
@@ -2815,7 +2815,7 @@ export interface components {
              * @example 요청이 성공적으로 처리되었습니다
              */
             message: string;
-            data?: components["schemas"]["GetCafeteriaResponse"];
+            data: components["schemas"]["GetCafeteriaResponse"];
         };
         /** @description 구내식당 정보 */
         CafeteriaInfo: {
@@ -2967,7 +2967,7 @@ export interface components {
              * @example 요청이 성공적으로 처리되었습니다
              */
             message: string;
-            data?: components["schemas"]["GetCafeteriaMenuResponse"];
+            data: components["schemas"]["GetCafeteriaMenuResponse"];
         };
         /** @description 특정 구내식당의 식단표 타임라인 조회 (무한 스크롤) */
         GetCafeteriaMenuTimelineResponse: {
@@ -3070,7 +3070,7 @@ export interface components {
              * @example 요청이 성공적으로 처리되었습니다
              */
             message: string;
-            data?: components["schemas"]["GetCafeteriaMenuAvailabilityResponse"];
+            data: components["schemas"]["GetCafeteriaMenuAvailabilityResponse"];
         };
         /** @description 네이버 OAuth 인가 URL 조회 응답 */
         GetNaverAuthorizeResponse: {
@@ -3102,7 +3102,7 @@ export interface components {
              * @example 요청이 성공적으로 처리되었습니다
              */
             message: string;
-            data?: components["schemas"]["GetNaverAuthorizeResponse"];
+            data: components["schemas"]["GetNaverAuthorizeResponse"];
         };
         /** @description 카카오 OAuth 인가 URL 조회 응답 */
         GetKakaoAuthorizeResponse: {
@@ -3134,7 +3134,7 @@ export interface components {
              * @example 요청이 성공적으로 처리되었습니다
              */
             message: string;
-            data?: components["schemas"]["GetKakaoAuthorizeResponse"];
+            data: components["schemas"]["GetKakaoAuthorizeResponse"];
         };
         /** @description 구글 OAuth 인가 URL 조회 응답 */
         GetGoogleAuthorizeResponse: {
@@ -3166,7 +3166,7 @@ export interface components {
              * @example 요청이 성공적으로 처리되었습니다
              */
             message: string;
-            data?: components["schemas"]["GetGoogleAuthorizeResponse"];
+            data: components["schemas"]["GetGoogleAuthorizeResponse"];
         };
         /** @description 리뷰 댓글 삭제 응답 */
         DeleteReviewCommentResponse: {
@@ -3199,7 +3199,7 @@ export interface components {
              * @example 요청이 성공적으로 처리되었습니다
              */
             message: string;
-            data?: components["schemas"]["DeleteReviewCommentResponse"];
+            data: components["schemas"]["DeleteReviewCommentResponse"];
         };
     };
     responses: never;
