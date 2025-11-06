@@ -51,4 +51,9 @@ export interface SessionManager {
    * Refresh Token 조회
    */
   getRefreshToken(): Promise<string | null>;
+
+  /**
+   * User ID 조회
+   */
+  getUserId(): Promise<string | null>;
 }

@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { createAuthServerContainer } from "@/src/di/auth-server-container";
 import { handleAuthError } from "@/src/domains/auth/data/utils/error-handler";
 import { state } from "@/src/domains/auth/data/utils/url";
+import { createAuthServerContainer } from "@/src/domains/auth/di/auth-server-container";
 import { logger } from "@/src/shared/infrastructure/logging/logger";
 
 type OAuthProvider = "google" | "kakao" | "naver";
@@ -54,13 +54,13 @@ const handler = async (
     });
 
     const container = createAuthServerContainer();
-    const authService = container.getAuthService();
+    const loginWithOAuthUseCase = container.getLoginWithOAuth();
 
-    const result = await authService.loginWithOAuth(
-      providerType,
+    const result = await loginWithOAuthUseCase.execute({
+      provider: providerType,
       code,
       redirectUri,
-    );
+    });
 
     logger.info("OAuth login result", {
       type: result.type,
@@ -76,8 +76,8 @@ const handler = async (
         : new URL("/", request.url);
 
       logger.info("Redirecting existing user", {
-        userId: result.userId,
-        nickname: result.nickname,
+        userId: result.user.userId,
+        name: result.user.name,
         targetUrl: targetUrl.toString(),
       });
 

@@ -1,4 +1,4 @@
-import { authClientContainer } from "@/src/di/auth-client-container";
+import { userClientContainer } from "@/src/domains/user/di/user-client-container";
 import { USER_PROFILE_QUERY_KEY } from "../../constants/query-keys";
 
 const USER_PROFILE_QUERY_OPTIONS = {
@@ -17,7 +17,7 @@ const baseUserProfileQuery = {
 export const userProfileQueryClient = {
   ...baseUserProfileQuery,
   queryFn: () => {
-    const userService = authClientContainer.getUserService();
-    return userService.getMyProfile();
+    const getMyProfileUseCase = userClientContainer.getGetMyProfile();
+    return getMyProfileUseCase.execute();
   },
 } as const;

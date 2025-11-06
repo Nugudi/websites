@@ -11,6 +11,13 @@ import type { SessionManager } from "../interfaces/session-manager.interface";
 import type { AuthRepository } from "../repositories/auth-repository";
 
 /**
+ * RefreshToken 결과 타입
+ */
+export type RefreshTokenResult =
+  | { success: true; accessToken: string }
+  | { success: false };
+
+/**
  * RefreshToken UseCase
  */
 export class RefreshToken {
@@ -21,16 +28,20 @@ export class RefreshToken {
 
   /**
    * UseCase 실행
-   * @returns 갱신 성공 여부
+   * @returns 갱신 성공 여부 및 새로운 accessToken
    */
-  async execute(): Promise<boolean> {
+  async execute(): Promise<RefreshTokenResult> {
     try {
-      // 1. 현재 세션 가져오기
-      const currentSession = await this.sessionManager.getSession();
+      // 1. Refresh Token과 User ID 가져오기
+      // NOTE: getSession() 대신 개별 메서드 사용
+      // - getSession()은 accessToken이 없으면 null 반환
+      // - 토큰 갱신 시에는 refreshToken과 userId만 필요
+      const refreshToken = await this.sessionManager.getRefreshToken();
+      const userId = await this.sessionManager.getUserId();
 
-      if (!currentSession?.refreshToken) {
-        // 세션이 없거나 refresh token이 없으면 실패
-        return false;
+      if (!refreshToken || !userId) {
+        // refresh token이나 userId가 없으면 실패
+        return { success: false };
       }
 
       // 2. 디바이스 ID 가져오기
@@ -38,21 +49,28 @@ export class RefreshToken {
 
       // 3. 토큰 갱신 요청 (Repository)
       const newSession = await this.authRepository.refreshToken({
-        refreshToken: currentSession.refreshToken,
+        refreshToken,
         deviceId,
       });
 
+      const accessToken = newSession.accessToken;
+
       // 4. 새 세션 저장 (SessionManager)
       await this.sessionManager.saveSession({
-        accessToken: newSession.accessToken,
+        accessToken,
         refreshToken: newSession.refreshToken,
-        userId: currentSession.userId,
+        userId,
       });
 
-      return true;
+      return { success: true, accessToken };
     } catch (error) {
-      // 토큰 갱신 실패 시 세션 클리어
-      await this.sessionManager.clearSession();
+      // 에러 타입에 따라 세션 클리어 여부 결정
+      const shouldClearSession = this.shouldClearSessionOnError(error);
+
+      if (shouldClearSession) {
+        // 토큰이 무효한 경우에만 세션 클리어 (401, 403)
+        await this.sessionManager.clearSession();
+      }
 
       throw this.handleError(error);
     }
@@ -67,6 +85,32 @@ export class RefreshToken {
     return session.willExpireSoon(
       SESSION_CONFIG.TOKEN_REFRESH_THRESHOLD_MINUTES,
     );
+  }
+
+  /**
+   * 에러 발생 시 세션을 클리어해야 하는지 판단
+   *
+   * - 401/403: 토큰이 무효하거나 만료됨 → 세션 클리어 필요
+   * - 네트워크/서버 에러: 일시적 오류일 수 있음 → 세션 유지
+   */
+  private shouldClearSessionOnError(error: unknown): boolean {
+    // HttpError의 status 코드 확인 (FetchHttpClient에서 발생)
+    if (error && typeof error === "object" && "status" in error) {
+      const status = (error as { status: number }).status;
+      // 401: Unauthorized, 403: Forbidden → 토큰 무효
+      return status === 401 || status === 403;
+    }
+
+    // AuthError의 코드 확인
+    if (error instanceof AuthError) {
+      // 특정 에러 코드만 세션 클리어
+      const clearCodes = ["TOKEN_EXPIRED", "INVALID_TOKEN", "UNAUTHORIZED"];
+      return error.code ? clearCodes.includes(error.code) : false;
+    }
+
+    // 기타 에러 (네트워크, 타임아웃 등)는 세션 유지
+    // 사용자가 재시도할 수 있도록
+    return false;
   }
 
   /**

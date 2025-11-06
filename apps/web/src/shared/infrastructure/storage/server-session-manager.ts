@@ -162,6 +162,14 @@ export class ServerSessionManager implements SessionManager {
   }
 
   /**
+   * User ID 조회
+   */
+  async getUserId(): Promise<string | null> {
+    const cookieStore = await cookies();
+    return cookieStore.get(USER_ID_COOKIE)?.value ?? null;
+  }
+
+  /**
    * UUID v4 생성 (crypto.randomUUID 사용)
    */
   private generateDeviceId(): string {

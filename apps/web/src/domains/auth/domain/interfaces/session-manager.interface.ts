@@ -37,4 +37,14 @@ export interface SessionManager {
    * 디바이스 ID 가져오기
    */
   getDeviceId(): Promise<string>;
+
+  /**
+   * Refresh Token 가져오기
+   */
+  getRefreshToken(): Promise<string | null>;
+
+  /**
+   * User ID 가져오기
+   */
+  getUserId(): Promise<string | null>;
 }

@@ -1,16 +1,17 @@
 /**
- * DI Container Module
+ * DEPRECATED: This directory is DEPRECATED
  *
- * 의존성 주입 컨테이너 모듈 Export
+ * The deprecated auth containers have been removed.
+ * Use the new Clean Architecture DI containers directly from domain directories:
  *
- * ⚠️ IMPORTANT: Client와 Server Container를 barrel export하면
- * 서버 전용 코드(next/headers)가 클라이언트 번들에 포함됩니다.
- * 따라서 각 파일을 직접 import해야 합니다:
+ * Recommended imports:
+ * - Auth Client: import { getAuthClientContainer } from "@/src/domains/auth/di/auth-client-container"
+ * - Auth Server: import { createAuthServerContainer } from "@/src/domains/auth/di/auth-server-container"
+ * - User Client: import { userClientContainer } from "@/src/domains/user/di/user-client-container"
+ * - User Server: import { createUserServerContainer } from "@/src/domains/user/di/user-server-container"
+ * - Cafeteria Client: import { getCafeteriaClientContainer } from "@/src/domains/cafeteria/di/cafeteria-client-container"
+ * - Cafeteria Server: import { createCafeteriaServerContainer } from "@/src/domains/cafeteria/di/cafeteria-server-container"
  *
- * - Client: import { authClientContainer } from "@/src/di/auth-client-container"
- * - Server: import { createAuthServerContainer } from "@/src/di/auth-server-container"
+ * All code now uses UseCase-based Clean Architecture DI containers.
+ * Services have been replaced with UseCases following Clean Architecture principles.
  */
-
-// ❌ DO NOT use barrel export here - it causes server code to be bundled in client
-// export * from "./auth-client-container";
-// export * from "./auth-server-container";

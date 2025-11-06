@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { createAuthServerContainer } from "@/src/di/auth-server-container";
+import { createAuthServerContainer } from "@/src/domains/auth/di/auth-server-container";
 import { logger } from "@/src/shared/infrastructure/logging/logger";
 
 const PUBLIC_PATHS = ["/auth", "/api/auth"];
@@ -64,7 +64,21 @@ function redirectToLogin(request: NextRequest): NextResponse {
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const container = createAuthServerContainer();
+  // Edge Runtime에서 명시적으로 API URL 전달 (환경변수가 비어있으면 에러 발생)
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  if (!apiUrl) {
+    logger.error(
+      "[Middleware] NEXT_PUBLIC_API_URL is not set. Cannot proceed with authentication.",
+      { pathname },
+    );
+    throw new Error(
+      "NEXT_PUBLIC_API_URL environment variable is required for middleware to function. " +
+        "Please check your .env file.",
+    );
+  }
+
+  const container = createAuthServerContainer(apiUrl);
   const sessionManager = container.getSessionManager();
   const refreshToken = await sessionManager.getRefreshToken();
 
@@ -105,14 +119,26 @@ export default async function middleware(request: NextRequest) {
         pathname,
       });
 
-      // RefreshTokenService로 즉시 갱신 (Middleware는 Cookie 수정 가능)
-      const refreshTokenService = container.getRefreshTokenService();
-      const result = await refreshTokenService.execute();
+      // RefreshToken UseCase로 즉시 갱신 (Middleware는 Cookie 수정 가능)
+      const refreshTokenUseCase = container.getRefreshToken();
+      let refreshResult:
+        | { success: true; accessToken: string }
+        | { success: false };
 
-      if (!result.success) {
+      try {
+        refreshResult = await refreshTokenUseCase.execute();
+      } catch (error) {
+        logger.error("Token refresh failed in middleware", {
+          pathname,
+          error: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined,
+        });
+        refreshResult = { success: false };
+      }
+
+      if (!refreshResult.success) {
         logger.warn("Preventive refresh failed, redirecting to login", {
           pathname,
-          error: result.error,
         });
 
         // Issue #4 해결: 무효한 토큰 삭제하여 무한 루프 방지
@@ -132,8 +158,8 @@ export default async function middleware(request: NextRequest) {
         pathname,
       });
 
-      // 갱신된 Token을 다시 조회 (Cookie에 저장됨)
-      accessToken = await sessionManager.getAccessToken();
+      // ✅ FIX: UseCase에서 반환받은 accessToken 사용 (Cookie 스냅샷 문제 해결)
+      accessToken = refreshResult.accessToken;
     }
 
     // Access Token이 준비되었으므로 SSR Prefetch 진행

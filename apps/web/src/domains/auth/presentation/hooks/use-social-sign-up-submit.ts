@@ -6,7 +6,7 @@
 
 import { useMutation } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
-import { authClientContainer } from "@/src/di/auth-client-container";
+import { getAuthClientContainer } from "@/src/domains/auth/di/auth-client-container";
 import type { SocialSignUpAgreementSchema } from "../schemas/social-sign-up-schema";
 import { useSocialSignUpStore } from "../stores/use-social-sign-up-store";
 
@@ -27,9 +27,10 @@ export function useSocialSignUpSubmit() {
         throw new Error("Nickname is required");
       }
 
-      const authService = await authClientContainer.getAuthService();
+      const authContainer = getAuthClientContainer();
+      const signUpWithSocialUseCase = authContainer.getSignUpWithSocial();
 
-      await authService.signUpWithSocial.execute({
+      await signUpWithSocialUseCase.execute({
         registrationToken,
         userData: {
           nickname,

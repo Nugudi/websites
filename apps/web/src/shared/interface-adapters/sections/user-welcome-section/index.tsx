@@ -64,9 +64,9 @@ const UserWelcomeSectionContent = () => {
   // UserService를 통해 비즈니스 로직이 처리되고 자동으로 인증 토큰이 주입됩니다
   const { data: profileData } = useSuspenseQuery(userProfileQueryClient);
 
-  // UserService가 반환하는 데이터 구조: { profile, account, health }
-  const nickname = profileData.profile?.nickname ?? "손님";
-  const profileImageUrl = profileData.profile?.profileImageUrl;
+  // UserProfile entity structure (flat)
+  const nickname = profileData.nickname ?? "손님";
+  const profileImageUrl = profileData.profileImageUrl;
 
   return (
     <Box borderRadius="xl" className={styles.container}>

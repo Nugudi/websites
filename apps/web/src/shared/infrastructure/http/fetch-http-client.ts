@@ -141,6 +141,17 @@ export class FetchHttpClient implements HttpClient {
     if (url.startsWith("http://") || url.startsWith("https://")) {
       fullUrl = url;
     } else {
+      // Edge Runtime 또는 다른 환경에서 baseUrl이 비어있는 경우 명확한 에러 발생
+      if (!this.baseUrl || this.baseUrl.trim() === "") {
+        throw new HttpError(
+          `Cannot build absolute URL: baseUrl is empty and relative URL "${url}" was provided. ` +
+            `This often happens in Next.js Edge Runtime (middleware) when NEXT_PUBLIC_API_URL is not set. ` +
+            `Please ensure the environment variable is properly configured.`,
+          0,
+          { url, baseUrl: this.baseUrl },
+        );
+      }
+
       const base = this.baseUrl.endsWith("/")
         ? this.baseUrl.slice(0, -1)
         : this.baseUrl;

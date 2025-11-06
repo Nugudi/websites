@@ -1,4 +1,4 @@
-import { createAuthServerContainer } from "@/src/di/auth-server-container";
+import { createUserServerContainer } from "@/src/domains/user/di/user-server-container";
 import { USER_PROFILE_QUERY_KEY } from "../../constants/query-keys";
 
 export const userProfileQueryServer = {
@@ -9,9 +9,9 @@ export const userProfileQueryServer = {
   refetchOnMount: false,
   refetchOnReconnect: false,
   queryFn: async () => {
-    const container = createAuthServerContainer();
-    const userService = container.getUserService();
+    const userContainer = createUserServerContainer();
+    const getMyProfileUseCase = userContainer.getGetMyProfile();
 
-    return userService.getMyProfile();
+    return getMyProfileUseCase.execute();
   },
 } as const;

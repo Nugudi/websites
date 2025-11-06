@@ -40,7 +40,7 @@ class AuthClientContainer {
       baseClient,
       tokenProvider,
       sessionManager, // Client-side: provide session manager for localStorage sync
-      undefined, // RefreshTokenService not needed (uses BFF)
+      undefined, // Client-side: BFF 사용 (RefreshTokenService 불필요)
     );
 
     // Data Layer

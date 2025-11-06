@@ -67,9 +67,9 @@ const UserProfileSectionContent = () => {
   // Page에서 prefetch한 데이터를 동일한 query로 조회
   const { data: profileData } = useSuspenseQuery(userProfileQueryClient);
 
-  // UserService가 반환하는 데이터 구조: { profile, account, health }
-  const nickname = profileData.profile?.nickname ?? "손님";
-  const profileImageUrl = profileData.profile?.profileImageUrl;
+  // UserProfile entity structure (flat)
+  const nickname = profileData.nickname ?? "손님";
+  const profileImageUrl = profileData.profileImageUrl;
 
   return (
     <Flex className={styles.container}>

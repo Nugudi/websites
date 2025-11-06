@@ -95,5 +95,6 @@ export async function refreshToken(): Promise<boolean> {
   const container = createAuthServerContainer();
   const refreshTokenUseCase = container.getRefreshToken();
 
-  return await refreshTokenUseCase.execute();
+  const result = await refreshTokenUseCase.execute();
+  return result.success;
 }

@@ -1,5 +1,5 @@
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { CafeteriaHomeView } from "@/src/domains/cafeteria/ui/views/cafeteria-home-view";
+import { CafeteriaHomeView } from "@/src/domains/cafeteria/presentation/ui/views/cafeteria-home-view";
 import { userProfileQueryServer } from "@/src/domains/user/presentation/hooks/queries/user-profile.query.server";
 import getQueryClient from "@/src/shared/infrastructure/configs/tanstack-query/get-query-client";
 

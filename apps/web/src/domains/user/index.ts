@@ -4,8 +4,10 @@
  * 공개 API만 export합니다.
  */
 
-// Data Layer
-export * from "./data";
+// DI Containers
+export * from "./di";
+// Domain Layer (Entities, UseCases, Repository Interfaces)
+export * from "./domain";
 
 // Presentation Layer
 export * from "./presentation";

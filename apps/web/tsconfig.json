@@ -37,7 +37,19 @@
       "@user/data/*": ["./src/domains/user/data/*"],
       "@user/data": ["./src/domains/user/data/index.ts"],
       "@user/presentation/*": ["./src/domains/user/presentation/*"],
-      "@user/presentation": ["./src/domains/user/presentation/index.ts"]
+      "@user/presentation": ["./src/domains/user/presentation/index.ts"],
+      "@cafeteria/core/*": ["./src/domains/cafeteria/core/*"],
+      "@cafeteria/core": ["./src/domains/cafeteria/core/index.ts"],
+      "@cafeteria/domain/*": ["./src/domains/cafeteria/domain/*"],
+      "@cafeteria/domain": ["./src/domains/cafeteria/domain/index.ts"],
+      "@cafeteria/data/*": ["./src/domains/cafeteria/data/*"],
+      "@cafeteria/data": ["./src/domains/cafeteria/data/index.ts"],
+      "@cafeteria/di/*": ["./src/domains/cafeteria/di/*"],
+      "@cafeteria/di": ["./src/domains/cafeteria/di/index.ts"],
+      "@cafeteria/presentation/*": ["./src/domains/cafeteria/presentation/*"],
+      "@cafeteria/presentation": [
+        "./src/domains/cafeteria/presentation/index.ts"
+      ]
     },
     "plugins": [{ "name": "next" }]
   },

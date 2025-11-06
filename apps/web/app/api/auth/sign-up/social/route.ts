@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { createAuthServerContainer } from "@/src/di/auth-server-container";
 import { handleAuthError } from "@/src/domains/auth/data/utils/error-handler";
+import { createAuthServerContainer } from "@/src/domains/auth/di/auth-server-container";
 
 /**
  * 소셜 회원가입 완료 후 세션 설정 API
@@ -24,10 +24,10 @@ export async function POST(request: NextRequest) {
     }
 
     const container = createAuthServerContainer();
-    const authService = container.getAuthService();
+    const sessionManager = container.getSessionManager();
 
     // 세션 저장 (Token + userId)
-    await authService.sessionManager.saveSession({
+    await sessionManager.saveSession({
       accessToken,
       refreshToken,
       userId,
