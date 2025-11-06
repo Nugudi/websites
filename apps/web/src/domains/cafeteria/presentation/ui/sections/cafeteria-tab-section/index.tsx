@@ -1,7 +1,8 @@
 "use client";
 
 import { Tabs } from "@nugudi/react-components-tab";
-import { getMockCafeteriaData } from "../../../../data/utils/cafeteria-mock-data";
+import { useQuery } from "@tanstack/react-query";
+import { getCafeteriaClientContainer } from "../../../../di/cafeteria-client-container";
 import { CafeteriaInfoTab } from "../../components/cafeteria-info-tab";
 import { CafeteriaMenuTab } from "../../components/cafeteria-menu-tab";
 
@@ -12,9 +13,25 @@ interface CafeteriaTabSectionProps {
 export const CafeteriaTabSection = ({
   cafeteriaId,
 }: CafeteriaTabSectionProps) => {
-  const cafeteriaData = getMockCafeteriaData();
+  const container = getCafeteriaClientContainer();
+  const getCafeteriaByIdUseCase = container.getGetCafeteriaById();
 
-  if (!cafeteriaData || !cafeteriaData.cafeteria) {
+  const {
+    data: cafeteria,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["cafeteria", "detail", cafeteriaId],
+    queryFn: () => getCafeteriaByIdUseCase.execute(cafeteriaId),
+    staleTime: 5 * 60 * 1000, // 5분
+    gcTime: 30 * 60 * 1000, // 30분
+  });
+
+  if (isLoading) {
+    return <div>Loading tabs...</div>;
+  }
+
+  if (isError || !cafeteria) {
     return null;
   }
 
@@ -26,14 +43,11 @@ export const CafeteriaTabSection = ({
       </Tabs.List>
 
       <Tabs.Panel value="info">
-        <CafeteriaInfoTab cafeteriaId={cafeteriaId} />
+        <CafeteriaInfoTab cafeteria={cafeteria} />
       </Tabs.Panel>
 
       <Tabs.Panel value="menu">
-        <CafeteriaMenuTab
-          cafeteria={cafeteriaData.cafeteria}
-          cafeteriaId={cafeteriaId}
-        />
+        <CafeteriaMenuTab cafeteria={cafeteria} cafeteriaId={cafeteriaId} />
       </Tabs.Panel>
     </Tabs>
   );

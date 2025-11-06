@@ -93,9 +93,9 @@ Next.js 16 route groups organize pages by authentication requirements:
 ```typescript
 // app/(auth)/benefits/page.tsx - Server Component by default
 import { getQueryClient } from '@/src/shared/infrastructure/configs/tanstack-query';
-import { createBenefitServerContainer } from '@/src/di';
+import { createBenefitServerContainer } from '@/src/domains/benefit/di';  // 🆕 Per-domain DI Container
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
-import { BenefitPageView } from '@/src/domains/benefit/ui/views/benefit-page-view';
+import { BenefitPageView } from '@/src/domains/benefit/presentation/views/benefit-page-view';
 
 const BenefitsPage = async ({ searchParams }) => {
   const queryClient = getQueryClient();
@@ -131,9 +131,9 @@ export default BenefitsPage; // Pages use default export
 ```typescript
 // app/(auth)/cafeterias/[cafeteriaId]/page.tsx
 import { getQueryClient } from '@/src/shared/infrastructure/configs/tanstack-query';
-import { createCafeteriaServerContainer } from '@/src/di';
+import { createCafeteriaServerContainer } from '@/src/domains/cafeteria/di';  // 🆕 Per-domain DI Container
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
-import { CafeteriaDetailView } from '@/src/domains/cafeteria/detail/ui/views/cafeteria-detail-view';
+import { CafeteriaDetailView } from '@/src/domains/cafeteria/detail/presentation/views/cafeteria-detail-view';
 
 interface PageProps {
   params: { cafeteriaId: string };
@@ -171,7 +171,7 @@ export default CafeteriaDetailPage;
 ```typescript
 // app/(auth)/cafeterias/[cafeteriaId]/page.tsx
 import { Metadata } from 'next';
-import { createCafeteriaServerContainer } from '@/src/di';
+import { createCafeteriaServerContainer } from '@/src/domains/cafeteria/di';  // 🆕 Per-domain DI Container
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   // 🆕 Server Container로 UseCase 획득

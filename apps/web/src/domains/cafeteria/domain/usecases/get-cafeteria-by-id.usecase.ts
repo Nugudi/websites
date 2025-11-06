@@ -4,14 +4,14 @@
  * 구내식당 상세 정보를 조회하는 비즈니스 로직
  */
 
-import type { GetCafeteriaResponse } from "../../data/dto";
+import type { Cafeteria } from "../entities";
 import type { CafeteriaRepository } from "../repositories";
 
 /**
  * Get Cafeteria By Id UseCase
  */
 export interface GetCafeteriaByIdUseCase {
-  execute(id: string): Promise<GetCafeteriaResponse>;
+  execute(id: string): Promise<Cafeteria>;
 }
 
 /**
@@ -23,13 +23,10 @@ export class GetCafeteriaByIdUseCaseImpl implements GetCafeteriaByIdUseCase {
   /**
    * UseCase 실행
    */
-  async execute(id: string): Promise<GetCafeteriaResponse> {
-    const response = await this.repository.getCafeteriaById(id);
+  async execute(id: string): Promise<Cafeteria> {
+    // Repository now returns Cafeteria entity directly
+    const cafeteria = await this.repository.getCafeteriaById(id);
 
-    if (!response || !response.cafeteria) {
-      throw new Error("Cafeteria not found");
-    }
-
-    return response;
+    return cafeteria;
   }
 }

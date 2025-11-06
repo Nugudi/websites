@@ -8,14 +8,9 @@
  */
 
 import { AuthError } from "../../core/errors/auth-error";
-import type {
-  DeviceInfo,
-  OAuthProvider,
-  SignUpData,
-} from "../../core/types/common";
+import type { DeviceInfo, SignUpData } from "../../core/types/common";
 import type { Session } from "../../domain/entities/session.entity";
 import type { User } from "../../domain/entities/user.entity";
-import { UserEntity } from "../../domain/entities/user.entity";
 import type {
   AuthRepository,
   LoginResult,
@@ -70,14 +65,8 @@ export class AuthRepositoryImpl implements AuthRepository {
       });
 
       if (dto.type === "EXISTING_USER") {
-        const user = new UserEntity({
-          userId: dto.userId,
-          email: dto.email ?? undefined, // Convert null to undefined for Entity
-          name: dto.name,
-          provider: "google" as OAuthProvider,
-          profileImageUrl: dto.profileImageUrl,
-          createdAt: undefined,
-        });
+        // Mapper를 사용한 DTO → Entity 변환
+        const user = UserMapper.existingUserLoginToDomain(dto, "google");
 
         const session = SessionMapper.toDomain({
           accessToken: dto.accessToken,
@@ -118,14 +107,8 @@ export class AuthRepositoryImpl implements AuthRepository {
       });
 
       if (dto.type === "EXISTING_USER") {
-        const user = new UserEntity({
-          userId: dto.userId,
-          email: dto.email ?? undefined, // Convert null to undefined for Entity
-          name: dto.name,
-          provider: "kakao" as OAuthProvider,
-          profileImageUrl: dto.profileImageUrl,
-          createdAt: undefined,
-        });
+        // Mapper를 사용한 DTO → Entity 변환
+        const user = UserMapper.existingUserLoginToDomain(dto, "kakao");
 
         const session = SessionMapper.toDomain({
           accessToken: dto.accessToken,
@@ -166,14 +149,8 @@ export class AuthRepositoryImpl implements AuthRepository {
       });
 
       if (dto.type === "EXISTING_USER") {
-        const user = new UserEntity({
-          userId: dto.userId,
-          email: dto.email ?? undefined, // Convert null to undefined for Entity
-          name: dto.name,
-          provider: "naver" as OAuthProvider,
-          profileImageUrl: dto.profileImageUrl,
-          createdAt: undefined,
-        });
+        // Mapper를 사용한 DTO → Entity 변환
+        const user = UserMapper.existingUserLoginToDomain(dto, "naver");
 
         const session = SessionMapper.toDomain({
           accessToken: dto.accessToken,

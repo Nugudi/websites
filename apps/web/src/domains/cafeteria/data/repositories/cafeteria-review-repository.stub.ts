@@ -1,16 +1,18 @@
+import type { PageInfo } from "@shared/domain/entities";
 import type {
-  CreateReviewCommentRequest,
-  CreateReviewCommentResponse,
-  CreateReviewRequest,
-  CreateReviewResponse,
-  // DeleteReviewCommentResponse, // TODO: OpenAPI 타입 추가되면 활성화
-  GetReviewCommentResponse,
-  PageInfo,
-  // ReplyInfo, // TODO: OpenAPI 타입 추가되면 활성화
-  // UpdateReviewCommentRequest, // TODO: OpenAPI 타입 추가되면 활성화
-  // UpdateReviewCommentResponse, // TODO: OpenAPI 타입 추가되면 활성화
-} from "../dto";
-import type { CafeteriaReviewRepository } from "./cafeteria-review-repository";
+  CreateReviewCommentRequest as CreateReviewCommentRequestEntity,
+  CreateReviewRequest as CreateReviewRequestEntity,
+  Review,
+  ReviewComment,
+  ReviewCommentWithMetadata,
+} from "../../domain/entities";
+import type { CafeteriaReviewRepository } from "../../domain/repositories";
+import type { CreateReviewCommentResponse, CreateReviewResponse } from "../dto";
+import {
+  createReviewCommentResponseToDomain,
+  createReviewResponseToDomain,
+  pageInfoDtoToDomain,
+} from "../mappers";
 
 /**
  * Cafeteria Review Repository Stub
@@ -18,13 +20,14 @@ import type { CafeteriaReviewRepository } from "./cafeteria-review-repository";
  * Mock 데이터를 반환하는 Review Repository Stub 구현
  * - 환경 변수 NEXT_PUBLIC_USE_MOCK=true일 때 사용
  * - HttpClient 없이 동작하며 실제 API 호출하지 않음
+ * - Mock DTO를 생성한 후 Mapper로 Entity 변환
  */
 export class CafeteriaReviewRepositoryStub
   implements CafeteriaReviewRepository
 {
-  async createReview(data: CreateReviewRequest): Promise<CreateReviewResponse> {
-    // TODO: Phase 4 - Replace with proper mock data
-    return {
+  async createReview(data: CreateReviewRequestEntity): Promise<Review> {
+    // Mock DTO 생성
+    const mockResponse: CreateReviewResponse = {
       reviewId: Date.now(),
       restaurantId: data.restaurantId,
       reviewDate: data.reviewDate,
@@ -35,6 +38,9 @@ export class CafeteriaReviewRepositoryStub
       likeCount: 0,
       createdAt: new Date().toISOString(),
     };
+
+    // Mapper로 Entity 변환
+    return createReviewResponseToDomain(mockResponse);
   }
 
   async getReviewComments(
@@ -44,17 +50,20 @@ export class CafeteriaReviewRepositoryStub
       size?: number;
     },
   ): Promise<{
-    data: GetReviewCommentResponse[];
+    data: ReviewCommentWithMetadata[];
     pageInfo: PageInfo;
   }> {
-    // TODO: Phase 4 - Replace with proper mock data
+    // Mock DTO 생성
+    const mockPageInfo = {
+      nextCursor: null,
+      size: 0,
+      hasNext: false,
+    };
+
+    // Mapper로 Entity 변환
     return {
       data: [],
-      pageInfo: {
-        nextCursor: null,
-        size: 0,
-        hasNext: false,
-      },
+      pageInfo: pageInfoDtoToDomain(mockPageInfo),
     };
   }
 
@@ -83,10 +92,10 @@ export class CafeteriaReviewRepositoryStub
 
   async createReviewComment(
     reviewId: string,
-    data: CreateReviewCommentRequest,
-  ): Promise<CreateReviewCommentResponse> {
-    // TODO: Phase 4 - Replace with proper mock data
-    return {
+    data: CreateReviewCommentRequestEntity,
+  ): Promise<ReviewComment> {
+    // Mock DTO 생성
+    const mockResponse: CreateReviewCommentResponse = {
       commentId: Date.now(),
       reviewId: Number(reviewId),
       parentCommentId: data.parentCommentId ?? null,
@@ -94,15 +103,18 @@ export class CafeteriaReviewRepositoryStub
       commentStatus: "ACTIVE",
       createdAt: new Date().toISOString(),
     };
+
+    // Mapper로 Entity 변환
+    return createReviewCommentResponseToDomain(mockResponse);
   }
 
   async createReviewCommentReply(
     reviewId: string,
     commentId: string,
-    data: CreateReviewCommentRequest,
-  ): Promise<CreateReviewCommentResponse> {
-    // TODO: Phase 4 - Replace with proper mock data
-    return {
+    data: CreateReviewCommentRequestEntity,
+  ): Promise<ReviewComment> {
+    // Mock DTO 생성
+    const mockResponse: CreateReviewCommentResponse = {
       commentId: Date.now(),
       reviewId: Number(reviewId),
       parentCommentId: Number(commentId),
@@ -110,6 +122,9 @@ export class CafeteriaReviewRepositoryStub
       commentStatus: "ACTIVE",
       createdAt: new Date().toISOString(),
     };
+
+    // Mapper로 Entity 변환
+    return createReviewCommentResponseToDomain(mockResponse);
   }
 
   // TODO: OpenAPI 타입 추가되면 활성화

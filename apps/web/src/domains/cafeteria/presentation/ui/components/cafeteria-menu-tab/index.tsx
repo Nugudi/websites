@@ -13,16 +13,16 @@ import { MenuCard } from "@nugudi/react-components-menu-card";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import type { CafeteriaInfoDTO } from "../../../../data/dto";
-import {
-  type GetCafeteriaMenuTimelineResponse,
-  getMockMenuData,
-} from "../../../../data/utils/cafeteria-mock-data";
+import type {
+  Cafeteria,
+  CafeteriaMenuTimeline,
+} from "../../../../domain/entities";
+import { useGetCafeteriaMenuTimeline } from "../../../hooks";
 import { getMealTypeTitle } from "../../../utils";
 import * as styles from "./index.css";
 
 type CafeteriaMenuTabProps = {
-  cafeteria: CafeteriaInfoDTO;
+  cafeteria: Cafeteria;
   cafeteriaId: string;
 };
 
@@ -30,7 +30,8 @@ export const CafeteriaMenuTab = ({
   cafeteria,
   cafeteriaId,
 }: CafeteriaMenuTabProps) => {
-  const menuData = getMockMenuData();
+  const { data } = useGetCafeteriaMenuTimeline(cafeteriaId);
+  const menuData = data.data;
 
   return (
     <VStack gap={0} pt={16} pb={24}>
@@ -49,7 +50,7 @@ export const CafeteriaMenuTab = ({
 };
 
 type MenuItemProps = {
-  menu: GetCafeteriaMenuTimelineResponse;
+  menu: CafeteriaMenuTimeline;
   cafeteriaId: string;
 };
 
@@ -65,8 +66,8 @@ const MenuItem = ({ menu, cafeteriaId }: MenuItemProps) => {
       <div className={styles.timelineLine} />
       <div className={styles.circle} />
       <VStack gap={8} grow={1}>
-        <DateHeader date={menu.menuDate || ""} cafeteriaId={cafeteriaId} />
-        {(menu.menus || []).map((menuInfo, index) => {
+        <DateHeader date={menu.menuDate} cafeteriaId={cafeteriaId} />
+        {menu.menus.map((menuInfo, index) => {
           const title = getMealTypeTitle(menuInfo.mealType) || "메뉴";
 
           return (
@@ -74,7 +75,7 @@ const MenuItem = ({ menu, cafeteriaId }: MenuItemProps) => {
               variant="subtle"
               key={`${menu.menuDate}-${index}`}
               title={title}
-              items={menuInfo.menuItems || []}
+              items={menuInfo.menuItems}
             />
           );
         })}
@@ -85,7 +86,7 @@ const MenuItem = ({ menu, cafeteriaId }: MenuItemProps) => {
 
 type ReviewPromptCardProps = {
   cafeteriaId: string;
-  cafeteriaName: NonNullable<CafeteriaInfoDTO["name"]>;
+  cafeteriaName: NonNullable<Cafeteria["name"]>;
 };
 
 const ReviewPromptCard = ({
@@ -131,7 +132,7 @@ const CharacterImage = () => {
 };
 
 type DateHeaderProps = {
-  date: NonNullable<GetCafeteriaMenuTimelineResponse["menuDate"]>;
+  date: CafeteriaMenuTimeline["menuDate"];
   cafeteriaId: string;
 };
 

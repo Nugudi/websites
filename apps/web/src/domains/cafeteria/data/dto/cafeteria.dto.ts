@@ -135,10 +135,18 @@ export type GetCafeteriaMenuResponse =
   components["schemas"]["GetCafeteriaMenuResponse"];
 
 /**
- * TODO: OpenAPI 스키마에 추가되면 활성화
+ * TODO: OpenAPI 스키마에 추가되면 이 임시 타입을 제거하고 아래 주석을 활성화
  * 구내식당 메뉴 타임라인 조회 응답 (리스트 아이템)
  * - 무한 스크롤 타임라인에서 사용
+ *
+ * TEMPORARY: 백엔드 API가 준비될 때까지 사용하는 임시 타입
  */
+export type GetCafeteriaMenuTimelineResponse = {
+  menuDate?: string;
+  menus?: MenuInfoDTO[];
+  reviewCount?: number;
+};
+
 // export type GetCafeteriaMenuTimelineResponse =
 //   components["schemas"]["GetCafeteriaMenuTimelineResponse"];
 

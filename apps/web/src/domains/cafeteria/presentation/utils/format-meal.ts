@@ -1,4 +1,4 @@
-export type MealType = "BREAKFAST" | "LUNCH" | "DINNER";
+import type { MealType } from "../../domain/entities";
 
 const MEAL_TYPES: readonly MealType[] = [
   "BREAKFAST",

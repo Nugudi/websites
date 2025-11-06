@@ -12,3 +12,4 @@
  */
 
 export * from "./cafeteria.mapper";
+export * from "./cafeteria-review.mapper";

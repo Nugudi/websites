@@ -4,7 +4,8 @@
  * 구내식당 리스트와 메뉴를 조회하는 비즈니스 로직 (무한 스크롤)
  */
 
-import type { GetCafeteriaWithMenuResponse, PageInfo } from "../../data/dto";
+import type { PageInfo } from "@shared/domain/entities";
+import type { CafeteriaWithMenu } from "../entities";
 import type { CafeteriaRepository } from "../repositories";
 
 /**
@@ -20,7 +21,7 @@ export interface GetCafeteriasWithMenuParams {
  * UseCase 출력 결과
  */
 export interface GetCafeteriasWithMenuResult {
-  data: GetCafeteriaWithMenuResponse[];
+  data: CafeteriaWithMenu[];
   pageInfo: PageInfo;
 }
 
@@ -47,6 +48,7 @@ export class GetCafeteriasWithMenuUseCaseImpl
   async execute(
     params: GetCafeteriasWithMenuParams,
   ): Promise<GetCafeteriasWithMenuResult> {
+    // Repository now returns entities directly
     return this.repository.getCafeteriasWithMenu(params);
   }
 }

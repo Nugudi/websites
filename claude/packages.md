@@ -1197,6 +1197,326 @@ const form = useForm({
 });
 ```
 
+### Mock Repository Pattern (Domains Without Backend APIs)
+
+For domains that don't have backend APIs yet (Notification, Benefit, Stamp), we use the **Mock Repository Pattern** to enable UI development while maintaining complete DDD architecture.
+
+#### Pattern Overview
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  Mock Repository Pattern (No Backend API Yet)               │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  DTO (snake_case)  ──────────────────┐                     │
+│      ↓                                │                     │
+│  Mapper (bidirectional)               │                     │
+│      ↓                                │                     │
+│  Entity (camelCase)                   │                     │
+│      ↓                                │                     │
+│  Mock DataSource ←───────────────────┘                     │
+│  (Hardcoded data + 100ms delay)                             │
+│      ↓                                                      │
+│  Repository Implementation                                  │
+│      ↓                                                      │
+│  UseCase (Business Logic)                                   │
+│      ↓                                                      │
+│  DI Container (Server/Client)                               │
+│      ↓                                                      │
+│  UI Components                                              │
+│                                                             │
+│  ⚡ When Backend Ready: Replace Mock DataSource            │
+│     with Remote DataSource (API calls)                     │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### Why Mock Repository Pattern?
+
+- ✅ **Enable UI Development**: Frontend development doesn't wait for backend APIs
+- ✅ **Maintain Architecture**: Complete DDD structure from day one
+- ✅ **Type Safety**: Full TypeScript support with DTOs and Entities
+- ✅ **Easy Replacement**: Swap Mock DataSource with Remote DataSource when API is ready
+- ✅ **Testing**: Business logic works with both mock and real data
+- ✅ **Consistent Patterns**: Same DI Container pattern across all domains
+
+#### Implementation Example (Notification Domain)
+
+**Step 1: Define DTO (snake_case - API contract)**
+
+```typescript
+// domains/notification/data/dto/notification.dto.ts
+export interface NotificationDTO {
+  id: string;
+  user_id: string;
+  title: string;
+  message: string;
+  type: "INFO" | "SUCCESS" | "WARNING" | "ERROR";
+  is_read: boolean;
+  created_at: string;
+  read_at?: string;
+}
+
+export interface GetNotificationListResponseDTO {
+  notifications: NotificationDTO[];
+  total_count: number;
+  unread_count: number;
+}
+```
+
+**Step 2: Create Mapper (DTO ↔ Entity conversion)**
+
+```typescript
+// domains/notification/data/mappers/notification.mapper.ts
+import type { NotificationDTO } from "../dto/notification.dto";
+import type { Notification } from "../../domain/entities/notification.entity";
+
+export function notificationDtoToDomain(dto: NotificationDTO): Notification {
+  return {
+    id: dto.id,
+    userId: dto.user_id,
+    title: dto.title,
+    message: dto.message,
+    type: dto.type,
+    isRead: dto.is_read,
+    createdAt: dto.created_at,
+    readAt: dto.read_at,
+  };
+}
+
+export function notificationDtoListToDomain(dtos: NotificationDTO[]): Notification[] {
+  return dtos.map(notificationDtoToDomain);
+}
+```
+
+**Step 3: Implement Mock DataSource**
+
+```typescript
+// domains/notification/data/data-sources/notification-mock-data-source.ts
+const MOCK_NOTIFICATIONS: NotificationDTO[] = [
+  {
+    id: "notif-1",
+    user_id: "user-123",
+    title: "새로운 할인 혜택",
+    message: "학생식당에서 20% 할인 혜택이 추가되었습니다.",
+    type: "INFO",
+    is_read: false,
+    created_at: "2024-01-15T10:00:00Z",
+  },
+  // ... more mock data
+];
+
+export interface NotificationDataSource {
+  getNotificationList(): Promise<GetNotificationListResponseDTO>;
+  markAsRead(notificationId: string): Promise<void>;
+}
+
+export class NotificationMockDataSource implements NotificationDataSource {
+  private notifications: NotificationDTO[] = [...MOCK_NOTIFICATIONS];
+
+  async getNotificationList(): Promise<GetNotificationListResponseDTO> {
+    // Simulate network delay
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const unreadCount = this.notifications.filter((n) => !n.is_read).length;
+    return {
+      notifications: this.notifications,
+      total_count: this.notifications.length,
+      unread_count: unreadCount,
+    };
+  }
+
+  async markAsRead(notificationId: string): Promise<void> {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const notification = this.notifications.find((n) => n.id === notificationId);
+    if (notification) {
+      notification.is_read = true;
+      notification.read_at = new Date().toISOString();
+    }
+  }
+}
+```
+
+**Step 4: Implement Repository**
+
+```typescript
+// domains/notification/data/repositories/notification-repository.impl.ts
+import type { NotificationRepository } from "../../domain/repositories/notification-repository.interface";
+import type { NotificationDataSource } from "../data-sources/notification-mock-data-source";
+import { notificationDtoListToDomain } from "../mappers/notification.mapper";
+
+export class NotificationRepositoryImpl implements NotificationRepository {
+  constructor(private readonly dataSource: NotificationDataSource) {}
+
+  async getNotificationList(): Promise<NotificationList> {
+    const response = await this.dataSource.getNotificationList();
+    const notifications = notificationDtoListToDomain(response.notifications);
+    return {
+      notifications,
+      totalCount: response.total_count,
+      unreadCount: response.unread_count,
+    };
+  }
+
+  async markAsRead(notificationId: string): Promise<void> {
+    await this.dataSource.markAsRead(notificationId);
+  }
+}
+```
+
+**Step 5: Create UseCase**
+
+```typescript
+// domains/notification/domain/usecases/get-notification-list.usecase.ts
+export interface GetNotificationListUseCase {
+  execute(): Promise<NotificationList>;
+}
+
+export class GetNotificationListUseCaseImpl implements GetNotificationListUseCase {
+  constructor(private readonly notificationRepository: NotificationRepository) {}
+
+  async execute(): Promise<NotificationList> {
+    return await this.notificationRepository.getNotificationList();
+  }
+}
+```
+
+**Step 6: Setup DI Containers**
+
+```typescript
+// domains/notification/di/notification-server-container.ts (Server-side)
+export class NotificationServerContainer {
+  private _dataSource?: NotificationMockDataSource;
+  private _repository?: NotificationRepositoryImpl;
+  private _getNotificationListUseCase?: GetNotificationListUseCase;
+
+  private getDataSource(): NotificationMockDataSource {
+    if (!this._dataSource) {
+      this._dataSource = new NotificationMockDataSource();
+    }
+    return this._dataSource;
+  }
+
+  private getRepository(): NotificationRepositoryImpl {
+    if (!this._repository) {
+      this._repository = new NotificationRepositoryImpl(this.getDataSource());
+    }
+    return this._repository;
+  }
+
+  getGetNotificationList(): GetNotificationListUseCase {
+    if (!this._getNotificationListUseCase) {
+      this._getNotificationListUseCase = new GetNotificationListUseCaseImpl(
+        this.getRepository()
+      );
+    }
+    return this._getNotificationListUseCase;
+  }
+}
+
+export function createNotificationServerContainer(): NotificationServerContainer {
+  return new NotificationServerContainer();
+}
+
+// domains/notification/di/notification-client-container.ts (Client-side)
+let clientContainer: NotificationClientContainer | null = null;
+
+export function getNotificationClientContainer(): NotificationClientContainer {
+  if (!clientContainer) {
+    clientContainer = new NotificationClientContainer();
+  }
+  return clientContainer;
+}
+```
+
+**Step 7: Use in Pages and Sections**
+
+```typescript
+// Page (Server-side prefetch)
+import { createNotificationServerContainer } from '@/src/domains/notification/di';
+
+const NotificationPage = async () => {
+  const container = createNotificationServerContainer();
+  const getNotificationListUseCase = container.getGetNotificationList();
+
+  const queryClient = getQueryClient();
+  await queryClient.prefetchQuery({
+    queryKey: ['notifications', 'list'],
+    queryFn: () => getNotificationListUseCase.execute()
+  });
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <NotificationView />
+    </HydrationBoundary>
+  );
+};
+
+// Section (Client-side fetch)
+'use client';
+import { getNotificationClientContainer } from '@/src/domains/notification/di';
+
+const NotificationListSection = () => {
+  const container = getNotificationClientContainer();
+  const getNotificationListUseCase = container.getGetNotificationList();
+
+  const { data } = useSuspenseQuery({
+    queryKey: ['notifications', 'list'],
+    queryFn: () => getNotificationListUseCase.execute()
+  });
+
+  return <NotificationList notifications={data.notifications} />;
+};
+```
+
+#### Replacing Mock with Real API
+
+When the backend API is ready, simply replace the Mock DataSource with a Remote DataSource:
+
+```typescript
+// Before (Mock)
+import { NotificationMockDataSource } from "../data-sources/notification-mock-data-source";
+
+private getDataSource(): NotificationMockDataSource {
+  if (!this._dataSource) {
+    this._dataSource = new NotificationMockDataSource();
+  }
+  return this._dataSource;
+}
+
+// After (Real API)
+import { NotificationRemoteDataSource } from "../data-sources/notification-remote-data-source";
+import { getHttpClient } from "@/src/shared/infrastructure/http-client";
+
+private getDataSource(): NotificationRemoteDataSource {
+  if (!this._dataSource) {
+    this._dataSource = new NotificationRemoteDataSource(getHttpClient());
+  }
+  return this._dataSource;
+}
+
+// Remote DataSource Implementation
+export class NotificationRemoteDataSource implements NotificationDataSource {
+  constructor(private readonly httpClient: HttpClient) {}
+
+  async getNotificationList(): Promise<GetNotificationListResponseDTO> {
+    return await this.httpClient.get<GetNotificationListResponseDTO>(
+      '/api/v1/notifications'
+    );
+  }
+
+  async markAsRead(notificationId: string): Promise<void> {
+    await this.httpClient.patch(`/api/v1/notifications/${notificationId}/read`);
+  }
+}
+```
+
+**Key Benefits of This Approach:**
+- ✅ Only the DI Container needs to change (2-3 lines)
+- ✅ Repository, UseCase, and UI components remain unchanged
+- ✅ Type safety maintained throughout
+- ✅ No breaking changes to existing code
+
 ---
 
 ## 🧹 Code Quality with Biome

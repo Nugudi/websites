@@ -8,6 +8,7 @@
 
 import type { OAuthProvider } from "../../core/types/common";
 import { type User, UserEntity } from "../../domain/entities/user.entity";
+import type { ExistingUserLoginDTO } from "../dto/login-dto";
 import type { UserDTO } from "../dto/user-dto";
 
 /**
@@ -60,6 +61,28 @@ export function userDomainListToDto(entities: User[]): UserDTO[] {
 }
 
 /**
+ * ExistingUserLoginDTO → User Entity 변환
+ * Login 응답에서 받은 유저 정보를 Entity로 변환
+ *
+ * @param dto Login 응답 DTO
+ * @param provider OAuth Provider (google, kakao, naver)
+ * @returns User Entity
+ */
+export function existingUserLoginDtoToDomain(
+  dto: ExistingUserLoginDTO,
+  provider: OAuthProvider,
+): User {
+  return new UserEntity({
+    userId: dto.userId,
+    email: dto.email ?? undefined,
+    name: dto.name,
+    provider,
+    profileImageUrl: dto.profileImageUrl,
+    createdAt: undefined,
+  });
+}
+
+/**
  * Backward compatibility - 기존 코드에서 사용하는 클래스 형태
  */
 export const UserMapper = {
@@ -67,4 +90,5 @@ export const UserMapper = {
   toDTO: userDomainToDto,
   toDomainList: userDtoListToDomain,
   toDTOList: userDomainListToDto,
+  existingUserLoginToDomain: existingUserLoginDtoToDomain,
 };

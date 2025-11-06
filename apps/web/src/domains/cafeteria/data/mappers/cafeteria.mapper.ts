@@ -1,36 +1,59 @@
 /**
  * Cafeteria Mapper
  *
- * CafeteriaDTO ↔ Cafeteria Entity 변환
- * - DTO: API 응답 형식 (OpenAPI)
- * - Entity: 도메인 객체 (비즈니스 로직 포함)
+ * DTO → Entity 변환 (Zod 검증 포함)
+ * - DTO: API 응답 형식 (OpenAPI, snake_case)
+ * - Entity: 도메인 객체 (비즈니스 로직, camelCase)
  */
 
-import type { Cafeteria } from "../../domain/entities/cafeteria.entity";
-import type { CafeteriaInfoDTO, GetCafeteriaResponse } from "../dto";
+import { PageInfoSchema } from "@shared/domain/entities";
+import {
+  type Cafeteria,
+  type CafeteriaMenu,
+  CafeteriaMenuSchema,
+  type CafeteriaMenuTimeline,
+  CafeteriaMenuTimelineSchema,
+  CafeteriaSchema,
+  type CafeteriaWithMenu,
+  CafeteriaWithMenuSchema,
+  type MenuAvailability,
+  MenuAvailabilitySchema,
+} from "../../domain/entities";
+import type {
+  CafeteriaInfoDTO,
+  GetCafeteriaMenuAvailabilityResponse,
+  GetCafeteriaMenuResponse,
+  GetCafeteriaMenuTimelineResponse,
+  GetCafeteriaResponse,
+  GetCafeteriaWithMenuResponse,
+  MenuInfoDTO,
+  PageInfo as PageInfoDTO,
+  RegisterCafeteriaMenuResponse,
+  RegisterCafeteriaResponse,
+} from "../dto";
 
 /**
- * Helper: OpenAPI LocalTime 객체를 HH:MM 문자열로 변환
+ * CafeteriaInfoDTO → Cafeteria Entity
  */
-function formatTimeObject(
-  timeObj:
-    | { hour?: number; minute?: number; second?: number; nano?: number }
-    | null
-    | undefined,
-): string {
-  if (!timeObj || timeObj.hour === undefined || timeObj.minute === undefined) {
-    return "";
-  }
-  const hour = String(timeObj.hour).padStart(2, "0");
-  const minute = String(timeObj.minute).padStart(2, "0");
-  return `${hour}:${minute}`;
+export function cafeteriaInfoDtoToDomain(dto: CafeteriaInfoDTO): Cafeteria {
+  const entity = {
+    id: dto.id,
+    name: dto.name,
+    address: dto.address,
+    addressDetail: dto.addressDetail,
+    latitude: dto.latitude,
+    longitude: dto.longitude,
+    phone: dto.phone,
+    mealTicketPrice: dto.mealTicketPrice,
+    takeoutAvailable: dto.takeoutAvailable,
+    businessHours: dto.businessHours,
+  };
+
+  return CafeteriaSchema.parse(entity);
 }
 
 /**
- * GetCafeteriaResponse DTO → Cafeteria Entity 변환
- *
- * @param dto API 응답 DTO
- * @returns Cafeteria Entity
+ * GetCafeteriaResponse DTO → Cafeteria Entity
  */
 export function getCafeteriaResponseToDomain(
   dto: GetCafeteriaResponse,
@@ -39,100 +62,178 @@ export function getCafeteriaResponseToDomain(
     throw new Error("Cafeteria info is missing in response");
   }
 
-  const cafeteriaInfo = dto.cafeteria;
-
-  return {
-    id: cafeteriaInfo.id ?? 0,
-    name: cafeteriaInfo.name ?? "",
-    address: cafeteriaInfo.address ?? undefined,
-    phoneNumber: cafeteriaInfo.phone ?? undefined,
-    imageUrl: undefined, // imageUrl not available in current DTO
-    latitude: cafeteriaInfo.latitude ?? undefined,
-    longitude: cafeteriaInfo.longitude ?? undefined,
-    businessHours: cafeteriaInfo.businessHours
-      ? {
-          lunch: cafeteriaInfo.businessHours.lunch
-            ? {
-                start: formatTimeObject(
-                  cafeteriaInfo.businessHours.lunch.start,
-                ),
-                end: formatTimeObject(cafeteriaInfo.businessHours.lunch.end),
-              }
-            : undefined,
-          dinner: cafeteriaInfo.businessHours.dinner
-            ? {
-                start: formatTimeObject(
-                  cafeteriaInfo.businessHours.dinner.start,
-                ),
-                end: formatTimeObject(cafeteriaInfo.businessHours.dinner.end),
-              }
-            : undefined,
-        }
-      : undefined,
-  };
+  return cafeteriaInfoDtoToDomain(dto.cafeteria);
 }
 
 /**
- * CafeteriaInfoDTO → Cafeteria Entity 변환
- *
- * @param dto CafeteriaInfoDTO
- * @returns Cafeteria Entity
+ * MenuInfoDTO → CafeteriaMenu Entity
  */
-export function cafeteriaInfoDtoToDomain(dto: CafeteriaInfoDTO): Cafeteria {
-  return {
-    id: dto.id ?? 0,
-    name: dto.name ?? "",
-    address: dto.address ?? undefined,
-    phoneNumber: dto.phone ?? undefined,
-    imageUrl: undefined, // imageUrl not available in current DTO
-    latitude: dto.latitude ?? undefined,
-    longitude: dto.longitude ?? undefined,
-    businessHours: dto.businessHours
-      ? {
-          lunch: dto.businessHours.lunch
-            ? {
-                start: formatTimeObject(dto.businessHours.lunch.start),
-                end: formatTimeObject(dto.businessHours.lunch.end),
-              }
-            : undefined,
-          dinner: dto.businessHours.dinner
-            ? {
-                start: formatTimeObject(dto.businessHours.dinner.start),
-                end: formatTimeObject(dto.businessHours.dinner.end),
-              }
-            : undefined,
-        }
-      : undefined,
+export function menuInfoDtoToDomain(dto: MenuInfoDTO): CafeteriaMenu {
+  if (!dto.nutritionInfo) {
+    throw new Error("NutritionInfo is missing in menu response");
+  }
+
+  const entity = {
+    mealType: dto.mealType,
+    menuItems: dto.menuItems.map((item) => ({
+      name: item.name,
+      category: item.category,
+      calories: item.calories,
+    })),
+    specialNote: dto.specialNote,
+    nutritionInfo: {
+      totalCalories: dto.nutritionInfo.totalCalories,
+      dailyPercentage: dto.nutritionInfo.dailyPercentage,
+      walkingSteps: dto.nutritionInfo.walkingSteps,
+      runningKm: dto.nutritionInfo.runningKm,
+      cyclingKm: dto.nutritionInfo.cyclingKm,
+    },
   };
+
+  return CafeteriaMenuSchema.parse(entity);
 }
 
 /**
- * Cafeteria Entity → CafeteriaInfoDTO 변환 (필요시)
- *
- * @param entity Cafeteria Entity
- * @returns CafeteriaInfoDTO
+ * GetCafeteriaMenuResponse DTO → CafeteriaMenu Entity
  */
-export function cafeteriaDomainToDto(
-  entity: Cafeteria,
-): Partial<CafeteriaInfoDTO> {
-  return {
-    id: entity.id,
-    name: entity.name,
-    address: entity.address ?? undefined,
-    phone: entity.phoneNumber ?? undefined,
-    // imageUrl not available in current DTO
-    latitude: entity.latitude ?? undefined,
-    longitude: entity.longitude ?? undefined,
-    // businessHours conversion would require complex type mapping
-  };
+export function getCafeteriaMenuResponseToDomain(
+  dto: GetCafeteriaMenuResponse,
+): CafeteriaMenu {
+  if (!dto || !dto.menus || dto.menus.length === 0) {
+    throw new Error("Menu info is missing in response");
+  }
+
+  return menuInfoDtoToDomain(dto.menus[0]);
 }
 
 /**
- * Backward compatibility - 기존 코드에서 사용하는 클래스 형태
+ * GetCafeteriaWithMenuResponse DTO → CafeteriaWithMenu Entity
+ */
+export function getCafeteriaWithMenuResponseToDomain(
+  dto: GetCafeteriaWithMenuResponse,
+): CafeteriaWithMenu {
+  const entity = {
+    cafeteria: cafeteriaInfoDtoToDomain(dto.cafeteria),
+    menus: dto.menus.map((menu) => menuInfoDtoToDomain(menu)),
+  };
+
+  return CafeteriaWithMenuSchema.parse(entity);
+}
+
+/**
+ * GetCafeteriaMenuAvailabilityResponse DTO → MenuAvailability Entity
+ */
+export function getCafeteriaMenuAvailabilityResponseToDomain(
+  dto: GetCafeteriaMenuAvailabilityResponse,
+): MenuAvailability {
+  if (!dto) {
+    throw new Error("MenuAvailability response is null");
+  }
+
+  const entity = {
+    year: dto.year,
+    month: dto.month,
+    availableDates: dto.daysWithMenu,
+  };
+
+  return MenuAvailabilitySchema.parse(entity);
+}
+
+/**
+ * PageInfo DTO → PageInfo Entity
+ */
+export function pageInfoDtoToDomain(dto: PageInfoDTO) {
+  const entity = {
+    nextCursor: dto.nextCursor,
+    size: dto.size,
+    hasNext: dto.hasNext,
+  };
+
+  return PageInfoSchema.parse(entity);
+}
+
+/**
+ * RegisterCafeteriaResponse DTO → Cafeteria Entity
+ */
+export function registerCafeteriaResponseToDomain(
+  dto: RegisterCafeteriaResponse,
+): Cafeteria {
+  if (!dto) {
+    throw new Error("RegisterCafeteriaResponse is null");
+  }
+
+  // RegisterCafeteriaResponse를 CafeteriaInfoDTO 형태로 변환
+  const cafeteriaInfo: CafeteriaInfoDTO = {
+    id: dto.cafeteriaId,
+    name: dto.name,
+    address: dto.address,
+    addressDetail: dto.addressDetail,
+    latitude: dto.latitude,
+    longitude: dto.longitude,
+    phone: dto.phone,
+    mealTicketPrice: dto.mealTicketPrice,
+    businessHours: null, // RegisterCafeteriaResponse doesn't include businessHours
+    takeoutAvailable: dto.takeoutAvailable ?? false,
+  };
+
+  return cafeteriaInfoDtoToDomain(cafeteriaInfo);
+}
+
+/**
+ * RegisterCafeteriaMenuResponse DTO → CafeteriaMenu Entity
+ */
+export function registerCafeteriaMenuResponseToDomain(
+  dto: RegisterCafeteriaMenuResponse,
+): CafeteriaMenu {
+  if (!dto) {
+    throw new Error("RegisterCafeteriaMenuResponse is null");
+  }
+
+  // RegisterCafeteriaMenuResponse를 MenuInfoDTO 형태로 변환
+  const menuInfo: MenuInfoDTO = {
+    mealType: dto.mealType,
+    menuItems: dto.menuItems,
+    specialNote: dto.specialNote,
+    nutritionInfo: {
+      totalCalories: dto.totalCalories ?? 0,
+      dailyPercentage: 0, // Not in RegisterCafeteriaMenuResponse
+      walkingSteps: 0, // Not in RegisterCafeteriaMenuResponse
+      runningKm: 0, // Not in RegisterCafeteriaMenuResponse
+      cyclingKm: 0, // Not in RegisterCafeteriaMenuResponse
+      stairsFloors: 0, // Not in RegisterCafeteriaMenuResponse
+    },
+  };
+
+  return menuInfoDtoToDomain(menuInfo);
+}
+
+/**
+ * GetCafeteriaMenuTimelineResponse DTO → CafeteriaMenuTimeline Entity
+ */
+export function getCafeteriaMenuTimelineResponseToDomain(
+  dto: GetCafeteriaMenuTimelineResponse,
+): CafeteriaMenuTimeline {
+  const entity = {
+    menuDate: dto.menuDate ?? "",
+    menus: (dto.menus ?? []).map((menu) => menuInfoDtoToDomain(menu)),
+    reviewCount: dto.reviewCount ?? 0,
+  };
+
+  return CafeteriaMenuTimelineSchema.parse(entity);
+}
+
+/**
+ * Backward compatibility
  */
 export const CafeteriaMapper = {
-  getCafeteriaResponseToDomain,
   cafeteriaInfoDtoToDomain,
-  toDomain: cafeteriaInfoDtoToDomain,
-  toDTO: cafeteriaDomainToDto,
+  getCafeteriaResponseToDomain,
+  menuInfoDtoToDomain,
+  getCafeteriaMenuResponseToDomain,
+  getCafeteriaMenuTimelineResponseToDomain,
+  getCafeteriaWithMenuResponseToDomain,
+  getCafeteriaMenuAvailabilityResponseToDomain,
+  pageInfoDtoToDomain,
+  registerCafeteriaResponseToDomain,
+  registerCafeteriaMenuResponseToDomain,
 };

@@ -19,7 +19,9 @@
       "Bash(cat:*)",
       "Bash(pnpm check-types:*)",
       "Bash(pnpm build:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(pnpm --filter=web check-types:*)",
+      "Bash(pnpm --filter=web build:*)"
     ],
     "deny": [],
     "ask": []

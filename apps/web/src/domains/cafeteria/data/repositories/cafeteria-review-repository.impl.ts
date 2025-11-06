@@ -3,30 +3,44 @@
  *
  * DataSource를 통해 API 호출 수행 (Clean Architecture)
  * - DataSource에서 DTO 가져오기
- * - 필요시 Mapper로 Entity 변환
+ * - Mapper로 Entity 변환
  * - 에러 처리
  */
 
+import type { PageInfo } from "@shared/domain/entities";
+import type {
+  CreateReviewCommentRequest as CreateReviewCommentRequestEntity,
+  CreateReviewRequest as CreateReviewRequestEntity,
+  Review,
+  ReviewComment,
+  ReviewCommentWithMetadata,
+} from "../../domain/entities";
 import type { CafeteriaReviewRepository } from "../../domain/repositories";
 import type { CafeteriaReviewRemoteDataSource } from "../data-sources";
-import type {
-  CreateReviewCommentRequest,
-  CreateReviewCommentResponse,
-  CreateReviewRequest,
-  CreateReviewResponse,
-  GetReviewCommentResponse,
-  PageInfo,
-} from "../dto";
+import {
+  createReviewCommentRequestToDto,
+  createReviewCommentResponseToDomain,
+  createReviewRequestToDto,
+  createReviewResponseToDomain,
+  getReviewCommentResponseToDomain,
+  pageInfoDtoToDomain,
+} from "../mappers";
 
 export class CafeteriaReviewRepositoryImpl
   implements CafeteriaReviewRepository
 {
   constructor(private readonly dataSource: CafeteriaReviewRemoteDataSource) {}
 
-  async createReview(data: CreateReviewRequest): Promise<CreateReviewResponse> {
+  async createReview(data: CreateReviewRequestEntity): Promise<Review> {
     try {
+      // Entity → DTO 변환
+      const dto = createReviewRequestToDto(data);
+
       // DataSource에서 DTO 가져오기
-      return await this.dataSource.createReview(data);
+      const response = await this.dataSource.createReview(dto);
+
+      // Mapper로 Entity 변환
+      return createReviewResponseToDomain(response);
     } catch (error) {
       throw this.handleError(error, "Failed to create review");
     }
@@ -39,12 +53,21 @@ export class CafeteriaReviewRepositoryImpl
       size?: number;
     },
   ): Promise<{
-    data: GetReviewCommentResponse[];
+    data: ReviewCommentWithMetadata[];
     pageInfo: PageInfo;
   }> {
     try {
       // DataSource에서 DTO 가져오기
-      return await this.dataSource.getReviewComments(reviewId, params);
+      const response = await this.dataSource.getReviewComments(
+        reviewId,
+        params,
+      );
+
+      // Mapper로 Entity 변환
+      return {
+        data: response.data.map((dto) => getReviewCommentResponseToDomain(dto)),
+        pageInfo: pageInfoDtoToDomain(response.pageInfo),
+      };
     } catch (error) {
       throw this.handleError(error, "Failed to fetch review comments");
     }
@@ -52,11 +75,17 @@ export class CafeteriaReviewRepositoryImpl
 
   async createReviewComment(
     reviewId: string,
-    data: CreateReviewCommentRequest,
-  ): Promise<CreateReviewCommentResponse> {
+    data: CreateReviewCommentRequestEntity,
+  ): Promise<ReviewComment> {
     try {
+      // Entity → DTO 변환
+      const dto = createReviewCommentRequestToDto(data);
+
       // DataSource에서 DTO 가져오기
-      return await this.dataSource.createReviewComment(reviewId, data);
+      const response = await this.dataSource.createReviewComment(reviewId, dto);
+
+      // Mapper로 Entity 변환
+      return createReviewCommentResponseToDomain(response);
     } catch (error) {
       throw this.handleError(error, "Failed to create review comment");
     }
@@ -65,15 +94,21 @@ export class CafeteriaReviewRepositoryImpl
   async createReviewCommentReply(
     reviewId: string,
     commentId: string,
-    data: CreateReviewCommentRequest,
-  ): Promise<CreateReviewCommentResponse> {
+    data: CreateReviewCommentRequestEntity,
+  ): Promise<ReviewComment> {
     try {
+      // Entity → DTO 변환
+      const dto = createReviewCommentRequestToDto(data);
+
       // DataSource에서 DTO 가져오기
-      return await this.dataSource.createReviewCommentReply(
+      const response = await this.dataSource.createReviewCommentReply(
         reviewId,
         commentId,
-        data,
+        dto,
       );
+
+      // Mapper로 Entity 변환
+      return createReviewCommentResponseToDomain(response);
     } catch (error) {
       throw this.handleError(error, "Failed to create review comment reply");
     }

@@ -6,17 +6,16 @@
  * - 비즈니스 로직 없음 (순수 데이터 액세스만)
  */
 
+import type { PageInfo } from "@shared/domain/entities";
 import type {
-  GetCafeteriaMenuAvailabilityResponse,
-  GetCafeteriaMenuResponse,
-  GetCafeteriaResponse,
-  GetCafeteriaWithMenuResponse,
-  PageInfo,
+  Cafeteria,
+  CafeteriaMenu,
+  CafeteriaMenuTimeline,
+  CafeteriaWithMenu,
+  MenuAvailability,
   RegisterCafeteriaMenuRequest,
-  RegisterCafeteriaMenuResponse,
   RegisterCafeteriaRequest,
-  RegisterCafeteriaResponse,
-} from "../../data/dto";
+} from "../entities";
 
 export interface CafeteriaRepository {
   getCafeteriasWithMenu(params: {
@@ -24,16 +23,24 @@ export interface CafeteriaRepository {
     cursor?: string;
     size?: number;
   }): Promise<{
-    data: GetCafeteriaWithMenuResponse[];
+    data: CafeteriaWithMenu[];
     pageInfo: PageInfo;
   }>;
 
-  getCafeteriaById(id: string): Promise<GetCafeteriaResponse>;
+  getCafeteriaById(id: string): Promise<Cafeteria>;
 
-  getCafeteriaMenuByDate(
+  getCafeteriaMenuByDate(id: string, date: string): Promise<CafeteriaMenu>;
+
+  getCafeteriaMenuTimeline(
     id: string,
-    date: string,
-  ): Promise<GetCafeteriaMenuResponse>;
+    params: {
+      cursor?: string;
+      size?: number;
+    },
+  ): Promise<{
+    data: CafeteriaMenuTimeline[];
+    pageInfo: PageInfo;
+  }>;
 
   getCafeteriaMenuAvailability(
     id: string,
@@ -41,13 +48,11 @@ export interface CafeteriaRepository {
       year: number;
       month: number;
     },
-  ): Promise<GetCafeteriaMenuAvailabilityResponse>;
+  ): Promise<MenuAvailability>;
 
-  registerCafeteria(
-    data: RegisterCafeteriaRequest,
-  ): Promise<RegisterCafeteriaResponse>;
+  registerCafeteria(data: RegisterCafeteriaRequest): Promise<Cafeteria>;
 
   registerCafeteriaMenu(
     data: RegisterCafeteriaMenuRequest,
-  ): Promise<RegisterCafeteriaMenuResponse>;
+  ): Promise<CafeteriaMenu>;
 }

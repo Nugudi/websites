@@ -4,19 +4,14 @@
  * 구내식당 메뉴를 등록하는 비즈니스 로직
  */
 
-import type {
-  RegisterCafeteriaMenuRequest,
-  RegisterCafeteriaMenuResponse,
-} from "../../data/dto";
+import type { CafeteriaMenu, RegisterCafeteriaMenuRequest } from "../entities";
 import type { CafeteriaRepository } from "../repositories";
 
 /**
  * Register Cafeteria Menu UseCase
  */
 export interface RegisterCafeteriaMenuUseCase {
-  execute(
-    data: RegisterCafeteriaMenuRequest,
-  ): Promise<RegisterCafeteriaMenuResponse>;
+  execute(data: RegisterCafeteriaMenuRequest): Promise<CafeteriaMenu>;
 }
 
 /**
@@ -30,9 +25,7 @@ export class RegisterCafeteriaMenuUseCaseImpl
   /**
    * UseCase 실행
    */
-  async execute(
-    data: RegisterCafeteriaMenuRequest,
-  ): Promise<RegisterCafeteriaMenuResponse> {
+  async execute(data: RegisterCafeteriaMenuRequest): Promise<CafeteriaMenu> {
     // Validate required fields
     if (!data.restaurantId) {
       throw new Error("Restaurant ID is required");
@@ -47,6 +40,7 @@ export class RegisterCafeteriaMenuUseCaseImpl
       throw new Error("Menu items are required");
     }
 
+    // Repository now returns CafeteriaMenu entity directly
     return this.repository.registerCafeteriaMenu(data);
   }
 }

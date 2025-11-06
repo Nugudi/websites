@@ -3,7 +3,7 @@
 import { CommentIcon } from "@nugudi/assets-icons";
 import { Body, VStack } from "@nugudi/react-components-layout";
 import { ReviewCard } from "@nugudi/react-components-review-card";
-import type { ReviewMockData } from "../../../../data/utils/cafeteria-mock-data";
+import type { ReviewMockData } from "../../../utils/cafeteria-mock-data";
 import * as styles from "./index.css";
 
 interface CafeteriaDateReviewsListProps {

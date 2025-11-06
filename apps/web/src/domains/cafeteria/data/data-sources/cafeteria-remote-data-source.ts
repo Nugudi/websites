@@ -11,6 +11,7 @@ import type { HttpClient } from "@/src/shared/infrastructure/http/http-client.in
 import type {
   GetCafeteriaMenuAvailabilityResponse,
   GetCafeteriaMenuResponse,
+  GetCafeteriaMenuTimelineResponse,
   GetCafeteriaResponse,
   GetCafeteriaWithMenuResponse,
   PageInfo,
@@ -101,6 +102,34 @@ export class CafeteriaRemoteDataSource {
     }
 
     return response.data.data;
+  }
+
+  /**
+   * 구내식당 메뉴 타임라인 조회 (무한 스크롤)
+   *
+   * TODO: 백엔드 API 완성되면 실제 엔드포인트로 교체
+   * TEMPORARY: 현재는 stub 구현에서만 사용됨
+   */
+  async getCafeteriaMenuTimeline(
+    _id: string,
+    _params: {
+      cursor?: string;
+      size?: number;
+    },
+  ): Promise<{
+    data: GetCafeteriaMenuTimelineResponse[];
+    pageInfo: PageInfo;
+  }> {
+    // TODO: 실제 API 구현 시 아래 코드로 교체
+    // const response = await this.httpClient.get<PageResponse...>(
+    //   `/api/v1/cafeterias/${id}/menus/timeline`,
+    //   { params }
+    // );
+    // return { data: response.data.data || [], pageInfo: response.data.pageInfo || ... };
+
+    throw new Error(
+      "getCafeteriaMenuTimeline is not yet implemented in real API - use stub repository",
+    );
   }
 
   /**

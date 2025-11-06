@@ -36,6 +36,7 @@ export * from "./create-review-comment-reply.usecase";
 export * from "./get-cafeteria-by-id.usecase";
 export * from "./get-cafeteria-menu-availability.usecase";
 export * from "./get-cafeteria-menu-by-date.usecase";
+export * from "./get-cafeteria-menu-timeline.usecase";
 // Cafeteria UseCases
 export * from "./get-cafeterias-with-menu.usecase";
 export * from "./get-review-comments.usecase";

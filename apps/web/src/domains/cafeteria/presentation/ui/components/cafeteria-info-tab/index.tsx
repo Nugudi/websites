@@ -9,24 +9,15 @@ import {
   VStack,
 } from "@nugudi/react-components-layout";
 import { formatPriceWithCurrency } from "@/src/domains/user/presentation/utils/format-points";
-import type { CafeteriaInfoDTO } from "../../../../data/dto";
-import { getMockCafeteriaData } from "../../../../data/utils/cafeteria-mock-data";
+import type { Cafeteria } from "../../../../domain/entities";
 import { getFullBusinessHours } from "../../../utils";
 import * as styles from "./index.css";
 
 type CafeteriaInfoTabProps = {
-  cafeteriaId: string;
+  cafeteria: Cafeteria;
 };
 
-export const CafeteriaInfoTab = (_props: CafeteriaInfoTabProps) => {
-  const cafeteriaData = getMockCafeteriaData();
-
-  if (!cafeteriaData || !cafeteriaData.cafeteria) {
-    return null;
-  }
-
-  const cafeteria = cafeteriaData.cafeteria;
-
+export const CafeteriaInfoTab = ({ cafeteria }: CafeteriaInfoTabProps) => {
   return (
     <VStack gap={32} pt={16} pb={24}>
       <BusinessInfo cafeteria={cafeteria} />
@@ -37,7 +28,7 @@ export const CafeteriaInfoTab = (_props: CafeteriaInfoTabProps) => {
 };
 
 type BusinessInfoProps = {
-  cafeteria: CafeteriaInfoDTO;
+  cafeteria: Cafeteria;
 };
 
 const BusinessInfo = ({ cafeteria }: BusinessInfoProps) => {
@@ -67,7 +58,7 @@ const BusinessInfo = ({ cafeteria }: BusinessInfoProps) => {
 };
 
 type LocationInfoProps = {
-  cafeteria: CafeteriaInfoDTO;
+  cafeteria: Cafeteria;
 };
 
 const LocationInfo = ({ cafeteria }: LocationInfoProps) => {

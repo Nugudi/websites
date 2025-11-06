@@ -10,8 +10,7 @@ import "server-only";
 
 // Data Layer
 import {
-  CafeteriaRemoteDataSource,
-  CafeteriaRepositoryImpl,
+  CafeteriaRepositoryStub,
   CafeteriaReviewRemoteDataSource,
   CafeteriaReviewRepositoryImpl,
 } from "@cafeteria/data";
@@ -29,6 +28,8 @@ import {
   GetCafeteriaMenuAvailabilityUseCaseImpl,
   type GetCafeteriaMenuByDateUseCase,
   GetCafeteriaMenuByDateUseCaseImpl,
+  type GetCafeteriaMenuTimelineUseCase,
+  GetCafeteriaMenuTimelineUseCaseImpl,
   type GetCafeteriasWithMenuUseCase,
   GetCafeteriasWithMenuUseCaseImpl,
   type GetReviewCommentsUseCase,
@@ -52,6 +53,7 @@ class CafeteriaServerContainer {
   private getCafeteriasWithMenuUseCase: GetCafeteriasWithMenuUseCase;
   private getCafeteriaByIdUseCase: GetCafeteriaByIdUseCase;
   private getCafeteriaMenuByDateUseCase: GetCafeteriaMenuByDateUseCase;
+  private getCafeteriaMenuTimelineUseCase: GetCafeteriaMenuTimelineUseCase;
   private getCafeteriaMenuAvailabilityUseCase: GetCafeteriaMenuAvailabilityUseCase;
   private registerCafeteriaUseCase: RegisterCafeteriaUseCase;
   private registerCafeteriaMenuUseCase: RegisterCafeteriaMenuUseCase;
@@ -81,12 +83,9 @@ class CafeteriaServerContainer {
       refreshTokenService, // Server-side: RefreshTokenService 주입
     );
 
-    // Data Layer
-    const cafeteriaDataSource = new CafeteriaRemoteDataSource(httpClient);
+    // Data Layer - Use Stub for Mock Data
+    const cafeteriaRepository = new CafeteriaRepositoryStub();
     const reviewDataSource = new CafeteriaReviewRemoteDataSource(httpClient);
-    const cafeteriaRepository = new CafeteriaRepositoryImpl(
-      cafeteriaDataSource,
-    );
     const reviewRepository = new CafeteriaReviewRepositoryImpl(
       reviewDataSource,
     );
@@ -101,6 +100,8 @@ class CafeteriaServerContainer {
     this.getCafeteriaMenuByDateUseCase = new GetCafeteriaMenuByDateUseCaseImpl(
       cafeteriaRepository,
     );
+    this.getCafeteriaMenuTimelineUseCase =
+      new GetCafeteriaMenuTimelineUseCaseImpl(cafeteriaRepository);
     this.getCafeteriaMenuAvailabilityUseCase =
       new GetCafeteriaMenuAvailabilityUseCaseImpl(cafeteriaRepository);
     this.registerCafeteriaUseCase = new RegisterCafeteriaUseCaseImpl(
@@ -133,6 +134,10 @@ class CafeteriaServerContainer {
 
   getGetCafeteriaMenuByDate(): GetCafeteriaMenuByDateUseCase {
     return this.getCafeteriaMenuByDateUseCase;
+  }
+
+  getGetCafeteriaMenuTimeline(): GetCafeteriaMenuTimelineUseCase {
+    return this.getCafeteriaMenuTimelineUseCase;
   }
 
   getGetCafeteriaMenuAvailability(): GetCafeteriaMenuAvailabilityUseCase {

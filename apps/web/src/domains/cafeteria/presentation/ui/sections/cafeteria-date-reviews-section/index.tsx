@@ -1,7 +1,7 @@
 "use client";
 
 import { VStack } from "@nugudi/react-components-layout";
-import { getMockReviews } from "../../../../data/utils/cafeteria-mock-data";
+import { getMockReviews } from "../../../utils/cafeteria-mock-data";
 import { CafeteriaDateReviewsList } from "../../components/cafeteria-date-reviews-list";
 import * as styles from "./index.css";
 

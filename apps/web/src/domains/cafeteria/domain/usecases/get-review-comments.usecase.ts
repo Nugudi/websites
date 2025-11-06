@@ -4,7 +4,8 @@
  * 리뷰 댓글을 조회하는 비즈니스 로직 (무한 스크롤)
  */
 
-import type { GetReviewCommentResponse, PageInfo } from "../../data/dto";
+import type { PageInfo } from "@shared/domain/entities";
+import type { ReviewCommentWithMetadata } from "../entities";
 import type { CafeteriaReviewRepository } from "../repositories";
 
 /**
@@ -19,7 +20,7 @@ export interface GetReviewCommentsParams {
  * UseCase 출력 결과
  */
 export interface GetReviewCommentsResult {
-  data: GetReviewCommentResponse[];
+  data: ReviewCommentWithMetadata[];
   pageInfo: PageInfo;
 }
 
@@ -46,6 +47,7 @@ export class GetReviewCommentsUseCaseImpl implements GetReviewCommentsUseCase {
     reviewId: string,
     params: GetReviewCommentsParams,
   ): Promise<GetReviewCommentsResult> {
+    // Repository now returns entities directly
     return this.repository.getReviewComments(reviewId, params);
   }
 }

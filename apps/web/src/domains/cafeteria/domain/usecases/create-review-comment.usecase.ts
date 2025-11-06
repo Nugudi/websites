@@ -4,10 +4,7 @@
  * 리뷰 댓글을 작성하는 비즈니스 로직
  */
 
-import type {
-  CreateReviewCommentRequest,
-  CreateReviewCommentResponse,
-} from "../../data/dto";
+import type { CreateReviewCommentRequest, ReviewComment } from "../entities";
 import type { CafeteriaReviewRepository } from "../repositories";
 
 /**
@@ -17,7 +14,7 @@ export interface CreateReviewCommentUseCase {
   execute(
     reviewId: string,
     data: CreateReviewCommentRequest,
-  ): Promise<CreateReviewCommentResponse>;
+  ): Promise<ReviewComment>;
 }
 
 /**
@@ -34,12 +31,13 @@ export class CreateReviewCommentUseCaseImpl
   async execute(
     reviewId: string,
     data: CreateReviewCommentRequest,
-  ): Promise<CreateReviewCommentResponse> {
+  ): Promise<ReviewComment> {
     // Validate required fields
     if (!data.content || data.content.trim().length === 0) {
       throw new Error("Comment content is required");
     }
 
+    // Repository now returns ReviewComment entity directly
     return this.repository.createReviewComment(reviewId, data);
   }
 }

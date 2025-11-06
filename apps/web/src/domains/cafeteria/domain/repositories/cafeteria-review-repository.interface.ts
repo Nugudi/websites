@@ -6,17 +6,17 @@
  * - 비즈니스 로직 없음 (순수 데이터 액세스만)
  */
 
+import type { PageInfo } from "@shared/domain/entities";
 import type {
   CreateReviewCommentRequest,
-  CreateReviewCommentResponse,
   CreateReviewRequest,
-  CreateReviewResponse,
-  GetReviewCommentResponse,
-  PageInfo,
-} from "../../data/dto";
+  Review,
+  ReviewComment,
+  ReviewCommentWithMetadata,
+} from "../entities";
 
 export interface CafeteriaReviewRepository {
-  createReview(data: CreateReviewRequest): Promise<CreateReviewResponse>;
+  createReview(data: CreateReviewRequest): Promise<Review>;
 
   getReviewComments(
     reviewId: string,
@@ -25,18 +25,18 @@ export interface CafeteriaReviewRepository {
       size?: number;
     },
   ): Promise<{
-    data: GetReviewCommentResponse[];
+    data: ReviewCommentWithMetadata[];
     pageInfo: PageInfo;
   }>;
 
   createReviewComment(
     reviewId: string,
     data: CreateReviewCommentRequest,
-  ): Promise<CreateReviewCommentResponse>;
+  ): Promise<ReviewComment>;
 
   createReviewCommentReply(
     reviewId: string,
     commentId: string,
     data: CreateReviewCommentRequest,
-  ): Promise<CreateReviewCommentResponse>;
+  ): Promise<ReviewComment>;
 }

@@ -1,8 +1,9 @@
 "use client";
 
 import { VStack } from "@nugudi/react-components-layout";
+import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
-import { getMockCafeteriaData } from "../../../../data/utils/cafeteria-mock-data";
+import { getCafeteriaClientContainer } from "../../../../di/cafeteria-client-container";
 import { CafeteriaInfoCard } from "../../components/cafeteria-info-card";
 import * as styles from "./index.css";
 
@@ -11,15 +12,34 @@ interface CafeteriaHeroSectionProps {
 }
 
 export const CafeteriaHeroSection = ({
-  cafeteriaId: _cafeteriaId,
+  cafeteriaId,
 }: CafeteriaHeroSectionProps) => {
-  const cafeteriaData = getMockCafeteriaData();
+  const container = getCafeteriaClientContainer();
+  const getCafeteriaByIdUseCase = container.getGetCafeteriaById();
 
-  if (!cafeteriaData || !cafeteriaData.cafeteria) {
-    return null;
+  const {
+    data: cafeteria,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["cafeteria", "detail", cafeteriaId],
+    queryFn: () => getCafeteriaByIdUseCase.execute(cafeteriaId),
+    staleTime: 5 * 60 * 1000, // 5분
+    gcTime: 30 * 60 * 1000, // 30분
+  });
+
+  if (isLoading) {
+    return (
+      <VStack width="full">
+        <HeroImage cafeteriaName="로딩 중..." />
+        <div>Loading...</div>
+      </VStack>
+    );
   }
 
-  const cafeteria = cafeteriaData.cafeteria;
+  if (isError || !cafeteria) {
+    return null;
+  }
 
   return (
     <VStack width="full">

@@ -109,7 +109,6 @@ domains/
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { createUserServerContainer } from "@/src/domains/user/di/user-server-container";  // 🆕 Per-domain DI Container
 import { CafeteriaHomeView } from "@/src/domains/cafeteria/presentation/views/cafeteria-home-view";
-import { userProfileQueryServer } from "@/src/domains/user/core/hooks/queries/user-profile.query";
 import getQueryClient from "@/src/shared/infrastructure/configs/tanstack-query/get-query-client";
 
 const Page = async ({ params, searchParams }) => {
@@ -204,7 +203,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { userProfileQueryClient } from "@/src/domains/user/hooks/queries/user-profile.query";
+import { getUserClientContainer } from "@/src/domains/user/di/user-client-container";  // 🆕 Client DI Container
 import * as styles from "./index.css";
 
 // Main Section Component (with boundaries)
@@ -617,8 +616,8 @@ import { api } from "@nugudi/api"; // ✅ Named
 ```typescript
 // 1. Page: Server Container + UseCases로 Prefetch (SSR)
 // File: app/page.tsx
-import { createUserServerContainer } from "@/src/di";
-import { userProfileQueryServer } from "@/src/domains/user/hooks/queries/user-profile.query.server";
+import { createUserServerContainer } from "@/src/domains/user/di/user-server-container";
+import getQueryClient from "@/src/shared/infrastructure/configs/tanstack-query/get-query-client";
 
 const HomePage = async () => {
   const queryClient = getQueryClient();
@@ -749,8 +748,13 @@ const DataSectionContent = () => {
 // ✅ CORRECT - constants/query-keys.ts (Query Key만 정의)
 export const USER_PROFILE_QUERY_KEY = ["user", "profile", "me"] as const;
 
-// ✅ CORRECT - hooks/queries/user-profile.query.ts (Query Options 정의)
-import { getMyProfile } from "@nugudi/api";
+// ⚠️ DEPRECATED PATTERN - Use DI Container + UseCase instead
+// This pattern is kept for reference only. New code should use:
+// - Server Container: createXXXServerContainer() → getUseCase() → execute()
+// - Client Container: getXXXClientContainer() → getUseCase() → execute()
+
+// ❌ OLD (Deprecated) - hooks/queries/user-profile.query.ts
+import { getMyProfile } from "@nugudi/api";  // ❌ @nugudi/api is removed
 import { USER_PROFILE_QUERY_KEY } from "../../constants/query-keys";
 
 // 캐싱 옵션 (private, 재사용)
@@ -784,10 +788,10 @@ export const userProfileQueryClient = {
 } as const;
 ```
 
-### 사용 패턴
+### ⚠️ DEPRECATED 사용 패턴 (Use DI Container Instead)
 
 ```typescript
-// Page (Server Component) - userProfileQueryServer 사용
+// ❌ OLD (Deprecated) - Page with Query Factory
 import { userProfileQueryServer } from "@/src/domains/user/hooks/queries/user-profile.query";
 
 const Page = async () => {

@@ -1,4 +1,8 @@
-import type { BusinessHoursDTO, LocalTime, TimeRangeDTO } from "../../data/dto";
+import type {
+  BusinessHours,
+  LocalTime,
+  TimeRange,
+} from "../../domain/entities";
 
 type BusinessPeriod = "lunch" | "dinner";
 
@@ -19,7 +23,7 @@ const formatTime = (time?: LocalTime | null): string => {
 };
 
 const isValidTimeRange = (
-  range?: TimeRangeDTO | null,
+  range?: TimeRange | null,
 ): range is { start: LocalTime; end: LocalTime } => {
   return Boolean(range?.start && range?.end);
 };
@@ -30,7 +34,7 @@ const formatTimeRange = (start: LocalTime, end: LocalTime): string => {
 
 const formatBusinessPeriod = (
   period: BusinessPeriod,
-  range?: TimeRangeDTO | null,
+  range?: TimeRange | null,
 ): string | null => {
   if (!isValidTimeRange(range)) return null;
   const label = BUSINESS_PERIOD_LABELS[period];
@@ -43,7 +47,7 @@ const formatBusinessPeriod = (
  * @returns 포맷팅된 영업시간 문자열 (예: "점심 11:00 - 14:00 & 저녁 17:00 - 20:00")
  */
 export const getFullBusinessHours = (cafeteria: {
-  businessHours?: BusinessHoursDTO | null;
+  businessHours?: BusinessHours | null;
 }): string => {
   const { lunch, dinner } = cafeteria.businessHours || {};
 

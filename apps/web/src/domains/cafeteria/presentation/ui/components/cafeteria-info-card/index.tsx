@@ -7,11 +7,11 @@ import {
   Title,
   VStack,
 } from "@nugudi/react-components-layout";
-import type { CafeteriaInfoDTO } from "../../../../data/dto";
+import type { Cafeteria } from "../../../../domain/entities";
 import * as styles from "./index.css";
 
 interface CafeteriaInfoCardProps {
-  cafeteria: CafeteriaInfoDTO;
+  cafeteria: Cafeteria;
 }
 
 export const CafeteriaInfoCard = ({ cafeteria }: CafeteriaInfoCardProps) => {

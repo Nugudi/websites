@@ -5,4 +5,5 @@
  */
 
 export * from "./cafeteria-repository.impl";
+export * from "./cafeteria-repository.stub";
 export * from "./cafeteria-review-repository.impl";
