@@ -18,7 +18,8 @@
       "Bash(fi)",
       "Bash(cat:*)",
       "Bash(pnpm check-types:*)",
-      "Bash(pnpm build:*)"
+      "Bash(pnpm build:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []

@@ -131,14 +131,14 @@ This project follows **Domain-Driven Design (DDD)** principles with **Clean Arch
 
 ### Layer Responsibilities
 
-| Layer               | Location                          | Responsibility                                                              | Examples                                              |
-| ------------------- | --------------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------- |
-| **Presentation**    | `app/`, `domains/*/ui/`           | User interface, user interactions, routing                                  | Pages, Views, Sections, Components                    |
-| **Application**     | `domains/*/services/`, `actions/` | Business logic, orchestration, use cases                                    | AuthService, UserService, Server Actions              |
-| **Domain**          | `domains/*/repositories/`         | Data access interfaces, domain models                                       | AuthRepository, UserRepository                        |
-| **Infrastructure**  | `shared/infrastructure/`          | External systems, frameworks, databases                                     | HttpClient, SessionManager, Logger                    |
-| **DI Container**    | `src/di/`                         | Dependency injection, object creation, lifecycle management                 | AuthServerContainer, AuthClientContainer              |
-| **Interface Adapt** | `shared/interface-adapters/`      | Shared UI components, providers (connects Infrastructure to Presentation)   | AppHeader, Providers                                  |
+| Layer               | Location                                   | Responsibility                                                              | Examples                                                    |
+| ------------------- | ------------------------------------------ | --------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| **Presentation**    | `app/`, `domains/*/ui/`                    | User interface, user interactions, routing                                  | Pages, Views, Sections, Components                          |
+| **Application**     | `domains/*/domain/usecases/`, `actions/`   | Business logic, orchestration, use cases                                    | LoginWithOAuthUseCase, GetMyProfileUseCase, Server Actions  |
+| **Domain**          | `domains/*/repositories/`                  | Data access interfaces, domain models                                       | AuthRepository, UserRepository                              |
+| **Infrastructure**  | `shared/infrastructure/`                   | External systems, frameworks, databases                                     | HttpClient, SessionManager, Logger                          |
+| **DI Container**    | `src/di/`                                  | Dependency injection, object creation, lifecycle management                 | AuthServerContainer, AuthClientContainer                    |
+| **Interface Adapt** | `shared/interface-adapters/`               | Shared UI components, providers (connects Infrastructure to Presentation)   | AppHeader, Providers                                        |
 
 ---
 
@@ -165,8 +165,8 @@ import { createAuthServerContainer } from '@/src/domains/auth/di/auth-server-con
 // Page (Server Component)
 const Page = async () => {
   const container = createAuthServerContainer();  // ✅ Create new instance per request
-  const authService = container.getAuthService();
-  const userService = container.getUserService();
+  const loginWithOAuthUseCase = container.getLoginWithOAuth();  // Get individual UseCase
+  const getMyProfileUseCase = container.getGetMyProfile();      // Get individual UseCase
 
   // Use UseCases...
 };
@@ -190,8 +190,8 @@ import { getAuthClientContainer } from '@/src/domains/auth/di/auth-client-contai
 const Component = () => {
   const handleLogin = async () => {
     const container = getAuthClientContainer();  // ✅ Get lazy-initialized singleton
-    const authService = container.getAuthService();
-    const result = await authService.loginWithOAuth(...);
+    const loginWithOAuthUseCase = container.getLoginWithOAuth();  // Get individual UseCase
+    const result = await loginWithOAuthUseCase.execute(...);
   };
 };
 ```
@@ -369,19 +369,17 @@ export class AuthRepositoryImpl implements AuthRepository {
 **역할**: 비즈니스 로직과 여러 Repository를 조합하여 복잡한 플로우 처리
 
 ```typescript
-export interface AuthService {
-  loginWithOAuth(provider, code, redirectUri): Promise<LoginResult>;
-  signUpWithSocial(token, data): Promise<SignUpResult>;
-  logout(): Promise<void>;
+export interface LoginWithOAuthUseCase {
+  execute(provider: string, code: string, redirectUri: string): Promise<LoginResult>;
 }
 
-export class AuthServiceImpl implements AuthService {
+export class LoginWithOAuthUseCaseImpl implements LoginWithOAuthUseCase {
   constructor(
     private readonly repository: AuthRepository,
     private readonly sessionManager: SessionManager
   ) {}
 
-  async loginWithOAuth(provider, code, redirectUri) {
+  async execute(provider: string, code: string, redirectUri: string) {
     // 1. Repository를 통해 로그인
     const response = await this.repository.loginWithGoogle({ code, redirectUri });
 
@@ -1350,7 +1348,7 @@ pnpm storybook --filter=ui
 ### DON'Ts ❌
 
 - **NEVER** use ESLint or Prettier (use Biome)
-- **NEVER** bypass DI Containers (직접 Service/Repository 인스턴스 생성하지 말것)
+- **NEVER** bypass DI Containers (직접 UseCase/Repository 인스턴스 생성하지 말것)
 - **NEVER** use HttpClient directly (always use through DI Container)
 - **NEVER** create components that exist in packages
 - **NEVER** use PascalCase for file/folder names (except index.tsx)
@@ -1702,7 +1700,7 @@ export type CafeteriaData = {};
    - No business logic
    - Returns raw data
 
-4. **Service Pattern**: Business logic orchestration
+4. **UseCase Pattern**: Business logic orchestration
    - Combines multiple repositories
    - Handles complex workflows
    - Manages session/state
@@ -1721,8 +1719,8 @@ const container = createAuthServerContainer();  // New instance per request
 const loginUseCase = container.getLoginWithOAuth();
 
 // ❌ DON'T
-import { AuthServiceImpl } from '@/src/domains/auth/services/auth-service';
-const service = new AuthServiceImpl(...);  // Never instantiate directly
+import { LoginWithOAuthUseCaseImpl } from '@/src/domains/auth/domain/usecases/login-with-oauth.usecase';
+const useCase = new LoginWithOAuthUseCaseImpl(...);  // Never instantiate directly
 ```
 
 #### Client-Side (Client Components, Hooks)
@@ -1745,7 +1743,7 @@ const container = new AuthClientContainer();  // Never create new instance
 5. **Complete Package Setup**: Add to package.json + import styles
 6. **Naming Consistency**: Maintain consistent naming within domains
 7. **Import Conventions**: Relative within domain, absolute cross-domain
-8. **Test All Layers**: Unit tests for all Repository/Service/Infrastructure layers
+8. **Test All Layers**: Unit tests for all Repository/UseCase/Infrastructure layers
 
 Remember: This is a **DDD-based, package-first monorepo** - maximize reuse and respect architectural boundaries!
 

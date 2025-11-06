@@ -12,9 +12,9 @@ Our goal is to maintain efficient test coverage while preventing productivity lo
 
 All modules that are not directly related to UI rendering **must** have comprehensive test coverage:
 
-- **🆕 Services (DDD)**: Business logic orchestration, domain operations
+- **🆕 UseCases (DDD)**: Business logic orchestration, domain operations
 - **🆕 Repositories (DDD)**: Data access layer, API integration
-- **Business Logic**: Domain services, state management, data transformations
+- **Business Logic**: Domain operations, state management, data transformations
 - **Utility Functions**: Helper functions, formatters, validators, parsers
 - **API Handlers**: Request/response processing, error handling, data mapping
 - **Hooks**: Custom React hooks with complex logic
@@ -106,23 +106,23 @@ describe('AuthRepository', () => {
 - ✅ 파라미터가 올바르게 전달되는지 검증
 - ✅ 응답 데이터가 올바르게 반환되는지 검증
 - ✅ 에러 상황 처리 검증
-- ❌ 비즈니스 로직 테스트 금지 (Service에서 담당)
+- ❌ 비즈니스 로직 테스트 금지 (UseCase에서 담당)
 
-#### Service Testing (Business Logic Layer)
+#### UseCase Testing (Business Logic Layer)
 
-**목적**: Service는 비즈니스 로직을 담당하므로, Repository와 SessionManager를 Mock하여 순수 로직만 테스트합니다.
+**목적**: UseCase는 비즈니스 로직을 담당하므로, Repository와 SessionManager를 Mock하여 순수 로직만 테스트합니다.
 
 ```typescript
-// domains/auth/services/__tests__/auth-service.test.ts
+// domains/auth/domain/usecases/__tests__/login-with-oauth.usecase.test.ts
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { AuthServiceImpl } from '../auth-service';
-import type { AuthRepository } from '../../repositories/auth-repository';
+import { LoginWithOAuthUseCaseImpl } from '../login-with-oauth.usecase';
+import type { AuthRepository } from '../../../data/repositories/auth-repository';
 import type { SessionManager } from '@/src/shared/infrastructure/storage';
 
-describe('AuthService', () => {
+describe('LoginWithOAuthUseCase', () => {
   let mockRepository: AuthRepository;
   let mockSessionManager: SessionManager;
-  let authService: AuthServiceImpl;
+  let loginWithOAuthUseCase: LoginWithOAuthUseCaseImpl;
 
   beforeEach(() => {
     // Repository Mock
@@ -141,10 +141,10 @@ describe('AuthService', () => {
       clearSession: vi.fn(),
     };
 
-    authService = new AuthServiceImpl(mockRepository, mockSessionManager);
+    loginWithOAuthUseCase = new LoginWithOAuthUseCaseImpl(mockRepository, mockSessionManager);
   });
 
-  describe('loginWithOAuth', () => {
+  describe('execute', () => {
     it('should save session for existing user and return user data', async () => {
       // Arrange
       const mockResponse = {
@@ -160,7 +160,7 @@ describe('AuthService', () => {
       vi.mocked(mockRepository.loginWithGoogle).mockResolvedValue(mockResponse);
 
       // Act
-      const result = await authService.loginWithOAuth(
+      const result = await loginWithOAuthUseCase.execute(
         'google',
         'auth-code-123',
         'http://localhost:3000/callback'
@@ -196,7 +196,7 @@ describe('AuthService', () => {
       vi.mocked(mockRepository.loginWithGoogle).mockResolvedValue(mockResponse);
 
       // Act
-      const result = await authService.loginWithOAuth(
+      const result = await loginWithOAuthUseCase.execute(
         'google',
         'auth-code-123',
         'http://localhost:3000/callback'
@@ -218,7 +218,7 @@ describe('AuthService', () => {
 
       // Act & Assert
       await expect(
-        authService.loginWithOAuth(
+        loginWithOAuthUseCase.execute(
           'google',
           'auth-code-123',
           'http://localhost:3000/callback'
@@ -242,12 +242,12 @@ describe('AuthService', () => {
 #### Example: Testing Business Logic (Legacy - 참고용)
 
 ```typescript
-// domains/auth/services/auth.service.test.ts
+// domains/auth/domain/usecases/validate-password.usecase.test.ts
 import { describe, it, expect } from 'vitest';
-import { validatePassword, hashPassword } from './auth.service';
+import { validatePassword, hashPassword } from './validate-password.usecase';
 
-describe('AuthService', () => {
-  describe('validatePassword', () => {
+describe('ValidatePasswordUseCase', () => {
+  describe('execute', () => {
     it('should reject passwords shorter than 8 characters', () => {
       expect(validatePassword('short')).toBe(false);
     });
@@ -464,10 +464,10 @@ Use **`.node.test.ts`** for code that:
 #### Examples of Node Tests
 
 ```typescript
-// services/auth.node.test.ts
-import { hashPassword, verifyPassword } from './auth.service';
+// domains/auth/domain/usecases/hash-password.usecase.node.test.ts
+import { hashPassword, verifyPassword } from './hash-password.usecase';
 
-describe('Auth Service', () => {
+describe('HashPasswordUseCase', () => {
   it('should hash and verify passwords', async () => {
     const password = 'SecurePass123!';
     const hash = await hashPassword(password);
@@ -753,8 +753,8 @@ component-name/
 
 ### Test Location Strategy
 
-- **🆕 Repository tests**: In `domains/[domain]/repositories/__tests__/` directory
-- **🆕 Service tests**: In `domains/[domain]/services/__tests__/` directory
+- **🆕 Repository tests**: In `domains/[domain]/data/repositories/__tests__/` directory
+- **🆕 UseCase tests**: In `domains/[domain]/domain/usecases/__tests__/` directory
 - **Unit tests**: Co-located with source files
 - **Integration tests**: In `__tests__` directories
 - **E2E tests**: In root `e2e/` directory
@@ -764,14 +764,16 @@ component-name/
 ```
 domains/
 └── auth/
-    ├── repositories/
-    │   ├── auth-repository.ts
-    │   └── __tests__/
-    │       └── auth-repository.test.ts       # Repository unit tests
-    ├── services/
-    │   ├── auth-service.ts
-    │   └── __tests__/
-    │       └── auth-service.test.ts          # Service unit tests
+    ├── data/
+    │   └── repositories/
+    │       ├── auth-repository.ts
+    │       └── __tests__/
+    │           └── auth-repository.test.ts   # Repository unit tests
+    ├── domain/
+    │   └── usecases/
+    │       ├── login-with-oauth.usecase.ts
+    │       └── __tests__/
+    │           └── login-with-oauth.usecase.test.ts  # UseCase unit tests
     └── ui/
         ├── components/
         │   └── auth-form/
@@ -961,7 +963,7 @@ pnpm test:e2e
 #### 🆕 DDD Layer Testing (NEW)
 
 - **Repository Tests**: Mock HttpClient to test API integration
-- **Service Tests**: Mock Repository and SessionManager to test business logic
+- **UseCase Tests**: Mock Repository and SessionManager to test business logic
 - **Test all scenarios**: Success cases, error cases, edge cases
 - **Verify mock calls**: Check correct parameters are passed
 - **Isolated testing**: Each layer tested independently with mocks
@@ -983,9 +985,9 @@ pnpm test:e2e
 #### 🆕 DDD Layer Testing (NEW)
 
 - **NEVER test Repository with real API calls**: Always mock HttpClient
-- **NEVER test Service with real Repository**: Always mock dependencies
+- **NEVER test UseCase with real Repository**: Always mock dependencies
 - **NEVER test business logic in Repository**: Repository는 순수 데이터 접근만
-- **NEVER test data access in Service**: Service는 비즈니스 로직만
+- **NEVER test data access in UseCase**: UseCase는 비즈니스 로직만
 - **NEVER test DI Containers directly**: Container는 설정일 뿐, 로직 없음
 - **NEVER skip error scenario tests**: 에러 처리는 필수 테스트 항목
 

@@ -16,20 +16,38 @@ nugudi/
 │       │           ├── sign-in/  # Sign in with credentials page
 │       │           └── sign-up/  # Sign up pages
 │       └── src/
-│           ├── di/        # 🆕 Dependency Injection Containers
-│           │   ├── auth-server-container.ts  # Server-side DI
-│           │   └── auth-client-container.ts  # Client-side DI (Singleton)
 │           ├── domains/   # 🆕 DDD Domain Layer
 │           │   ├── auth/
-│           │   │   ├── repositories/  # Data Access Layer
-│           │   │   ├── services/      # Business Logic Layer
-│           │   │   ├── types/
-│           │   │   ├── actions/       # Server Actions
-│           │   │   └── ui/           # Presentation Layer
+│           │   │   ├── di/             # 🆕 DI Containers (per-domain)
+│           │   │   │   ├── auth-server-container.ts  # Server DI (Stateless)
+│           │   │   │   └── auth-client-container.ts  # Client DI (Lazy Singleton)
+│           │   │   ├── domain/         # Domain Layer
+│           │   │   │   ├── repositories/  # Repository Interfaces
+│           │   │   │   ├── usecases/      # Business Logic (UseCase pattern)
+│           │   │   │   ├── entities/      # Domain Entities
+│           │   │   │   └── interfaces/    # Domain Interfaces
+│           │   │   ├── data/           # Data Layer
+│           │   │   │   ├── repositories/  # Repository Implementations
+│           │   │   │   ├── data-sources/  # Data Sources
+│           │   │   │   ├── mappers/       # DTO → Entity Mappers
+│           │   │   │   └── dto/           # Data Transfer Objects
+│           │   │   ├── infrastructure/ # Infrastructure Layer
+│           │   │   │   └── services/      # External Services
+│           │   │   ├── presentation/   # Presentation Layer (UI)
+│           │   │   │   ├── views/
+│           │   │   │   ├── sections/
+│           │   │   │   └── components/
+│           │   │   └── core/           # Core Domain Concepts
+│           │   │       ├── types/
+│           │   │       ├── config/
+│           │   │       └── errors/
 │           │   ├── user/
-│           │   │   ├── repositories/
-│           │   │   ├── services/
-│           │   │   └── ui/
+│           │   │   ├── di/
+│           │   │   ├── domain/
+│           │   │   ├── data/
+│           │   │   ├── infrastructure/
+│           │   │   ├── presentation/
+│           │   │   └── core/
 │           │   └── [other-domains]/
 │           └── shared/    # Shared Infrastructure & Interface Adapters
 │               ├── infrastructure/  # 🆕 Infrastructure Layer
@@ -76,20 +94,26 @@ This project follows **Domain-Driven Design (DDD)** principles with **Clean Arch
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                     Presentation Layer                      │
-│                    (app/, domains/*/ui/)                    │
+│              (app/, domains/*/presentation/)                │
 │              Pages → Views → Sections → Components          │
 └─────────────────────────────────────────────────────────────┘
                             ↓ depends on
 ┌─────────────────────────────────────────────────────────────┐
-│                   Application Layer                         │
-│              (domains/*/services/, actions/)                │
+│                   Application Layer (UseCase)               │
+│                  (domains/*/domain/usecases/)               │
 │             Business Logic & Orchestration                  │
 └─────────────────────────────────────────────────────────────┘
                             ↓ depends on
 ┌─────────────────────────────────────────────────────────────┐
 │                      Domain Layer                           │
-│              (domains/*/repositories/, types/)              │
-│                  Data Access Interface                      │
+│          (domains/*/domain/repositories/, entities/)        │
+│              Repository Interfaces & Domain Models          │
+└─────────────────────────────────────────────────────────────┘
+                            ↓ depends on
+┌─────────────────────────────────────────────────────────────┐
+│                      Data Layer                             │
+│       (domains/*/data/repositories/, data-sources/)         │
+│         Repository Implementations & Data Sources           │
 └─────────────────────────────────────────────────────────────┘
                             ↓ depends on
 ┌─────────────────────────────────────────────────────────────┐
@@ -136,15 +160,15 @@ DI Containers manage dependencies and their lifecycles, making code:
 **Use in**: Server Components, API Routes, Server Actions
 
 ```typescript
-import { createAuthServerContainer } from '@/src/di/auth-server-container';
+import { createAuthServerContainer } from '@/src/domains/auth/di/auth-server-container';
 
 // Page (Server Component)
 const Page = async () => {
-  const container = createAuthServerContainer();  // ✅ Create new instance
+  const container = createAuthServerContainer();  // ✅ Create new instance per request
   const authService = container.getAuthService();
   const userService = container.getUserService();
 
-  // Use services...
+  // Use UseCases...
 };
 ```
 
@@ -160,12 +184,13 @@ const Page = async () => {
 
 ```typescript
 'use client';
-import { authClientContainer } from '@/src/di/auth-client-container';
+import { getAuthClientContainer } from '@/src/domains/auth/di/auth-client-container';
 
 // Client Component
 const Component = () => {
   const handleLogin = async () => {
-    const authService = authClientContainer.getAuthService();  // ✅ Use singleton
+    const container = getAuthClientContainer();  // ✅ Get lazy-initialized singleton
+    const authService = container.getAuthService();
     const result = await authService.loginWithOAuth(...);
   };
 };
@@ -177,23 +202,22 @@ const Component = () => {
 - **TokenProvider**: `ClientTokenProvider` (localStorage에서 토큰 조회)
 - **HttpClient**: 브라우저 fetch 사용
 
-### Available Services
+### Available UseCases
 
 ```typescript
-// Auth Domain Services
-container.getAuthService()
-  - getOAuthAuthorizeUrl()
-  - loginWithOAuth()
-  - signUpWithSocial()
-  - logout()
-  - refreshToken()
-  - getCurrentSession()
+// Auth Domain UseCases (per-UseCase getters)
+const authContainer = createAuthServerContainer();
+authContainer.getLoginWithOAuth()      // OAuth 로그인 UseCase
+authContainer.getLogout()              // 로그아웃 UseCase
+authContainer.getRefreshToken()        // 토큰 갱신 UseCase
+authContainer.getSignUpWithSocial()    // 소셜 회원가입 UseCase
+authContainer.getCurrentSession()      // 세션 조회 UseCase
+authContainer.getOAuthAuthorizeUrl()   // OAuth URL 생성 UseCase
 
-// User Domain Services
-container.getUserService()
-  - getProfile()
-  - updateProfile()
-  // ... user-related methods
+// User Domain UseCases (per-UseCase getters)
+const userContainer = createUserServerContainer();
+userContainer.getGetMyProfile()              // 내 프로필 조회 UseCase
+userContainer.getCheckNicknameAvailability() // 닉네임 중복 확인 UseCase
 ```
 
 ---
@@ -235,8 +259,8 @@ const client = new FetchHttpClient({ baseUrl: '...' });
 
 // ✅ CORRECT - Use through DI Container
 const container = createAuthServerContainer();
-const authService = container.getAuthService();
-// AuthService internally uses AuthenticatedHttpClient
+const loginUseCase = container.getLoginWithOAuth();  // 개별 UseCase 획득
+// UseCases internally use Repository → DataSource → AuthenticatedHttpClient
 ```
 
 ### SessionManager (Server vs Client)
@@ -306,7 +330,7 @@ class ClientTokenProvider implements TokenProvider {
 
 ---
 
-## 🏗️ Repository & Service Pattern
+## 🏗️ Repository & UseCase Pattern
 
 ### Repository Layer (Data Access)
 
@@ -340,7 +364,7 @@ export class AuthRepositoryImpl implements AuthRepository {
 - 순수 데이터 접근 로직만 포함
 - 비즈니스 로직 없음
 
-### Service Layer (Business Logic)
+### UseCase Layer (Business Logic)
 
 **역할**: 비즈니스 로직과 여러 Repository를 조합하여 복잡한 플로우 처리
 
@@ -749,9 +773,9 @@ import { useToggle } from "@nugudi/react-hooks-toggle";
 import { useStepper } from "@nugudi/react-hooks-use-stepper";
 ```
 
-### ~~API Client~~ → DI Container + Services
+### ~~API Client~~ → DI Container + UseCases
 
-**DEPRECATED**: `@nugudi/api` has been removed. Use **DI Containers** and **Services** instead.
+**DEPRECATED**: `@nugudi/api` has been removed. Use **DI Containers** and **UseCases** instead.
 
 ```typescript
 // ❌ OLD (Removed)
@@ -759,15 +783,16 @@ import { api } from "@nugudi/api";
 const response = await api.users.getProfile(userId);
 
 // ✅ NEW - Server-side (in Page/Server Action)
-import { createAuthServerContainer } from '@/src/di/auth-server-container';
-const container = createAuthServerContainer();
-const userService = container.getUserService();
-const profile = await userService.getProfile();
+import { createUserServerContainer } from '@/src/domains/user/di/user-server-container';
+const container = createUserServerContainer();
+const getMyProfileUseCase = container.getGetMyProfile();
+const profile = await getMyProfileUseCase.execute();
 
 // ✅ NEW - Client-side (in Client Component)
-import { authClientContainer } from '@/src/di/auth-client-container';
-const userService = authClientContainer.getUserService();
-const profile = await userService.getProfile();
+import { getUserClientContainer } from '@/src/domains/user/di/user-client-container';
+const container = getUserClientContainer();
+const getMyProfileUseCase = container.getGetMyProfile();
+const profile = await getMyProfileUseCase.execute();
 ```
 
 ### Types Package (`@nugudi/types`)
@@ -878,36 +903,64 @@ apps/web/
 │           ├── sign-in/         # Sign in page
 │           └── sign-up/         # Sign up page
 ├── src/
-│   ├── di/                       # 🆕 Dependency Injection Containers
-│   │   ├── auth-server-container.ts    # Server DI (Stateless)
-│   │   └── auth-client-container.ts    # Client DI (Singleton)
 │   ├── domains/                  # 🆕 DDD Domain Layer
 │   │   ├── auth/                # Auth domain
-│   │   │   ├── repositories/   # 🆕 Data Access Layer
-│   │   │   │   └── auth-repository.ts
-│   │   │   ├── services/       # 🆕 Business Logic Layer
-│   │   │   │   └── auth-service.ts
-│   │   │   ├── actions/        # Server Actions
-│   │   │   ├── types/          # Domain types
-│   │   │   ├── hooks/          # Domain hooks
-│   │   │   └── ui/             # Presentation Layer
-│   │   │       ├── views/
-│   │   │       ├── sections/
-│   │   │       └── components/
+│   │   │   ├── di/             # 🆕 DI Containers (per-domain)
+│   │   │   │   ├── auth-server-container.ts  # Server DI (Stateless)
+│   │   │   │   └── auth-client-container.ts  # Client DI (Lazy Singleton)
+│   │   │   ├── domain/         # Domain Layer
+│   │   │   │   ├── repositories/  # Repository Interfaces
+│   │   │   │   ├── usecases/      # Business Logic (UseCase pattern)
+│   │   │   │   ├── entities/      # Domain Entities
+│   │   │   │   └── interfaces/    # Domain Interfaces
+│   │   │   ├── data/           # Data Layer
+│   │   │   │   ├── repositories/  # Repository Implementations
+│   │   │   │   ├── data-sources/  # Data Sources
+│   │   │   │   ├── mappers/       # DTO → Entity Mappers
+│   │   │   │   └── dto/           # Data Transfer Objects
+│   │   │   ├── infrastructure/ # Infrastructure Layer
+│   │   │   │   └── services/      # External Services
+│   │   │   ├── presentation/   # Presentation Layer (UI)
+│   │   │   │   ├── views/
+│   │   │   │   ├── sections/
+│   │   │   │   └── components/
+│   │   │   └── core/           # Core Domain Concepts
+│   │   │       ├── types/
+│   │   │       ├── config/
+│   │   │       └── errors/
 │   │   ├── user/               # User domain
-│   │   │   ├── repositories/   # 🆕
-│   │   │   ├── services/       # 🆕
-│   │   │   ├── types/
-│   │   │   ├── hooks/
-│   │   │   └── ui/
-│   │   ├── benefit/            # Simple domain (no repositories/services yet)
-│   │   │   └── ui/
-│   │   ├── cafeteria/          # Cafeteria domain
-│   │   │   ├── home/
-│   │   │   ├── detail/
-│   │   │   └── review/
-│   │   └── stamp/
-│   │       └── ui/
+│   │   │   ├── di/
+│   │   │   ├── domain/
+│   │   │   ├── data/
+│   │   │   ├── infrastructure/
+│   │   │   ├── presentation/
+│   │   │   └── core/
+│   │   ├── benefit/            # Benefit domain
+│   │   │   ├── di/
+│   │   │   ├── domain/
+│   │   │   ├── data/
+│   │   │   ├── infrastructure/
+│   │   │   ├── presentation/
+│   │   │   └── core/
+│   │   ├── cafeteria/          # Cafeteria domain (feature-based)
+│   │   │   ├── home/           # Home feature
+│   │   │   ├── detail/         # Detail feature
+│   │   │   ├── review/         # Review feature
+│   │   │   └── di/             # Shared DI for cafeteria
+│   │   ├── notification/       # Notification domain
+│   │   │   ├── di/
+│   │   │   ├── domain/
+│   │   │   ├── data/
+│   │   │   ├── infrastructure/
+│   │   │   ├── presentation/
+│   │   │   └── core/
+│   │   └── stamp/              # Stamp domain
+│   │       ├── di/
+│   │       ├── domain/
+│   │       ├── data/
+│   │       ├── infrastructure/
+│   │       ├── presentation/
+│   │       └── core/
 │   └── shared/                  # Shared Infrastructure & Adapters
 │       ├── infrastructure/     # 🆕 Infrastructure Layer
 │       │   ├── http/          # HttpClient, AuthenticatedHttpClient
@@ -1059,20 +1112,20 @@ import * as styles from "./index.css";
 
 ```typescript
 // app/(auth)/profile/page.tsx
-import { createAuthServerContainer } from '@/src/di/auth-server-container';
+import { createUserServerContainer } from '@/src/domains/user/di/user-server-container';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import getQueryClient from '@/src/shared/infrastructure/configs/tanstack-query/get-query-client';
 
 const ProfilePage = async () => {
-  // 1. DI Container로 서비스 획득
-  const container = createAuthServerContainer();
-  const userService = container.getUserService();
+  // 1. DI Container로 UseCase 획득
+  const container = createUserServerContainer();
+  const getMyProfileUseCase = container.getGetMyProfile();
 
   // 2. 서버사이드에서 데이터 prefetch
   const queryClient = getQueryClient();
   await queryClient.prefetchQuery({
     queryKey: ['user', 'profile'],
-    queryFn: () => userService.getProfile()
+    queryFn: () => getMyProfileUseCase.execute()
   });
 
   // 3. HydrationBoundary로 클라이언트에 전달
@@ -1089,19 +1142,20 @@ export default ProfilePage;
 ### Client-Side Data Fetching (Client Components)
 
 ```typescript
-// domains/user/ui/sections/user-profile-section/index.tsx
+// domains/user/presentation/sections/user-profile-section/index.tsx
 'use client';
-import { authClientContainer } from '@/src/di/auth-client-container';
+import { getUserClientContainer } from '@/src/domains/user/di/user-client-container';
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 const UserProfileSectionContent = () => {
-  // 1. 클라이언트 컨테이너 사용 (Singleton)
-  const userService = authClientContainer.getUserService();
+  // 1. 클라이언트 컨테이너 사용 (Lazy-initialized singleton)
+  const container = getUserClientContainer();
+  const getMyProfileUseCase = container.getGetMyProfile();
 
   // 2. TanStack Query로 데이터 조회 (Page에서 prefetch한 데이터 재사용)
   const { data } = useSuspenseQuery({
     queryKey: ['user', 'profile'],
-    queryFn: () => userService.getProfile()
+    queryFn: () => getMyProfileUseCase.execute()
   });
 
   return <div>{data.profile.nickname}</div>;
@@ -1111,15 +1165,19 @@ const UserProfileSectionContent = () => {
 ### Server Action with DI Container
 
 ```typescript
-// domains/auth/actions/auth-actions.ts
+// domains/auth/infrastructure/actions/auth-actions.ts
 'use server';
-import { createAuthServerContainer } from '@/src/di/auth-server-container';
+import { createAuthServerContainer } from '@/src/domains/auth/di/auth-server-container';
 
 export async function loginWithGoogle(code: string) {
   const container = createAuthServerContainer();
-  const authService = container.getAuthService();
+  const loginWithOAuthUseCase = container.getLoginWithOAuth();
 
-  const result = await authService.loginWithOAuth('google', code, '/auth/callback/google');
+  const result = await loginWithOAuthUseCase.execute({
+    provider: 'google',
+    code,
+    redirectUri: '/auth/callback/google'
+  });
 
   return result;
 }
@@ -1360,10 +1418,10 @@ import { AppleIcon, HeartIcon, ArrowRightIcon } from "@nugudi/assets-icons";
 
 // DI Container usage
 // Server-side
-import { createAuthServerContainer } from '@/src/di/auth-server-container';
+import { createAuthServerContainer } from '@/src/domains/auth/di/auth-server-container';
 
 // Client-side
-import { authClientContainer } from '@/src/di/auth-client-container';
+import { getAuthClientContainer } from '@/src/domains/auth/di/auth-client-container';
 ```
 
 ---
@@ -1631,9 +1689,9 @@ export type CafeteriaData = {};
 
 ### DDD Development Guidelines
 
-1. **Use DI Containers**: Always access services through DI containers
-   - Server: `createAuthServerContainer()` (새 인스턴스)
-   - Client: `authClientContainer` (Singleton)
+1. **Use DI Containers**: Always access UseCases through DI containers
+   - Server: `createAuthServerContainer()` (새 인스턴스 per request)
+   - Client: `getAuthClientContainer()` (Lazy-initialized singleton)
 
 2. **Layer Separation**: Respect architectural boundaries
    - Presentation → Application → Domain → Infrastructure
@@ -1660,7 +1718,7 @@ export type CafeteriaData = {};
 ```typescript
 // ✅ DO
 const container = createAuthServerContainer();  // New instance per request
-const service = container.getAuthService();
+const loginUseCase = container.getLoginWithOAuth();
 
 // ❌ DON'T
 import { AuthServiceImpl } from '@/src/domains/auth/services/auth-service';
@@ -1670,8 +1728,9 @@ const service = new AuthServiceImpl(...);  // Never instantiate directly
 #### Client-Side (Client Components, Hooks)
 ```typescript
 // ✅ DO
-import { authClientContainer } from '@/src/di/auth-client-container';
-const service = authClientContainer.getAuthService();  // Use singleton
+import { getAuthClientContainer } from '@/src/domains/auth/di/auth-client-container';
+const container = getAuthClientContainer();  // Get lazy-initialized singleton
+const loginUseCase = container.getLoginWithOAuth();
 
 // ❌ DON'T
 const container = new AuthClientContainer();  // Never create new instance

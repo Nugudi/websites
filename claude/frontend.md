@@ -97,7 +97,7 @@ domains/
 
 ```typescript
 // MUST: Server Component
-// MUST: Use Server DI Container for services
+// MUST: Use Server DI Container for UseCases
 // MUST: Prefetch data for SSR
 // MUST: Wrap with HydrationBoundary
 // MAY: Set metadata for SEO
@@ -615,7 +615,7 @@ import { api } from "@nugudi/api"; // ✅ Named
 **실제 UserProfile 데이터 흐름 예시**:
 
 ```typescript
-// 1. Page: Server Container + Service로 Prefetch (SSR)
+// 1. Page: Server Container + UseCases로 Prefetch (SSR)
 // File: app/page.tsx
 import { createUserServerContainer } from "@/src/di";
 import { userProfileQueryServer } from "@/src/domains/user/hooks/queries/user-profile.query.server";
@@ -681,7 +681,7 @@ export const WelcomeMessage = ({ nickname }: { nickname: string }) => {
 **🆕 핵심 포인트**:
 - **Server Container**: Page Layer에서 `createXXXServerContainer()` 사용 (매번 새 인스턴스)
 - **Client Container**: Section/Component에서 `xxxClientContainer` 사용 (Singleton)
-- **Service Layer**: Repository 호출 + 비즈니스 로직 처리
+- **UseCase Layer**: Repository 호출 + 비즈니스 로직 처리
 - **자동 토큰 주입**: DI Container가 AuthenticatedHttpClient를 통해 자동 처리
 - **캐시 재사용**: Page에서 1번의 API 호출, Section에서 캐시 재사용 (추가 네트워크 요청 없음)
 - **Component는 순수 UI만 담당**: Props로 데이터 받아 렌더링만
@@ -691,7 +691,7 @@ export const WelcomeMessage = ({ nickname }: { nickname: string }) => {
 | Layer | 환경 | DI Container | 책임 |
 |-------|------|--------------|------|
 | **Page** | Server | `createXXXServerContainer()` | SSR 데이터 prefetch |
-| **Service** | Both | Container에서 주입 | 비즈니스 로직 + Repository 호출 |
+| **UseCase** | Both | Container에서 주입 | 비즈니스 로직 + Repository 호출 |
 | **Repository** | Both | Container에서 주입 | 순수 데이터 접근 (HttpClient 사용) |
 | **Section** | Client | `xxxClientContainer` | 캐시 재사용 + UI 상태 관리 |
 | **Component** | Both | - | 순수 UI 렌더링 (Props만) |
@@ -846,22 +846,22 @@ const CafeteriaListSectionContent = ({ filter }: { filter: string }) => {
 
 ### 🆕 DDD Architecture (NEW)
 
-1. **DI Containers**: ALWAYS use DI containers to get Services
+1. **DI Containers**: ALWAYS use DI containers to get UseCases
    - Server: `createXXXServerContainer()` (매번 새 인스턴스)
    - Client: `xxxClientContainer` (Singleton)
-2. **Service Layer**: Business logic + Repository 호출 (직접 API 호출 금지)
+2. **UseCase Layer**: Business logic + Repository 호출 (직접 API 호출 금지)
 3. **Repository Layer**: Pure data access using HttpClient (비즈니스 로직 금지)
 4. **Infrastructure Layer**: HttpClient, SessionManager, TokenProvider (환경 무관 추상화)
-5. **NEVER**: 직접 Repository/Service 인스턴스화 (Container에서만 주입)
+5. **NEVER**: 직접 Repository/UseCase 인스턴스화 (Container에서만 주입)
 6. **NEVER**: Page에서 Client Container 사용 (Singleton은 Client 전용)
-7. **NEVER**: `@nugudi/api` 사용 (deprecated, Service 사용)
+7. **NEVER**: `@nugudi/api` 사용 (deprecated, UseCase 사용)
 
 ### Component Hierarchy
 
 8. **Route Groups**: Use `(auth)` for protected pages, `(public)` for public pages
-9. **Page**: Server Container + Service로 data prefetching (`app/(auth|public)/[domain]/page.tsx`)
+9. **Page**: Server Container + UseCases로 data prefetching (`app/(auth|public)/[domain]/page.tsx`)
 10. **View**: Layout composition only (`domains/[domain]/[feature?]/ui/views/`)
-11. **Section**: Client Container + Service로 data fetching + Error/Loading boundaries (`ui/sections/`)
+11. **Section**: Client Container + UseCases로 data fetching + Error/Loading boundaries (`ui/sections/`)
 12. **Component**: Pure UI components (`ui/components/`)
 13. **Always use** Suspense + ErrorBoundary in Sections
 14. **Never skip** the hierarchy (Page → View → Section → Component)
@@ -873,7 +873,7 @@ const CafeteriaListSectionContent = ({ filter }: { filter: string }) => {
 17. **Name consistently** following the patterns above
 18. **Separate concerns** strictly between layers
 19. **Each component** must be in its own folder with `index.tsx` and `index.css.ts`
-20. **Domain logic** (repositories, services, stores, schemas, types) stays outside the `ui/` folder
+20. **Domain logic** (repositories, usecases, stores, schemas, types) stays outside the `ui/` folder
 21. **Use Vanilla Extract** with `vars` and `classes` from `@nugudi/themes`
 22. **Always prefer** existing packages from `@nugudi/*` namespace
 23. **Client Components**: Add `"use client"` when using event handlers or hooks
@@ -883,8 +883,8 @@ const CafeteriaListSectionContent = ({ filter }: { filter: string }) => {
 
 25. **TanStack Query**: Separate Query Keys (`constants/`) from Query Options (`hooks/queries/`)
 26. **Query Naming**: Use `xxxQueryServer()` for Server (factory), `xxxQueryClient()` for Client (factory)
-27. **Query Structure**: Use DI Container to get Service, call Service methods in queryFn
-28. **NEVER**: 직접 API 함수 호출 (Service 메서드 사용)
+27. **Query Structure**: Use DI Container to get UseCase, call UseCase.execute() in queryFn
+28. **NEVER**: 직접 API 함수 호출 (UseCase 메서드 사용)
 
 ## TypeScript Interface Rules
 

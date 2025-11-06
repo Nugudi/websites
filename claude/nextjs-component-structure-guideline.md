@@ -100,14 +100,14 @@ import { BenefitPageView } from '@/src/domains/benefit/ui/views/benefit-page-vie
 const BenefitsPage = async ({ searchParams }) => {
   const queryClient = getQueryClient();
 
-  // 🆕 Server Container로 Service 획득 (매번 새 인스턴스)
+  // 🆕 Server Container로 UseCase 획득 (매번 새 인스턴스)
   const container = createBenefitServerContainer();
-  const benefitService = container.getBenefitService();
+  const getBenefitsUseCase = container.getGetBenefits();
 
-  // Service를 통한 데이터 prefetch (자동 토큰 주입)
+  // UseCase를 통한 데이터 prefetch (자동 토큰 주입)
   await queryClient.prefetchQuery({
     queryKey: ['benefits', 'list'],
-    queryFn: () => benefitService.getBenefits()
+    queryFn: () => getBenefitsUseCase.execute()
   });
 
   return (
@@ -122,8 +122,8 @@ export default BenefitsPage; // Pages use default export
 
 **🆕 핵심 포인트**:
 - **Server Container**: 매 요청마다 새로운 컨테이너 인스턴스 생성
-- **Service 획득**: Container에서 필요한 Service를 주입받음
-- **자동 토큰 주입**: Service 내부의 Repository가 AuthenticatedHttpClient를 통해 자동으로 토큰 주입
+- **UseCase 획득**: Container에서 필요한 UseCase를 주입받음
+- **자동 토큰 주입**: UseCase 내부의 Repository가 AuthenticatedHttpClient를 통해 자동으로 토큰 주입
 - **NEVER**: Client Container (`xxxClientContainer`) 사용 금지 - Server에서는 항상 `createXXXServerContainer()` 사용
 
 ### 2. Route Parameters (🆕 with DI Container)
@@ -146,14 +146,14 @@ const CafeteriaDetailPage = async ({ params, searchParams }: PageProps) => {
 
   const queryClient = getQueryClient();
 
-  // 🆕 Server Container로 Service 획득
+  // 🆕 Server Container로 UseCase 획득
   const container = createCafeteriaServerContainer();
-  const cafeteriaService = container.getCafeteriaService();
+  const getCafeteriaDetailUseCase = container.getGetCafeteriaDetail();
 
-  // Dynamic route parameter를 Service 메서드에 전달
+  // Dynamic route parameter를 UseCase 메서드에 전달
   await queryClient.prefetchQuery({
     queryKey: ['cafeteria', 'detail', cafeteriaId],
-    queryFn: () => cafeteriaService.getCafeteriaDetail(cafeteriaId)
+    queryFn: () => getCafeteriaDetailUseCase.execute(cafeteriaId)
   });
 
   return (
@@ -174,12 +174,12 @@ import { Metadata } from 'next';
 import { createCafeteriaServerContainer } from '@/src/di';
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  // 🆕 Server Container로 Service 획득
+  // 🆕 Server Container로 UseCase 획득
   const container = createCafeteriaServerContainer();
-  const cafeteriaService = container.getCafeteriaService();
+  const getCafeteriaDetailUseCase = container.getGetCafeteriaDetail();
 
-  // Service 메서드로 데이터 조회
-  const cafeteria = await cafeteriaService.getCafeteriaDetail(params.cafeteriaId);
+  // UseCase 메서드로 데이터 조회
+  const cafeteria = await getCafeteriaDetailUseCase.execute(params.cafeteriaId);
 
   return {
     title: cafeteria.name,
@@ -191,7 +191,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 **🆕 중요**:
 - `generateMetadata`에서도 Server Container 사용
 - 각 함수마다 새로운 Container 인스턴스 생성 (stateless)
-- Service는 자동으로 인증 토큰 주입 처리
+- UseCase는 자동으로 인증 토큰 주입 처리
 
 ### 4. Loading and Error UI
 ```typescript

@@ -12,6 +12,3 @@ export * from "./dto";
 export * from "./mappers";
 // Repositories (uses DataSource)
 export * from "./repositories";
-
-// Services (deprecated - use UseCases instead)
-export * from "./services";
