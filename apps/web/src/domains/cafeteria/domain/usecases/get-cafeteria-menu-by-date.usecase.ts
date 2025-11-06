@@ -8,9 +8,18 @@ import type { GetCafeteriaMenuResponse } from "../../data/dto";
 import type { CafeteriaRepository } from "../repositories";
 
 /**
- * GetCafeteriaMenuByDate UseCase
+ * Get Cafeteria Menu By Date UseCase
  */
-export class GetCafeteriaMenuByDate {
+export interface GetCafeteriaMenuByDateUseCase {
+  execute(id: string, date: string): Promise<GetCafeteriaMenuResponse>;
+}
+
+/**
+ * Get Cafeteria Menu By Date UseCase Implementation
+ */
+export class GetCafeteriaMenuByDateUseCaseImpl
+  implements GetCafeteriaMenuByDateUseCase
+{
   constructor(private readonly repository: CafeteriaRepository) {}
 
   /**

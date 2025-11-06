@@ -7,7 +7,7 @@
  * Recommended imports:
  * - Auth Client: import { getAuthClientContainer } from "@/src/domains/auth/di/auth-client-container"
  * - Auth Server: import { createAuthServerContainer } from "@/src/domains/auth/di/auth-server-container"
- * - User Client: import { userClientContainer } from "@/src/domains/user/di/user-client-container"
+ * - User Client: import { getUserClientContainer } from "@/src/domains/user/di/user-client-container"
  * - User Server: import { createUserServerContainer } from "@/src/domains/user/di/user-server-container"
  * - Cafeteria Client: import { getCafeteriaClientContainer } from "@/src/domains/cafeteria/di/cafeteria-client-container"
  * - Cafeteria Server: import { createCafeteriaServerContainer } from "@/src/domains/cafeteria/di/cafeteria-server-container"

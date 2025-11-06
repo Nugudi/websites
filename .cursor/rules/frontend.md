@@ -122,7 +122,7 @@ export default Page; // Pages MUST use default export
 
 ### 2. View Layer (`ui/views/`)
 
-**Type**: Client or Server Component  
+**Type**: Client or Server Component
 **Purpose**: Page layout composition and section orchestration
 
 ```typescript
@@ -159,7 +159,7 @@ export const CafeteriaHomeView = ({ filter }) => {
 
 ### 3. Section Layer (`ui/sections/`)
 
-**Type**: Client Component (typically)  
+**Type**: Client Component (typically)
 **Purpose**: Feature-specific logic encapsulation with error and loading boundaries
 
 ```typescript
@@ -270,7 +270,7 @@ const UserWelcomeSectionContent = () => {
 
 ### 4. Component Layer (`ui/components/`)
 
-**Type**: Client or Server Component  
+**Type**: Client or Server Component
 **Purpose**: Reusable, presentational UI components
 
 ```typescript

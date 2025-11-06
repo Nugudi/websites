@@ -12,12 +12,18 @@ import "server-only";
 import { AuthRemoteDataSource, AuthRepositoryImpl } from "@auth/data";
 // Domain Layer (UseCases)
 import {
-  GetCurrentSession,
-  GetOAuthAuthorizeUrl,
-  LoginWithOAuth,
-  Logout,
-  RefreshToken,
-  SignUpWithSocial,
+  type GetCurrentSessionUseCase,
+  GetCurrentSessionUseCaseImpl,
+  type GetOAuthAuthorizeUrlUseCase,
+  GetOAuthAuthorizeUrlUseCaseImpl,
+  type LoginWithOAuthUseCase,
+  LoginWithOAuthUseCaseImpl,
+  type LogoutUseCase,
+  LogoutUseCaseImpl,
+  type RefreshTokenUseCase,
+  RefreshTokenUseCaseImpl,
+  type SignUpWithSocialUseCase,
+  SignUpWithSocialUseCaseImpl,
 } from "@auth/domain";
 import { AuthenticatedHttpClient } from "@/src/shared/infrastructure/http/authenticated-http-client";
 import { FetchHttpClient } from "@/src/shared/infrastructure/http/fetch-http-client";
@@ -32,15 +38,14 @@ import { RefreshTokenService } from "../infrastructure/services/refresh-token.se
 class AuthServerContainer {
   private sessionManager: ServerSessionManager;
   private refreshTokenService: RefreshTokenService;
-  private loginWithOAuthUseCase: LoginWithOAuth;
-  private logoutUseCase: Logout;
-  private refreshTokenUseCase: RefreshToken;
-  private signUpWithSocialUseCase: SignUpWithSocial;
-  private getCurrentSessionUseCase: GetCurrentSession;
-  private getOAuthAuthorizeUrlUseCase: GetOAuthAuthorizeUrl;
+  private loginWithOAuthUseCase: LoginWithOAuthUseCase;
+  private logoutUseCase: LogoutUseCase;
+  private refreshTokenUseCase: RefreshTokenUseCase;
+  private signUpWithSocialUseCase: SignUpWithSocialUseCase;
+  private getCurrentSessionUseCase: GetCurrentSessionUseCase;
+  private getOAuthAuthorizeUrlUseCase: GetOAuthAuthorizeUrlUseCase;
 
   constructor(baseUrl?: string) {
-    // baseUrl 검증 - Edge Runtime에서도 절대 URL 보장
     const apiUrl = baseUrl ?? process.env.NEXT_PUBLIC_API_URL;
 
     if (!apiUrl || apiUrl.trim() === "") {
@@ -57,15 +62,13 @@ class AuthServerContainer {
     const sessionManager = this.sessionManager;
     const tokenProvider = new ServerTokenProvider(sessionManager);
     const baseClient = new FetchHttpClient({ baseUrl: apiUrl });
-
-    // RefreshTokenService 생성 (Spring API 직접 호출)
     this.refreshTokenService = new RefreshTokenService(sessionManager, apiUrl);
 
     const httpClient = new AuthenticatedHttpClient(
       baseClient,
       tokenProvider,
-      undefined, // Server-side: no session manager for client sync
-      this.refreshTokenService, // Server-side: RefreshTokenService 주입
+      undefined,
+      this.refreshTokenService,
     );
 
     // Data Layer
@@ -73,43 +76,52 @@ class AuthServerContainer {
     const authRepository = new AuthRepositoryImpl(authDataSource);
 
     // Domain Layer (UseCases)
-    this.loginWithOAuthUseCase = new LoginWithOAuth(
+    this.loginWithOAuthUseCase = new LoginWithOAuthUseCaseImpl(
       authRepository,
       sessionManager,
     );
 
-    this.logoutUseCase = new Logout(authRepository, sessionManager);
+    this.logoutUseCase = new LogoutUseCaseImpl(authRepository, sessionManager);
 
-    this.refreshTokenUseCase = new RefreshToken(authRepository, sessionManager);
+    this.refreshTokenUseCase = new RefreshTokenUseCaseImpl(
+      authRepository,
+      sessionManager,
+    );
 
-    this.signUpWithSocialUseCase = new SignUpWithSocial(authRepository);
+    this.signUpWithSocialUseCase = new SignUpWithSocialUseCaseImpl(
+      authRepository,
+    );
 
-    this.getCurrentSessionUseCase = new GetCurrentSession(sessionManager);
+    this.getCurrentSessionUseCase = new GetCurrentSessionUseCaseImpl(
+      sessionManager,
+    );
 
-    this.getOAuthAuthorizeUrlUseCase = new GetOAuthAuthorizeUrl(authRepository);
+    this.getOAuthAuthorizeUrlUseCase = new GetOAuthAuthorizeUrlUseCaseImpl(
+      authRepository,
+    );
   }
 
-  getLoginWithOAuth(): LoginWithOAuth {
+  getLoginWithOAuth(): LoginWithOAuthUseCase {
     return this.loginWithOAuthUseCase;
   }
 
-  getLogout(): Logout {
+  getLogout(): LogoutUseCase {
     return this.logoutUseCase;
   }
 
-  getRefreshToken(): RefreshToken {
+  getRefreshToken(): RefreshTokenUseCase {
     return this.refreshTokenUseCase;
   }
 
-  getSignUpWithSocial(): SignUpWithSocial {
+  getSignUpWithSocial(): SignUpWithSocialUseCase {
     return this.signUpWithSocialUseCase;
   }
 
-  getCurrentSession(): GetCurrentSession {
+  getCurrentSession(): GetCurrentSessionUseCase {
     return this.getCurrentSessionUseCase;
   }
 
-  getOAuthAuthorizeUrl(): GetOAuthAuthorizeUrl {
+  getOAuthAuthorizeUrl(): GetOAuthAuthorizeUrlUseCase {
     return this.getOAuthAuthorizeUrlUseCase;
   }
 

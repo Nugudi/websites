@@ -8,9 +8,16 @@ import type { CreateReviewRequest, CreateReviewResponse } from "../../data/dto";
 import type { CafeteriaReviewRepository } from "../repositories";
 
 /**
- * CreateReview UseCase
+ * Create Review UseCase
  */
-export class CreateReview {
+export interface CreateReviewUseCase {
+  execute(data: CreateReviewRequest): Promise<CreateReviewResponse>;
+}
+
+/**
+ * Create Review UseCase Implementation
+ */
+export class CreateReviewUseCaseImpl implements CreateReviewUseCase {
   constructor(private readonly repository: CafeteriaReviewRepository) {}
 
   /**

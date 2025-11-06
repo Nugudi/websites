@@ -218,7 +218,16 @@ export class AuthRemoteDataSource {
    * 로그아웃
    */
   async logout(params: LogoutRequestDTO): Promise<void> {
-    await this.httpClient.post(AUTH_API_ENDPOINTS.LOGOUT, params);
+    await this.httpClient.post(
+      AUTH_API_ENDPOINTS.LOGOUT,
+      {}, // Empty body
+      {
+        headers: {
+          "X-Refresh-Token": params.refreshToken,
+          "X-Device-ID": params.deviceId,
+        },
+      },
+    );
   }
 
   /**

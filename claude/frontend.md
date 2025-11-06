@@ -20,50 +20,73 @@ Page (Server Component) → View → Section (with Suspense/ErrorBoundary) → C
 ```
 domains/
 ├── auth/                          # Auth Domain (DDD Layered)
-│   ├── repositories/             # 🆕 Data Access Layer
-│   │   └── auth-repository.ts   #     HTTP API 호출
-│   ├── services/                 # 🆕 Business Logic Layer
-│   │   └── auth-service.ts      #     비즈니스 로직 + Repository 조합
-│   ├── actions/                  # Server Actions
-│   │   └── auth-actions.ts      #     Next.js Server Actions
-│   ├── types/                    # Domain Types
-│   │   └── auth.type.ts
-│   ├── hooks/                    # React Hooks
-│   │   ├── queries/             # TanStack Query Options
-│   │   └── use-*.ts             # Custom Hooks
-│   └── ui/                       # Presentation Layer
-│       ├── components/
-│       ├── sections/
-│       └── views/
+│   ├── di/                       # 🆕 DI Containers (per-domain)
+│   │   ├── auth-server-container.ts   # Server Container (Stateless)
+│   │   └── auth-client-container.ts   # Client Container (Lazy Singleton)
+│   ├── domain/                   # Domain Layer
+│   │   ├── repositories/        #     Repository Interfaces
+│   │   ├── usecases/            #     Business Logic (UseCase pattern)
+│   │   ├── entities/            #     Domain Entities
+│   │   └── interfaces/          #     Domain Interfaces
+│   ├── data/                     # Data Layer
+│   │   ├── repositories/        #     Repository Implementations
+│   │   ├── data-sources/        #     Data Sources
+│   │   ├── mappers/             #     DTO → Entity Mappers
+│   │   └── dto/                 #     Data Transfer Objects
+│   ├── infrastructure/           # Infrastructure Layer
+│   │   ├── services/            #     External Services
+│   │   └── actions/             #     Next.js Server Actions
+│   ├── presentation/             # Presentation Layer (UI)
+│   │   ├── components/
+│   │   ├── sections/
+│   │   └── views/
+│   └── core/                     # Core Domain Concepts
+│       ├── types/               #     Domain Types
+│       ├── config/              #     Domain Configuration
+│       ├── errors/              #     Domain Errors
+│       └── hooks/               #     React Hooks & Query Factories
 ├── user/                          # User Domain (DDD Layered)
-│   ├── repositories/             # 🆕 Data Access Layer
-│   │   └── user-repository.ts
-│   ├── services/                 # 🆕 Business Logic Layer
-│   │   └── user-service.ts
-│   ├── types/
-│   │   └── user.type.ts
-│   ├── hooks/
-│   │   └── queries/
-│   │       └── user-profile.query.ts  # Server/Client Query Factories
-│   └── ui/
-├── benefit/                       # Simple Domain (no services yet)
-│   └── ui/
-├── cafeteria/                     # Cafeteria Domain
-│   ├── home/
-│   ├── detail/
-│   └── review/
-└── stamp/
-    └── ui/
+│   ├── di/
+│   ├── domain/
+│   ├── data/
+│   ├── infrastructure/
+│   ├── presentation/
+│   └── core/
+├── benefit/                       # Benefit Domain
+│   ├── di/
+│   ├── domain/
+│   ├── data/
+│   ├── infrastructure/
+│   ├── presentation/
+│   └── core/
+├── cafeteria/                     # Cafeteria Domain (feature-based)
+│   ├── home/                     # Home feature
+│   ├── detail/                   # Detail feature
+│   ├── review/                   # Review feature
+│   └── di/                       # Shared DI for cafeteria
+└── stamp/                         # Stamp Domain
+    ├── di/
+    ├── domain/
+    ├── data/
+    ├── infrastructure/
+    ├── presentation/
+    └── core/
 ```
 
 **DDD Layer Responsibilities:**
 
-- **repositories/**: HTTP API 호출, 순수 데이터 접근
-- **services/**: 비즈니스 로직, Repository 조합, 세션 관리
-- **actions/**: Next.js Server Actions (Page/Component에서 호출)
-- **types/**: Domain 타입 정의
-- **hooks/**: React Hooks (TanStack Query 포함)
-- **ui/**: Presentation Layer (Views/Sections/Components)
+- **di/**: DI Containers (per-domain) - Server Container (stateless) & Client Container (lazy singleton)
+- **domain/repositories/**: Repository Interfaces (의존성 역전)
+- **domain/usecases/**: Business Logic (UseCase pattern), Repository & Infrastructure 조합
+- **domain/entities/**: Domain Entities (비즈니스 객체)
+- **data/repositories/**: Repository Implementations (실제 HTTP API 호출)
+- **data/data-sources/**: Data Sources (HTTP Client 사용)
+- **data/mappers/**: DTO → Entity 변환
+- **infrastructure/services/**: External Services (third-party integrations)
+- **infrastructure/actions/**: Next.js Server Actions (Page/Component에서 호출)
+- **presentation/**: UI Components (Views/Sections/Components)
+- **core/types/**: Domain 타입 정의
+- **core/hooks/**: React Hooks (TanStack Query Factory 포함)
 
 ## Layer-by-Layer Rules
 
@@ -84,22 +107,22 @@ domains/
 
 // Example: app/page.tsx (home page shows cafeteria)
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { createAuthServerContainer } from "@/src/di/auth-server-container";  // 🆕 DI Container
-import { CafeteriaHomeView } from "@/src/domains/cafeteria/ui/views/cafeteria-home-view";
-import { userProfileQueryServer } from "@/src/domains/user/hooks/queries/user-profile.query";
+import { createUserServerContainer } from "@/src/domains/user/di/user-server-container";  // 🆕 Per-domain DI Container
+import { CafeteriaHomeView } from "@/src/domains/cafeteria/presentation/views/cafeteria-home-view";
+import { userProfileQueryServer } from "@/src/domains/user/core/hooks/queries/user-profile.query";
 import getQueryClient from "@/src/shared/infrastructure/configs/tanstack-query/get-query-client";
 
 const Page = async ({ params, searchParams }) => {
   const queryClient = getQueryClient();
 
-  // 🆕 DI Container로 서비스 획득
-  const container = createAuthServerContainer();
-  const userService = container.getUserService();
+  // 🆕 DI Container로 UseCase 획득 (Server Container는 매 요청마다 새 인스턴스)
+  const container = createUserServerContainer();
+  const getMyProfileUseCase = container.getGetMyProfile();  // 개별 UseCase 획득
 
-  // Prefetch data using Service (DI Container가 자동으로 토큰 주입)
+  // Prefetch data using UseCase (DI Container가 자동으로 인증 토큰 주입)
   await queryClient.prefetchQuery({
     queryKey: ['user', 'profile'],
-    queryFn: () => userService.getProfile()
+    queryFn: () => getMyProfileUseCase.execute()
   });
 
   // Return View wrapped in HydrationBoundary
@@ -114,11 +137,12 @@ export default Page; // Pages MUST use default export
 ```
 
 **🔑 Key Points:**
-- ✅ Use `createAuthServerContainer()` (creates new instance per request)
-- ✅ Get services from container: `container.getUserService()`
-- ✅ Services automatically handle token injection via `AuthenticatedHttpClient`
-- ❌ Never instantiate services directly
-- ❌ Never use client container (`authClientContainer`) on server
+- ✅ Use `createUserServerContainer()` (creates new instance per request, stateless)
+- ✅ Get UseCases individually: `container.getGetMyProfile()` (개별 UseCase 획득)
+- ✅ UseCases automatically handle token injection via `Repository → DataSource → AuthenticatedHttpClient`
+- ✅ Call UseCase with `.execute()` method
+- ❌ Never instantiate Repository or UseCase directly
+- ❌ Never use client container (`getUserClientContainer()`) on server
 
 ### 2. View Layer (`ui/views/`)
 
@@ -234,14 +258,15 @@ const UserWelcomeSectionError = () => {
 
 // Content Component (actual data fetching)
 const UserWelcomeSectionContent = () => {
-  // 🆕 Client-side DI Container에서 서비스 획득 (Singleton 패턴)
-  const userService = authClientContainer.getUserService();
+  // 🆕 Client-side DI Container에서 UseCase 획득 (Lazy-initialized Singleton)
+  const container = getUserClientContainer();
+  const getMyProfileUseCase = container.getGetMyProfile();  // 개별 UseCase 획득
 
   // Page에서 prefetch한 데이터를 동일한 Query로 재사용 (캐시 hit!)
-  // DI Container가 자동으로 인증 토큰을 주입
+  // UseCase → Repository → DataSource → AuthenticatedHttpClient (자동 토큰 주입)
   const { data } = useSuspenseQuery({
     queryKey: ['user', 'profile'],
-    queryFn: () => userService.getProfile()
+    queryFn: () => getMyProfileUseCase.execute()
   });
 
   const nickname = data.profile?.nickname ?? "손님";
@@ -399,15 +424,15 @@ hooks/
 
 1. **파일명**: `[feature].query.ts` 형식 사용 (`[feature].query.server.ts`는 Server 전용)
 2. **Import**: Query Key는 `constants/query-keys.ts`에서 import
-3. **🆕 Service 사용**: DI Container에서 Service를 획득하여 queryFn에 사용
+3. **🆕 UseCase 사용**: DI Container에서 UseCase를 획득하여 queryFn에 사용
 4. **캐싱**: 데이터 특성에 맞는 캐싱 전략 설정 (staleTime, gcTime, refetch options)
 5. **DRY**: 공통 옵션은 `baseQuery`로 추출하여 재사용
 
 **🆕 Server-side Query (Page Layer용)**
 
 ```typescript
-// ✅ CORRECT - hooks/queries/user-profile.query.server.ts
-import { createUserServerContainer } from "@/src/di";
+// ✅ CORRECT - core/hooks/queries/user-profile.query.server.ts
+import { createUserServerContainer } from "@/src/domains/user/di/user-server-container";
 import { USER_PROFILE_QUERY_KEY } from "../../constants/query-keys";
 
 // Private: 캐싱 옵션
@@ -421,13 +446,13 @@ const USER_PROFILE_QUERY_OPTIONS = {
 
 // Public: Server Query Factory (Page에서 prefetch 시 사용)
 export const userProfileQueryServer = () => {
-  // 🆕 Server Container에서 Service 획득 (매번 새 인스턴스)
+  // 🆕 Server Container에서 UseCase 획득 (매번 새 인스턴스)
   const container = createUserServerContainer();
-  const userService = container.getUserService();
+  const getMyProfileUseCase = container.getGetMyProfile();  // 개별 UseCase 획득
 
   return {
     queryKey: USER_PROFILE_QUERY_KEY,
-    queryFn: () => userService.getProfile(), // Service가 토큰 주입 처리
+    queryFn: () => getMyProfileUseCase.execute(), // UseCase → Repository → DataSource (자동 토큰 주입)
     ...USER_PROFILE_QUERY_OPTIONS,
   };
 };
@@ -436,8 +461,8 @@ export const userProfileQueryServer = () => {
 **🆕 Client-side Query (Section Layer용)**
 
 ```typescript
-// ✅ CORRECT - hooks/queries/user-profile.query.ts
-import { userClientContainer } from "@/src/di";
+// ✅ CORRECT - core/hooks/queries/user-profile.query.ts
+import { getUserClientContainer } from "@/src/domains/user/di/user-client-container";
 import { USER_PROFILE_QUERY_KEY } from "../../constants/query-keys";
 
 // Private: 캐싱 옵션
@@ -451,12 +476,13 @@ const USER_PROFILE_QUERY_OPTIONS = {
 
 // Public: Client Query Options (Section/Component에서 사용)
 export const userProfileQueryClient = () => {
-  // 🆕 Client Container에서 Service 획득 (Singleton)
-  const userService = userClientContainer.getUserService();
+  // 🆕 Client Container에서 UseCase 획득 (Lazy-initialized Singleton)
+  const container = getUserClientContainer();
+  const getMyProfileUseCase = container.getGetMyProfile();  // 개별 UseCase 획득
 
   return {
     queryKey: USER_PROFILE_QUERY_KEY,
-    queryFn: () => userService.getProfile(), // Service가 토큰 주입 처리
+    queryFn: () => getMyProfileUseCase.execute(), // UseCase → Repository → DataSource (자동 토큰 주입)
     ...USER_PROFILE_QUERY_OPTIONS,
   };
 };
@@ -597,14 +623,14 @@ import { userProfileQueryServer } from "@/src/domains/user/hooks/queries/user-pr
 const HomePage = async () => {
   const queryClient = getQueryClient();
 
-  // 🆕 Server Container로 Service 획득 (매번 새 인스턴스, 자동 토큰 주입)
+  // 🆕 Server Container로 UseCase 획득 (매번 새 인스턴스, 자동 토큰 주입)
   const container = createUserServerContainer();
-  const userService = container.getUserService();
+  const getMyProfileUseCase = container.getGetMyProfile();  // 개별 UseCase 획득
 
-  // Server Query Factory 사용 (Service가 자동으로 토큰 주입)
+  // Server Query Factory 사용 (UseCase → Repository → DataSource, 자동 토큰 주입)
   await queryClient.prefetchQuery({
     queryKey: ['user', 'profile'],
-    queryFn: () => userService.getProfile()
+    queryFn: () => getMyProfileUseCase.execute()
   });
 
   return (
@@ -625,18 +651,19 @@ export const CafeteriaHomeView = () => {
   );
 };
 
-// 3. Section: Client Container + Service로 캐시 재사용
+// 3. Section: Client Container + UseCase로 캐시 재사용
 // File: shared/interface-adapters/sections/user-welcome-section/index.tsx
-import { userClientContainer } from "@/src/di";
+import { getUserClientContainer } from "@/src/domains/user/di/user-client-container";
 
 const UserWelcomeSectionContent = () => {
-  // 🆕 Client Container에서 Service 획득 (Singleton, 자동 토큰 주입)
-  const userService = userClientContainer.getUserService();
+  // 🆕 Client Container에서 UseCase 획득 (Lazy-initialized Singleton, 자동 토큰 주입)
+  const container = getUserClientContainer();
+  const getMyProfileUseCase = container.getGetMyProfile();  // 개별 UseCase 획득
 
   // Page에서 prefetch한 데이터를 동일한 Query Key로 조회 (캐시 hit!)
   const { data } = useSuspenseQuery({
     queryKey: ['user', 'profile'],
-    queryFn: () => userService.getProfile()
+    queryFn: () => getMyProfileUseCase.execute()
   });
 
   const nickname = data.profile?.nickname ?? "손님";

@@ -25,9 +25,20 @@ export interface GetCafeteriasWithMenuResult {
 }
 
 /**
- * GetCafeteriasWithMenu UseCase
+ * Get Cafeterias With Menu UseCase
  */
-export class GetCafeteriasWithMenu {
+export interface GetCafeteriasWithMenuUseCase {
+  execute(
+    params: GetCafeteriasWithMenuParams,
+  ): Promise<GetCafeteriasWithMenuResult>;
+}
+
+/**
+ * Get Cafeterias With Menu UseCase Implementation
+ */
+export class GetCafeteriasWithMenuUseCaseImpl
+  implements GetCafeteriasWithMenuUseCase
+{
   constructor(private readonly repository: CafeteriaRepository) {}
 
   /**

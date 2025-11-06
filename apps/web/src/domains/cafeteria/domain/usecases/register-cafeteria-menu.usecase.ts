@@ -11,9 +11,20 @@ import type {
 import type { CafeteriaRepository } from "../repositories";
 
 /**
- * RegisterCafeteriaMenu UseCase
+ * Register Cafeteria Menu UseCase
  */
-export class RegisterCafeteriaMenu {
+export interface RegisterCafeteriaMenuUseCase {
+  execute(
+    data: RegisterCafeteriaMenuRequest,
+  ): Promise<RegisterCafeteriaMenuResponse>;
+}
+
+/**
+ * Register Cafeteria Menu UseCase Implementation
+ */
+export class RegisterCafeteriaMenuUseCaseImpl
+  implements RegisterCafeteriaMenuUseCase
+{
   constructor(private readonly repository: CafeteriaRepository) {}
 
   /**

@@ -34,8 +34,12 @@
       "@notification/presentation": [
         "./src/domains/notification/presentation/index.ts"
       ],
+      "@user/domain/*": ["./src/domains/user/domain/*"],
+      "@user/domain": ["./src/domains/user/domain/index.ts"],
       "@user/data/*": ["./src/domains/user/data/*"],
       "@user/data": ["./src/domains/user/data/index.ts"],
+      "@user/di/*": ["./src/domains/user/di/*"],
+      "@user/di": ["./src/domains/user/di/index.ts"],
       "@user/presentation/*": ["./src/domains/user/presentation/*"],
       "@user/presentation": ["./src/domains/user/presentation/index.ts"],
       "@cafeteria/core/*": ["./src/domains/cafeteria/core/*"],

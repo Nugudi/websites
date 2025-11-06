@@ -24,9 +24,19 @@ export interface GetReviewCommentsResult {
 }
 
 /**
- * GetReviewComments UseCase
+ * Get Review Comments UseCase
  */
-export class GetReviewComments {
+export interface GetReviewCommentsUseCase {
+  execute(
+    reviewId: string,
+    params: GetReviewCommentsParams,
+  ): Promise<GetReviewCommentsResult>;
+}
+
+/**
+ * Get Review Comments UseCase Implementation
+ */
+export class GetReviewCommentsUseCaseImpl implements GetReviewCommentsUseCase {
   constructor(private readonly repository: CafeteriaReviewRepository) {}
 
   /**

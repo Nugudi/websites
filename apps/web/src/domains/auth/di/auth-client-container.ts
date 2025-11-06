@@ -10,11 +10,16 @@
 import { AuthRemoteDataSource, AuthRepositoryImpl } from "@auth/data";
 // Domain Layer (UseCases)
 import {
-  GetCurrentSession,
-  LoginWithOAuth,
-  Logout,
-  RefreshToken,
-  SignUpWithSocial,
+  type GetCurrentSessionUseCase,
+  GetCurrentSessionUseCaseImpl,
+  type LoginWithOAuthUseCase,
+  LoginWithOAuthUseCaseImpl,
+  type LogoutUseCase,
+  LogoutUseCaseImpl,
+  type RefreshTokenUseCase,
+  RefreshTokenUseCaseImpl,
+  type SignUpWithSocialUseCase,
+  SignUpWithSocialUseCaseImpl,
 } from "@auth/domain";
 import { AuthenticatedHttpClient } from "@/src/shared/infrastructure/http/authenticated-http-client";
 import { ClientTokenProvider } from "@/src/shared/infrastructure/http/client-token-provider";
@@ -25,11 +30,11 @@ import { ClientSessionManager } from "@/src/shared/infrastructure/storage/client
  * Auth Client Container
  */
 class AuthClientContainer {
-  private loginWithOAuthUseCase: LoginWithOAuth;
-  private logoutUseCase: Logout;
-  private refreshTokenUseCase: RefreshToken;
-  private signUpWithSocialUseCase: SignUpWithSocial;
-  private getCurrentSessionUseCase: GetCurrentSession;
+  private loginWithOAuthUseCase: LoginWithOAuthUseCase;
+  private logoutUseCase: LogoutUseCase;
+  private refreshTokenUseCase: RefreshTokenUseCase;
+  private signUpWithSocialUseCase: SignUpWithSocialUseCase;
+  private getCurrentSessionUseCase: GetCurrentSessionUseCase;
 
   constructor(baseUrl: string = process.env.NEXT_PUBLIC_API_URL || "") {
     // Infrastructure Layer
@@ -48,37 +53,44 @@ class AuthClientContainer {
     const authRepository = new AuthRepositoryImpl(authDataSource);
 
     // Domain Layer (UseCases)
-    this.loginWithOAuthUseCase = new LoginWithOAuth(
+    this.loginWithOAuthUseCase = new LoginWithOAuthUseCaseImpl(
       authRepository,
       sessionManager,
     );
 
-    this.logoutUseCase = new Logout(authRepository, sessionManager);
+    this.logoutUseCase = new LogoutUseCaseImpl(authRepository, sessionManager);
 
-    this.refreshTokenUseCase = new RefreshToken(authRepository, sessionManager);
+    this.refreshTokenUseCase = new RefreshTokenUseCaseImpl(
+      authRepository,
+      sessionManager,
+    );
 
-    this.signUpWithSocialUseCase = new SignUpWithSocial(authRepository);
+    this.signUpWithSocialUseCase = new SignUpWithSocialUseCaseImpl(
+      authRepository,
+    );
 
-    this.getCurrentSessionUseCase = new GetCurrentSession(sessionManager);
+    this.getCurrentSessionUseCase = new GetCurrentSessionUseCaseImpl(
+      sessionManager,
+    );
   }
 
-  getLoginWithOAuth(): LoginWithOAuth {
+  getLoginWithOAuth(): LoginWithOAuthUseCase {
     return this.loginWithOAuthUseCase;
   }
 
-  getLogout(): Logout {
+  getLogout(): LogoutUseCase {
     return this.logoutUseCase;
   }
 
-  getRefreshToken(): RefreshToken {
+  getRefreshToken(): RefreshTokenUseCase {
     return this.refreshTokenUseCase;
   }
 
-  getSignUpWithSocial(): SignUpWithSocial {
+  getSignUpWithSocial(): SignUpWithSocialUseCase {
     return this.signUpWithSocialUseCase;
   }
 
-  getCurrentSession(): GetCurrentSession {
+  getCurrentSession(): GetCurrentSessionUseCase {
     return this.getCurrentSessionUseCase;
   }
 }

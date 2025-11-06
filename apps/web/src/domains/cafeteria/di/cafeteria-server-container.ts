@@ -17,16 +17,26 @@ import {
 } from "@cafeteria/data";
 // Domain Layer (UseCases)
 import {
-  CreateReview,
-  CreateReviewComment,
-  CreateReviewCommentReply,
-  GetCafeteriaById,
-  GetCafeteriaMenuAvailability,
-  GetCafeteriaMenuByDate,
-  GetCafeteriasWithMenu,
-  GetReviewComments,
-  RegisterCafeteria,
-  RegisterCafeteriaMenu,
+  type CreateReviewCommentReplyUseCase,
+  CreateReviewCommentReplyUseCaseImpl,
+  type CreateReviewCommentUseCase,
+  CreateReviewCommentUseCaseImpl,
+  type CreateReviewUseCase,
+  CreateReviewUseCaseImpl,
+  type GetCafeteriaByIdUseCase,
+  GetCafeteriaByIdUseCaseImpl,
+  type GetCafeteriaMenuAvailabilityUseCase,
+  GetCafeteriaMenuAvailabilityUseCaseImpl,
+  type GetCafeteriaMenuByDateUseCase,
+  GetCafeteriaMenuByDateUseCaseImpl,
+  type GetCafeteriasWithMenuUseCase,
+  GetCafeteriasWithMenuUseCaseImpl,
+  type GetReviewCommentsUseCase,
+  GetReviewCommentsUseCaseImpl,
+  type RegisterCafeteriaMenuUseCase,
+  RegisterCafeteriaMenuUseCaseImpl,
+  type RegisterCafeteriaUseCase,
+  RegisterCafeteriaUseCaseImpl,
 } from "@cafeteria/domain";
 import { RefreshTokenService } from "@/src/domains/auth/infrastructure/services/refresh-token.service";
 import { AuthenticatedHttpClient } from "@/src/shared/infrastructure/http/authenticated-http-client";
@@ -39,18 +49,18 @@ import { ServerSessionManager } from "@/src/shared/infrastructure/storage/server
  */
 class CafeteriaServerContainer {
   // Cafeteria UseCases
-  private getCafeteriasWithMenuUseCase: GetCafeteriasWithMenu;
-  private getCafeteriaByIdUseCase: GetCafeteriaById;
-  private getCafeteriaMenuByDateUseCase: GetCafeteriaMenuByDate;
-  private getCafeteriaMenuAvailabilityUseCase: GetCafeteriaMenuAvailability;
-  private registerCafeteriaUseCase: RegisterCafeteria;
-  private registerCafeteriaMenuUseCase: RegisterCafeteriaMenu;
+  private getCafeteriasWithMenuUseCase: GetCafeteriasWithMenuUseCase;
+  private getCafeteriaByIdUseCase: GetCafeteriaByIdUseCase;
+  private getCafeteriaMenuByDateUseCase: GetCafeteriaMenuByDateUseCase;
+  private getCafeteriaMenuAvailabilityUseCase: GetCafeteriaMenuAvailabilityUseCase;
+  private registerCafeteriaUseCase: RegisterCafeteriaUseCase;
+  private registerCafeteriaMenuUseCase: RegisterCafeteriaMenuUseCase;
 
   // Review UseCases
-  private createReviewUseCase: CreateReview;
-  private getReviewCommentsUseCase: GetReviewComments;
-  private createReviewCommentUseCase: CreateReviewComment;
-  private createReviewCommentReplyUseCase: CreateReviewCommentReply;
+  private createReviewUseCase: CreateReviewUseCase;
+  private getReviewCommentsUseCase: GetReviewCommentsUseCase;
+  private createReviewCommentUseCase: CreateReviewCommentUseCase;
+  private createReviewCommentReplyUseCase: CreateReviewCommentReplyUseCase;
 
   constructor(baseUrl: string = process.env.NEXT_PUBLIC_API_URL || "") {
     // Infrastructure Layer
@@ -82,69 +92,75 @@ class CafeteriaServerContainer {
     );
 
     // Domain Layer (Cafeteria UseCases)
-    this.getCafeteriasWithMenuUseCase = new GetCafeteriasWithMenu(
+    this.getCafeteriasWithMenuUseCase = new GetCafeteriasWithMenuUseCaseImpl(
       cafeteriaRepository,
     );
-    this.getCafeteriaByIdUseCase = new GetCafeteriaById(cafeteriaRepository);
-    this.getCafeteriaMenuByDateUseCase = new GetCafeteriaMenuByDate(
+    this.getCafeteriaByIdUseCase = new GetCafeteriaByIdUseCaseImpl(
       cafeteriaRepository,
     );
-    this.getCafeteriaMenuAvailabilityUseCase = new GetCafeteriaMenuAvailability(
+    this.getCafeteriaMenuByDateUseCase = new GetCafeteriaMenuByDateUseCaseImpl(
       cafeteriaRepository,
     );
-    this.registerCafeteriaUseCase = new RegisterCafeteria(cafeteriaRepository);
-    this.registerCafeteriaMenuUseCase = new RegisterCafeteriaMenu(
+    this.getCafeteriaMenuAvailabilityUseCase =
+      new GetCafeteriaMenuAvailabilityUseCaseImpl(cafeteriaRepository);
+    this.registerCafeteriaUseCase = new RegisterCafeteriaUseCaseImpl(
+      cafeteriaRepository,
+    );
+    this.registerCafeteriaMenuUseCase = new RegisterCafeteriaMenuUseCaseImpl(
       cafeteriaRepository,
     );
 
     // Domain Layer (Review UseCases)
-    this.createReviewUseCase = new CreateReview(reviewRepository);
-    this.getReviewCommentsUseCase = new GetReviewComments(reviewRepository);
-    this.createReviewCommentUseCase = new CreateReviewComment(reviewRepository);
-    this.createReviewCommentReplyUseCase = new CreateReviewCommentReply(
+    this.createReviewUseCase = new CreateReviewUseCaseImpl(reviewRepository);
+    this.getReviewCommentsUseCase = new GetReviewCommentsUseCaseImpl(
       reviewRepository,
     );
+    this.createReviewCommentUseCase = new CreateReviewCommentUseCaseImpl(
+      reviewRepository,
+    );
+    this.createReviewCommentReplyUseCase =
+      new CreateReviewCommentReplyUseCaseImpl(reviewRepository);
   }
 
   // Cafeteria UseCase Getters
-  getGetCafeteriasWithMenu(): GetCafeteriasWithMenu {
+  getGetCafeteriasWithMenu(): GetCafeteriasWithMenuUseCase {
     return this.getCafeteriasWithMenuUseCase;
   }
 
-  getGetCafeteriaById(): GetCafeteriaById {
+  getGetCafeteriaById(): GetCafeteriaByIdUseCase {
     return this.getCafeteriaByIdUseCase;
   }
 
-  getGetCafeteriaMenuByDate(): GetCafeteriaMenuByDate {
+  getGetCafeteriaMenuByDate(): GetCafeteriaMenuByDateUseCase {
     return this.getCafeteriaMenuByDateUseCase;
   }
 
-  getGetCafeteriaMenuAvailability(): GetCafeteriaMenuAvailability {
+  getGetCafeteriaMenuAvailability(): GetCafeteriaMenuAvailabilityUseCase {
     return this.getCafeteriaMenuAvailabilityUseCase;
   }
 
-  getRegisterCafeteria(): RegisterCafeteria {
+  getRegisterCafeteria(): RegisterCafeteriaUseCase {
     return this.registerCafeteriaUseCase;
   }
 
-  getRegisterCafeteriaMenu(): RegisterCafeteriaMenu {
+  getRegisterCafeteriaMenu(): RegisterCafeteriaMenuUseCase {
     return this.registerCafeteriaMenuUseCase;
   }
 
   // Review UseCase Getters
-  getCreateReview(): CreateReview {
+  getCreateReview(): CreateReviewUseCase {
     return this.createReviewUseCase;
   }
 
-  getGetReviewComments(): GetReviewComments {
+  getGetReviewComments(): GetReviewCommentsUseCase {
     return this.getReviewCommentsUseCase;
   }
 
-  getCreateReviewComment(): CreateReviewComment {
+  getCreateReviewComment(): CreateReviewCommentUseCase {
     return this.createReviewCommentUseCase;
   }
 
-  getCreateReviewCommentReply(): CreateReviewCommentReply {
+  getCreateReviewCommentReply(): CreateReviewCommentReplyUseCase {
     return this.createReviewCommentReplyUseCase;
   }
 }

@@ -8,9 +8,16 @@ import type { GetCafeteriaResponse } from "../../data/dto";
 import type { CafeteriaRepository } from "../repositories";
 
 /**
- * GetCafeteriaById UseCase
+ * Get Cafeteria By Id UseCase
  */
-export class GetCafeteriaById {
+export interface GetCafeteriaByIdUseCase {
+  execute(id: string): Promise<GetCafeteriaResponse>;
+}
+
+/**
+ * Get Cafeteria By Id UseCase Implementation
+ */
+export class GetCafeteriaByIdUseCaseImpl implements GetCafeteriaByIdUseCase {
   constructor(private readonly repository: CafeteriaRepository) {}
 
   /**

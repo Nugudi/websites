@@ -11,9 +11,21 @@ import type {
 import type { CafeteriaReviewRepository } from "../repositories";
 
 /**
- * CreateReviewComment UseCase
+ * Create Review Comment UseCase
  */
-export class CreateReviewComment {
+export interface CreateReviewCommentUseCase {
+  execute(
+    reviewId: string,
+    data: CreateReviewCommentRequest,
+  ): Promise<CreateReviewCommentResponse>;
+}
+
+/**
+ * Create Review Comment UseCase Implementation
+ */
+export class CreateReviewCommentUseCaseImpl
+  implements CreateReviewCommentUseCase
+{
   constructor(private readonly repository: CafeteriaReviewRepository) {}
 
   /**

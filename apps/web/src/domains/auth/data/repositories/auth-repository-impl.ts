@@ -30,9 +30,6 @@ import { UserMapper } from "../mappers/user-mapper";
 export class AuthRepositoryImpl implements AuthRepository {
   constructor(private readonly dataSource: AuthRemoteDataSource) {}
 
-  /**
-   * Google OAuth 인증 URL 가져오기
-   */
   async getGoogleAuthorizeUrl(redirectUri: string): Promise<string> {
     try {
       return await this.dataSource.getGoogleAuthorizeUrl(redirectUri);
@@ -41,9 +38,6 @@ export class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  /**
-   * Kakao OAuth 인증 URL 가져오기
-   */
   async getKakaoAuthorizeUrl(redirectUri: string): Promise<string> {
     try {
       return await this.dataSource.getKakaoAuthorizeUrl(redirectUri);
@@ -52,9 +46,6 @@ export class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  /**
-   * Naver OAuth 인증 URL 가져오기
-   */
   async getNaverAuthorizeUrl(redirectUri: string): Promise<string> {
     try {
       return await this.dataSource.getNaverAuthorizeUrl(redirectUri);
@@ -63,28 +54,22 @@ export class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  /**
-   * Google OAuth 로그인
-   */
   async loginWithGoogle(params: {
     code: string;
     redirectUri: string;
     deviceInfo: DeviceInfo;
   }): Promise<LoginResult> {
     try {
-      // 1. DataSource에서 DTO 가져오기
       const dto = await this.dataSource.loginWithGoogle({
         code: params.code,
         redirectUri: params.redirectUri,
         deviceInfo: {
-          deviceType: "WEB", // OpenAPI 타입: "IOS" | "ANDROID" | "WEB"
+          deviceType: "WEB",
           deviceUniqueId: params.deviceInfo.deviceId,
         },
       });
 
-      // 2. DTO 타입에 따라 분기 + Mapper로 Entity 변환
       if (dto.type === "EXISTING_USER") {
-        // Login response uses different structure than UserDTO
         const user = new UserEntity({
           userId: dto.userId,
           email: dto.email ?? undefined, // Convert null to undefined for Entity
@@ -117,16 +102,12 @@ export class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  /**
-   * Kakao OAuth 로그인
-   */
   async loginWithKakao(params: {
     code: string;
     redirectUri: string;
     deviceInfo: DeviceInfo;
   }): Promise<LoginResult> {
     try {
-      // 1. DataSource에서 DTO 가져오기
       const dto = await this.dataSource.loginWithKakao({
         code: params.code,
         redirectUri: params.redirectUri,
@@ -136,7 +117,6 @@ export class AuthRepositoryImpl implements AuthRepository {
         },
       });
 
-      // 2. DTO 타입에 따라 분기 + Mapper로 Entity 변환
       if (dto.type === "EXISTING_USER") {
         const user = new UserEntity({
           userId: dto.userId,
@@ -170,16 +150,12 @@ export class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  /**
-   * Naver OAuth 로그인
-   */
   async loginWithNaver(params: {
     code: string;
     redirectUri: string;
     deviceInfo: DeviceInfo;
   }): Promise<LoginResult> {
     try {
-      // 1. DataSource에서 DTO 가져오기
       const dto = await this.dataSource.loginWithNaver({
         code: params.code,
         redirectUri: params.redirectUri,
@@ -189,7 +165,6 @@ export class AuthRepositoryImpl implements AuthRepository {
         },
       });
 
-      // 2. DTO 타입에 따라 분기 + Mapper로 Entity 변환
       if (dto.type === "EXISTING_USER") {
         const user = new UserEntity({
           userId: dto.userId,
@@ -223,15 +198,11 @@ export class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  /**
-   * 토큰 갱신
-   */
   async refreshToken(params: {
     refreshToken: string;
     deviceId: string;
   }): Promise<Session> {
     try {
-      // 1. DataSource에서 DTO 가져오기
       const dto = await this.dataSource.refreshToken({
         refreshToken: params.refreshToken,
         deviceInfo: {
@@ -240,18 +211,13 @@ export class AuthRepositoryImpl implements AuthRepository {
         },
       });
 
-      // 2. Mapper로 Entity 변환
-      // Note: userId는 현재 세션에서 가져와야 하므로, 호출하는 곳에서 제공 필요
-      // 여기서는 임시로 빈 문자열 사용 (실제로는 UseCase에서 처리)
+      // Note: userId is temporarily empty here, UseCase layer provides actual userId
       return SessionMapper.fromTokenData(dto, "");
     } catch (error) {
       throw this.handleError(error, "Failed to refresh token");
     }
   }
 
-  /**
-   * 로그아웃
-   */
   async logout(params: {
     refreshToken: string;
     deviceId: string;
@@ -266,15 +232,11 @@ export class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  /**
-   * 소셜 계정으로 회원가입
-   */
   async signUpWithSocial(params: {
     registrationToken: string;
     userData: SignUpData;
   }): Promise<User> {
     try {
-      // 1. DataSource에서 DTO 가져오기
       const dto = await this.dataSource.signUpWithSocial(
         params.registrationToken,
         {
@@ -285,12 +247,11 @@ export class AuthRepositoryImpl implements AuthRepository {
           marketingEmail: params.userData.marketingEmail,
           deviceInfo: {
             deviceType: "WEB",
-            deviceUniqueId: crypto.randomUUID(), // Generate unique ID
+            deviceUniqueId: crypto.randomUUID(),
           },
         },
       );
 
-      // 2. Mapper로 Entity 변환
       return UserMapper.toDomain(dto);
     } catch (error) {
       throw this.handleError(error, "Failed to sign up with social account");

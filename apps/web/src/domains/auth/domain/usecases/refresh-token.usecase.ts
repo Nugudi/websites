@@ -18,9 +18,17 @@ export type RefreshTokenResult =
   | { success: false };
 
 /**
- * RefreshToken UseCase
+ * Refresh Token UseCase
  */
-export class RefreshToken {
+export interface RefreshTokenUseCase {
+  execute(): Promise<RefreshTokenResult>;
+  shouldRefresh(session: Session): Promise<boolean>;
+}
+
+/**
+ * Refresh Token UseCase Implementation
+ */
+export class RefreshTokenUseCaseImpl implements RefreshTokenUseCase {
   constructor(
     private readonly authRepository: AuthRepository,
     private readonly sessionManager: SessionManager,

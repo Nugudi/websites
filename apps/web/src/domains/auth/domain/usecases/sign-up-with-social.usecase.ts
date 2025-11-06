@@ -18,9 +18,16 @@ export interface SignUpWithSocialParams {
 }
 
 /**
- * SignUpWithSocial UseCase
+ * Sign Up With Social UseCase
  */
-export class SignUpWithSocial {
+export interface SignUpWithSocialUseCase {
+  execute(params: SignUpWithSocialParams): Promise<User>;
+}
+
+/**
+ * Sign Up With Social UseCase Implementation
+ */
+export class SignUpWithSocialUseCaseImpl implements SignUpWithSocialUseCase {
   constructor(private readonly authRepository: AuthRepository) {}
 
   /**

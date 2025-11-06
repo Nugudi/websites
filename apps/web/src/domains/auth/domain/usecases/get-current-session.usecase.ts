@@ -18,9 +18,16 @@ export interface CurrentSessionResult {
 }
 
 /**
- * GetCurrentSession UseCase
+ * Get Current Session UseCase
  */
-export class GetCurrentSession {
+export interface GetCurrentSessionUseCase {
+  execute(): Promise<Session | null>;
+}
+
+/**
+ * Get Current Session UseCase Implementation
+ */
+export class GetCurrentSessionUseCaseImpl implements GetCurrentSessionUseCase {
   constructor(private readonly sessionManager: SessionManager) {}
 
   /**

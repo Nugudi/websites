@@ -16,9 +16,21 @@ export interface GetCafeteriaMenuAvailabilityParams {
 }
 
 /**
- * GetCafeteriaMenuAvailability UseCase
+ * Get Cafeteria Menu Availability UseCase
  */
-export class GetCafeteriaMenuAvailability {
+export interface GetCafeteriaMenuAvailabilityUseCase {
+  execute(
+    id: string,
+    params: GetCafeteriaMenuAvailabilityParams,
+  ): Promise<GetCafeteriaMenuAvailabilityResponse>;
+}
+
+/**
+ * Get Cafeteria Menu Availability UseCase Implementation
+ */
+export class GetCafeteriaMenuAvailabilityUseCaseImpl
+  implements GetCafeteriaMenuAvailabilityUseCase
+{
   constructor(private readonly repository: CafeteriaRepository) {}
 
   /**

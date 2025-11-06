@@ -41,7 +41,6 @@ export class RefreshTokenService {
     error?: string;
   }> {
     try {
-      // 1. SessionManager에서 Refresh Token과 Device ID 조회
       const refreshToken = await this.sessionManager.getRefreshToken();
       const deviceId = await this.sessionManager.getDeviceId();
 
@@ -60,8 +59,6 @@ export class RefreshTokenService {
         deviceId,
       });
 
-      // 2. Spring API 직접 호출 (AuthenticatedHttpClient 우회)
-      // 절대 URL 사용 (Edge Runtime 호환)
       const response = await fetch(`${this.springApiUrl}/api/v1/auth/refresh`, {
         method: "POST",
         headers: {
@@ -82,7 +79,6 @@ export class RefreshTokenService {
         };
       }
 
-      // 3. 응답 검증
       const data = await response.json();
 
       if (!data.success || !data.data) {
@@ -100,13 +96,17 @@ export class RefreshTokenService {
         return { success: false, error: "Missing tokens in response" };
       }
 
-      // 4. SessionManager를 통해 새 토큰 저장 (기존 userId 유지)
       const currentSession = await this.sessionManager.getSession();
+
+      if (!currentSession?.userId) {
+        logger.error("No userId found in current session during token refresh");
+        return { success: false, error: "Missing userId in session" };
+      }
 
       await this.sessionManager.saveSession({
         accessToken,
         refreshToken: newRefreshToken,
-        userId: currentSession?.userId,
+        userId: currentSession.userId,
       });
 
       logger.info("Token refreshed successfully via Spring API");

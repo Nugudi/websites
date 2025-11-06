@@ -11,7 +11,14 @@ import type { AuthRepository } from "../repositories/auth-repository";
 /**
  * Logout UseCase
  */
-export class Logout {
+export interface LogoutUseCase {
+  execute(): Promise<void>;
+}
+
+/**
+ * Logout UseCase Implementation
+ */
+export class LogoutUseCaseImpl implements LogoutUseCase {
   constructor(
     private readonly authRepository: AuthRepository,
     private readonly sessionManager: SessionManager,

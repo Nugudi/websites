@@ -105,25 +105,19 @@ export class AuthenticatedHttpClient implements HttpClient {
     try {
       return await requestFn();
     } catch (error) {
-      // 401 에러가 아니면 그대로 throw
       if (!(error instanceof HttpError) || error.status !== 401) {
         throw error;
       }
 
-      // Refresh Token 시도
       const refreshResult = await this.refreshAccessToken();
 
       if (!refreshResult.success) {
-        // Refresh 실패 → 로그인 페이지로 리다이렉트
         if (typeof window !== "undefined") {
           window.location.href = "/auth/login";
         }
         throw error;
       }
 
-      // Refresh 성공 → 원래 요청 재시도
-      // Server-side에서는 새 토큰이 Cookie에 저장되어 있음
-      // Client-side에서는 localStorage에 저장되어 있음
       return await requestFn();
     }
   }
@@ -140,7 +134,6 @@ export class AuthenticatedHttpClient implements HttpClient {
     accessToken?: string;
     refreshToken?: string;
   }> {
-    // 이미 갱신 중이면 기존 Promise 재사용
     if (this.isRefreshing && this.refreshPromise) {
       return this.refreshPromise;
     }
@@ -174,15 +167,13 @@ export class AuthenticatedHttpClient implements HttpClient {
     try {
       const isClientSide = typeof window !== "undefined";
 
-      // Server-side: RefreshTokenService 사용 (Spring API 직접 호출)
       if (!isClientSide && this.refreshTokenProvider) {
         return await this.refreshTokenProvider.refresh();
       }
 
-      // Client-side: BFF 호출
       const response = await fetch("/api/auth/refresh", {
         method: "POST",
-        credentials: "include", // 브라우저가 자동으로 Cookie 전달
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -191,7 +182,6 @@ export class AuthenticatedHttpClient implements HttpClient {
 
       const refreshResponseData = await response.json();
 
-      // Client-side localStorage 동기화 (Issue #1 해결)
       if (
         isClientSide &&
         refreshResponseData.success === true &&
@@ -200,7 +190,6 @@ export class AuthenticatedHttpClient implements HttpClient {
       ) {
         const { accessToken, refreshToken, userId } = refreshResponseData.data;
         if (accessToken && refreshToken && userId) {
-          // BFF 응답에서 받은 userId 사용 (localStorage가 비어있어도 복구 가능)
           await this.sessionManager.saveSession({
             accessToken,
             refreshToken,
@@ -231,12 +220,10 @@ export class AuthenticatedHttpClient implements HttpClient {
   private async injectToken(options?: RequestOptions): Promise<RequestOptions> {
     const token = await this.tokenProvider.getToken();
 
-    // 토큰이 없으면 원본 옵션 그대로 반환
     if (!token) {
       return options ?? {};
     }
 
-    // Authorization 헤더 추가
     return {
       ...options,
       headers: {

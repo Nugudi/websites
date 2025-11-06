@@ -33,9 +33,16 @@ export type LoginWithOAuthResult =
   | { type: "NEW_USER"; registrationToken: string };
 
 /**
- * LoginWithOAuth UseCase
+ * Login With OAuth UseCase
  */
-export class LoginWithOAuth {
+export interface LoginWithOAuthUseCase {
+  execute(params: LoginWithOAuthParams): Promise<LoginWithOAuthResult>;
+}
+
+/**
+ * Login With OAuth UseCase Implementation
+ */
+export class LoginWithOAuthUseCaseImpl implements LoginWithOAuthUseCase {
   constructor(
     private readonly authRepository: AuthRepository,
     private readonly sessionManager: SessionManager,

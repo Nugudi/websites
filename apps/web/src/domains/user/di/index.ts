@@ -5,7 +5,7 @@
  * to avoid bundling server-only code in client bundles.
  *
  * Correct imports:
- * - Client: import { userClientContainer } from "@/src/domains/user/di/user-client-container";
+ * - Client: import { getUserClientContainer } from "@/src/domains/user/di/user-client-container";
  * - Server: import { createUserServerContainer } from "@/src/domains/user/di/user-server-container";
  *
  * DO NOT use: import { ... } from "@/src/domains/user/di";

@@ -8,7 +8,19 @@
 import type { OAuthProvider } from "../../core/types/common";
 import type { AuthRepository } from "../repositories/auth-repository";
 
-export class GetOAuthAuthorizeUrl {
+/**
+ * Get OAuth Authorize URL UseCase
+ */
+export interface GetOAuthAuthorizeUrlUseCase {
+  execute(provider: OAuthProvider, redirectUri: string): Promise<string>;
+}
+
+/**
+ * Get OAuth Authorize URL UseCase Implementation
+ */
+export class GetOAuthAuthorizeUrlUseCaseImpl
+  implements GetOAuthAuthorizeUrlUseCase
+{
   constructor(private readonly authRepository: AuthRepository) {}
 
   /**

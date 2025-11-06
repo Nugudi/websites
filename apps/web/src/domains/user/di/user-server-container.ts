@@ -9,25 +9,23 @@
  * NEVER use this in Client Components (use userClientContainer instead)
  */
 
+import {
+  type UserRemoteDataSource,
+  UserRemoteDataSourceImpl,
+  UserRepositoryImpl,
+} from "@user/data";
+import type { UserRepository } from "@user/domain";
+import {
+  type CheckNicknameAvailabilityUseCase,
+  CheckNicknameAvailabilityUseCaseImpl,
+  type GetMyProfileUseCase,
+  GetMyProfileUseCaseImpl,
+} from "@user/domain";
 import { RefreshTokenService } from "@/src/domains/auth/infrastructure/services/refresh-token.service";
 import { AuthenticatedHttpClient } from "@/src/shared/infrastructure/http/authenticated-http-client";
 import { FetchHttpClient } from "@/src/shared/infrastructure/http/fetch-http-client";
 import { ServerTokenProvider } from "@/src/shared/infrastructure/http/server-token-provider";
 import { ServerSessionManager } from "@/src/shared/infrastructure/storage/server-session-manager";
-import {
-  type UserRemoteDataSource,
-  UserRemoteDataSourceImpl,
-} from "../data/data-sources/user-remote-data-source";
-import { UserRepositoryImpl } from "../data/repositories/user-repository.impl";
-import type { UserRepository } from "../domain/repositories/user-repository.interface";
-import {
-  type CheckNicknameAvailabilityUseCase,
-  CheckNicknameAvailabilityUseCaseImpl,
-} from "../domain/usecases/check-nickname-availability.usecase";
-import {
-  type GetMyProfileUseCase,
-  GetMyProfileUseCaseImpl,
-} from "../domain/usecases/get-my-profile.usecase";
 
 export interface UserServerContainer {
   getGetMyProfile(): GetMyProfileUseCase;
@@ -45,8 +43,6 @@ class UserServerContainerImpl implements UserServerContainer {
     const baseClient = new FetchHttpClient({
       baseUrl: process.env.NEXT_PUBLIC_API_URL || "",
     });
-
-    // RefreshTokenService 생성 (Spring API 직접 호출)
     const refreshTokenService = new RefreshTokenService(
       sessionManager,
       process.env.NEXT_PUBLIC_API_URL || "",
@@ -55,8 +51,8 @@ class UserServerContainerImpl implements UserServerContainer {
     const httpClient = new AuthenticatedHttpClient(
       baseClient,
       tokenProvider,
-      undefined, // Server-side: no session manager for client sync
-      refreshTokenService, // Server-side: RefreshTokenService 주입
+      undefined,
+      refreshTokenService,
     );
 
     // Data Layer

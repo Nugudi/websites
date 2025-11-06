@@ -16,7 +16,9 @@
       "Bash(then grep \"NEXT_PUBLIC_API_URL\" /Users/kim-yongmin/Workspace/personal/nugudi/apps/web/.env.local)",
       "Bash(else echo \".env.local file does not exist\")",
       "Bash(fi)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(pnpm check-types:*)",
+      "Bash(pnpm build:*)"
     ],
     "deny": [],
     "ask": []

@@ -51,14 +51,15 @@ Before writing ANY new code, you MUST check existing package documentation:
 
 ### 🆕 DDD Architecture (HIGHEST PRIORITY)
 
-- **ALWAYS** use DI Containers to get Services
-  - Server-side: `createXXXServerContainer()` (creates new instance)
-  - Client-side: `xxxClientContainer` (Singleton)
-- **NEVER** directly instantiate Repository or Service (only through DI Container)
-- **NEVER** use Client Container (`xxxClientContainer`) in Server Components/Pages
-- **NEVER** use `@nugudi/api` package (deprecated - use Services instead)
-- **ALWAYS** use Service layer for business logic (Repository only for data access)
-- **ALWAYS** use Repository layer for API calls (Service only for business logic)
+- **ALWAYS** use DI Containers to get UseCases
+  - Server-side: `createXXXServerContainer()` (creates new instance per request)
+  - Client-side: `getXXXClientContainer()` (Lazy-initialized singleton)
+  - **Location**: Per-domain in `apps/web/src/domains/*/di/` (NOT global `src/di/`)
+- **NEVER** directly instantiate Repository or UseCase (only through DI Container)
+- **NEVER** use Client Container (`getXXXClientContainer()`) in Server Components/Pages
+- **NEVER** use `@nugudi/api` package (deprecated - use UseCases instead)
+- **ALWAYS** use UseCase layer for business logic (Repository only for data access)
+- **ALWAYS** use Repository layer for API calls (UseCase only for business logic)
 
 ### Commit and Code Quality
 
@@ -73,7 +74,7 @@ When creating Next.js components:
 
 - **ALWAYS** follow the Page → View → Section → Component hierarchy
 - **ALWAYS** use Server Container (`createXXXServerContainer()`) in Pages for data prefetch
-- **ALWAYS** use Client Container (`xxxClientContainer`) in Sections for data fetch
+- **ALWAYS** use Client Container (`getXXXClientContainer()`) in Sections for data fetch
 - **NEVER** skip layers (e.g., Page directly importing Components)
 - **ALWAYS** implement Suspense and ErrorBoundary in Section components
 - **NEVER** fetch data in View or Component layers
@@ -92,8 +93,8 @@ When creating shared components & Storybook:
 Failure to read these documents will result in:
 
 - ❌ **🆕 Wrong DI Container usage** (Client container on server, breaking SSR)
-- ❌ **🆕 Direct Repository/Service instantiation** (breaking dependency injection)
-- ❌ **🆕 Using deprecated `@nugudi/api`** (should use Service layer)
+- ❌ **🆕 Direct Repository/UseCase instantiation** (breaking dependency injection)
+- ❌ **🆕 Using deprecated `@nugudi/api`** (should use UseCase layer)
 - ❌ Incorrect commit messages (Co-Author lines that break our CI/CD)
 - ❌ Duplicate component creation (wasting existing packages)
 - ❌ Wrong import patterns (breaking build process)
@@ -107,7 +108,7 @@ Failure to read these documents will result in:
 To avoid confusion, each document has a specific focus:
 
 - **[claude/packages.md](./claude/packages.md)** - **AUTHORITATIVE SOURCE** for:
-  - **🆕 DDD Architecture** (Repository, Service, Infrastructure layers)
+  - **🆕 DDD Architecture** (Repository, UseCase, Infrastructure layers)
   - **🆕 Dependency Injection Containers** (Server vs Client)
   - **🆕 Infrastructure Layer** (HttpClient, SessionManager, TokenProvider)
   - Import/export patterns
@@ -119,7 +120,7 @@ To avoid confusion, each document has a specific focus:
 - **[claude/frontend.md](./claude/frontend.md)** - **COMPLETE GUIDE** for:
   - Component architecture (Page → View → Section → Component)
   - **🆕 DI Container usage** (Server Container in Pages, Client Container in Sections)
-  - **🆕 Service-based data flow** (replacing direct API calls)
+  - **🆕 UseCase-based data flow** (replacing direct API calls)
   - Layer responsibilities and patterns
   - Error handling with Suspense/ErrorBoundary
   - Data flow and state management
@@ -137,7 +138,7 @@ To avoid confusion, each document has a specific focus:
 
 - **[claude/testing.md](./claude/testing.md)** - **TESTING FOCUSED** for:
   - **🆕 Repository testing patterns** (Mock HttpClient)
-  - **🆕 Service testing patterns** (Mock Repository and SessionManager)
+  - **🆕 UseCase testing patterns** (Mock Repository and SessionManager)
   - Testing strategies and patterns
   - What to test vs what to skip
   - Testing tool usage

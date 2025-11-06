@@ -9,24 +9,22 @@
  * NEVER use this in Server Components/Pages (use createUserServerContainer instead)
  */
 
+import {
+  type UserRemoteDataSource,
+  UserRemoteDataSourceImpl,
+  UserRepositoryImpl,
+} from "@user/data";
+import type { UserRepository } from "@user/domain";
+import {
+  type CheckNicknameAvailabilityUseCase,
+  CheckNicknameAvailabilityUseCaseImpl,
+  type GetMyProfileUseCase,
+  GetMyProfileUseCaseImpl,
+} from "@user/domain";
 import { AuthenticatedHttpClient } from "@/src/shared/infrastructure/http/authenticated-http-client";
 import { ClientTokenProvider } from "@/src/shared/infrastructure/http/client-token-provider";
 import { FetchHttpClient } from "@/src/shared/infrastructure/http/fetch-http-client";
 import { ClientSessionManager } from "@/src/shared/infrastructure/storage/client-session-manager";
-import {
-  type UserRemoteDataSource,
-  UserRemoteDataSourceImpl,
-} from "../data/data-sources/user-remote-data-source";
-import { UserRepositoryImpl } from "../data/repositories/user-repository.impl";
-import type { UserRepository } from "../domain/repositories/user-repository.interface";
-import {
-  type CheckNicknameAvailabilityUseCase,
-  CheckNicknameAvailabilityUseCaseImpl,
-} from "../domain/usecases/check-nickname-availability.usecase";
-import {
-  type GetMyProfileUseCase,
-  GetMyProfileUseCaseImpl,
-} from "../domain/usecases/get-my-profile.usecase";
 
 export interface UserClientContainer {
   getGetMyProfile(): GetMyProfileUseCase;
@@ -47,8 +45,8 @@ class UserClientContainerImpl implements UserClientContainer {
     const httpClient = new AuthenticatedHttpClient(
       baseClient,
       tokenProvider,
-      sessionManager, // Client-side: localStorage 동기화를 위해 SessionManager 주입
-      undefined, // Client-side: BFF 사용 (RefreshTokenService 불필요)
+      sessionManager,
+      undefined,
     );
 
     // Data Layer
@@ -66,10 +64,21 @@ class UserClientContainerImpl implements UserClientContainer {
 }
 
 /**
- * User Client Container Singleton
+ * User Client Container Factory (Lazy-initialized Singleton)
  *
  * IMPORTANT: Singleton for client-side use only
  * DO NOT use in Server Components/Pages
+ *
+ * Benefits of Lazy Initialization:
+ * - Only creates instance when first accessed (better for tree-shaking)
+ * - Easier to test (can reset instance between tests)
+ * - Explicit dependency tracking
  */
-export const userClientContainer: UserClientContainer =
-  new UserClientContainerImpl();
+let clientContainerInstance: UserClientContainer | null = null;
+
+export function getUserClientContainer(): UserClientContainer {
+  if (!clientContainerInstance) {
+    clientContainerInstance = new UserClientContainerImpl();
+  }
+  return clientContainerInstance;
+}
