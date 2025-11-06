@@ -204,11 +204,21 @@ export class AuthRemoteDataSource {
 
   /**
    * 토큰 갱신
+   *
+   * NOTE: API는 requestBody가 아닌 헤더를 사용합니다:
+   * - Authorization: Bearer {refreshToken}
+   * - X-Device-ID: {deviceId}
    */
   async refreshToken(params: RefreshTokenRequestDTO): Promise<TokenDataDTO> {
     const response = await this.httpClient.post<{ data: TokenDataDTO }>(
       AUTH_API_ENDPOINTS.REFRESH_TOKEN,
-      params,
+      {}, // Empty body
+      {
+        headers: {
+          Authorization: `Bearer ${params.refreshToken}`,
+          "X-Device-ID": params.deviceId,
+        },
+      },
     );
 
     return response.data.data;

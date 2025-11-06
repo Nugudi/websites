@@ -9,7 +9,7 @@
 // Data Layer
 import {
   CafeteriaRepositoryStub,
-  CafeteriaReviewRemoteDataSource,
+  CafeteriaReviewMockDataSource,
   CafeteriaReviewRepositoryImpl,
 } from "@cafeteria/data";
 // Domain Layer (UseCases)
@@ -66,7 +66,7 @@ class CafeteriaClientContainer {
     const sessionManager = new ClientSessionManager();
     const tokenProvider = new ClientTokenProvider(sessionManager);
     const baseClient = new FetchHttpClient({ baseUrl });
-    const httpClient = new AuthenticatedHttpClient(
+    const _httpClient = new AuthenticatedHttpClient(
       baseClient,
       tokenProvider,
       sessionManager,
@@ -75,7 +75,7 @@ class CafeteriaClientContainer {
 
     // Data Layer - Use Stub for Mock Data
     const cafeteriaRepository = new CafeteriaRepositoryStub();
-    const reviewDataSource = new CafeteriaReviewRemoteDataSource(httpClient);
+    const reviewDataSource = new CafeteriaReviewMockDataSource();
     const reviewRepository = new CafeteriaReviewRepositoryImpl(
       reviewDataSource,
     );

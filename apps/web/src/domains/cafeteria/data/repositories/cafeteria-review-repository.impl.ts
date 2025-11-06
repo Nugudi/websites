@@ -16,7 +16,7 @@ import type {
   ReviewCommentWithMetadata,
 } from "../../domain/entities";
 import type { CafeteriaReviewRepository } from "../../domain/repositories";
-import type { CafeteriaReviewRemoteDataSource } from "../data-sources";
+import type { CafeteriaReviewDataSource } from "../data-sources";
 import {
   createReviewCommentRequestToDto,
   createReviewCommentResponseToDomain,
@@ -29,7 +29,7 @@ import {
 export class CafeteriaReviewRepositoryImpl
   implements CafeteriaReviewRepository
 {
-  constructor(private readonly dataSource: CafeteriaReviewRemoteDataSource) {}
+  constructor(private readonly dataSource: CafeteriaReviewDataSource) {}
 
   async createReview(data: CreateReviewRequestEntity): Promise<Review> {
     try {

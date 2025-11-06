@@ -182,10 +182,7 @@ export class AuthRepositoryImpl implements AuthRepository {
     try {
       const dto = await this.dataSource.refreshToken({
         refreshToken: params.refreshToken,
-        deviceInfo: {
-          deviceType: "WEB",
-          deviceUniqueId: params.deviceId,
-        },
+        deviceId: params.deviceId,
       });
 
       // Note: userId is temporarily empty here, UseCase layer provides actual userId

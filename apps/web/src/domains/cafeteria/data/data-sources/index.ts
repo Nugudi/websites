@@ -8,4 +8,5 @@
  */
 
 export * from "./cafeteria-remote-data-source";
+export * from "./cafeteria-review-mock-data-source";
 export * from "./cafeteria-review-remote-data-source";

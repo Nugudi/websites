@@ -19,13 +19,16 @@ import type {
   SuccessResponseCreateReviewCommentResponse,
   SuccessResponseCreateReviewResponse,
 } from "../dto";
+import type { CafeteriaReviewDataSource } from "./cafeteria-review-mock-data-source";
 
 /**
  * CafeteriaReviewRemoteDataSource
  *
  * 모든 메서드는 DTO를 반환합니다.
  */
-export class CafeteriaReviewRemoteDataSource {
+export class CafeteriaReviewRemoteDataSource
+  implements CafeteriaReviewDataSource
+{
   constructor(private readonly httpClient: HttpClient) {}
 
   /**
