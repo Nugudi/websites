@@ -1,8 +1,8 @@
-import type {
-  BusinessHours,
-  LocalTime,
-  TimeRange,
-} from "../../domain/entities";
+import {
+  formatTimeRange as formatTimeRangeUtil,
+  formatTime as formatTimeUtil,
+} from "@/src/shared/core/utils/date";
+import type { Cafeteria, LocalTime, TimeRange } from "../../domain/entities";
 
 type BusinessPeriod = "lunch" | "dinner";
 
@@ -13,43 +13,31 @@ const BUSINESS_PERIOD_LABELS: Record<BusinessPeriod, string> = {
 
 const EMPTY_BUSINESS_HOURS_MESSAGE = "영업시간 정보 없음";
 
-const formatTime = (time?: LocalTime | null): string => {
-  if (!time || time.hour === undefined || time.minute === undefined) {
-    return "";
-  }
-  const hour = time.hour.toString().padStart(2, "0");
-  const minute = time.minute.toString().padStart(2, "0");
-  return `${hour}:${minute}`;
-};
-
-const isValidTimeRange = (
-  range?: TimeRange | null,
-): range is { start: LocalTime; end: LocalTime } => {
-  return Boolean(range?.start && range?.end);
+const _formatTime = (time: LocalTime): string => {
+  return formatTimeUtil(time.hour, time.minute);
 };
 
 const formatTimeRange = (start: LocalTime, end: LocalTime): string => {
-  return `${formatTime(start)} - ${formatTime(end)}`;
+  return formatTimeRangeUtil(start.hour, start.minute, end.hour, end.minute);
 };
 
 const formatBusinessPeriod = (
   period: BusinessPeriod,
-  range?: TimeRange | null,
+  range: TimeRange | null | undefined,
 ): string | null => {
-  if (!isValidTimeRange(range)) return null;
+  if (!range) return null; // TimeRange가 null이거나 undefined면 영업 안 함
   const label = BUSINESS_PERIOD_LABELS[period];
   return `${label} ${formatTimeRange(range.start, range.end)}`;
 };
 
 /**
  * 식당의 영업시간 정보를 포맷팅하여 반환
- * @param cafeteria - businessHours 필드를 포함한 식당 정보
+ * @param cafeteria - Cafeteria 엔티티
  * @returns 포맷팅된 영업시간 문자열 (예: "점심 11:00 - 14:00 & 저녁 17:00 - 20:00")
  */
-export const getFullBusinessHours = (cafeteria: {
-  businessHours?: BusinessHours | null;
-}): string => {
-  const { lunch, dinner } = cafeteria.businessHours || {};
+export const getFullBusinessHours = (cafeteria: Cafeteria): string => {
+  const businessHours = cafeteria.getBusinessHours();
+  const { lunch, dinner } = businessHours || {};
 
   const periods = [
     formatBusinessPeriod("lunch", lunch),

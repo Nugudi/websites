@@ -36,9 +36,9 @@ export function userDtoToDomain(dto: UserDTO): User {
  */
 export function userDomainToDto(entity: User): UserDTO {
   return {
-    userId: Number(entity.userId),
-    email: entity.email ?? null, // Convert undefined to null for DTO
-    nickname: entity.name,
+    userId: Number(entity.getUserId()),
+    email: entity.getEmail() ?? null, // Convert undefined to null for DTO
+    nickname: entity.getName(),
     accessToken: "",
     refreshToken: "",
     accessTokenExpiresAt: "",

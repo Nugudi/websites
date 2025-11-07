@@ -26,6 +26,7 @@
  * ```
  */
 
+export * from "./check-nickname-availability.usecase";
 export * from "./get-current-session.usecase";
 export * from "./get-oauth-authorize-url.usecase";
 export * from "./login-with-oauth.usecase";

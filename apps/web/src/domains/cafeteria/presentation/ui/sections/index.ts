@@ -4,7 +4,6 @@
 
 export * from "./cafeteria-browse-menu-section";
 export * from "./cafeteria-hero-section";
-export * from "./cafeteria-recommend-section";
 export * from "./cafeteria-review-comment-input-section";
 export * from "./cafeteria-review-comments-section";
 export * from "./cafeteria-review-detail-section";

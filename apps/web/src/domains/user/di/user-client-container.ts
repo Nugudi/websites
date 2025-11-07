@@ -1,12 +1,5 @@
 /**
- * User Domain Client DI Container
- *
- * Dependency injection container for CLIENT-SIDE components
- * - Singleton instance (shared across client components)
- * - Use in Client Components/Sections for data fetching
- * - Wires: HttpClient → DataSource → Repository → UseCases
- *
- * NEVER use this in Server Components/Pages (use createUserServerContainer instead)
+ * User Client DI Container
  */
 
 import {
@@ -63,17 +56,6 @@ class UserClientContainerImpl implements UserClientContainer {
   }
 }
 
-/**
- * User Client Container Factory (Lazy-initialized Singleton)
- *
- * IMPORTANT: Singleton for client-side use only
- * DO NOT use in Server Components/Pages
- *
- * Benefits of Lazy Initialization:
- * - Only creates instance when first accessed (better for tree-shaking)
- * - Easier to test (can reset instance between tests)
- * - Explicit dependency tracking
- */
 let clientContainerInstance: UserClientContainer | null = null;
 
 export function getUserClientContainer(): UserClientContainer {

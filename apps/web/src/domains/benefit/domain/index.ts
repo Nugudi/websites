@@ -10,8 +10,8 @@
 // Entities (domain objects with business logic)
 export * from "./entities";
 
-// TODO: Repository Interfaces (contracts for data access)
-// export * from "./repositories";
+// Repository Interfaces (contracts for data access)
+export * from "./repositories";
 
-// TODO: Use Cases (application business logic)
-// export * from "./usecases";
+// Use Cases (application business logic)
+export * from "./usecases";

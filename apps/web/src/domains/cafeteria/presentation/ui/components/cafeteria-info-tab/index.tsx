@@ -1,5 +1,3 @@
-"use client";
-
 import { InfoIcon } from "@nugudi/assets-icons";
 import {
   Body,
@@ -8,13 +6,12 @@ import {
   Title,
   VStack,
 } from "@nugudi/react-components-layout";
-import { formatPriceWithCurrency } from "@/src/domains/user/presentation/utils/format-points";
-import type { Cafeteria } from "../../../../domain/entities";
-import { getFullBusinessHours } from "../../../utils";
+import { formatPriceWithCurrency } from "@/src/shared/core/utils/currency";
+import type { CafeteriaDetailItem } from "../../../types";
 import * as styles from "./index.css";
 
 type CafeteriaInfoTabProps = {
-  cafeteria: Cafeteria;
+  cafeteria: CafeteriaDetailItem;
 };
 
 export const CafeteriaInfoTab = ({ cafeteria }: CafeteriaInfoTabProps) => {
@@ -28,11 +25,12 @@ export const CafeteriaInfoTab = ({ cafeteria }: CafeteriaInfoTabProps) => {
 };
 
 type BusinessInfoProps = {
-  cafeteria: Cafeteria;
+  cafeteria: CafeteriaDetailItem;
 };
 
 const BusinessInfo = ({ cafeteria }: BusinessInfoProps) => {
-  const fullHours = getFullBusinessHours(cafeteria);
+  const fullHours = cafeteria.fullBusinessHours;
+  const phone = cafeteria.phone;
 
   return (
     <VStack gap={12}>
@@ -51,14 +49,14 @@ const BusinessInfo = ({ cafeteria }: BusinessInfoProps) => {
           label={`가격 ${formatPriceWithCurrency(cafeteria.mealTicketPrice ?? 0)}`}
         />
         {cafeteria.takeoutAvailable && <InfoRow icon="📦" label="포장 가능" />}
-        {cafeteria.phone && <InfoRow icon="📞" label={cafeteria.phone} />}
+        {phone && <InfoRow icon="📞" label={phone} />}
       </VStack>
     </VStack>
   );
 };
 
 type LocationInfoProps = {
-  cafeteria: Cafeteria;
+  cafeteria: CafeteriaDetailItem;
 };
 
 const LocationInfo = ({ cafeteria }: LocationInfoProps) => {

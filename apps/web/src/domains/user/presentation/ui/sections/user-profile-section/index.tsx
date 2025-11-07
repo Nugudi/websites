@@ -64,10 +64,8 @@ const UserProfileSectionError = () => {
 
 // Content Component (actual data fetching)
 const UserProfileSectionContent = () => {
-  // Page에서 prefetch한 데이터를 동일한 query로 조회
   const { data: profileData } = useSuspenseQuery(userProfileQueryClient);
 
-  // UserProfile entity structure (flat)
   const nickname = profileData.nickname ?? "손님";
   const profileImageUrl = profileData.profileImageUrl;
 

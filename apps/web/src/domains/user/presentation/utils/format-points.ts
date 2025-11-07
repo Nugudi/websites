@@ -1,12 +1,6 @@
 // 포인트 포맷터 - 한국 로케일로 천 단위 구분자 적용
 const pointFormatter = new Intl.NumberFormat("ko-KR");
 
-// 가격 포맷터 - 원화 통화 표시
-const priceFormatter = new Intl.NumberFormat("ko-KR", {
-  style: "currency",
-  currency: "KRW",
-});
-
 export const isPositiveAmount = (amount: number): boolean => {
   return amount > 0;
 };
@@ -26,5 +20,6 @@ export const formatPointBalance = (balance: number): string => {
   return `${formattedBalance}P`;
 };
 
-export const formatPriceWithCurrency = (price: number): string =>
-  Number.isFinite(price) ? priceFormatter.format(price) : "₩0";
+// Re-export from shared utils for backward compatibility
+// TODO: 점진적으로 직접 import로 마이그레이션 권장
+export { formatPriceWithCurrency } from "@/src/shared/core/utils/currency/format-currency";

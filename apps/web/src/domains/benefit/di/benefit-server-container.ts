@@ -1,16 +1,5 @@
 /**
  * Benefit Server DI Container
- *
- * Server-side Dependency Injection Container
- * - Creates new instance per request (Stateless)
- * - Use in Server Components, API Routes, Server Actions
- *
- * Usage:
- * ```typescript
- * const container = createBenefitServerContainer();
- * const getBenefitListUseCase = container.getGetBenefitList();
- * const result = await getBenefitListUseCase.execute();
- * ```
  */
 
 import { BenefitMockDataSource } from "../data/data-sources/benefit-mock-data-source";

@@ -3,10 +3,7 @@ import type {
   Cafeteria,
   CafeteriaMenu,
   CafeteriaMenuTimeline,
-  CafeteriaWithMenu,
   MenuAvailability,
-  RegisterCafeteriaMenuRequest as RegisterCafeteriaMenuRequestEntity,
-  RegisterCafeteriaRequest as RegisterCafeteriaRequestEntity,
 } from "../../domain/entities";
 import type { CafeteriaRepository } from "../../domain/repositories/cafeteria-repository.interface";
 import type {
@@ -14,7 +11,9 @@ import type {
   GetCafeteriaMenuResponse,
   GetCafeteriaMenuTimelineResponse,
   GetCafeteriaResponse,
+  RegisterCafeteriaMenuRequest,
   RegisterCafeteriaMenuResponse,
+  RegisterCafeteriaRequest,
   RegisterCafeteriaResponse,
 } from "../dto";
 import {
@@ -40,7 +39,10 @@ export class CafeteriaRepositoryStub implements CafeteriaRepository {
     cursor?: string;
     size?: number;
   }): Promise<{
-    data: CafeteriaWithMenu[];
+    data: Array<{
+      cafeteria: Cafeteria;
+      menus: CafeteriaMenu[];
+    }>;
     pageInfo: PageInfo;
   }> {
     // TODO: 추후 구현 예정
@@ -608,9 +610,7 @@ export class CafeteriaRepositoryStub implements CafeteriaRepository {
   //   };
   // }
 
-  async registerCafeteria(
-    data: RegisterCafeteriaRequestEntity,
-  ): Promise<Cafeteria> {
+  async registerCafeteria(data: RegisterCafeteriaRequest): Promise<Cafeteria> {
     // Mock DTO 생성
     const mockResponse: RegisterCafeteriaResponse = {
       cafeteriaId: Date.now(),
@@ -633,7 +633,7 @@ export class CafeteriaRepositoryStub implements CafeteriaRepository {
   }
 
   async registerCafeteriaMenu(
-    data: RegisterCafeteriaMenuRequestEntity,
+    data: RegisterCafeteriaMenuRequest,
   ): Promise<CafeteriaMenu> {
     // Mock DTO 생성
     const mockResponse: RegisterCafeteriaMenuResponse = {

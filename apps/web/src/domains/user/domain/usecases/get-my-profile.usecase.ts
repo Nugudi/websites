@@ -1,12 +1,3 @@
-/**
- * Get My Profile UseCase
- *
- * Business logic for fetching authenticated user's profile
- * - Single responsibility: Get user profile
- * - Uses UserRepository for data access
- * - Returns UserProfile entity
- */
-
 import type { UserProfile } from "../entities/user.entity";
 import type { UserRepository } from "../repositories/user-repository.interface";
 

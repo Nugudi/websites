@@ -20,6 +20,10 @@ import type {
 import type { LogoutRequestDTO } from "../dto/logout-dto";
 import type { SignUpDataDTO, SignUpSocialRequestDTO } from "../dto/sign-up-dto";
 import type { RefreshTokenRequestDTO, TokenDataDTO } from "../dto/token-dto";
+import type {
+  CheckNicknameAvailabilityParams,
+  CheckNicknameAvailabilityResponse,
+} from "../dto/user-dto";
 
 /**
  * AuthRemoteDataSource
@@ -258,5 +262,19 @@ export class AuthRemoteDataSource {
     );
 
     return response.data.data;
+  }
+
+  /**
+   * 닉네임 사용 가능 여부 확인
+   */
+  async checkNicknameAvailability(
+    params: CheckNicknameAvailabilityParams,
+  ): Promise<CheckNicknameAvailabilityResponse> {
+    const response =
+      await this.httpClient.get<CheckNicknameAvailabilityResponse>(
+        "/api/v1/users/nickname/availability",
+        { params },
+      );
+    return response.data;
   }
 }

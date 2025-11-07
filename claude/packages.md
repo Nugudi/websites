@@ -33,11 +33,22 @@ nugudi/
 │           │   │   │   └── dto/           # Data Transfer Objects
 │           │   │   ├── infrastructure/ # Infrastructure Layer
 │           │   │   │   └── services/      # External Services
-│           │   │   ├── presentation/   # Presentation Layer (UI)
-│           │   │   │   ├── views/
-│           │   │   │   ├── sections/
-│           │   │   │   └── components/
-│           │   │   └── core/           # Core Domain Concepts
+│           │   │   ├── presentation/   # Presentation Layer (UI & Logic)
+│           │   │   │   ├── ui/         # UI Components Hierarchy
+│           │   │   │   │   ├── views/      # Page-level layouts
+│           │   │   │   │   ├── sections/   # Feature sections with boundaries
+│           │   │   │   │   └── components/ # Reusable components
+│           │   │   │   ├── adapters/   # 🆕 Entity → UI Type Adapters (optional)
+│           │   │   │   ├── hooks/      # React Hooks & TanStack Query
+│           │   │   │   │   └── queries/   # Query custom hooks
+│           │   │   │   ├── mappers/    # Simple transformations (alternative to adapters)
+│           │   │   │   ├── types/      # UI-specific types
+│           │   │   │   ├── utils/      # Presentation utilities
+│           │   │   │   ├── constants/  # Presentation constants (query keys)
+│           │   │   │   ├── schemas/    # Validation schemas
+│           │   │   │   ├── stores/     # State management stores
+│           │   │   │   └── actions/    # Server Actions
+│           │   │   └── core/           # Core Domain Concepts (deprecated structure)
 │           │   │       ├── types/
 │           │   │       ├── config/
 │           │   │       └── errors/
@@ -46,10 +57,15 @@ nugudi/
 │           │   │   ├── domain/
 │           │   │   ├── data/
 │           │   │   ├── infrastructure/
-│           │   │   ├── presentation/
-│           │   │   └── core/
+│           │   │   ├── presentation/   # (same structure as auth above)
+│           │   │   └── core/           # (deprecated)
 │           │   └── [other-domains]/
-│           └── shared/    # Shared Infrastructure & Interface Adapters
+│           └── shared/    # Shared Infrastructure, Core, & Interface Adapters
+│               ├── core/            # 🆕 Domain-Agnostic Core Utilities
+│               │   └── utils/       # Pure utility functions
+│               │       ├── currency/   # Currency formatting (formatPriceWithCurrency)
+│               │       ├── date/       # Date utilities (formatDate, parseDate)
+│               │       └── validation/ # Common validation helpers
 │               ├── infrastructure/  # 🆕 Infrastructure Layer
 │               │   ├── http/       # HttpClient, TokenProvider
 │               │   ├── storage/    # SessionManager
@@ -133,12 +149,14 @@ This project follows **Domain-Driven Design (DDD)** principles with **Clean Arch
 
 | Layer               | Location                                   | Responsibility                                                              | Examples                                                    |
 | ------------------- | ------------------------------------------ | --------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| **Presentation**    | `app/`, `domains/*/ui/`                    | User interface, user interactions, routing                                  | Pages, Views, Sections, Components                          |
-| **Application**     | `domains/*/domain/usecases/`, `actions/`   | Business logic, orchestration, use cases                                    | LoginWithOAuthUseCase, GetMyProfileUseCase, Server Actions  |
-| **Domain**          | `domains/*/repositories/`                  | Data access interfaces, domain models                                       | AuthRepository, UserRepository                              |
-| **Infrastructure**  | `shared/infrastructure/`                   | External systems, frameworks, databases                                     | HttpClient, SessionManager, Logger                          |
-| **DI Container**    | `src/di/`                                  | Dependency injection, object creation, lifecycle management                 | AuthServerContainer, AuthClientContainer                    |
-| **Interface Adapt** | `shared/interface-adapters/`               | Shared UI components, providers (connects Infrastructure to Presentation)   | AppHeader, Providers                                        |
+| **Presentation**    | `app/`, `domains/*/presentation/`          | User interface, user interactions, routing, UI logic                        | Pages, Views, Sections, Components, Adapters, Hooks         |
+| **Application**     | `domains/*/domain/usecases/`               | Business logic, orchestration, use cases                                    | LoginWithOAuthUseCase, GetMyProfileUseCase                  |
+| **Domain**          | `domains/*/domain/repositories/`, `entities/` | Data access interfaces, domain models, domain logic                      | AuthRepository, UserRepository, User Entity                 |
+| **Data**            | `domains/*/data/repositories/`, `data-sources/` | Repository implementations, data sources, DTO mappings                 | AuthRepositoryImpl, AuthDataSource, DTO Mappers             |
+| **Infrastructure**  | `domains/*/infrastructure/`, `shared/infrastructure/` | External services, frameworks, databases, HTTP clients            | HttpClient, SessionManager, Logger, External APIs           |
+| **DI Container**    | `domains/*/di/` 🆕 (per-domain)            | Dependency injection, object creation, lifecycle management (per-domain)    | AuthServerContainer, AuthClientContainer                    |
+| **Shared Core**     | `shared/core/` 🆕                          | Domain-agnostic utilities, pure functions (no business logic)               | formatPriceWithCurrency, formatDate, validation helpers     |
+| **Interface Adapt** | `shared/interface-adapters/`               | Shared UI components, providers (connects Infrastructure to Presentation)   | AppHeader, Providers, Global Sections                       |
 
 ---
 
@@ -1006,7 +1024,7 @@ component-name/
 
 ```typescript
 // Domain component structure example
-// src/domains/auth/sign-up/ui/components/sign-up-form/index.tsx
+// src/domains/auth/sign-up/presentation/ui/components/sign-up-form/index.tsx
 interface SignUpFormProps {
   // Props interface
 }
@@ -1015,7 +1033,7 @@ export const SignUpForm = (props: SignUpFormProps) => {
   // Component implementation
 };
 
-// src/domains/auth/sign-up/ui/components/sign-up-form/index.css.ts
+// src/domains/auth/sign-up/presentation/ui/components/sign-up-form/index.css.ts
 import { style } from "@vanilla-extract/css";
 import { vars } from "@nugudi/themes";
 
@@ -1782,19 +1800,19 @@ pnpm commit                 # Commit with commitizen
 
 ```typescript
 // ✅ CORRECT - Within same domain (e.g., auth/sign-up)
-// From: src/domains/auth/sign-up/ui/views/sign-up-view/index.tsx
+// From: src/domains/auth/sign-up/presentation/ui/views/sign-up-view/index.tsx
 import { SignUpForm } from "../../components/sign-up-form";
 import { useSignUpStore } from "../../../stores/use-sign-up-store";
 import { signUpSchema } from "../../../schemas/sign-up-schema";
 import type { SignUpFormData } from "../../../types/sign-up";
 
 // ✅ CORRECT - From section to component in same domain
-// From: src/domains/auth/sign-up/ui/sections/sign-up-section/index.tsx
+// From: src/domains/auth/sign-up/presentation/ui/sections/sign-up-section/index.tsx
 import { EmailForm } from "../../components/sign-up-form/steps/email-form";
 import { PasswordForm } from "../../components/sign-up-form/steps/password-form";
 
 // ✅ CORRECT - Within same folder
-// From: src/domains/auth/sign-up/ui/components/sign-up-form/steps/email-form/index.tsx
+// From: src/domains/auth/sign-up/presentation/ui/components/sign-up-form/steps/email-form/index.tsx
 import * as styles from "./index.css";
 ```
 
@@ -1807,11 +1825,11 @@ import { useAuth } from "@/src/domains/auth/hooks/use-auth";
 
 // ✅ CORRECT - From app pages (public routes)
 // From: app/(public)/auth/sign-up/page.tsx
-import { SignUpView } from "@/src/domains/auth/sign-up/ui/views/sign-up-view";
+import { SignUpView } from "@/src/domains/auth/sign-up/presentation/ui/views/sign-up-view";
 
 // ✅ CORRECT - From app pages (protected routes)
 // From: app/(auth)/profile/page.tsx
-import { ProfilePageView } from "@/src/domains/auth/profile/ui/views/profile-page-view";
+import { ProfilePageView } from "@/src/domains/auth/profile/presentation/ui/views/profile-page-view";
 ```
 
 #### Package Imports - Always Use Package Path
@@ -1981,18 +1999,18 @@ export const BenefitCard = () => {};
 
 ```typescript
 // ✅ CORRECT - Named exports for ALL components/sections/views
-// domains/cafeteria/ui/components/cafeteria-menu-list/index.tsx
+// domains/cafeteria/presentation/ui/components/cafeteria-menu-list/index.tsx
 export const CafeteriaMenuList = () => {};
 
-// domains/cafeteria/ui/sections/cafeteria-recommend-section/index.tsx
+// domains/cafeteria/presentation/ui/sections/cafeteria-recommend-section/index.tsx
 export const CafeteriaRecommendSection = () => {};
 
-// domains/cafeteria/ui/views/cafeteria-home-view/index.tsx
+// domains/cafeteria/presentation/ui/views/cafeteria-home-view/index.tsx
 export const CafeteriaHomeView = () => {};
 
 // ✅ CORRECT - Default export ONLY for page.tsx files
 // app/page.tsx
-import { CafeteriaHomeView } from "@/src/domains/cafeteria/ui/views/cafeteria-home-view";
+import { CafeteriaHomeView } from "@/src/domains/cafeteria/presentation/ui/views/cafeteria-home-view";
 const HomePage = () => {
   return <CafeteriaHomeView />;
 };

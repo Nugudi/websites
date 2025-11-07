@@ -13,16 +13,13 @@ import { MenuCard } from "@nugudi/react-components-menu-card";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import type {
-  Cafeteria,
-  CafeteriaMenuTimeline,
-} from "../../../../domain/entities";
 import { useGetCafeteriaMenuTimeline } from "../../../hooks";
+import type { CafeteriaItem, CafeteriaMenuTimelineItem } from "../../../types";
 import { getMealTypeTitle } from "../../../utils";
 import * as styles from "./index.css";
 
 type CafeteriaMenuTabProps = {
-  cafeteria: Cafeteria;
+  cafeteria: CafeteriaItem;
   cafeteriaId: string;
 };
 
@@ -50,7 +47,7 @@ export const CafeteriaMenuTab = ({
 };
 
 type MenuItemProps = {
-  menu: CafeteriaMenuTimeline;
+  menu: CafeteriaMenuTimelineItem;
   cafeteriaId: string;
 };
 
@@ -75,7 +72,7 @@ const MenuItem = ({ menu, cafeteriaId }: MenuItemProps) => {
               variant="subtle"
               key={`${menu.menuDate}-${index}`}
               title={title}
-              items={menuInfo.menuItems}
+              items={menuInfo.items}
             />
           );
         })}
@@ -86,7 +83,7 @@ const MenuItem = ({ menu, cafeteriaId }: MenuItemProps) => {
 
 type ReviewPromptCardProps = {
   cafeteriaId: string;
-  cafeteriaName: NonNullable<Cafeteria["name"]>;
+  cafeteriaName: string;
 };
 
 const ReviewPromptCard = ({
@@ -132,7 +129,7 @@ const CharacterImage = () => {
 };
 
 type DateHeaderProps = {
-  date: CafeteriaMenuTimeline["menuDate"];
+  date: CafeteriaMenuTimelineItem["menuDate"];
   cafeteriaId: string;
 };
 

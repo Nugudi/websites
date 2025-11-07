@@ -1,23 +1,15 @@
 /**
  * Cafeteria Mapper
- *
- * DTO → Entity 변환 (Zod 검증 포함)
- * - DTO: API 응답 형식 (OpenAPI, snake_case)
- * - Entity: 도메인 객체 (비즈니스 로직, camelCase)
  */
 
 import { PageInfoSchema } from "@shared/domain/entities";
+// Import types from Domain Layer
 import {
   type Cafeteria,
+  CafeteriaEntity,
   type CafeteriaMenu,
-  CafeteriaMenuSchema,
   type CafeteriaMenuTimeline,
-  CafeteriaMenuTimelineSchema,
-  CafeteriaSchema,
-  type CafeteriaWithMenu,
-  CafeteriaWithMenuSchema,
   type MenuAvailability,
-  MenuAvailabilitySchema,
 } from "../../domain/entities";
 import type {
   CafeteriaInfoDTO,
@@ -31,12 +23,16 @@ import type {
   RegisterCafeteriaMenuResponse,
   RegisterCafeteriaResponse,
 } from "../dto";
+import { CafeteriaSchema } from "../dto/schemas/cafeteria.schema";
+// Import Zod schemas from Data Layer
+import {
+  CafeteriaMenuSchema,
+  MenuAvailabilitySchema,
+} from "../dto/schemas/cafeteria-menu.schema";
+import { CafeteriaMenuTimelineSchema } from "../dto/schemas/cafeteria-menu-timeline.schema";
 
-/**
- * CafeteriaInfoDTO → Cafeteria Entity
- */
 export function cafeteriaInfoDtoToDomain(dto: CafeteriaInfoDTO): Cafeteria {
-  const entity = {
+  const rawData = {
     id: dto.id,
     name: dto.name,
     address: dto.address,
@@ -49,12 +45,13 @@ export function cafeteriaInfoDtoToDomain(dto: CafeteriaInfoDTO): Cafeteria {
     businessHours: dto.businessHours,
   };
 
-  return CafeteriaSchema.parse(entity);
+  // Validate and transform with Zod schema - returns validated/transformed data
+  const validatedProps = CafeteriaSchema.parse(rawData);
+
+  // Return CafeteriaEntity instance with validated props
+  return new CafeteriaEntity(validatedProps);
 }
 
-/**
- * GetCafeteriaResponse DTO → Cafeteria Entity
- */
 export function getCafeteriaResponseToDomain(
   dto: GetCafeteriaResponse,
 ): Cafeteria {
@@ -65,9 +62,6 @@ export function getCafeteriaResponseToDomain(
   return cafeteriaInfoDtoToDomain(dto.cafeteria);
 }
 
-/**
- * MenuInfoDTO → CafeteriaMenu Entity
- */
 export function menuInfoDtoToDomain(dto: MenuInfoDTO): CafeteriaMenu {
   if (!dto.nutritionInfo) {
     throw new Error("NutritionInfo is missing in menu response");
@@ -93,9 +87,6 @@ export function menuInfoDtoToDomain(dto: MenuInfoDTO): CafeteriaMenu {
   return CafeteriaMenuSchema.parse(entity);
 }
 
-/**
- * GetCafeteriaMenuResponse DTO → CafeteriaMenu Entity
- */
 export function getCafeteriaMenuResponseToDomain(
   dto: GetCafeteriaMenuResponse,
 ): CafeteriaMenu {
@@ -106,23 +97,18 @@ export function getCafeteriaMenuResponseToDomain(
   return menuInfoDtoToDomain(dto.menus[0]);
 }
 
-/**
- * GetCafeteriaWithMenuResponse DTO → CafeteriaWithMenu Entity
- */
 export function getCafeteriaWithMenuResponseToDomain(
   dto: GetCafeteriaWithMenuResponse,
-): CafeteriaWithMenu {
-  const entity = {
+): {
+  cafeteria: Cafeteria;
+  menus: CafeteriaMenu[];
+} {
+  return {
     cafeteria: cafeteriaInfoDtoToDomain(dto.cafeteria),
     menus: dto.menus.map((menu) => menuInfoDtoToDomain(menu)),
   };
-
-  return CafeteriaWithMenuSchema.parse(entity);
 }
 
-/**
- * GetCafeteriaMenuAvailabilityResponse DTO → MenuAvailability Entity
- */
 export function getCafeteriaMenuAvailabilityResponseToDomain(
   dto: GetCafeteriaMenuAvailabilityResponse,
 ): MenuAvailability {
@@ -139,9 +125,6 @@ export function getCafeteriaMenuAvailabilityResponseToDomain(
   return MenuAvailabilitySchema.parse(entity);
 }
 
-/**
- * PageInfo DTO → PageInfo Entity
- */
 export function pageInfoDtoToDomain(dto: PageInfoDTO) {
   const entity = {
     nextCursor: dto.nextCursor,
@@ -152,9 +135,6 @@ export function pageInfoDtoToDomain(dto: PageInfoDTO) {
   return PageInfoSchema.parse(entity);
 }
 
-/**
- * RegisterCafeteriaResponse DTO → Cafeteria Entity
- */
 export function registerCafeteriaResponseToDomain(
   dto: RegisterCafeteriaResponse,
 ): Cafeteria {
@@ -162,7 +142,6 @@ export function registerCafeteriaResponseToDomain(
     throw new Error("RegisterCafeteriaResponse is null");
   }
 
-  // RegisterCafeteriaResponse를 CafeteriaInfoDTO 형태로 변환
   const cafeteriaInfo: CafeteriaInfoDTO = {
     id: dto.cafeteriaId,
     name: dto.name,
@@ -172,16 +151,13 @@ export function registerCafeteriaResponseToDomain(
     longitude: dto.longitude,
     phone: dto.phone,
     mealTicketPrice: dto.mealTicketPrice,
-    businessHours: null, // RegisterCafeteriaResponse doesn't include businessHours
+    businessHours: null,
     takeoutAvailable: dto.takeoutAvailable ?? false,
   };
 
   return cafeteriaInfoDtoToDomain(cafeteriaInfo);
 }
 
-/**
- * RegisterCafeteriaMenuResponse DTO → CafeteriaMenu Entity
- */
 export function registerCafeteriaMenuResponseToDomain(
   dto: RegisterCafeteriaMenuResponse,
 ): CafeteriaMenu {
@@ -189,27 +165,23 @@ export function registerCafeteriaMenuResponseToDomain(
     throw new Error("RegisterCafeteriaMenuResponse is null");
   }
 
-  // RegisterCafeteriaMenuResponse를 MenuInfoDTO 형태로 변환
   const menuInfo: MenuInfoDTO = {
     mealType: dto.mealType,
     menuItems: dto.menuItems,
     specialNote: dto.specialNote,
     nutritionInfo: {
       totalCalories: dto.totalCalories ?? 0,
-      dailyPercentage: 0, // Not in RegisterCafeteriaMenuResponse
-      walkingSteps: 0, // Not in RegisterCafeteriaMenuResponse
-      runningKm: 0, // Not in RegisterCafeteriaMenuResponse
-      cyclingKm: 0, // Not in RegisterCafeteriaMenuResponse
-      stairsFloors: 0, // Not in RegisterCafeteriaMenuResponse
+      dailyPercentage: 0,
+      walkingSteps: 0,
+      runningKm: 0,
+      cyclingKm: 0,
+      stairsFloors: 0,
     },
   };
 
   return menuInfoDtoToDomain(menuInfo);
 }
 
-/**
- * GetCafeteriaMenuTimelineResponse DTO → CafeteriaMenuTimeline Entity
- */
 export function getCafeteriaMenuTimelineResponseToDomain(
   dto: GetCafeteriaMenuTimelineResponse,
 ): CafeteriaMenuTimeline {
@@ -222,9 +194,6 @@ export function getCafeteriaMenuTimelineResponseToDomain(
   return CafeteriaMenuTimelineSchema.parse(entity);
 }
 
-/**
- * Backward compatibility
- */
 export const CafeteriaMapper = {
   cafeteriaInfoDtoToDomain,
   getCafeteriaResponseToDomain,

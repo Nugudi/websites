@@ -4,6 +4,7 @@ import { VStack } from "@nugudi/react-components-layout";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import { getCafeteriaClientContainer } from "../../../../di/cafeteria-client-container";
+import { CafeteriaAdapter } from "../../../adapters";
 import { CafeteriaInfoCard } from "../../components/cafeteria-info-card";
 import * as styles from "./index.css";
 
@@ -23,9 +24,12 @@ export const CafeteriaHeroSection = ({
     isError,
   } = useQuery({
     queryKey: ["cafeteria", "detail", cafeteriaId],
-    queryFn: () => getCafeteriaByIdUseCase.execute(cafeteriaId),
-    staleTime: 5 * 60 * 1000, // 5분
-    gcTime: 30 * 60 * 1000, // 30분
+    queryFn: async () => {
+      const entity = await getCafeteriaByIdUseCase.execute(cafeteriaId);
+      return CafeteriaAdapter.toUiDetailItem(entity);
+    },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
   });
 
   if (isLoading) {

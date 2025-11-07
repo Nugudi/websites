@@ -9,7 +9,7 @@
 
 import type { DeviceInfo, SignUpData } from "../../core/types/common";
 import type { Session } from "../entities/session.entity";
-import type { User } from "../entities/user.entity";
+import type { NicknameAvailability, User } from "../entities/user.entity";
 
 /**
  * 로그인 결과 타입
@@ -101,4 +101,11 @@ export interface AuthRepository {
     registrationToken: string;
     userData: SignUpData;
   }): Promise<User>;
+
+  /**
+   * 닉네임 사용 가능 여부 확인
+   * @param nickname 확인할 닉네임
+   * @returns 사용 가능 여부
+   */
+  checkNicknameAvailability(nickname: string): Promise<NicknameAvailability>;
 }

@@ -54,7 +54,53 @@ export function tokenDataToSession(dto: TokenDataDTO, userId: string): Session {
 }
 
 /**
+ * 🆕 Entity → Storage Data 변환 (Clean Architecture)
+ *
+ * Mapper가 직접 Storage 형식 변환을 담당 (Entity는 비즈니스 로직만)
+ *
+ * @param entity Session Entity
+ * @returns Storage에 저장할 수 있는 형식 (ISO string)
+ */
+export function sessionDomainToStorageData(entity: Session): {
+  accessToken: string;
+  refreshToken: string;
+  userId: string;
+  expiresAt: string; // ISO string
+} {
+  return {
+    accessToken: entity.getAccessToken(),
+    refreshToken: entity.getRefreshToken(),
+    userId: entity.getUserId(),
+    expiresAt: entity.getExpiresAt().toISOString(), // Mapper가 ISO 변환
+  };
+}
+
+/**
+ * 🆕 Storage Data → Entity 변환 (Clean Architecture)
+ *
+ * Mapper가 직접 Storage 형식에서 Entity 복원을 담당
+ *
+ * @param data Storage에서 읽은 데이터
+ * @returns Session Entity
+ */
+export function sessionStorageDataToDomain(data: {
+  accessToken: string;
+  refreshToken: string;
+  userId: string;
+  expiresAt: string; // ISO string
+}): Session {
+  return new SessionEntity({
+    accessToken: data.accessToken,
+    refreshToken: data.refreshToken,
+    userId: data.userId,
+    expiresAt: new Date(data.expiresAt), // Mapper가 Date 변환
+  });
+}
+
+/**
  * Entity → 저장 가능한 형식으로 변환
+ *
+ * @deprecated Use sessionDomainToStorageData instead
  */
 export function sessionToStorageFormat(entity: Session): {
   accessToken: string;
@@ -62,11 +108,13 @@ export function sessionToStorageFormat(entity: Session): {
   userId: string;
   expiresAt: string; // ISO string
 } {
-  return entity.serialize();
+  return sessionDomainToStorageData(entity);
 }
 
 /**
  * 저장된 형식에서 Entity 복원
+ *
+ * @deprecated Use sessionStorageDataToDomain instead
  */
 export function sessionFromStorageFormat(data: {
   accessToken: string;
@@ -74,7 +122,7 @@ export function sessionFromStorageFormat(data: {
   userId: string;
   expiresAt: string;
 }): Session {
-  return SessionEntity.deserialize(data);
+  return sessionStorageDataToDomain(data);
 }
 
 /**
@@ -83,6 +131,10 @@ export function sessionFromStorageFormat(data: {
 export const SessionMapper = {
   toDomain: sessionDtoToDomain,
   fromTokenData: tokenDataToSession,
+  // 🆕 표준 네이밍 (다른 mapper들과 일관성)
+  toStorageData: sessionDomainToStorageData,
+  fromStorageData: sessionStorageDataToDomain,
+  // Backward compatibility
   toStorageFormat: sessionToStorageFormat,
   fromStorageFormat: sessionFromStorageFormat,
 };

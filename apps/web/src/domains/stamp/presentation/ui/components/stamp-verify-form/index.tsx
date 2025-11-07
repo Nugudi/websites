@@ -15,7 +15,6 @@ export const StampVerifyForm = () => {
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  // 스탬프 컬렉션 조회 (첫 번째 미사용 스탬프를 인증에 사용)
   const { data: stampCollection } = useGetStampCollection();
   const { mutate: consumeStamp, isPending } = useConsumeStamp();
 
@@ -38,14 +37,12 @@ export const StampVerifyForm = () => {
       return;
     }
 
-    // 미사용 스탬프 중 첫 번째 스탬프를 인증에 사용
     const unusedStamp = stampCollection?.stamps.find((stamp) => !stamp.isUsed);
     if (!unusedStamp) {
       alert("사용 가능한 스탬프가 없습니다.");
       return;
     }
 
-    // 스탬프 소비 (이미지 업로드는 Mock에서 생략, 실제 API에서는 이미지도 함께 전송)
     consumeStamp(unusedStamp.id, {
       onSuccess: () => {
         alert("스탬프 인증이 완료되었습니다!");

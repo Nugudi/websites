@@ -1,40 +1,49 @@
 /**
  * Review Entity
- *
- * 리뷰 도메인 객체
- * - 프레임워크에 독립적
- * - 비즈니스 로직 포함 가능
- * - Immutable 패턴 사용
  */
 
-/**
- * Review Entity Interface
- */
 export interface Review {
-  readonly id: number;
-  readonly content: string;
-  readonly rating: number;
-  readonly images?: string[];
-  readonly createdAt: Date;
-  readonly authorId: number;
-  readonly authorName: string;
-  readonly cafeteriaId: number;
-  readonly menuId: number;
+  // Getter methods
+  getId(): number;
+  getContent(): string;
+  getRating(): number;
+  getImages(): string[] | undefined;
+  getCreatedAt(): Date;
+  getAuthorId(): number;
+  getAuthorName(): string;
+  getCafeteriaId(): number;
+  getMenuId(): number;
+
+  // Business logic methods
+  hasImages(): boolean;
+  isPositive(): boolean;
+  isNegative(): boolean;
+  isRecent(): boolean;
+  isAuthoredBy(userId: number): boolean;
+  toPlainObject(): {
+    id: number;
+    content: string;
+    rating: number;
+    images?: string[];
+    createdAt: Date;
+    authorId: number;
+    authorName: string;
+    cafeteriaId: number;
+    menuId: number;
+  };
+  equals(other: Review): boolean;
 }
 
-/**
- * Review Entity Class (with business logic)
- */
 export class ReviewEntity implements Review {
-  readonly id: number;
-  readonly content: string;
-  readonly rating: number;
-  readonly images?: string[];
-  readonly createdAt: Date;
-  readonly authorId: number;
-  readonly authorName: string;
-  readonly cafeteriaId: number;
-  readonly menuId: number;
+  private readonly _id: number;
+  private readonly _content: string;
+  private readonly _rating: number;
+  private readonly _images?: string[];
+  private readonly _createdAt: Date;
+  private readonly _authorId: number;
+  private readonly _authorName: string;
+  private readonly _cafeteriaId: number;
+  private readonly _menuId: number;
 
   constructor(params: {
     id: number;
@@ -47,7 +56,6 @@ export class ReviewEntity implements Review {
     cafeteriaId: number;
     menuId: number;
   }) {
-    // 검증 로직
     if (!params.id || params.id <= 0) {
       throw new Error("Review ID must be a positive number");
     }
@@ -61,75 +69,91 @@ export class ReviewEntity implements Review {
       throw new Error("Created date is required");
     }
 
-    this.id = params.id;
-    this.content = params.content;
-    this.rating = params.rating;
-    this.images = params.images;
-    this.createdAt = params.createdAt;
-    this.authorId = params.authorId;
-    this.authorName = params.authorName;
-    this.cafeteriaId = params.cafeteriaId;
-    this.menuId = params.menuId;
+    this._id = params.id;
+    this._content = params.content;
+    this._rating = params.rating;
+    this._images = params.images;
+    this._createdAt = params.createdAt;
+    this._authorId = params.authorId;
+    this._authorName = params.authorName;
+    this._cafeteriaId = params.cafeteriaId;
+    this._menuId = params.menuId;
   }
 
-  /**
-   * 비즈니스 로직: 이미지가 있는지 확인
-   */
+  // Getter methods
+  getId(): number {
+    return this._id;
+  }
+
+  getContent(): string {
+    return this._content;
+  }
+
+  getRating(): number {
+    return this._rating;
+  }
+
+  getImages(): string[] | undefined {
+    return this._images;
+  }
+
+  getCreatedAt(): Date {
+    return this._createdAt;
+  }
+
+  getAuthorId(): number {
+    return this._authorId;
+  }
+
+  getAuthorName(): string {
+    return this._authorName;
+  }
+
+  getCafeteriaId(): number {
+    return this._cafeteriaId;
+  }
+
+  getMenuId(): number {
+    return this._menuId;
+  }
+
   hasImages(): boolean {
-    return !!this.images && this.images.length > 0;
+    return !!this._images && this._images.length > 0;
   }
 
-  /**
-   * 비즈니스 로직: 높은 평점인지 (4점 이상)
-   */
   isPositive(): boolean {
-    return this.rating >= 4;
+    return this._rating >= 4;
   }
 
-  /**
-   * 비즈니스 로직: 낮은 평점인지 (2점 이하)
-   */
   isNegative(): boolean {
-    return this.rating <= 2;
+    return this._rating <= 2;
   }
 
-  /**
-   * 비즈니스 로직: 최근 리뷰인지 (7일 이내)
-   */
   isRecent(): boolean {
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    return this.createdAt >= sevenDaysAgo;
+    return this._createdAt >= sevenDaysAgo;
   }
 
-  /**
-   * 비즈니스 로직: 리뷰 작성자가 특정 사용자인지 확인
-   */
   isAuthoredBy(userId: number): boolean {
-    return this.authorId === userId;
+    return this._authorId === userId;
   }
 
-  /**
-   * Entity를 Plain Object로 변환
-   */
-  toPlainObject(): Review {
+  toPlainObject() {
     return {
-      id: this.id,
-      content: this.content,
-      rating: this.rating,
-      images: this.images,
-      createdAt: this.createdAt,
-      authorId: this.authorId,
-      authorName: this.authorName,
-      cafeteriaId: this.cafeteriaId,
-      menuId: this.menuId,
+      id: this._id,
+      content: this._content,
+      rating: this._rating,
+      images: this._images,
+      createdAt: this._createdAt,
+      authorId: this._authorId,
+      authorName: this._authorName,
+      cafeteriaId: this._cafeteriaId,
+      menuId: this._menuId,
     };
   }
 
-  /**
-   * 동등성 비교
-   */
   equals(other: Review): boolean {
-    return this.id === other.id;
+    return this._id === other.getId();
   }
 }

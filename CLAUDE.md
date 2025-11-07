@@ -79,6 +79,15 @@ When creating Next.js components:
 - **ALWAYS** implement Suspense and ErrorBoundary in Section components
 - **NEVER** fetch data in View or Component layers
 
+When working with Adapters and Query Hooks:
+
+- **ALWAYS** use Adapter pattern when Entity → UI Type transformation requires 7+ Entity method calls
+- **ALWAYS** add comprehensive JSDoc to ALL Adapter methods (summary, description, @param, @returns)
+- **ALWAYS** follow Query Hook naming: file `get-[feature].query.ts`, hook `useGet[Feature]`
+- **ALWAYS** use DI Container method pattern: `container.getGet[UseCase]()`
+- **NEVER** skip JSDoc documentation on Adapter methods
+- **NEVER** use deprecated Factory pattern for Query Hooks
+
 When creating shared components & Storybook:
 
 - **ALWAYS** develop components in `packages/react/components/` first
@@ -121,6 +130,9 @@ To avoid confusion, each document has a specific focus:
   - Component architecture (Page → View → Section → Component)
   - **🆕 DI Container usage** (Server Container in Pages, Client Container in Sections)
   - **🆕 UseCase-based data flow** (replacing direct API calls)
+  - **🆕 Adapter Pattern** (Entity → UI Type transformation with 7+ Entity methods threshold)
+  - **🆕 Query Hook Patterns** (file naming, hook naming, container method naming)
+  - **🆕 JSDoc Standards** (comprehensive documentation for all Adapter methods)
   - Layer responsibilities and patterns
   - Error handling with Suspense/ErrorBoundary
   - Data flow and state management

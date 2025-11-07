@@ -1,20 +1,14 @@
 /**
  * Cafeteria Review Mapper
- *
- * DTO → Entity 변환 (Zod 검증 포함)
  */
 
-import {
-  type CreateReviewCommentRequest,
-  CreateReviewCommentRequestSchema,
-  type CreateReviewRequest,
-  CreateReviewRequestSchema,
-  type Review,
-  type ReviewComment,
-  ReviewCommentSchema,
-  type ReviewCommentWithMetadata,
-  ReviewCommentWithMetadataSchema,
-  ReviewSchema,
+// Import types from Domain Layer
+import type {
+  CreateReviewCommentRequest,
+  CreateReviewRequest,
+  Review,
+  ReviewComment,
+  ReviewCommentWithMetadata,
 } from "../../domain/entities";
 import type {
   CreateReviewCommentRequest as CreateReviewCommentRequestDTO,
@@ -23,10 +17,17 @@ import type {
   CreateReviewResponse,
   GetReviewCommentResponse,
 } from "../dto";
+// Import Zod schemas from Data Layer
+import {
+  CreateReviewRequestSchema,
+  ReviewSchema,
+} from "../dto/schemas/cafeteria-review.schema";
+import {
+  CreateReviewCommentRequestSchema,
+  ReviewCommentSchema,
+  ReviewCommentWithMetadataSchema,
+} from "../dto/schemas/cafeteria-review-comment.schema";
 
-/**
- * CreateReviewResponse DTO → Review Entity
- */
 export function createReviewResponseToDomain(
   dto: CreateReviewResponse,
 ): Review {
@@ -49,9 +50,6 @@ export function createReviewResponseToDomain(
   return ReviewSchema.parse(entity);
 }
 
-/**
- * GetReviewCommentResponse DTO → ReviewCommentWithMetadata Entity
- */
 export function getReviewCommentResponseToDomain(
   dto: GetReviewCommentResponse,
 ): ReviewCommentWithMetadata {
@@ -78,9 +76,6 @@ export function getReviewCommentResponseToDomain(
   return ReviewCommentWithMetadataSchema.parse(entity);
 }
 
-/**
- * CreateReviewCommentResponse DTO → ReviewComment Entity
- */
 export function createReviewCommentResponseToDomain(
   dto: CreateReviewCommentResponse,
 ): ReviewComment {
@@ -93,24 +88,17 @@ export function createReviewCommentResponseToDomain(
     content: dto.content,
     commentStatus: dto.commentStatus,
     createdAt: dto.createdAt,
-    // CreateReviewCommentResponse doesn't have updatedAt or isAuthor
   };
 
   return ReviewCommentSchema.parse(entity);
 }
 
-/**
- * CreateReviewRequest Entity → DTO
- */
 export function createReviewRequestToDto(
   entity: CreateReviewRequest,
 ): CreateReviewRequestDTO {
   return CreateReviewRequestSchema.parse(entity) as CreateReviewRequestDTO;
 }
 
-/**
- * CreateReviewCommentRequest Entity → DTO
- */
 export function createReviewCommentRequestToDto(
   entity: CreateReviewCommentRequest,
 ): CreateReviewCommentRequestDTO {
@@ -119,9 +107,6 @@ export function createReviewCommentRequestToDto(
   ) as CreateReviewCommentRequestDTO;
 }
 
-/**
- * Backward compatibility
- */
 export const CafeteriaReviewMapper = {
   createReviewResponseToDomain,
   getReviewCommentResponseToDomain,

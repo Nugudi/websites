@@ -10,9 +10,3 @@ export interface StampItem {
   isUsed: boolean;
   issuedDate: string; // Formatted date string for display
 }
-
-export interface StampCollectionUI {
-  stamps: StampItem[];
-  totalCount: number;
-  unusedCount: number;
-}

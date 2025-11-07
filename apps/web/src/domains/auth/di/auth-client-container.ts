@@ -10,6 +10,8 @@
 import { AuthRemoteDataSource, AuthRepositoryImpl } from "@auth/data";
 // Domain Layer (UseCases)
 import {
+  type CheckNicknameAvailabilityUseCase,
+  CheckNicknameAvailabilityUseCaseImpl,
   type GetCurrentSessionUseCase,
   GetCurrentSessionUseCaseImpl,
   type LoginWithOAuthUseCase,
@@ -35,6 +37,7 @@ class AuthClientContainer {
   private refreshTokenUseCase: RefreshTokenUseCase;
   private signUpWithSocialUseCase: SignUpWithSocialUseCase;
   private getCurrentSessionUseCase: GetCurrentSessionUseCase;
+  private checkNicknameAvailabilityUseCase: CheckNicknameAvailabilityUseCase;
 
   constructor(baseUrl: string = process.env.NEXT_PUBLIC_API_URL || "") {
     // Infrastructure Layer
@@ -72,6 +75,9 @@ class AuthClientContainer {
     this.getCurrentSessionUseCase = new GetCurrentSessionUseCaseImpl(
       sessionManager,
     );
+
+    this.checkNicknameAvailabilityUseCase =
+      new CheckNicknameAvailabilityUseCaseImpl(authRepository);
   }
 
   getLoginWithOAuth(): LoginWithOAuthUseCase {
@@ -92,6 +98,10 @@ class AuthClientContainer {
 
   getCurrentSession(): GetCurrentSessionUseCase {
     return this.getCurrentSessionUseCase;
+  }
+
+  getCheckNicknameAvailability(): CheckNicknameAvailabilityUseCase {
+    return this.checkNicknameAvailabilityUseCase;
   }
 }
 

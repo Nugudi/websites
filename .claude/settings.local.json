@@ -1,28 +1,6 @@
 {
   "permissions": {
-    "allow": [
-      "Bash(ls:*)",
-      "Bash(perl -pi -e 's|from \"\\.\\.\\/\\.\\.\\/data/dto\"|from \"../../types\"|g':*)",
-      "Bash(perl -pi -e 's|from \"\\.\\.\\/\\.\\.\\/types\"|from \"../../../types\"|g' src/domains/cafeteria/presentation/ui/components/cafeteria-review-comment-list/index.tsx:*)",
-      "Bash(perl -pi -e 's|from \"/presentation/types\"|from \"@cafeteria/presentation/types\"|g':*)",
-      "Bash(perl -pi -e:*)",
-      "Bash(src/domains/cafeteria/presentation/ui/sections/cafeteria-review-comment-input-section/index.tsx )",
-      "Bash(src/domains/cafeteria/presentation/ui/sections/cafeteria-review-comments-section/index.tsx)",
-      "Bash(for domain in auth benefit cafeteria notification stamp user)",
-      "Bash(do echo \"=== $domain DOMAIN ===\" find /Users/kim-yongmin/Workspace/personal/nugudi/apps/web/src/domains/$domain -type f)",
-      "Bash(git rm:*)",
-      "Bash(for file in /Users/kim-yongmin/Workspace/personal/nugudi/apps/web/app/api/auth/callback/[provider]/route.ts /Users/kim-yongmin/Workspace/personal/nugudi/apps/web/app/api/auth/refresh/route.ts /Users/kim-yongmin/Workspace/personal/nugudi/apps/web/app/api/auth/session/route.ts /Users/kim-yongmin/Workspace/personal/nugudi/apps/web/app/api/auth/sign-up/social/route.ts)",
-      "Bash(if [ -f /Users/kim-yongmin/Workspace/personal/nugudi/apps/web/.env.local ])",
-      "Bash(then grep \"NEXT_PUBLIC_API_URL\" /Users/kim-yongmin/Workspace/personal/nugudi/apps/web/.env.local)",
-      "Bash(else echo \".env.local file does not exist\")",
-      "Bash(fi)",
-      "Bash(cat:*)",
-      "Bash(pnpm check-types:*)",
-      "Bash(pnpm build:*)",
-      "Bash(find:*)",
-      "Bash(pnpm --filter=web check-types:*)",
-      "Bash(pnpm --filter=web build:*)"
-    ],
+    "allow": [],
     "deny": [],
     "ask": []
   }

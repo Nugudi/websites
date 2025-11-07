@@ -1,4 +1,5 @@
 import { createUserServerContainer } from "@/src/domains/user/di/user-server-container";
+import { UserAdapter } from "../../adapters";
 import { USER_PROFILE_QUERY_KEY } from "../../constants/query-keys";
 
 export const userProfileQueryServer = {
@@ -11,7 +12,7 @@ export const userProfileQueryServer = {
   queryFn: async () => {
     const userContainer = createUserServerContainer();
     const getMyProfileUseCase = userContainer.getGetMyProfile();
-
-    return getMyProfileUseCase.execute();
+    const profile = await getMyProfileUseCase.execute();
+    return UserAdapter.toUiItem(profile);
   },
 } as const;

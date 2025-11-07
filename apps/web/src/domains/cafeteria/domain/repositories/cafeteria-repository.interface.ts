@@ -11,7 +11,6 @@ import type {
   Cafeteria,
   CafeteriaMenu,
   CafeteriaMenuTimeline,
-  CafeteriaWithMenu,
   MenuAvailability,
   RegisterCafeteriaMenuRequest,
   RegisterCafeteriaRequest,
@@ -23,7 +22,10 @@ export interface CafeteriaRepository {
     cursor?: string;
     size?: number;
   }): Promise<{
-    data: CafeteriaWithMenu[];
+    data: Array<{
+      cafeteria: Cafeteria;
+      menus: CafeteriaMenu[];
+    }>;
     pageInfo: PageInfo;
   }>;
 

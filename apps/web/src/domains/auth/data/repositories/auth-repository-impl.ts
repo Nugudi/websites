@@ -10,7 +10,10 @@
 import { AuthError } from "../../core/errors/auth-error";
 import type { DeviceInfo, SignUpData } from "../../core/types/common";
 import type { Session } from "../../domain/entities/session.entity";
-import type { User } from "../../domain/entities/user.entity";
+import type {
+  NicknameAvailability,
+  User,
+} from "../../domain/entities/user.entity";
 import type {
   AuthRepository,
   LoginResult,
@@ -229,6 +232,29 @@ export class AuthRepositoryImpl implements AuthRepository {
       return UserMapper.toDomain(dto);
     } catch (error) {
       throw this.handleError(error, "Failed to sign up with social account");
+    }
+  }
+
+  async checkNicknameAvailability(
+    nickname: string,
+  ): Promise<NicknameAvailability> {
+    try {
+      const response = await this.dataSource.checkNicknameAvailability({
+        nickname,
+      });
+
+      if (!response.data) {
+        return {
+          available: false,
+          message: "닉네임 확인에 실패했습니다: 데이터를 받지 못했습니다.",
+        };
+      }
+
+      return {
+        available: response.data.available ?? false,
+      };
+    } catch (error) {
+      throw this.handleError(error, "Failed to check nickname availability");
     }
   }
 

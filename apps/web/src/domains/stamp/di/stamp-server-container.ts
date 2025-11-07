@@ -1,16 +1,5 @@
 /**
  * Stamp Server DI Container
- *
- * Server-side Dependency Injection Container
- * - Creates new instance per request (Stateless)
- * - Use in Server Components, API Routes, Server Actions
- *
- * Usage:
- * ```typescript
- * const container = createStampServerContainer();
- * const getStampCollectionUseCase = container.getGetStampCollection();
- * const result = await getStampCollectionUseCase.execute();
- * ```
  */
 
 import { StampMockDataSource } from "../data/data-sources/stamp-mock-data-source";

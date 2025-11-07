@@ -8,7 +8,7 @@ import { Box, Flex, Heading, HStack } from "@nugudi/react-components-layout";
 import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
-import { getUserClientContainer } from "@/src/domains/user/di/user-client-container";
+import { getAuthClientContainer } from "@/src/domains/auth/di/auth-client-container";
 import {
   type SocialSignUpNicknameSchema,
   socialSignUpNicknameSchema,
@@ -35,7 +35,7 @@ export const NicknameForm = () => {
     error,
   } = useMutation({
     mutationFn: (nickname: string) => {
-      const container = getUserClientContainer();
+      const container = getAuthClientContainer();
       const checkNicknameAvailabilityUseCase =
         container.getCheckNicknameAvailability();
       return checkNicknameAvailabilityUseCase.execute(nickname);

@@ -9,6 +9,7 @@
  * - Keep UI concerns separate from data transfer concerns
  */
 
+export * from "./cafeteria";
 export * from "./cafeteria-review-comment";
 export * from "./request-register";
 export * from "./review-rating";

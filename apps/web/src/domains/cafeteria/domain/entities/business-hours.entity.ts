@@ -1,37 +1,24 @@
 /**
- * Business Hours Domain Entity
- * Entity: camelCase | DTO: snake_case
+ * Business Hours Entity
  */
 
-import { z } from "zod";
-
 /** Java LocalTime 타입 (시간 정보만) */
-export const LocalTimeSchema = z
-  .object({
-    hour: z.number().int().min(0).max(23),
-    minute: z.number().int().min(0).max(59),
-    second: z.number().int().min(0).max(59),
-    nano: z.number().int().min(0),
-  })
-  .nullable();
+export interface LocalTime {
+  readonly hour: number;
+  readonly minute: number;
+  readonly second: number;
+  readonly nano: number;
+}
 
-export type LocalTime = z.infer<typeof LocalTimeSchema>;
+/** 시간 범위 (시작/종료) - TimeRange 자체가 nullable */
+export interface TimeRange {
+  readonly start: LocalTime;
+  readonly end: LocalTime;
+}
 
-/** 시간 범위 (시작/종료) */
-export const TimeRangeSchema = z.object({
-  start: LocalTimeSchema,
-  end: LocalTimeSchema,
-});
-
-export type TimeRange = z.infer<typeof TimeRangeSchema>;
-
-/** 영업시간 (점심/저녁) */
-export const BusinessHoursSchema = z
-  .object({
-    lunch: TimeRangeSchema,
-    dinner: TimeRangeSchema,
-    note: z.string().nullable(),
-  })
-  .nullable();
-
-export type BusinessHours = z.infer<typeof BusinessHoursSchema>;
+/** 영업시간 (점심/저녁) - BusinessHours 자체가 nullable */
+export interface BusinessHours {
+  readonly lunch: TimeRange | null; // null이면 점심 영업 안 함
+  readonly dinner: TimeRange | null; // null이면 저녁 영업 안 함
+  readonly note: string | null;
+}

@@ -1,16 +1,5 @@
 /**
  * Stamp Client DI Container
- *
- * Client-side Dependency Injection Container
- * - Lazy-initialized singleton (Stateful)
- * - Use in Client Components, Hooks, Browser-side logic
- *
- * Usage:
- * ```typescript
- * const container = getStampClientContainer();
- * const getStampCollectionUseCase = container.getGetStampCollection();
- * const result = await getStampCollectionUseCase.execute();
- * ```
  */
 
 import { StampMockDataSource } from "../data/data-sources/stamp-mock-data-source";
@@ -23,16 +12,11 @@ import {
   type GetStampCollectionUseCase,
   GetStampCollectionUseCaseImpl,
 } from "../domain/usecases/get-stamp-collection.usecase";
-import {
-  type GetStampCollectionForUIUseCase,
-  GetStampCollectionForUIUseCaseImpl,
-} from "../domain/usecases/get-stamp-collection-for-ui.usecase";
 
 export class StampClientContainer {
   private _dataSource?: StampMockDataSource;
   private _repository?: StampRepositoryImpl;
   private _getStampCollectionUseCase?: GetStampCollectionUseCase;
-  private _getStampCollectionForUIUseCase?: GetStampCollectionForUIUseCase;
   private _consumeStampUseCase?: ConsumeStampUseCase;
 
   private getDataSource(): StampMockDataSource {
@@ -58,14 +42,6 @@ export class StampClientContainer {
     return this._getStampCollectionUseCase;
   }
 
-  getGetStampCollectionForUI(): GetStampCollectionForUIUseCase {
-    if (!this._getStampCollectionForUIUseCase) {
-      this._getStampCollectionForUIUseCase =
-        new GetStampCollectionForUIUseCaseImpl(this.getRepository());
-    }
-    return this._getStampCollectionForUIUseCase;
-  }
-
   getConsumeStamp(): ConsumeStampUseCase {
     if (!this._consumeStampUseCase) {
       this._consumeStampUseCase = new ConsumeStampUseCaseImpl(
@@ -76,16 +52,8 @@ export class StampClientContainer {
   }
 }
 
-/**
- * Global singleton instance
- */
 let clientContainer: StampClientContainer | null = null;
 
-/**
- * Get or create singleton instance
- * - Lazy initialization
- * - Ensures single instance across application
- */
 export function getStampClientContainer(): StampClientContainer {
   if (!clientContainer) {
     clientContainer = new StampClientContainer();

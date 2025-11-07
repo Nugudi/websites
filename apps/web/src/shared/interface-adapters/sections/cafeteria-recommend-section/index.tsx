@@ -1,5 +1,5 @@
 import { Body, Emphasis, Flex } from "@nugudi/react-components-layout";
-import { CafeteriaRecommendCard } from "../../components/cafeteria-recommend-card";
+import { CafeteriaRecommendCard } from "@/src/domains/cafeteria/presentation/ui/components/cafeteria-recommend-card";
 import * as styles from "./index.css";
 
 export const CafeteriaRecommendSection = () => {

@@ -1,34 +1,15 @@
-/**
- * Get OAuth Authorize URL UseCase
- *
- * OAuth 인증 URL을 가져옵니다.
- * - 제공자(Google, Kakao, Naver)별로 다른 메서드 호출
- */
-
 import type { OAuthProvider } from "../../core/types/common";
 import type { AuthRepository } from "../repositories/auth-repository";
 
-/**
- * Get OAuth Authorize URL UseCase
- */
 export interface GetOAuthAuthorizeUrlUseCase {
   execute(provider: OAuthProvider, redirectUri: string): Promise<string>;
 }
 
-/**
- * Get OAuth Authorize URL UseCase Implementation
- */
 export class GetOAuthAuthorizeUrlUseCaseImpl
   implements GetOAuthAuthorizeUrlUseCase
 {
   constructor(private readonly authRepository: AuthRepository) {}
 
-  /**
-   * OAuth 인증 URL 가져오기
-   * @param provider OAuth 제공자
-   * @param redirectUri 리다이렉트 URI
-   * @returns 인증 URL
-   */
   async execute(provider: OAuthProvider, redirectUri: string): Promise<string> {
     switch (provider) {
       case "google":

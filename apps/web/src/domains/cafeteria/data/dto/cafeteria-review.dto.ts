@@ -1,14 +1,5 @@
 /**
- * Cafeteria Review Domain Types
- *
- * This file re-exports all Review-related types from the OpenAPI-generated types package.
- *
- * IMPORTANT:
- * - All types are sourced from @nugudi/types (auto-generated from OpenAPI spec)
- * - DO NOT directly import from @nugudi/types outside this file
- * - ALWAYS import Review types from this domain type file
- *
- * @see packages/types - OpenAPI type generation source
+ * Cafeteria Review DTO
  */
 
 import type { components } from "@nugudi/types";
@@ -160,6 +151,23 @@ export type SuccessResponseCreateReviewCommentResponse =
  */
 // export type PageResponseReplyInfo =
 //   components["schemas"]["PageResponseReplyInfo"];
+
+// ==========================================
+// Temporary DTO Types (TODO: Replace with OpenAPI types)
+// ==========================================
+
+/**
+ * 리뷰 댓글 DTO (임시 - OpenAPI 스키마 추가 시 교체)
+ * TODO: OpenAPI 스키마에 ReviewCommentDto 추가되면 위의 주석 처리된 타입으로 교체
+ */
+export interface ReviewCommentDto {
+  id: string;
+  username: string;
+  level: number;
+  time_ago: string; // API 규칙: snake_case
+  content: string;
+  replies?: ReviewCommentDto[];
+}
 
 // ==========================================
 // NOTE: PageInfo is exported from cafeteria.type.ts (shared type)

@@ -1,10 +1,5 @@
 /**
  * User Repository Implementation
- *
- * Implements UserRepository interface from domain layer
- * - Uses UserRemoteDataSource for API calls
- * - Converts DTOs to domain entities using mapper
- * - Handles errors and data validation
  */
 
 import type {

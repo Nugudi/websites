@@ -1,12 +1,3 @@
-/**
- * Check Nickname Availability UseCase
- *
- * Business logic for checking nickname availability
- * - Single responsibility: Check if nickname is available
- * - Uses UserRepository for data access
- * - Returns NicknameAvailability result
- */
-
 import type { NicknameAvailability } from "../entities/user.entity";
 import type { UserRepository } from "../repositories/user-repository.interface";
 

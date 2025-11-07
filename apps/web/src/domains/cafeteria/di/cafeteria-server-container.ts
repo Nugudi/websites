@@ -1,9 +1,5 @@
 /**
- * Cafeteria Server Container
- *
- * Server-side only DI Container
- * - Uses ServerSessionManager and ServerTokenProvider
- * - Creates new instance per request
+ * Cafeteria Server DI Container
  */
 
 import "server-only";
@@ -45,9 +41,6 @@ import { FetchHttpClient } from "@/src/shared/infrastructure/http/fetch-http-cli
 import { ServerTokenProvider } from "@/src/shared/infrastructure/http/server-token-provider";
 import { ServerSessionManager } from "@/src/shared/infrastructure/storage/server-session-manager";
 
-/**
- * Cafeteria Server Container
- */
 class CafeteriaServerContainer {
   // Cafeteria UseCases
   private getCafeteriasWithMenuUseCase: GetCafeteriasWithMenuUseCase;

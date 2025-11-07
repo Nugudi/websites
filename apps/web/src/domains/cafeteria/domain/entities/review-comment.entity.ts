@@ -1,40 +1,51 @@
 /**
  * Review Comment Entity
- *
- * 리뷰 댓글 도메인 객체
- * - 프레임워크에 독립적
- * - 비즈니스 로직 포함 가능
- * - Immutable 패턴 사용
  */
 
-/**
- * ReviewComment Entity Interface
- */
 export interface ReviewComment {
-  readonly id: number;
-  readonly content: string;
-  readonly createdAt: Date;
-  readonly authorId: number;
-  readonly authorName: string;
-  readonly reviewId: number;
-  readonly parentCommentId?: number;
-  readonly status: "ACTIVE" | "DELETED";
-  readonly replyCount?: number;
+  // Getter methods
+  getId(): number;
+  getContent(): string;
+  getCreatedAt(): Date;
+  getAuthorId(): number;
+  getAuthorName(): string;
+  getReviewId(): number;
+  getParentCommentId(): number | undefined;
+  getStatus(): "ACTIVE" | "DELETED";
+  getReplyCount(): number | undefined;
+
+  // Business logic methods
+  isReply(): boolean;
+  isTopLevel(): boolean;
+  isActive(): boolean;
+  isDeleted(): boolean;
+  hasReplies(): boolean;
+  isRecent(): boolean;
+  isAuthoredBy(userId: number): boolean;
+  toPlainObject(): {
+    id: number;
+    content: string;
+    createdAt: Date;
+    authorId: number;
+    authorName: string;
+    reviewId: number;
+    parentCommentId?: number;
+    status: "ACTIVE" | "DELETED";
+    replyCount?: number;
+  };
+  equals(other: ReviewComment): boolean;
 }
 
-/**
- * ReviewComment Entity Class (with business logic)
- */
 export class ReviewCommentEntity implements ReviewComment {
-  readonly id: number;
-  readonly content: string;
-  readonly createdAt: Date;
-  readonly authorId: number;
-  readonly authorName: string;
-  readonly reviewId: number;
-  readonly parentCommentId?: number;
-  readonly status: "ACTIVE" | "DELETED";
-  readonly replyCount?: number;
+  private readonly _id: number;
+  private readonly _content: string;
+  private readonly _createdAt: Date;
+  private readonly _authorId: number;
+  private readonly _authorName: string;
+  private readonly _reviewId: number;
+  private readonly _parentCommentId?: number;
+  private readonly _status: "ACTIVE" | "DELETED";
+  private readonly _replyCount?: number;
 
   constructor(params: {
     id: number;
@@ -47,7 +58,6 @@ export class ReviewCommentEntity implements ReviewComment {
     status: "ACTIVE" | "DELETED";
     replyCount?: number;
   }) {
-    // 검증 로직
     if (!params.id || params.id <= 0) {
       throw new Error("Comment ID must be a positive number");
     }
@@ -58,89 +68,99 @@ export class ReviewCommentEntity implements ReviewComment {
       throw new Error("Created date is required");
     }
 
-    this.id = params.id;
-    this.content = params.content;
-    this.createdAt = params.createdAt;
-    this.authorId = params.authorId;
-    this.authorName = params.authorName;
-    this.reviewId = params.reviewId;
-    this.parentCommentId = params.parentCommentId;
-    this.status = params.status;
-    this.replyCount = params.replyCount;
+    this._id = params.id;
+    this._content = params.content;
+    this._createdAt = params.createdAt;
+    this._authorId = params.authorId;
+    this._authorName = params.authorName;
+    this._reviewId = params.reviewId;
+    this._parentCommentId = params.parentCommentId;
+    this._status = params.status;
+    this._replyCount = params.replyCount;
   }
 
-  /**
-   * 비즈니스 로직: 대댓글인지 확인
-   */
+  // Getter methods
+  getId(): number {
+    return this._id;
+  }
+
+  getContent(): string {
+    return this._content;
+  }
+
+  getCreatedAt(): Date {
+    return this._createdAt;
+  }
+
+  getAuthorId(): number {
+    return this._authorId;
+  }
+
+  getAuthorName(): string {
+    return this._authorName;
+  }
+
+  getReviewId(): number {
+    return this._reviewId;
+  }
+
+  getParentCommentId(): number | undefined {
+    return this._parentCommentId;
+  }
+
+  getStatus(): "ACTIVE" | "DELETED" {
+    return this._status;
+  }
+
+  getReplyCount(): number | undefined {
+    return this._replyCount;
+  }
+
   isReply(): boolean {
-    return !!this.parentCommentId;
+    return !!this._parentCommentId;
   }
 
-  /**
-   * 비즈니스 로직: 최상위 댓글인지 확인
-   */
   isTopLevel(): boolean {
-    return !this.parentCommentId;
+    return !this._parentCommentId;
   }
 
-  /**
-   * 비즈니스 로직: 활성 상태인지 확인
-   */
   isActive(): boolean {
-    return this.status === "ACTIVE";
+    return this._status === "ACTIVE";
   }
 
-  /**
-   * 비즈니스 로직: 삭제된 상태인지 확인
-   */
   isDeleted(): boolean {
-    return this.status === "DELETED";
+    return this._status === "DELETED";
   }
 
-  /**
-   * 비즈니스 로직: 대댓글이 있는지 확인
-   */
   hasReplies(): boolean {
-    return (this.replyCount ?? 0) > 0;
+    return (this._replyCount ?? 0) > 0;
   }
 
-  /**
-   * 비즈니스 로직: 최근 댓글인지 (24시간 이내)
-   */
   isRecent(): boolean {
     const oneDayAgo = new Date();
     oneDayAgo.setDate(oneDayAgo.getDate() - 1);
-    return this.createdAt >= oneDayAgo;
+    return this._createdAt >= oneDayAgo;
   }
 
-  /**
-   * 비즈니스 로직: 댓글 작성자가 특정 사용자인지 확인
-   */
   isAuthoredBy(userId: number): boolean {
-    return this.authorId === userId;
+    return this._authorId === userId;
   }
 
-  /**
-   * Entity를 Plain Object로 변환
-   */
-  toPlainObject(): ReviewComment {
+  toPlainObject() {
     return {
-      id: this.id,
-      content: this.content,
-      createdAt: this.createdAt,
-      authorId: this.authorId,
-      authorName: this.authorName,
-      reviewId: this.reviewId,
-      parentCommentId: this.parentCommentId,
-      status: this.status,
-      replyCount: this.replyCount,
+      id: this._id,
+      content: this._content,
+      createdAt: this._createdAt,
+      authorId: this._authorId,
+      authorName: this._authorName,
+      reviewId: this._reviewId,
+      parentCommentId: this._parentCommentId,
+      status: this._status,
+      replyCount: this._replyCount,
     };
   }
 
-  /**
-   * 동등성 비교
-   */
   equals(other: ReviewComment): boolean {
-    return this.id === other.id;
+    return this._id === other.getId();
   }
 }

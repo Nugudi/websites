@@ -1,14 +1,5 @@
 /**
- * Cafeteria Domain Types
- *
- * This file re-exports all Cafeteria-related types from the OpenAPI-generated types package.
- *
- * IMPORTANT:
- * - All types are sourced from @nugudi/types (auto-generated from OpenAPI spec)
- * - DO NOT directly import from @nugudi/types outside this file
- * - ALWAYS import Cafeteria types from this domain type file
- *
- * @see packages/types - OpenAPI type generation source
+ * Cafeteria DTO
  */
 
 import type { components, operations } from "@nugudi/types";

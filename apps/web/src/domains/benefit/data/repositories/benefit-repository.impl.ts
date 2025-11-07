@@ -1,15 +1,5 @@
 /**
  * Benefit Repository Implementation
- *
- * Data layer repository implementation
- * - Uses DataSource for data access
- * - Converts DTOs to Domain Entities using Mapper
- * - Implements BenefitRepository interface
- *
- * Pattern:
- * 1. DataSource에서 DTO 가져오기 (snake_case)
- * 2. Mapper로 Entity 변환 (camelCase)
- * 3. Domain Entity 반환
  */
 
 import type {
@@ -34,6 +24,6 @@ export class BenefitRepositoryImpl implements BenefitRepository {
 
   async getBenefitById(benefitId: string): Promise<Benefit | null> {
     const { benefits } = await this.getBenefitList();
-    return benefits.find((b) => b.id === benefitId) ?? null;
+    return benefits.find((b) => b.getId() === benefitId) ?? null;
   }
 }

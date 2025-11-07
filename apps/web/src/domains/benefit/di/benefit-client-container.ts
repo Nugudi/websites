@@ -1,16 +1,5 @@
 /**
  * Benefit Client DI Container
- *
- * Client-side Dependency Injection Container
- * - Lazy-initialized singleton (Stateful)
- * - Use in Client Components, Hooks, Browser-side logic
- *
- * Usage:
- * ```typescript
- * const container = getBenefitClientContainer();
- * const getBenefitListUseCase = container.getGetBenefitList();
- * const result = await getBenefitListUseCase.execute();
- * ```
  */
 
 import { BenefitMockDataSource } from "../data/data-sources/benefit-mock-data-source";
@@ -49,16 +38,8 @@ export class BenefitClientContainer {
   }
 }
 
-/**
- * Global singleton instance
- */
 let clientContainer: BenefitClientContainer | null = null;
 
-/**
- * Get or create singleton instance
- * - Lazy initialization
- * - Ensures single instance across application
- */
 export function getBenefitClientContainer(): BenefitClientContainer {
   if (!clientContainer) {
     clientContainer = new BenefitClientContainer();

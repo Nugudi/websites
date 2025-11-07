@@ -9,15 +9,12 @@ import * as styles from "./index.css";
 
 export const StampCollectionSection = () => {
   const router = useRouter();
-  // Custom hook으로 데이터 fetch
-  // Repository에서 이미 UI-ready data로 변환되어 반환됨
   const { data, isLoading, error } = useGetStampCollection();
 
   const handleMoveToVerifyPage = () => {
     router.push("/cafeterias/stamps/verify");
   };
 
-  // Loading state
   if (isLoading) {
     return (
       <Flex className={styles.container} direction="column">
@@ -26,7 +23,6 @@ export const StampCollectionSection = () => {
     );
   }
 
-  // Error state
   if (error) {
     return (
       <Flex className={styles.container} direction="column">
@@ -35,7 +31,6 @@ export const StampCollectionSection = () => {
     );
   }
 
-  // Empty state - 스탬프가 없는 경우에도 UI는 표시
   const stamps = data?.stamps ?? [];
 
   return (

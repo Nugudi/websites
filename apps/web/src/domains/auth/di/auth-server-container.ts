@@ -1,9 +1,5 @@
 /**
  * Auth Server Container
- *
- * Server-side only DI Container
- * - Uses ServerSessionManager and ServerTokenProvider
- * - Creates new instance per request
  */
 
 import "server-only";
@@ -32,9 +28,6 @@ import { ServerSessionManager } from "@/src/shared/infrastructure/storage/server
 // Infrastructure Layer
 import { RefreshTokenService } from "../infrastructure/services/refresh-token.service";
 
-/**
- * Auth Server Container
- */
 class AuthServerContainer {
   private sessionManager: ServerSessionManager;
   private refreshTokenService: RefreshTokenService;
@@ -134,11 +127,6 @@ class AuthServerContainer {
   }
 }
 
-/**
- * Server Container Factory (Per-Request)
- *
- * @param baseUrl - Optional API base URL. If not provided, uses NEXT_PUBLIC_API_URL
- */
 export function createAuthServerContainer(
   baseUrl?: string,
 ): AuthServerContainer {

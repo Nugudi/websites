@@ -76,8 +76,8 @@ const handler = async (
         : new URL("/", request.url);
 
       logger.info("Redirecting existing user", {
-        userId: result.user.userId,
-        name: result.user.name,
+        userId: result.user.getUserId(),
+        name: result.user.getName(),
         targetUrl: targetUrl.toString(),
       });
 

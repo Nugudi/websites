@@ -1,41 +1,40 @@
 /**
  * User Entity
- *
- * 사용자 도메인 객체
- * - 프레임워크에 독립적
- * - 비즈니스 로직 포함 가능
- * - Immutable 패턴 사용
  */
 
 import type { OAuthProvider } from "../../core/types/common";
 
-/**
- * User Entity Interface
- */
 export interface User {
-  readonly userId: string;
-  readonly email?: string; // Optional: OAuth providers may not provide email
-  readonly name: string;
-  readonly provider: OAuthProvider;
-  readonly profileImageUrl?: string;
-  readonly createdAt?: Date;
+  // Getter methods
+  getUserId(): string;
+  getEmail(): string | undefined;
+  getName(): string;
+  getProvider(): OAuthProvider;
+  getProfileImageUrl(): string | undefined;
+  getCreatedAt(): Date | undefined;
+
+  // Business logic methods
+  isFromGoogle(): boolean;
+  hasProfileImage(): boolean;
+  getDisplayName(): string;
+  toPlainObject(): {
+    userId: string;
+    email?: string;
+    name: string;
+    provider: OAuthProvider;
+    profileImageUrl?: string;
+    createdAt?: Date;
+  };
+  equals(other: User): boolean;
 }
 
-/**
- * User Entity Class (with business logic)
- *
- * Entity 클래스의 장점:
- * 1. 비즈니스 로직을 캡슐화
- * 2. 데이터 유효성 검증
- * 3. 도메인 규칙 강제
- */
 export class UserEntity implements User {
-  readonly userId: string;
-  readonly email?: string;
-  readonly name: string;
-  readonly provider: OAuthProvider;
-  readonly profileImageUrl?: string;
-  readonly createdAt?: Date;
+  private readonly _userId: string;
+  private readonly _email?: string;
+  private readonly _name: string;
+  private readonly _provider: OAuthProvider;
+  private readonly _profileImageUrl?: string;
+  private readonly _createdAt?: Date;
 
   constructor(params: {
     userId: string;
@@ -45,79 +44,92 @@ export class UserEntity implements User {
     profileImageUrl?: string;
     createdAt?: Date;
   }) {
-    // 검증 로직
     if (!params.userId) {
       throw new Error("User ID is required");
     }
     if (!params.name) {
       throw new Error("Name is required");
     }
-    // Email is optional, but if provided, must be valid
     if (params.email && !this.isValidEmail(params.email)) {
       throw new Error("Invalid email format");
     }
 
-    this.userId = params.userId;
-    this.email = params.email;
-    this.name = params.name;
-    this.provider = params.provider;
-    this.profileImageUrl = params.profileImageUrl;
-    this.createdAt = params.createdAt;
+    this._userId = params.userId;
+    this._email = params.email;
+    this._name = params.name;
+    this._provider = params.provider;
+    this._profileImageUrl = params.profileImageUrl;
+    this._createdAt = params.createdAt;
   }
 
-  /**
-   * 비즈니스 로직: Google 사용자인지 확인
-   */
+  // Getter methods
+  getUserId(): string {
+    return this._userId;
+  }
+
+  getEmail(): string | undefined {
+    return this._email;
+  }
+
+  getName(): string {
+    return this._name;
+  }
+
+  getProvider(): OAuthProvider {
+    return this._provider;
+  }
+
+  getProfileImageUrl(): string | undefined {
+    return this._profileImageUrl;
+  }
+
+  getCreatedAt(): Date | undefined {
+    return this._createdAt;
+  }
+
   isFromGoogle(): boolean {
-    return this.provider === "google";
+    return this._provider === "google";
   }
 
-  /**
-   * 비즈니스 로직: 프로필 이미지가 있는지 확인
-   */
   hasProfileImage(): boolean {
-    return !!this.profileImageUrl;
+    return !!this._profileImageUrl;
   }
 
-  /**
-   * 비즈니스 로직: 이메일 유효성 검증
-   */
   private isValidEmail(email: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   }
 
-  /**
-   * 비즈니스 로직: 사용자 표시 이름 가져오기
-   */
   getDisplayName(): string {
-    if (this.name) {
-      return this.name;
+    if (this._name) {
+      return this._name;
     }
-    if (this.email) {
-      return this.email.split("@")[0];
+    if (this._email) {
+      return this._email.split("@")[0];
     }
     return "User";
   }
 
-  /**
-   * Entity를 Plain Object로 변환 (필요시)
-   */
-  toPlainObject(): User {
+  toPlainObject() {
     return {
-      userId: this.userId,
-      email: this.email,
-      name: this.name,
-      provider: this.provider,
-      profileImageUrl: this.profileImageUrl,
-      createdAt: this.createdAt,
+      userId: this._userId,
+      email: this._email,
+      name: this._name,
+      provider: this._provider,
+      profileImageUrl: this._profileImageUrl,
+      createdAt: this._createdAt,
     };
   }
 
-  /**
-   * 동등성 비교
-   */
   equals(other: User): boolean {
-    return this.userId === other.userId;
+    return this._userId === other.getUserId();
   }
+}
+
+/**
+ * Nickname Availability Result
+ */
+export interface NicknameAvailability {
+  available: boolean;
+  message?: string;
 }

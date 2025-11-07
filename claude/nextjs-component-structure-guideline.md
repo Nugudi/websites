@@ -73,17 +73,17 @@ Next.js 16 route groups organize pages by authentication requirements:
 
 ### Protected Routes (auth)
 ```
-/benefits          → domains/benefit/ui/views/benefit-page-view
-/cafeterias        → domains/cafeteria/home/ui/views/cafeteria-home-view
-/cafeterias/[id]   → domains/cafeteria/detail/ui/views/cafeteria-detail-view
-/my                → domains/user/ui/views/my-page-view
+/benefits          → domains/benefit/presentation/ui/views/benefit-page-view
+/cafeterias        → domains/cafeteria/home/presentation/ui/views/cafeteria-home-view
+/cafeterias/[id]   → domains/cafeteria/detail/presentation/ui/views/cafeteria-detail-view
+/my                → domains/user/presentation/ui/views/my-page-view
 ```
 
 ### Public Routes (public)
 ```
-/auth/sign-in       → domains/auth/ui/views/credentials-sign-in-view
-/auth/sign-up/social → domains/auth/ui/views/social-sign-up-view
-/home              → domains/cafeteria/home/ui/views/cafeteria-home-view (same as root)
+/auth/sign-in       → domains/auth/presentation/ui/views/credentials-sign-in-view
+/auth/sign-up/social → domains/auth/presentation/ui/views/social-sign-up-view
+/home              → domains/cafeteria/home/presentation/ui/views/cafeteria-home-view (same as root)
 ```
 
 ## Next.js App Router Specific Patterns
@@ -95,7 +95,7 @@ Next.js 16 route groups organize pages by authentication requirements:
 import { getQueryClient } from '@/src/shared/infrastructure/configs/tanstack-query';
 import { createBenefitServerContainer } from '@/src/domains/benefit/di';  // 🆕 Per-domain DI Container
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
-import { BenefitPageView } from '@/src/domains/benefit/presentation/views/benefit-page-view';
+import { BenefitPageView } from '@/src/domains/benefit/presentation/ui/views/benefit-page-view';
 
 const BenefitsPage = async ({ searchParams }) => {
   const queryClient = getQueryClient();
@@ -133,7 +133,7 @@ export default BenefitsPage; // Pages use default export
 import { getQueryClient } from '@/src/shared/infrastructure/configs/tanstack-query';
 import { createCafeteriaServerContainer } from '@/src/domains/cafeteria/di';  // 🆕 Per-domain DI Container
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
-import { CafeteriaDetailView } from '@/src/domains/cafeteria/detail/presentation/views/cafeteria-detail-view';
+import { CafeteriaDetailView } from '@/src/domains/cafeteria/detail/presentation/ui/views/cafeteria-detail-view';
 
 interface PageProps {
   params: { cafeteriaId: string };

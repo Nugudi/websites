@@ -18,6 +18,32 @@
  * Edge Runtime 호환:
  * - 절대 URL 사용 (상대 URL은 Edge Runtime에서 지원 안됨)
  * - Node.js API 사용 안함 (Edge Runtime 제약)
+ *
+ * ⚠️ ARCHITECTURE NOTE: Auth Infrastructure Layer 예외 처리
+ *
+ * Auth는 유일하게 domain-specific infrastructure를 가지는 도메인입니다.
+ *
+ * 이유:
+ * - Token refresh는 Auth 도메인에 특화된 로직
+ * - 다른 도메인에서는 사용하지 않음
+ * - RefreshTokenService는 Auth의 핵심 비즈니스 로직의 일부
+ * - Shared infrastructure로 이동 시 불필요한 추상화 증가
+ *
+ * TODO: 다음 상황에서 재검토 필요
+ * 1. Multi-tenant 시스템으로 전환 시
+ *    → 여러 인증 제공자를 지원해야 할 경우
+ *    → 예: OAuth, SAML, JWT, Session 등 동시 지원
+ * 2. Microservices 아키텍처로 분리 시
+ *    → Auth가 독립 서비스가 되는 경우
+ *    → 예: Auth Service가 별도 배포 단위로 분리
+ * 3. 다른 도메인도 domain-specific infrastructure가 필요한 경우
+ *    → 패턴의 일관성 검토 필요
+ *    → 예: Payment 도메인이 PG사 전용 로직 필요
+ *
+ * 현재 구조가 옳은 이유:
+ * - YAGNI 원칙: 필요한 것만 구현
+ * - 단일 인증 시스템이므로 Auth에 위치하는 것이 자연스러움
+ * - 현재는 오버엔지니어링 없이 실용적인 구조 유지
  */
 
 import { logger } from "@/src/shared/infrastructure/logging/logger";

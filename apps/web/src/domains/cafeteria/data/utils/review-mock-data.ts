@@ -1,4 +1,4 @@
-import type { CafeteriaReviewCommentData } from "../../presentation/types/cafeteria-review-comment";
+import type { ReviewCommentDto } from "../dto/cafeteria-review.dto";
 
 // TODO: Phase 4 - Replace with proper OpenAPI types and structure
 export const MOCK_CAFETERIA_REVIEW = {
@@ -16,33 +16,33 @@ export const MOCK_CAFETERIA_REVIEW = {
   ],
 };
 
-export const MOCK_CAFETERIA_REVIEW_COMMENTS: CafeteriaReviewCommentData[] = [
+export const MOCK_CAFETERIA_REVIEW_COMMENTS: ReviewCommentDto[] = [
   {
     id: "1",
     username: "애옹",
     level: 7,
-    timeAgo: "3분전",
+    time_ago: "3분전",
     content: "구내식당 맛있어요. 🥟",
     replies: [
       {
         id: "2",
         username: "조울핑",
         level: 1,
-        timeAgo: "3분전",
+        time_ago: "3분전",
         content: "구내식당 싫어.",
       },
       {
         id: "2-1",
         username: "김용민",
         level: 12,
-        timeAgo: "2분전",
+        time_ago: "2분전",
         content: "나는 좋던데 ㅎㅎ",
       },
       {
         id: "2-2",
         username: "정혜원",
         level: 25,
-        timeAgo: "1분전",
+        time_ago: "1분전",
         content: "맛은 개취지!",
       },
     ],
@@ -51,28 +51,28 @@ export const MOCK_CAFETERIA_REVIEW_COMMENTS: CafeteriaReviewCommentData[] = [
     id: "3",
     username: "조울핑",
     level: 1,
-    timeAgo: "3분전",
+    time_ago: "3분전",
     content: "구내식당 싫어.",
   },
   {
     id: "4",
     username: "조울핑",
     level: 1,
-    timeAgo: "3분전",
+    time_ago: "3분전",
     content: "구내식당 싫어.",
   },
   {
     id: "5",
     username: "조울핑",
     level: 1,
-    timeAgo: "3분전",
+    time_ago: "3분전",
     content: "구내식당 싫어.",
   },
   {
     id: "6",
     username: "조울핑",
     level: 1,
-    timeAgo: "3분전",
+    time_ago: "3분전",
     content: "구내식당 싫어.",
   },
 ];

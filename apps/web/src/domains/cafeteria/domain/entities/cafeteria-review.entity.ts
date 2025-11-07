@@ -1,34 +1,28 @@
 /**
- * Cafeteria Review Domain Entity
- * Entity: camelCase | DTO: snake_case
+ * Cafeteria Review Entity
  */
 
-import { z } from "zod";
-import { MealTypeSchema } from "./cafeteria-menu.entity";
+import type { MealType } from "./cafeteria-menu.entity";
 
 /** 리뷰 Entity */
-export const ReviewSchema = z.object({
-  id: z.number().int().positive(),
-  restaurantId: z.number().int().positive(),
-  reviewDate: z.string(),
-  mealType: MealTypeSchema,
-  tasteTypeId: z.number().int().positive(),
-  content: z.string().min(1),
-  mainImageUrl: z.string().nullable(),
-  likeCount: z.number().int().min(0),
-  createdAt: z.string().datetime(),
-});
-
-export type Review = z.infer<typeof ReviewSchema>;
+export interface Review {
+  readonly id: number;
+  readonly restaurantId: number;
+  readonly reviewDate: string;
+  readonly mealType: MealType;
+  readonly tasteTypeId: number;
+  readonly content: string;
+  readonly mainImageUrl: string | null;
+  readonly likeCount: number;
+  readonly createdAt: string;
+}
 
 /** 리뷰 작성 요청 */
-export const CreateReviewRequestSchema = z.object({
-  restaurantId: z.number().int().positive(),
-  reviewDate: z.string(),
-  mealType: MealTypeSchema,
-  tasteTypeId: z.number().int().positive(),
-  content: z.string().min(1),
-  mainImageFileId: z.number().int().nullable().optional(),
-});
-
-export type CreateReviewRequest = z.infer<typeof CreateReviewRequestSchema>;
+export interface CreateReviewRequest {
+  readonly restaurantId: number;
+  readonly reviewDate: string;
+  readonly mealType: MealType;
+  readonly tasteTypeId: number;
+  readonly content: string;
+  readonly mainImageFileId?: number | null;
+}

@@ -1,10 +1,5 @@
 /**
  * Cafeteria Repository Implementation
- *
- * DataSource를 통해 API 호출 수행 (Clean Architecture)
- * - DataSource에서 DTO 가져오기
- * - Mapper로 Entity 변환
- * - 에러 처리
  */
 
 import type { PageInfo } from "@shared/domain/entities";
@@ -12,14 +7,15 @@ import type {
   Cafeteria,
   CafeteriaMenu,
   CafeteriaMenuTimeline,
-  CafeteriaWithMenu,
   MenuAvailability,
-  RegisterCafeteriaMenuRequest as RegisterCafeteriaMenuRequestEntity,
-  RegisterCafeteriaRequest as RegisterCafeteriaRequestEntity,
 } from "../../domain/entities";
 import type { CafeteriaRepository } from "../../domain/repositories";
 import type { CafeteriaRemoteDataSource } from "../data-sources";
-import type { GetCafeteriaMenuTimelineResponse } from "../dto";
+import type {
+  GetCafeteriaMenuTimelineResponse,
+  RegisterCafeteriaMenuRequest,
+  RegisterCafeteriaRequest,
+} from "../dto";
 import {
   cafeteriaInfoDtoToDomain,
   getCafeteriaMenuAvailabilityResponseToDomain,
@@ -39,14 +35,15 @@ export class CafeteriaRepositoryImpl implements CafeteriaRepository {
     cursor?: string;
     size?: number;
   }): Promise<{
-    data: CafeteriaWithMenu[];
+    data: Array<{
+      cafeteria: Cafeteria;
+      menus: CafeteriaMenu[];
+    }>;
     pageInfo: PageInfo;
   }> {
     try {
-      // DataSource에서 DTO 가져오기
       const response = await this.dataSource.getCafeteriasWithMenu(params);
 
-      // Mapper로 Entity 변환
       return {
         data: response.data.map((dto) =>
           getCafeteriaWithMenuResponseToDomain(dto),
@@ -60,15 +57,12 @@ export class CafeteriaRepositoryImpl implements CafeteriaRepository {
 
   async getCafeteriaById(id: string): Promise<Cafeteria> {
     try {
-      // DataSource에서 DTO 가져오기
       const response = await this.dataSource.getCafeteriaById(id);
 
-      // Null 체크
       if (!response) {
         throw new Error("Cafeteria response is null");
       }
 
-      // Mapper로 Entity 변환
       if (!response.cafeteria) {
         throw new Error("Cafeteria not found in response");
       }
@@ -83,10 +77,8 @@ export class CafeteriaRepositoryImpl implements CafeteriaRepository {
     date: string,
   ): Promise<CafeteriaMenu> {
     try {
-      // DataSource에서 DTO 가져오기
       const response = await this.dataSource.getCafeteriaMenuByDate(id, date);
 
-      // Mapper로 Entity 변환
       return getCafeteriaMenuResponseToDomain(response);
     } catch (error) {
       throw this.handleError(error, "Failed to fetch cafeteria menu");
@@ -104,13 +96,11 @@ export class CafeteriaRepositoryImpl implements CafeteriaRepository {
     pageInfo: PageInfo;
   }> {
     try {
-      // DataSource에서 DTO 가져오기
       const response = await this.dataSource.getCafeteriaMenuTimeline(
         id,
         params,
       );
 
-      // Mapper로 Entity 변환
       return {
         data: response.data.map((dto: GetCafeteriaMenuTimelineResponse) =>
           getCafeteriaMenuTimelineResponseToDomain(dto),
@@ -130,32 +120,25 @@ export class CafeteriaRepositoryImpl implements CafeteriaRepository {
     },
   ): Promise<MenuAvailability> {
     try {
-      // DataSource에서 DTO 가져오기
       const response = await this.dataSource.getCafeteriaMenuAvailability(
         id,
         params,
       );
 
-      // Mapper로 Entity 변환
       return getCafeteriaMenuAvailabilityResponseToDomain(response);
     } catch (error) {
       throw this.handleError(error, "Failed to fetch menu availability");
     }
   }
 
-  async registerCafeteria(
-    data: RegisterCafeteriaRequestEntity,
-  ): Promise<Cafeteria> {
+  async registerCafeteria(data: RegisterCafeteriaRequest): Promise<Cafeteria> {
     try {
-      // Entity → DTO 변환은 DataSource에서 처리
-      const response = await this.dataSource.registerCafeteria(data as any);
+      const response = await this.dataSource.registerCafeteria(data);
 
-      // Null 체크
       if (!response) {
         throw new Error("Register cafeteria response is null");
       }
 
-      // Mapper로 Entity 변환
       return registerCafeteriaResponseToDomain(response);
     } catch (error) {
       throw this.handleError(error, "Failed to register cafeteria");
@@ -163,27 +146,21 @@ export class CafeteriaRepositoryImpl implements CafeteriaRepository {
   }
 
   async registerCafeteriaMenu(
-    data: RegisterCafeteriaMenuRequestEntity,
+    data: RegisterCafeteriaMenuRequest,
   ): Promise<CafeteriaMenu> {
     try {
-      // Entity → DTO 변환은 DataSource에서 처리
-      const response = await this.dataSource.registerCafeteriaMenu(data as any);
+      const response = await this.dataSource.registerCafeteriaMenu(data);
 
-      // Null 체크
       if (!response) {
         throw new Error("Register cafeteria menu response is null");
       }
 
-      // Mapper로 Entity 변환
       return registerCafeteriaMenuResponseToDomain(response);
     } catch (error) {
       throw this.handleError(error, "Failed to register cafeteria menu");
     }
   }
 
-  /**
-   * 에러 처리 헬퍼
-   */
   private handleError(error: unknown, message: string): Error {
     if (error instanceof Error) {
       return new Error(`${message}: ${error.message}`);

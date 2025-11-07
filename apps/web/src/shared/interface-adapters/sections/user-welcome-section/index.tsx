@@ -60,11 +60,8 @@ const UserWelcomeSectionError = () => {
 
 // Content Component (actual data fetching)
 const UserWelcomeSectionContent = () => {
-  // Page에서 prefetch한 데이터를 동일한 query로 조회
-  // UserService를 통해 비즈니스 로직이 처리되고 자동으로 인증 토큰이 주입됩니다
   const { data: profileData } = useSuspenseQuery(userProfileQueryClient);
 
-  // UserProfile entity structure (flat)
   const nickname = profileData.nickname ?? "손님";
   const profileImageUrl = profileData.profileImageUrl;
 

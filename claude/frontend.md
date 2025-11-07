@@ -36,11 +36,21 @@ domains/
 │   ├── infrastructure/           # Infrastructure Layer
 │   │   ├── services/            #     External Services
 │   │   └── actions/             #     Next.js Server Actions
-│   ├── presentation/             # Presentation Layer (UI)
-│   │   ├── components/
-│   │   ├── sections/
-│   │   └── views/
-│   └── core/                     # Core Domain Concepts
+│   ├── presentation/             # Presentation Layer
+│   │   ├── ui/                  #     UI Components Hierarchy
+│   │   │   ├── views/          #       Page-level layouts
+│   │   │   ├── sections/       #       Feature sections with boundaries
+│   │   │   └── components/     #       Reusable components
+│   │   ├── adapters/            # 🆕 Entity → UI Type Adapters (optional)
+│   │   ├── hooks/               #     React Hooks & TanStack Query
+│   │   ├── mappers/             #     Simple transformations (alternative to adapters)
+│   │   ├── types/               #     UI-specific types
+│   │   ├── utils/               #     Presentation utilities
+│   │   ├── constants/           #     Presentation constants
+│   │   ├── schemas/             #     Validation schemas
+│   │   ├── stores/              #     State management stores
+│   │   └── actions/             #     Server Actions
+│   └── core/                     # Core Domain Concepts (deprecated structure)
 │       ├── types/               #     Domain Types
 │       ├── config/              #     Domain Configuration
 │       ├── errors/              #     Domain Errors
@@ -50,27 +60,38 @@ domains/
 │   ├── domain/
 │   ├── data/
 │   ├── infrastructure/
-│   ├── presentation/
-│   └── core/
+│   └── presentation/
+│       ├── ui/
+│       ├── hooks/
+│       └── utils/
 ├── benefit/                       # Benefit Domain
 │   ├── di/
 │   ├── domain/
 │   ├── data/
 │   ├── infrastructure/
-│   ├── presentation/
-│   └── core/
+│   └── presentation/
+│       ├── ui/
+│       ├── adapters/             # 🆕 Entity → UI Type Adapters
+│       ├── hooks/
+│       └── types/
 ├── cafeteria/                     # Cafeteria Domain (feature-based)
 │   ├── home/                     # Home feature
+│   │   └── presentation/        #     Has its own presentation layer
 │   ├── detail/                   # Detail feature
+│   │   └── presentation/
 │   ├── review/                   # Review feature
+│   │   └── presentation/
 │   └── di/                       # Shared DI for cafeteria
 └── stamp/                         # Stamp Domain
     ├── di/
     ├── domain/
     ├── data/
     ├── infrastructure/
-    ├── presentation/
-    └── core/
+    └── presentation/
+        ├── ui/
+        ├── mappers/              # Simple transformations (alternative to adapters)
+        ├── hooks/
+        └── types/
 ```
 
 **DDD Layer Responsibilities:**
@@ -84,9 +105,276 @@ domains/
 - **data/mappers/**: DTO → Entity 변환
 - **infrastructure/services/**: External Services (third-party integrations)
 - **infrastructure/actions/**: Next.js Server Actions (Page/Component에서 호출)
-- **presentation/**: UI Components (Views/Sections/Components)
-- **core/types/**: Domain 타입 정의
-- **core/hooks/**: React Hooks (TanStack Query Factory 포함)
+- **presentation/**: Presentation Layer (UI and related logic)
+  - **presentation/ui/**: UI Components Hierarchy (Views/Sections/Components)
+  - **presentation/adapters/**: Entity → UI Type transformation with orchestration (🆕 optional pattern)
+  - **presentation/mappers/**: Simple pure function transformations (alternative to adapters)
+  - **presentation/hooks/**: React Hooks & TanStack Query custom hooks
+  - **presentation/types/**: UI-specific TypeScript types
+  - **presentation/utils/**: Presentation-layer utilities
+  - **presentation/constants/**: Presentation constants
+  - **presentation/schemas/**: Validation schemas
+  - **presentation/stores/**: State management stores
+  - **presentation/actions/**: Server Actions (UI-triggered)
+- **core/** (deprecated): Legacy structure - migrate to presentation/ subfolders
+
+## Adapter Pattern (🆕 Optional Pattern)
+
+### When to Use Adapters vs Mappers
+
+**Use Adapter** (`presentation/adapters/`) when:
+- Entity → UI Type transformation requires **orchestrating 7+ Entity methods**
+- Need **type-safe conversions** to eliminate unsafe `as` assertions
+- Require **UI-specific helper methods** (color calculation, availability checks, formatting)
+- Complex business logic needs to be centralized for better testability
+
+**Use Mapper** (`presentation/mappers/` or `data/mappers/`) when:
+- Simple 1:1 field transformations (DTO → Entity, Entity → UI Type)
+- Pure function transformations without complex orchestration
+- Minimal business logic involved
+
+### Adapter Pattern Structure
+
+Adapters are **objects with methods** (not classes) that:
+1. **Private helper functions**: Type-safe conversions (e.g., `getMenuTypeUi()`, `getDiscountBadgeUi()`)
+2. **Public conversion methods**: Entity → UI Type transformations (e.g., `toUiItem()`, `toUiList()`)
+3. **Public UI helpers**: UI-specific calculations (e.g., `getStatusColor()`, `canPurchase()`)
+
+### JSDoc Documentation Standards
+
+**IMPORTANT**: All Adapter methods MUST have comprehensive JSDoc documentation:
+
+**Required JSDoc Structure**:
+1. **Summary**: One-line description of what the method does
+2. **Detailed Description**: Explanation of behavior, rules, edge cases, examples
+3. **@param**: Document each parameter with type and description
+4. **@returns**: Document return value with type and description
+
+**Example from actual codebase**:
+```typescript
+/**
+ * Get UI color based on stamp status and expiry
+ *
+ * Status mapping: used → gray, expired → red, expiring soon → orange, valid → green
+ *
+ * @param stamp - Domain stamp entity
+ * @returns Color string for UI theming
+ */
+getStatusColor(stamp: Stamp): string {
+  // Implementation
+}
+```
+
+**Why Comprehensive JSDoc**:
+- Methods contain UI business logic that may not be obvious
+- Rules and mappings (e.g., discount thresholds, color schemes) should be documented
+- Helps maintainers understand behavior without reading implementation
+- Provides IntelliSense documentation in IDEs
+
+### Real Example: BenefitAdapter
+
+**Note**: The example below shows simplified JSDoc for brevity. In actual code, use comprehensive JSDoc as shown in the standards above.
+
+```typescript
+// File: domains/benefit/presentation/adapters/benefit.adapter.ts
+import type { Benefit, BenefitList } from "../../domain/entities";
+import type { BenefitItem } from "../types/benefit";
+
+// Private helper: Type-safe conversion (eliminates unsafe 'as' assertions)
+function getMenuTypeUi(benefit: Benefit): "점심" | "저녁" | "간식" {
+  const displayName = benefit.getMenuTypeDisplayName();
+  if (displayName === "점심" || displayName === "저녁" || displayName === "간식") {
+    return displayName;
+  }
+  console.error(`Invalid menuType displayName: ${displayName} for benefit ${benefit.getId()}`);
+  return "점심"; // Safe fallback
+}
+
+function getDiscountBadgeUi(benefit: Benefit): "특가" | "할인" | null {
+  const badge = benefit.getDiscountBadge();
+  if (badge === null) return null;
+  if (badge === "특가" || badge === "할인") return badge;
+  console.error(`Invalid discountBadge: ${badge} for benefit ${benefit.getId()}`);
+  return null; // Safe fallback
+}
+
+// Adapter object with public API
+export const BenefitAdapter = {
+  /**
+   * Entity → UI Item transformation (orchestrates 7+ Entity methods)
+   */
+  toUiItem(benefit: Benefit): BenefitItem {
+    return {
+      id: benefit.getId(),
+      cafeteriaName: benefit.getCafeteriaName(),
+      menuName: benefit.getMenuName(),
+      imageUrl: benefit.getImageUrl(),
+      description: benefit.getDescription(),
+
+      // Type-safe conversions
+      menuType: getMenuTypeUi(benefit),
+      discountBadge: getDiscountBadgeUi(benefit),
+
+      // Entity method orchestration (7+ calls)
+      originalPrice: benefit.getPrice(),
+      finalPrice: benefit.getFinalPrice(),            // Entity method #1
+      hasDiscount: benefit.hasDiscount(),             // Entity method #2
+      discountPercentage: benefit.getDiscountPercentage(), // Entity method #3
+      isAvailable: benefit.isAvailableNow(),         // Entity method #4
+      isNew: benefit.isNew(),                        // Entity method #5
+    };
+  },
+
+  /**
+   * Batch conversion helper
+   */
+  toUiList(benefits: Benefit[]): BenefitItem[] {
+    return benefits.map((benefit) => this.toUiItem(benefit));
+  },
+
+  /**
+   * List wrapper conversion
+   */
+  benefitListToUi(list: BenefitList) {
+    return {
+      benefits: this.toUiList(list.benefits),
+      totalCount: list.totalCount,
+    };
+  },
+
+  /**
+   * UI helper: Status color based on discount and availability
+   */
+  getStatusColor(benefit: Benefit): string {
+    if (!benefit.isAvailableNow()) return "gray";
+    const discountPercentage = benefit.getDiscountPercentage();
+    if (discountPercentage >= 30) return "red";
+    if (discountPercentage >= 10) return "orange";
+    return "blue";
+  },
+
+  /**
+   * UI helper: Purchase availability check
+   */
+  canPurchase(benefit: Benefit): boolean {
+    return benefit.isAvailableNow();
+  },
+
+  /**
+   * UI helper: Price display with formatting
+   */
+  getPriceDisplay(benefit: Benefit): {
+    original: string;
+    final: string;
+    showStrikethrough: boolean;
+  } {
+    const hasDiscount = benefit.hasDiscount();
+    const originalPrice = benefit.price.toLocaleString("ko-KR");
+    const finalPrice = benefit.getFinalPrice().toLocaleString("ko-KR");
+    return {
+      original: `${originalPrice}원`,
+      final: `${finalPrice}원`,
+      showStrikethrough: hasDiscount,
+    };
+  },
+};
+```
+
+### Usage in Query Hooks
+
+Adapters are typically used in **TanStack Query custom hooks** to transform Entity → UI Type:
+
+```typescript
+// File: domains/benefit/presentation/hooks/queries/get-benefit-list.query.ts
+import { useQuery } from "@tanstack/react-query";
+import { getBenefitClientContainer } from "@/src/domains/benefit/di/benefit-client-container";
+import { BenefitAdapter } from "../../adapters/benefit.adapter";
+
+export const useGetBenefitList = () => {
+  const container = getBenefitClientContainer();
+  const getBenefitListUseCase = container.getGetBenefitList();
+
+  return useQuery({
+    queryKey: ["benefits", "list"],
+    queryFn: async () => {
+      // 1. UseCase returns Domain Entity (BenefitList)
+      const benefitList = await getBenefitListUseCase.execute();
+
+      // 2. Adapter transforms Entity → UI Type
+      return BenefitAdapter.benefitListToUi(benefitList);
+    },
+  });
+};
+```
+
+### Usage in Components
+
+Components consume **UI Types** (not Domain Entities) for type safety:
+
+```typescript
+// File: domains/benefit/presentation/ui/components/benefit-card/index.tsx
+import type { BenefitItem } from "../../../types/benefit";  // UI Type (not Entity)
+
+type BenefitCardProps = {
+  benefit: BenefitItem;  // ✅ UI Type from Adapter
+};
+
+export const BenefitCard = ({ benefit }: BenefitCardProps) => {
+  return (
+    <div>
+      <h3>{benefit.menuName}</h3>
+      <p>{benefit.cafeteriaName}</p>
+      {benefit.hasDiscount && (
+        <span>{benefit.discountPercentage}% 할인</span>
+      )}
+      <p>{benefit.finalPrice}원</p>
+    </div>
+  );
+};
+```
+
+### Key Benefits
+
+1. **Type Safety**: Eliminates unsafe `as` type assertions through helper functions
+2. **Centralization**: Business logic concentrated in one testable location
+3. **Separation of Concerns**: Domain Entities vs UI Types clearly separated
+4. **Reusability**: Adapter methods can be reused across multiple query hooks
+5. **Maintainability**: Changes to Entity methods only require updating Adapter
+
+### Location and Conventions
+
+- **Directory**: `domains/[domain]/presentation/adapters/`
+- **Naming**: `[entity-name].adapter.ts` (e.g., `benefit.adapter.ts`)
+- **Export**: Named export as object (e.g., `export const BenefitAdapter = { ... }`)
+- **Usage**: Import in query hooks (`queries/`) for Entity → UI Type transformation
+
+### Comparison: Adapter vs Mapper
+
+```typescript
+// ❌ Mapper (Too simple for complex transformations)
+// File: domains/benefit/presentation/mappers/benefit.mapper.ts
+export const mapBenefitToUi = (benefit: Benefit): BenefitItem => {
+  return {
+    id: benefit.id,
+    // Problem: Need to call 7+ Entity methods manually
+    finalPrice: benefit.getFinalPrice(),
+    hasDiscount: benefit.hasDiscount(),
+    // ... repetitive Entity method calls
+  };
+};
+
+// ✅ Adapter (Better for complex orchestration)
+// File: domains/benefit/presentation/adapters/benefit.adapter.ts
+export const BenefitAdapter = {
+  toUiItem(benefit: Benefit): BenefitItem {
+    // Private helpers handle type-safe conversions
+    // Public method orchestrates Entity methods
+    // UI helpers provide reusable calculations
+  },
+  getStatusColor(benefit: Benefit): string { /* ... */ },
+  canPurchase(benefit: Benefit): boolean { /* ... */ },
+};
+```
 
 ## Layer-by-Layer Rules
 
@@ -143,9 +431,9 @@ export default Page; // Pages MUST use default export
 - ❌ Never instantiate Repository or UseCase directly
 - ❌ Never use client container (`getUserClientContainer()`) on server
 
-### 2. View Layer (`ui/views/`)
+### 2. View Layer (`presentation/ui/views/`)
 
-**Type**: Client or Server Component  
+**Type**: Client or Server Component
 **Purpose**: Page layout composition and section orchestration
 
 ```typescript
@@ -158,7 +446,7 @@ export default Page; // Pages MUST use default export
 // NEVER: Contain business logic
 // NEVER: Implement error/loading states
 
-// Example: domains/cafeteria/ui/views/cafeteria-home-view/index.tsx
+// Example: domains/cafeteria/presentation/ui/views/cafeteria-home-view/index.tsx
 import { Flex } from "@nugudi/react-components-layout";
 import { AppHeader } from "@/src/shared/ui/components/app-header";
 import { CafeteriaBrowseMenuSection } from "../../sections/cafeteria-browse-menu-section";
@@ -180,9 +468,9 @@ export const CafeteriaHomeView = ({ filter }) => {
 // Views use named export
 ```
 
-### 3. Section Layer (`ui/sections/`)
+### 3. Section Layer (`presentation/ui/sections/`)
 
-**Type**: Client Component (typically)  
+**Type**: Client Component (typically)
 **Purpose**: Feature-specific logic encapsulation with error and loading boundaries
 
 ```typescript
@@ -292,9 +580,9 @@ const UserWelcomeSectionContent = () => {
 // Sections use named export
 ```
 
-### 4. Component Layer (`ui/components/`)
+### 4. Component Layer (`presentation/ui/components/`)
 
-**Type**: Client or Server Component  
+**Type**: Client or Server Component
 **Purpose**: Reusable, presentational UI components
 
 ```typescript
@@ -355,50 +643,64 @@ components/
 apps/web/src/
 └── domains/
     └── user/                              # Domain (simple structure)
-        ├── constants/
-        │   └── query-keys.ts              # Query Key 상수만 정의 (NOT Query Options)
-        ├── hooks/
-        │   └── queries/                   # TanStack Query Options 정의
-        │       └── user-profile.query.ts  # Server/Client Query Factory
-        ├── types/
-        │   └── index.ts                   # TypeScript types
-        ├── utils/
-        │   └── format-points.ts           # Utility functions
-        └── ui/
-            ├── views/
-            │   └── user-profile-view/
-            │       ├── index.tsx
-            │       └── index.css.ts
-            ├── sections/
-            │   └── user-profile-section/
-            │       └── index.tsx
-            └── components/
-                └── user-profile-card/
-                    ├── index.tsx
-                    └── index.css.ts
+        ├── di/                            # DI Containers
+        │   ├── user-server-container.ts
+        │   └── user-client-container.ts
+        ├── domain/                        # Domain Layer
+        │   ├── entities/
+        │   ├── repositories/
+        │   └── usecases/
+        ├── data/                          # Data Layer
+        │   ├── dto/
+        │   ├── mappers/
+        │   └── repositories/
+        ├── infrastructure/                # Infrastructure Layer
+        │   └── services/
+        └── presentation/                  # Presentation Layer
+            ├── ui/                        # UI Components Hierarchy
+            │   ├── views/
+            │   │   └── user-profile-view/
+            │   │       ├── index.tsx
+            │   │       └── index.css.ts
+            │   ├── sections/
+            │   │   └── user-profile-section/
+            │   │       └── index.tsx
+            │   └── components/
+            │       └── user-profile-card/
+            │           ├── index.tsx
+            │           └── index.css.ts
+            ├── hooks/                     # React Hooks & TanStack Query
+            │   └── queries/               # Query custom hooks
+            │       └── get-user-profile.query.ts
+            ├── types/                     # UI-specific types
+            │   └── index.ts
+            ├── utils/                     # Presentation utilities
+            │   └── format-points.ts
+            └── constants/                 # Presentation constants
+                └── query-keys.ts          # Query Key 상수
 ```
 
 ### Component Naming Pattern
 
 ```typescript
 // Views: [Feature]View (in feature-view folder)
-// File: domains/auth/sign-up/ui/views/sign-up-view/index.tsx
+// File: domains/auth/presentation/ui/views/sign-up-view/index.tsx
 export const SignUpView = () => {};
 // ✅ Views use named export
 
 // Sections: [Feature]Section (in feature-section folder)
-// File: domains/auth/sign-up/ui/sections/sign-up-section/index.tsx
+// File: domains/auth/presentation/ui/sections/sign-up-section/index.tsx
 export const SignUpSection = () => {};
 // ✅ Sections use named export
 // Note: Skeleton and Error components are in the same file (not exported)
 
 // Components: Descriptive name (in component-name folder)
-// File: domains/auth/sign-up/ui/components/sign-up-form/index.tsx
+// File: domains/auth/presentation/ui/components/sign-up-form/index.tsx
 export const SignUpForm = () => {};
 // ✅ Components use named export
 
 // Sub-components in steps folder
-// File: domains/auth/sign-up/ui/components/sign-up-form/steps/email-form/index.tsx
+// File: domains/auth/presentation/ui/components/sign-up-form/steps/email-form/index.tsx
 export const EmailForm = () => {};
 // ✅ Sub-components also use named export
 ```
@@ -407,91 +709,158 @@ export const EmailForm = () => {};
 
 ### Query vs. General Hooks 분리
 
-**IMPORTANT**: `hooks/` 폴더 내에서 TanStack Query Options와 일반 커스텀 훅을 명확히 분리합니다.
+**IMPORTANT**: `presentation/hooks/` 폴더 내에서 TanStack Query 커스텀 훅과 일반 커스텀 훅을 명확히 분리합니다.
 
 ```
-hooks/
-├── queries/                        # TanStack Query Options만 정의
-│   ├── user-profile.query.ts      # Query Factory (Server/Client)
-│   └── user-settings.query.ts
-└── use-*.ts                        # 일반 커스텀 훅
-    ├── use-user-actions.ts        # UI 로직, 상태 관리
-    └── use-user-validation.ts     # Side effects (데이터 fetching 제외)
+presentation/
+└── hooks/
+    ├── queries/                        # TanStack Query Custom Hooks
+    │   ├── get-user-profile.query.ts  # useGetUserProfile hook
+    │   └── get-user-settings.query.ts # useGetUserSettings hook
+    └── use-*.ts                        # 일반 커스텀 훅
+        ├── use-user-actions.ts        # UI 로직, 상태 관리
+        └── use-user-validation.ts     # Side effects (데이터 fetching 제외)
 ```
 
-### Query Options 파일 작성 규칙
+### TanStack Query Custom Hook 작성 규칙
 
-1. **파일명**: `[feature].query.ts` 형식 사용 (`[feature].query.server.ts`는 Server 전용)
-2. **Import**: Query Key는 `constants/query-keys.ts`에서 import
-3. **🆕 UseCase 사용**: DI Container에서 UseCase를 획득하여 queryFn에 사용
-4. **캐싱**: 데이터 특성에 맞는 캐싱 전략 설정 (staleTime, gcTime, refetch options)
-5. **DRY**: 공통 옵션은 `baseQuery`로 추출하여 재사용
+1. **파일명**: `get-[feature].query.ts` 형식 사용 (예: `get-user-profile.query.ts`, `get-benefit-list.query.ts`)
+2. **Hook 이름**: `useGet[Feature]` 형식 사용 (예: `useGetUserProfile`, `useGetBenefitList`)
+3. **Import**: Query Key는 `constants/query-keys.ts`에서 import
+4. **🆕 UseCase 사용**: DI Container에서 UseCase를 획득하여 queryFn에 사용
+5. **🆕 Adapter 사용**: 복잡한 Entity → UI Type 변환이 필요한 경우 Adapter 사용 (7+ Entity methods)
+6. **캐싱**: 데이터 특성에 맞는 캐싱 전략 설정 (staleTime, gcTime, refetch options)
 
-**🆕 Server-side Query (Page Layer용)**
+**패턴 1: 간단한 Custom Hook (Adapter 없이)**
 
 ```typescript
-// ✅ CORRECT - core/hooks/queries/user-profile.query.server.ts
-import { createUserServerContainer } from "@/src/domains/user/di/user-server-container";
-import { USER_PROFILE_QUERY_KEY } from "../../constants/query-keys";
-
-// Private: 캐싱 옵션
-const USER_PROFILE_QUERY_OPTIONS = {
-  staleTime: 10 * 60 * 1000,
-  gcTime: 30 * 60 * 1000,
-  refetchOnWindowFocus: false,
-  refetchOnMount: false,
-  refetchOnReconnect: false,
-} as const;
-
-// Public: Server Query Factory (Page에서 prefetch 시 사용)
-export const userProfileQueryServer = () => {
-  // 🆕 Server Container에서 UseCase 획득 (매번 새 인스턴스)
-  const container = createUserServerContainer();
-  const getMyProfileUseCase = container.getGetMyProfile();  // 개별 UseCase 획득
-
-  return {
-    queryKey: USER_PROFILE_QUERY_KEY,
-    queryFn: () => getMyProfileUseCase.execute(), // UseCase → Repository → DataSource (자동 토큰 주입)
-    ...USER_PROFILE_QUERY_OPTIONS,
-  };
-};
-```
-
-**🆕 Client-side Query (Section Layer용)**
-
-```typescript
-// ✅ CORRECT - core/hooks/queries/user-profile.query.ts
+// ✅ CORRECT - presentation/hooks/queries/get-user-profile.query.ts
+import { useQuery } from "@tanstack/react-query";
 import { getUserClientContainer } from "@/src/domains/user/di/user-client-container";
 import { USER_PROFILE_QUERY_KEY } from "../../constants/query-keys";
 
-// Private: 캐싱 옵션
-const USER_PROFILE_QUERY_OPTIONS = {
-  staleTime: 10 * 60 * 1000,
-  gcTime: 30 * 60 * 1000,
-  refetchOnWindowFocus: false,
-  refetchOnMount: false,
-  refetchOnReconnect: false,
-} as const;
-
-// Public: Client Query Options (Section/Component에서 사용)
-export const userProfileQueryClient = () => {
+export function useGetUserProfile() {
   // 🆕 Client Container에서 UseCase 획득 (Lazy-initialized Singleton)
   const container = getUserClientContainer();
-  const getMyProfileUseCase = container.getGetMyProfile();  // 개별 UseCase 획득
+  const getMyProfileUseCase = container.getGetMyProfile();
 
-  return {
+  return useQuery({
     queryKey: USER_PROFILE_QUERY_KEY,
-    queryFn: () => getMyProfileUseCase.execute(), // UseCase → Repository → DataSource (자동 토큰 주입)
-    ...USER_PROFILE_QUERY_OPTIONS,
-  };
+    queryFn: () => getMyProfileUseCase.execute(), // UseCase → Entity
+    staleTime: 10 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+  });
+}
+```
+
+**패턴 2: Adapter를 사용하는 Custom Hook (복잡한 변환)**
+
+```typescript
+// ✅ CORRECT - presentation/hooks/queries/get-benefit-list.query.ts
+import { useQuery } from "@tanstack/react-query";
+import { getBenefitClientContainer } from "@/src/domains/benefit/di/benefit-client-container";
+import { BenefitAdapter } from "../../adapters/benefit.adapter";
+import { BENEFIT_LIST_QUERY_KEY } from "../../constants/query-keys";
+
+export function useGetBenefitList() {
+  const container = getBenefitClientContainer();
+  const getBenefitListUseCase = container.getGetBenefitList();
+
+  return useQuery({
+    queryKey: BENEFIT_LIST_QUERY_KEY,
+    queryFn: async () => {
+      // 1. UseCase returns Domain Entity (BenefitList)
+      const result = await getBenefitListUseCase.execute();
+
+      // 2. Adapter transforms Entity → UI Type (orchestrates 7+ Entity methods)
+      return BenefitAdapter.benefitListToUi(result);
+    },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
+  });
+}
+```
+
+**패턴 3: Infinite Query Custom Hook (무한스크롤)**
+
+```typescript
+// ✅ CORRECT - presentation/hooks/queries/get-cafeteria-infinite-list.query.ts
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { getCafeteriaClientContainer } from "@/src/domains/cafeteria/di/cafeteria-client-container";
+import { CAFETERIA_LIST_QUERY_KEY } from "../../constants/query-keys";
+
+type UseGetCafeteriaInfiniteListParams = {
+  filter: string;
 };
 
-// ❌ DEPRECATED - 직접 API 호출하지 말 것 (@nugudi/api는 제거됨)
-// import { getMyProfile } from "@nugudi/api";
-// export const userProfileQueryClient = {
-//   queryKey: USER_PROFILE_QUERY_KEY,
-//   queryFn: () => getMyProfile(), // NO!
-// };
+export const useGetCafeteriaInfiniteList = ({
+  filter,
+}: UseGetCafeteriaInfiniteListParams) => {
+  const container = getCafeteriaClientContainer();
+  const getCafeteriaListUseCase = container.getGetCafeteriaList();
+
+  return useInfiniteQuery({
+    queryKey: [...CAFETERIA_LIST_QUERY_KEY, filter], // 필터 파라미터 포함
+    queryFn: ({ pageParam = 0 }) =>
+      getCafeteriaListUseCase.execute({ filter, page: pageParam }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => {
+      return lastPage.hasNext ? lastPage.nextPage : undefined;
+    },
+    staleTime: 3 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  });
+};
+```
+
+**Section에서 Custom Hook 사용**
+
+```typescript
+// ✅ CORRECT - presentation/ui/sections/benefit-list-section/index.tsx
+"use client";
+
+import { useGetBenefitList } from "../../../hooks/queries/get-benefit-list.query";
+import { BenefitCard } from "../../components/benefit-card";
+
+export const BenefitListSection = () => {
+  // Custom Hook 사용 - UI Type 반환 (BenefitItem[])
+  const { data: benefitList, isLoading } = useGetBenefitList();
+
+  if (isLoading) return <div>Loading...</div>;
+
+  return (
+    <div>
+      {benefitList?.benefits.map((benefit) => (
+        <BenefitCard key={benefit.id} benefit={benefit} />
+      ))}
+    </div>
+  );
+};
+```
+
+**❌ DEPRECATED 패턴들 (사용 금지)**
+
+```typescript
+// ❌ OLD - Factory Pattern (더 이상 사용하지 않음)
+export const userProfileQueryClient = () => ({
+  queryKey: USER_PROFILE_QUERY_KEY,
+  queryFn: () => getMyProfileUseCase.execute(),
+});
+
+// ❌ OLD - Query Options 객체 export (더 이상 사용하지 않음)
+export const userProfileQueryClient = {
+  queryKey: USER_PROFILE_QUERY_KEY,
+  queryFn: () => getMyProfile(),
+} as const;
+
+// ❌ DEPRECATED - 직접 API 호출 (@nugudi/api는 제거됨)
+import { getMyProfile } from "@nugudi/api";
+export const useGetUserProfile = () => {
+  return useQuery({
+    queryKey: USER_PROFILE_QUERY_KEY,
+    queryFn: () => getMyProfile(), // NO! UseCase 사용해야 함
+  });
+};
 ```
 
 ### 일반 커스텀 훅 작성 규칙
@@ -529,20 +898,20 @@ export const useUserProfile = () => {
 
 ```typescript
 // ✅ CORRECT - Use relative imports + named exports within same domain
-// In: apps/web/src/domains/auth/sign-up/ui/views/sign-up-view/index.tsx
+// In: apps/web/src/domains/auth/presentation/ui/views/sign-up-view/index.tsx
 import { SignUpSection } from "../../sections/sign-up-section";
 
-// In: apps/web/src/domains/auth/sign-up/ui/sections/sign-up-section/index.tsx
+// In: apps/web/src/domains/auth/presentation/ui/sections/sign-up-section/index.tsx
 import { SignUpForm } from "../../components/sign-up-form";
 import { useSignUpStore } from "../../../stores/use-sign-up-store"; // Named export for hooks
 import type { SignUpFormData } from "../../../types/sign-up";
 
-// In: apps/web/src/domains/auth/sign-up/ui/components/sign-up-form/index.tsx
+// In: apps/web/src/domains/auth/presentation/ui/components/sign-up-form/index.tsx
 import { EmailForm } from "./steps/email-form";
 import { PasswordForm } from "./steps/password-form";
 
 // ❌ WRONG - Don't use absolute imports within same domain
-import { SignUpSection } from "@/src/domains/auth/sign-up/ui/sections/sign-up-section"; // NO!
+import { SignUpSection } from "@/src/domains/auth/presentation/ui/sections/sign-up-section"; // NO!
 ```
 
 ### From Page to View - MUST Use Absolute Imports
@@ -551,14 +920,14 @@ import { SignUpSection } from "@/src/domains/auth/sign-up/ui/sections/sign-up-se
 // ✅ CORRECT - Pages use absolute imports for views
 // Public route example
 // In: app/(public)/auth/sign-up/page.tsx
-import { SignUpView } from "@/src/domains/auth/sign-up/ui/views/sign-up-view";
+import { SignUpView } from "@/src/domains/auth/presentation/ui/views/sign-up-view";
 
 // Protected route example
 // In: app/(auth)/profile/page.tsx
-import { ProfilePageView } from "@/src/domains/auth/profile/ui/views/profile-page-view";
+import { ProfilePageView } from "@/src/domains/user/presentation/ui/views/profile-page-view";
 
 // In: app/page.tsx (home page shows cafeteria)
-import { CafeteriaHomeView } from "@/src/domains/cafeteria/ui/views/cafeteria-home-view";
+import { CafeteriaHomeView } from "@/src/domains/cafeteria/presentation/ui/views/cafeteria-home-view";
 ```
 
 ### Cross-Domain Imports - MUST Use Absolute Imports
@@ -566,14 +935,14 @@ import { CafeteriaHomeView } from "@/src/domains/cafeteria/ui/views/cafeteria-ho
 ```typescript
 // ✅ CORRECT - Use absolute imports for cross-domain
 // In: apps/web/src/domains/cafeteria/...
-import { useAuth } from "@/src/domains/auth/hooks/use-auth";
-import { LoginWelcome } from "@/src/domains/auth/login/ui/components/login-welcome";
+import { useAuth } from "@/src/domains/auth/presentation/hooks/use-auth";
+import { LoginWelcome } from "@/src/domains/auth/presentation/ui/components/login-welcome";
 
-// In: apps/web/src/shared/ui/components/...
-import { ProfileSection } from "@/src/domains/auth/profile/ui/sections/profile-section";
+// In: apps/web/src/shared/interface-adapters/components/...
+import { ProfileSection } from "@/src/domains/user/presentation/ui/sections/profile-section";
 
 // ❌ WRONG - Don't use relative imports for cross-domain
-import { useAuth } from "../../../auth/hooks/use-auth"; // NO!
+import { useAuth } from "../../../auth/presentation/hooks/use-auth"; // NO!
 ```
 
 ### Using Monorepo Packages - Package Import Rules
@@ -640,7 +1009,7 @@ const HomePage = async () => {
 };
 
 // 2. View: Section 조합 (변경 없음)
-// File: domains/cafeteria/home/ui/views/cafeteria-home-view/index.tsx
+// File: domains/cafeteria/presentation/ui/views/cafeteria-home-view/index.tsx
 export const CafeteriaHomeView = () => {
   return (
     <Flex direction="column" gap={16}>
@@ -740,111 +1109,31 @@ const DataSectionContent = () => {
 
 ## TanStack Query Pattern
 
-### Query Key와 Query Options 분리 규칙
+### Query Key 관리 규칙
 
-**IMPORTANT**: Query Key와 Query Options는 명확히 분리하여 관리합니다.
+**IMPORTANT**: Query Key는 `constants/query-keys.ts`에 상수로 정의합니다.
 
 ```typescript
 // ✅ CORRECT - constants/query-keys.ts (Query Key만 정의)
 export const USER_PROFILE_QUERY_KEY = ["user", "profile", "me"] as const;
-
-// ⚠️ DEPRECATED PATTERN - Use DI Container + UseCase instead
-// This pattern is kept for reference only. New code should use:
-// - Server Container: createXXXServerContainer() → getUseCase() → execute()
-// - Client Container: getXXXClientContainer() → getUseCase() → execute()
-
-// ❌ OLD (Deprecated) - hooks/queries/user-profile.query.ts
-import { getMyProfile } from "@nugudi/api";  // ❌ @nugudi/api is removed
-import { USER_PROFILE_QUERY_KEY } from "../../constants/query-keys";
-
-// 캐싱 옵션 (private, 재사용)
-const USER_PROFILE_QUERY_OPTIONS = {
-  staleTime: 10 * 60 * 1000,
-  gcTime: 30 * 60 * 1000,
-  refetchOnWindowFocus: false,
-  refetchOnMount: false,
-  refetchOnReconnect: false,
-} as const;
-
-// Base Query (공통 부분 추출)
-const baseUserProfileQuery = {
-  queryKey: USER_PROFILE_QUERY_KEY,
-  ...USER_PROFILE_QUERY_OPTIONS,
-} as const;
-
-// Server-side용: 토큰 주입 Factory
-export const userProfileQueryServer = (accessToken: string) => ({
-  ...baseUserProfileQuery,
-  queryFn: () =>
-    getMyProfile({
-      headers: { Authorization: `Bearer ${accessToken}` },
-    }),
-});
-
-// Client-side용: 토큰 자동 주입 (HTTP 클라이언트가 처리)
-export const userProfileQueryClient = {
-  ...baseUserProfileQuery,
-  queryFn: () => getMyProfile(),
-} as const;
+export const BENEFIT_LIST_QUERY_KEY = ["benefits", "list"] as const;
+export const CAFETERIA_LIST_QUERY_KEY = ["cafeterias", "list"] as const;
 ```
 
-### ⚠️ DEPRECATED 사용 패턴 (Use DI Container Instead)
-
-```typescript
-// ❌ OLD (Deprecated) - Page with Query Factory
-import { userProfileQueryServer } from "@/src/domains/user/hooks/queries/user-profile.query";
-
-const Page = async () => {
-  const session = await auth.getSession({ refresh: false });
-
-  await queryClient.prefetchQuery(
-    userProfileQueryServer(session!.tokenSet.accessToken)
-  );
-
-  return <HydrationBoundary state={dehydrate(queryClient)}>...</HydrationBoundary>;
-};
-
-// Section Content (Client Component) - userProfileQueryClient 사용
-import { userProfileQueryClient } from "@/src/domains/user/hooks/queries/user-profile.query";
-
-const SectionContent = () => {
-  const { data } = useSuspenseQuery(userProfileQueryClient);
-  return <Component data={data} />;
-};
-
-// Infinite Scroll 패턴 (필터 파라미터 포함)
-const CafeteriaListSectionContent = ({ filter }: { filter: string }) => {
-  const { data, fetchNextPage, hasNextPage } = useSuspenseInfiniteQuery({
-    // queryKey에 필터 파라미터 포함 (각 필터별 별도 캐시)
-    queryKey: ["cafeterias", filter],
-    queryFn: ({ pageParam }) =>
-      getCafeteriaList({ filter, page: pageParam }),
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) => {
-      const hasNext = lastPage.data.hasNext;
-      return hasNext ? lastPage.data.nextPage : undefined;
-    },
-  });
-
-  const cafeterias = data.pages.flatMap((page) => page.data.items);
-
-  return (
-    <div>
-      <CafeteriaList items={cafeterias} />
-      {hasNextPage && (
-        <button onClick={() => fetchNextPage()}>더 보기</button>
-      )}
-    </div>
-  );
-};
-```
+**🆕 CURRENT PATTERN**: TanStack Query Custom Hooks를 사용하세요 (위 "TanStack Query Custom Hook 작성 규칙" 섹션 참조)
 
 ### 네이밍 규칙
 
-- **Query Key 상수**: `[DOMAIN]_[FEATURE]_QUERY_KEY`
-- **Server Factory**: `[feature]QueryServer(token)` - 함수
-- **Client Options**: `[feature]QueryClient` - 객체
-- **Base Query**: `base[Feature]Query` - private
+**✅ CURRENT (TanStack Query Custom Hook Pattern)**:
+- **Query Key 상수**: `[DOMAIN]_[FEATURE]_QUERY_KEY` (예: `USER_PROFILE_QUERY_KEY`, `BENEFIT_LIST_QUERY_KEY`)
+- **파일명**: `get-[feature].query.ts` (예: `get-user-profile.query.ts`, `get-benefit-list.query.ts`)
+- **Hook 이름**: `useGet[Feature]` (예: `useGetUserProfile`, `useGetBenefitList`)
+- **Adapter 이름**: `[Entity]Adapter` (예: `BenefitAdapter`, `UserAdapter`)
+
+**❌ DEPRECATED (Factory Pattern - 더 이상 사용 금지)**:
+- **Server Factory**: `[feature]QueryServer(token)` - 함수 (OLD)
+- **Client Options**: `[feature]QueryClient` - 객체 (OLD)
+- **Base Query**: `base[Feature]Query` - private (OLD)
 
 ## Best Practices Summary
 
@@ -864,9 +1153,9 @@ const CafeteriaListSectionContent = ({ filter }: { filter: string }) => {
 
 8. **Route Groups**: Use `(auth)` for protected pages, `(public)` for public pages
 9. **Page**: Server Container + UseCases로 data prefetching (`app/(auth|public)/[domain]/page.tsx`)
-10. **View**: Layout composition only (`domains/[domain]/[feature?]/ui/views/`)
-11. **Section**: Client Container + UseCases로 data fetching + Error/Loading boundaries (`ui/sections/`)
-12. **Component**: Pure UI components (`ui/components/`)
+10. **View**: Layout composition only (`domains/[domain]/presentation/ui/views/`)
+11. **Section**: Client Container + UseCases로 data fetching + Error/Loading boundaries (`presentation/ui/sections/`)
+12. **Component**: Pure UI components (`presentation/ui/components/`)
 13. **Always use** Suspense + ErrorBoundary in Sections
 14. **Never skip** the hierarchy (Page → View → Section → Component)
 15. **Keep components** pure and reusable
@@ -877,7 +1166,7 @@ const CafeteriaListSectionContent = ({ filter }: { filter: string }) => {
 17. **Name consistently** following the patterns above
 18. **Separate concerns** strictly between layers
 19. **Each component** must be in its own folder with `index.tsx` and `index.css.ts`
-20. **Domain logic** (repositories, usecases, stores, schemas, types) stays outside the `ui/` folder
+20. **Presentation layer** structure: DDD layers (domain, data, infrastructure) + `presentation/` (ui, hooks, adapters, types, utils)
 21. **Use Vanilla Extract** with `vars` and `classes` from `@nugudi/themes`
 22. **Always prefer** existing packages from `@nugudi/*` namespace
 23. **Client Components**: Add `"use client"` when using event handlers or hooks
@@ -885,10 +1174,11 @@ const CafeteriaListSectionContent = ({ filter }: { filter: string }) => {
 
 ### Data Fetching
 
-25. **TanStack Query**: Separate Query Keys (`constants/`) from Query Options (`hooks/queries/`)
-26. **Query Naming**: Use `xxxQueryServer()` for Server (factory), `xxxQueryClient()` for Client (factory)
+25. **TanStack Query**: Separate Query Keys (`constants/`) from Custom Hooks (`hooks/queries/`)
+26. **Query Hook Naming**: Use `get-[feature].query.ts` for files, `useGet[Feature]` for hooks (e.g., `useGetUserProfile`)
 27. **Query Structure**: Use DI Container to get UseCase, call UseCase.execute() in queryFn
-28. **NEVER**: 직접 API 함수 호출 (UseCase 메서드 사용)
+28. **Adapter Usage**: Use Adapters for complex Entity → UI Type transformations (7+ Entity method calls)
+29. **NEVER**: 직접 API 함수 호출 (UseCase 메서드 사용), Factory pattern 사용 (deprecated)
 
 ## TypeScript Interface Rules
 
@@ -934,22 +1224,25 @@ interface [Component]Props {
 | **Example**             | `../../sections/`                                                    | `@/domains/auth/`                                             | `@/src/shared/` | `@nugudi/themes`                                           |
 | **View → Section**      | `import { SignUpSection } from '../../sections/sign-up-section'`     | N/A                                                           | N/A             | N/A                                                        |
 | **Section → Component** | `import { SignUpForm } from '../../components/sign-up-form'`         | N/A                                                           | N/A             | N/A                                                        |
-| **Component → Store**   | `import { useSignUpStore } from '../../../stores/use-sign-up-store'` | `import { useAuth } from '@/src/domains/auth/hooks/use-auth'` | N/A             | N/A                                                        |
+| **Component → Store**   | `import { useSignUpStore } from '../../../stores/use-sign-up-store'` | `import { useAuth } from '@/src/domains/auth/presentation/hooks/use-auth'` | N/A             | N/A                                                        |
 | **Any → Package**       | N/A                                                                  | N/A                                                           | N/A             | `import { Button } from '@nugudi/react-components-button'` |
 
 ### Common Import Patterns
 
 ```typescript
 // ✅ CORRECT Examples
-// Within same domain (auth/sign-up)
+// Within same domain (auth)
 import { SignUpSection } from "../../sections/sign-up-section";
 import { useSignUpStore } from "../../../stores/use-sign-up-store";
 
 // Cross-domain
-import { LoginWelcome } from "@/src/domains/auth/login/ui/components/login-welcome";
+import { LoginWelcome } from "@/src/domains/auth/presentation/ui/components/login-welcome";
 
 // Shared components
-import { AppHeader } from "@/src/shared/ui/components/app-header";
+import { AppHeader } from "@/src/shared/interface-adapters/components/app-header";
+
+// Shared utilities
+import { formatPriceWithCurrency } from "@/src/shared/core/utils/currency";
 
 // Packages
 import { Button } from "@nugudi/react-components-button";
@@ -957,10 +1250,10 @@ import { Box, Flex } from "@nugudi/react-components-layout";
 
 // ❌ WRONG Examples
 // Using absolute path within same domain
-import { SignUpSection } from "@/src/domains/auth/sign-up/ui/sections/sign-up-section";
+import { SignUpSection } from "@/src/domains/auth/presentation/ui/sections/sign-up-section";
 
 // Using relative path for cross-domain
-import { LoginWelcome } from "../../../auth/login/ui/components/login-welcome";
+import { LoginWelcome } from "../../../auth/presentation/ui/components/login-welcome";
 
 // Wrong export pattern for packages
 import Button from "@nugudi/react-components-button"; // Should be named export

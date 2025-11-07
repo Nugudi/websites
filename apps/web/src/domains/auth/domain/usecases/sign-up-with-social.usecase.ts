@@ -1,44 +1,24 @@
-/**
- * Sign Up With Social UseCase
- *
- * 소셜 계정으로 회원가입 비즈니스 로직을 캡슐화
- */
-
 import { AuthError } from "../../core/errors/auth-error";
 import type { SignUpData } from "../../core/types/common";
 import type { User } from "../entities/user.entity";
 import type { AuthRepository } from "../repositories/auth-repository";
 
-/**
- * UseCase 입력 파라미터
- */
 export interface SignUpWithSocialParams {
   registrationToken: string;
   userData: SignUpData;
 }
 
-/**
- * Sign Up With Social UseCase
- */
 export interface SignUpWithSocialUseCase {
   execute(params: SignUpWithSocialParams): Promise<User>;
 }
 
-/**
- * Sign Up With Social UseCase Implementation
- */
 export class SignUpWithSocialUseCaseImpl implements SignUpWithSocialUseCase {
   constructor(private readonly authRepository: AuthRepository) {}
 
-  /**
-   * UseCase 실행
-   */
   async execute(params: SignUpWithSocialParams): Promise<User> {
-    // 1. 입력값 검증
     this.validateParams(params);
 
     try {
-      // 2. Repository 호출
       const user = await this.authRepository.signUpWithSocial({
         registrationToken: params.registrationToken,
         userData: params.userData,
@@ -50,9 +30,6 @@ export class SignUpWithSocialUseCaseImpl implements SignUpWithSocialUseCase {
     }
   }
 
-  /**
-   * 입력값 검증
-   */
   private validateParams(params: SignUpWithSocialParams): void {
     if (!params.registrationToken) {
       throw new AuthError("Registration token is required", "INVALID_CODE");
@@ -70,7 +47,6 @@ export class SignUpWithSocialUseCaseImpl implements SignUpWithSocialUseCase {
       throw new AuthError("Nickname must be less than 20 characters");
     }
 
-    // 필수 약관 동의 확인
     if (!params.userData.privacyPolicy) {
       throw new AuthError("Privacy policy agreement is required");
     }
@@ -84,9 +60,6 @@ export class SignUpWithSocialUseCaseImpl implements SignUpWithSocialUseCase {
     }
   }
 
-  /**
-   * 에러 처리
-   */
   private handleError(error: unknown): AuthError {
     if (error instanceof AuthError) {
       return error;

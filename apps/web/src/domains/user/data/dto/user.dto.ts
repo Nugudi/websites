@@ -1,7 +1,5 @@
 /**
- * User DTO Types
- *
- * All types sourced from OpenAPI-generated @nugudi/types
+ * User DTO
  */
 
 import type { paths } from "@nugudi/types";

@@ -1,12 +1,5 @@
 /**
- * User Domain Server DI Container
- *
- * Dependency injection container for SERVER-SIDE components
- * - Creates NEW instances each time (for SSR safety)
- * - Use in Server Components/Pages for data prefetching
- * - Wires: HttpClient → DataSource → Repository → UseCases
- *
- * NEVER use this in Client Components (use userClientContainer instead)
+ * User Server DI Container
  */
 
 import {
@@ -69,13 +62,6 @@ class UserServerContainerImpl implements UserServerContainer {
   }
 }
 
-/**
- * Create User Server Container
- *
- * IMPORTANT: Always creates NEW instance for SSR safety
- *
- * @returns UserServerContainer
- */
 export function createUserServerContainer(): UserServerContainer {
   return new UserServerContainerImpl();
 }

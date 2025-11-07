@@ -1,9 +1,5 @@
 /**
- * Cafeteria Client Container
- *
- * Client-side only DI Container
- * - Uses ClientSessionManager and ClientTokenProvider
- * - Singleton instance
+ * Cafeteria Client DI Container
  */
 
 // Data Layer
@@ -42,9 +38,6 @@ import { ClientTokenProvider } from "@/src/shared/infrastructure/http/client-tok
 import { FetchHttpClient } from "@/src/shared/infrastructure/http/fetch-http-client";
 import { ClientSessionManager } from "@/src/shared/infrastructure/storage/client-session-manager";
 
-/**
- * Cafeteria Client Container
- */
 class CafeteriaClientContainer {
   // Cafeteria UseCases
   private getCafeteriasWithMenuUseCase: GetCafeteriasWithMenuUseCase;

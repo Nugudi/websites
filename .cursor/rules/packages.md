@@ -33,11 +33,22 @@ nugudi/
 │           │   │   │   └── dto/           # Data Transfer Objects
 │           │   │   ├── infrastructure/ # Infrastructure Layer
 │           │   │   │   └── services/      # External Services
-│           │   │   ├── presentation/   # Presentation Layer (UI)
-│           │   │   │   ├── views/
-│           │   │   │   ├── sections/
-│           │   │   │   └── components/
-│           │   │   └── core/           # Core Domain Concepts
+│           │   │   ├── presentation/   # Presentation Layer (UI & Logic)
+│           │   │   │   ├── ui/         # UI Components Hierarchy
+│           │   │   │   │   ├── views/      # Page-level layouts
+│           │   │   │   │   ├── sections/   # Feature sections with boundaries
+│           │   │   │   │   └── components/ # Reusable components
+│           │   │   │   ├── adapters/   # 🆕 Entity → UI Type Adapters (optional)
+│           │   │   │   ├── hooks/      # React Hooks & TanStack Query
+│           │   │   │   │   └── queries/   # Query custom hooks
+│           │   │   │   ├── mappers/    # Simple transformations (alternative to adapters)
+│           │   │   │   ├── types/      # UI-specific types
+│           │   │   │   ├── utils/      # Presentation utilities
+│           │   │   │   ├── constants/  # Presentation constants (query keys)
+│           │   │   │   ├── schemas/    # Validation schemas
+│           │   │   │   ├── stores/     # State management stores
+│           │   │   │   └── actions/    # Server Actions
+│           │   │   └── core/           # Core Domain Concepts (deprecated structure)
 │           │   │       ├── types/
 │           │   │       ├── config/
 │           │   │       └── errors/
@@ -46,10 +57,15 @@ nugudi/
 │           │   │   ├── domain/
 │           │   │   ├── data/
 │           │   │   ├── infrastructure/
-│           │   │   ├── presentation/
-│           │   │   └── core/
+│           │   │   ├── presentation/   # (same structure as auth above)
+│           │   │   └── core/           # (deprecated)
 │           │   └── [other-domains]/
-│           └── shared/    # Shared Infrastructure & Interface Adapters
+│           └── shared/    # Shared Infrastructure, Core, & Interface Adapters
+│               ├── core/            # 🆕 Domain-Agnostic Core Utilities
+│               │   └── utils/       # Pure utility functions
+│               │       ├── currency/   # Currency formatting (formatPriceWithCurrency)
+│               │       ├── date/       # Date utilities (formatDate, parseDate)
+│               │       └── validation/ # Common validation helpers
 │               ├── infrastructure/  # 🆕 Infrastructure Layer
 │               │   ├── http/       # HttpClient, TokenProvider
 │               │   ├── storage/    # SessionManager
@@ -131,14 +147,16 @@ This project follows **Domain-Driven Design (DDD)** principles with **Clean Arch
 
 ### Layer Responsibilities
 
-| Layer               | Location                          | Responsibility                                                              | Examples                                              |
-| ------------------- | --------------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------- |
-| **Presentation**    | `app/`, `domains/*/ui/`           | User interface, user interactions, routing                                  | Pages, Views, Sections, Components                    |
-| **Application**     | `domains/*/services/`, `actions/` | Business logic, orchestration, use cases                                    | AuthService, UserService, Server Actions              |
-| **Domain**          | `domains/*/repositories/`         | Data access interfaces, domain models                                       | AuthRepository, UserRepository                        |
-| **Infrastructure**  | `shared/infrastructure/`          | External systems, frameworks, databases                                     | HttpClient, SessionManager, Logger                    |
-| **DI Container**    | `src/di/`                         | Dependency injection, object creation, lifecycle management                 | AuthServerContainer, AuthClientContainer              |
-| **Interface Adapt** | `shared/interface-adapters/`      | Shared UI components, providers (connects Infrastructure to Presentation)   | AppHeader, Providers                                  |
+| Layer               | Location                                   | Responsibility                                                              | Examples                                                    |
+| ------------------- | ------------------------------------------ | --------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| **Presentation**    | `app/`, `domains/*/presentation/`          | User interface, user interactions, routing, UI logic                        | Pages, Views, Sections, Components, Adapters, Hooks         |
+| **Application**     | `domains/*/domain/usecases/`               | Business logic, orchestration, use cases                                    | LoginWithOAuthUseCase, GetMyProfileUseCase                  |
+| **Domain**          | `domains/*/domain/repositories/`, `entities/` | Data access interfaces, domain models, domain logic                      | AuthRepository, UserRepository, User Entity                 |
+| **Data**            | `domains/*/data/repositories/`, `data-sources/` | Repository implementations, data sources, DTO mappings                 | AuthRepositoryImpl, AuthDataSource, DTO Mappers             |
+| **Infrastructure**  | `domains/*/infrastructure/`, `shared/infrastructure/` | External services, frameworks, databases, HTTP clients            | HttpClient, SessionManager, Logger, External APIs           |
+| **DI Container**    | `domains/*/di/` 🆕 (per-domain)            | Dependency injection, object creation, lifecycle management (per-domain)    | AuthServerContainer, AuthClientContainer                    |
+| **Shared Core**     | `shared/core/` 🆕                          | Domain-agnostic utilities, pure functions (no business logic)               | formatPriceWithCurrency, formatDate, validation helpers     |
+| **Interface Adapt** | `shared/interface-adapters/`               | Shared UI components, providers (connects Infrastructure to Presentation)   | AppHeader, Providers, Global Sections                       |
 
 ---
 
@@ -165,8 +183,8 @@ import { createAuthServerContainer } from '@/src/domains/auth/di/auth-server-con
 // Page (Server Component)
 const Page = async () => {
   const container = createAuthServerContainer();  // ✅ Create new instance per request
-  const authService = container.getAuthService();
-  const userService = container.getUserService();
+  const loginWithOAuthUseCase = container.getLoginWithOAuth();  // Get individual UseCase
+  const getMyProfileUseCase = container.getGetMyProfile();      // Get individual UseCase
 
   // Use UseCases...
 };
@@ -190,8 +208,8 @@ import { getAuthClientContainer } from '@/src/domains/auth/di/auth-client-contai
 const Component = () => {
   const handleLogin = async () => {
     const container = getAuthClientContainer();  // ✅ Get lazy-initialized singleton
-    const authService = container.getAuthService();
-    const result = await authService.loginWithOAuth(...);
+    const loginWithOAuthUseCase = container.getLoginWithOAuth();  // Get individual UseCase
+    const result = await loginWithOAuthUseCase.execute(...);
   };
 };
 ```
@@ -369,19 +387,17 @@ export class AuthRepositoryImpl implements AuthRepository {
 **역할**: 비즈니스 로직과 여러 Repository를 조합하여 복잡한 플로우 처리
 
 ```typescript
-export interface AuthService {
-  loginWithOAuth(provider, code, redirectUri): Promise<LoginResult>;
-  signUpWithSocial(token, data): Promise<SignUpResult>;
-  logout(): Promise<void>;
+export interface LoginWithOAuthUseCase {
+  execute(provider: string, code: string, redirectUri: string): Promise<LoginResult>;
 }
 
-export class AuthServiceImpl implements AuthService {
+export class LoginWithOAuthUseCaseImpl implements LoginWithOAuthUseCase {
   constructor(
     private readonly repository: AuthRepository,
     private readonly sessionManager: SessionManager
   ) {}
 
-  async loginWithOAuth(provider, code, redirectUri) {
+  async execute(provider: string, code: string, redirectUri: string) {
     // 1. Repository를 통해 로그인
     const response = await this.repository.loginWithGoogle({ code, redirectUri });
 
@@ -1008,7 +1024,7 @@ component-name/
 
 ```typescript
 // Domain component structure example
-// src/domains/auth/sign-up/ui/components/sign-up-form/index.tsx
+// src/domains/auth/sign-up/presentation/ui/components/sign-up-form/index.tsx
 interface SignUpFormProps {
   // Props interface
 }
@@ -1017,7 +1033,7 @@ export const SignUpForm = (props: SignUpFormProps) => {
   // Component implementation
 };
 
-// src/domains/auth/sign-up/ui/components/sign-up-form/index.css.ts
+// src/domains/auth/sign-up/presentation/ui/components/sign-up-form/index.css.ts
 import { style } from "@vanilla-extract/css";
 import { vars } from "@nugudi/themes";
 
@@ -1199,6 +1215,326 @@ const form = useForm({
 });
 ```
 
+### Mock Repository Pattern (Domains Without Backend APIs)
+
+For domains that don't have backend APIs yet (Notification, Benefit, Stamp), we use the **Mock Repository Pattern** to enable UI development while maintaining complete DDD architecture.
+
+#### Pattern Overview
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  Mock Repository Pattern (No Backend API Yet)               │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  DTO (snake_case)  ──────────────────┐                     │
+│      ↓                                │                     │
+│  Mapper (bidirectional)               │                     │
+│      ↓                                │                     │
+│  Entity (camelCase)                   │                     │
+│      ↓                                │                     │
+│  Mock DataSource ←───────────────────┘                     │
+│  (Hardcoded data + 100ms delay)                             │
+│      ↓                                                      │
+│  Repository Implementation                                  │
+│      ↓                                                      │
+│  UseCase (Business Logic)                                   │
+│      ↓                                                      │
+│  DI Container (Server/Client)                               │
+│      ↓                                                      │
+│  UI Components                                              │
+│                                                             │
+│  ⚡ When Backend Ready: Replace Mock DataSource            │
+│     with Remote DataSource (API calls)                     │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### Why Mock Repository Pattern?
+
+- ✅ **Enable UI Development**: Frontend development doesn't wait for backend APIs
+- ✅ **Maintain Architecture**: Complete DDD structure from day one
+- ✅ **Type Safety**: Full TypeScript support with DTOs and Entities
+- ✅ **Easy Replacement**: Swap Mock DataSource with Remote DataSource when API is ready
+- ✅ **Testing**: Business logic works with both mock and real data
+- ✅ **Consistent Patterns**: Same DI Container pattern across all domains
+
+#### Implementation Example (Notification Domain)
+
+**Step 1: Define DTO (snake_case - API contract)**
+
+```typescript
+// domains/notification/data/dto/notification.dto.ts
+export interface NotificationDTO {
+  id: string;
+  user_id: string;
+  title: string;
+  message: string;
+  type: "INFO" | "SUCCESS" | "WARNING" | "ERROR";
+  is_read: boolean;
+  created_at: string;
+  read_at?: string;
+}
+
+export interface GetNotificationListResponseDTO {
+  notifications: NotificationDTO[];
+  total_count: number;
+  unread_count: number;
+}
+```
+
+**Step 2: Create Mapper (DTO ↔ Entity conversion)**
+
+```typescript
+// domains/notification/data/mappers/notification.mapper.ts
+import type { NotificationDTO } from "../dto/notification.dto";
+import type { Notification } from "../../domain/entities/notification.entity";
+
+export function notificationDtoToDomain(dto: NotificationDTO): Notification {
+  return {
+    id: dto.id,
+    userId: dto.user_id,
+    title: dto.title,
+    message: dto.message,
+    type: dto.type,
+    isRead: dto.is_read,
+    createdAt: dto.created_at,
+    readAt: dto.read_at,
+  };
+}
+
+export function notificationDtoListToDomain(dtos: NotificationDTO[]): Notification[] {
+  return dtos.map(notificationDtoToDomain);
+}
+```
+
+**Step 3: Implement Mock DataSource**
+
+```typescript
+// domains/notification/data/data-sources/notification-mock-data-source.ts
+const MOCK_NOTIFICATIONS: NotificationDTO[] = [
+  {
+    id: "notif-1",
+    user_id: "user-123",
+    title: "새로운 할인 혜택",
+    message: "학생식당에서 20% 할인 혜택이 추가되었습니다.",
+    type: "INFO",
+    is_read: false,
+    created_at: "2024-01-15T10:00:00Z",
+  },
+  // ... more mock data
+];
+
+export interface NotificationDataSource {
+  getNotificationList(): Promise<GetNotificationListResponseDTO>;
+  markAsRead(notificationId: string): Promise<void>;
+}
+
+export class NotificationMockDataSource implements NotificationDataSource {
+  private notifications: NotificationDTO[] = [...MOCK_NOTIFICATIONS];
+
+  async getNotificationList(): Promise<GetNotificationListResponseDTO> {
+    // Simulate network delay
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const unreadCount = this.notifications.filter((n) => !n.is_read).length;
+    return {
+      notifications: this.notifications,
+      total_count: this.notifications.length,
+      unread_count: unreadCount,
+    };
+  }
+
+  async markAsRead(notificationId: string): Promise<void> {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const notification = this.notifications.find((n) => n.id === notificationId);
+    if (notification) {
+      notification.is_read = true;
+      notification.read_at = new Date().toISOString();
+    }
+  }
+}
+```
+
+**Step 4: Implement Repository**
+
+```typescript
+// domains/notification/data/repositories/notification-repository.impl.ts
+import type { NotificationRepository } from "../../domain/repositories/notification-repository.interface";
+import type { NotificationDataSource } from "../data-sources/notification-mock-data-source";
+import { notificationDtoListToDomain } from "../mappers/notification.mapper";
+
+export class NotificationRepositoryImpl implements NotificationRepository {
+  constructor(private readonly dataSource: NotificationDataSource) {}
+
+  async getNotificationList(): Promise<NotificationList> {
+    const response = await this.dataSource.getNotificationList();
+    const notifications = notificationDtoListToDomain(response.notifications);
+    return {
+      notifications,
+      totalCount: response.total_count,
+      unreadCount: response.unread_count,
+    };
+  }
+
+  async markAsRead(notificationId: string): Promise<void> {
+    await this.dataSource.markAsRead(notificationId);
+  }
+}
+```
+
+**Step 5: Create UseCase**
+
+```typescript
+// domains/notification/domain/usecases/get-notification-list.usecase.ts
+export interface GetNotificationListUseCase {
+  execute(): Promise<NotificationList>;
+}
+
+export class GetNotificationListUseCaseImpl implements GetNotificationListUseCase {
+  constructor(private readonly notificationRepository: NotificationRepository) {}
+
+  async execute(): Promise<NotificationList> {
+    return await this.notificationRepository.getNotificationList();
+  }
+}
+```
+
+**Step 6: Setup DI Containers**
+
+```typescript
+// domains/notification/di/notification-server-container.ts (Server-side)
+export class NotificationServerContainer {
+  private _dataSource?: NotificationMockDataSource;
+  private _repository?: NotificationRepositoryImpl;
+  private _getNotificationListUseCase?: GetNotificationListUseCase;
+
+  private getDataSource(): NotificationMockDataSource {
+    if (!this._dataSource) {
+      this._dataSource = new NotificationMockDataSource();
+    }
+    return this._dataSource;
+  }
+
+  private getRepository(): NotificationRepositoryImpl {
+    if (!this._repository) {
+      this._repository = new NotificationRepositoryImpl(this.getDataSource());
+    }
+    return this._repository;
+  }
+
+  getGetNotificationList(): GetNotificationListUseCase {
+    if (!this._getNotificationListUseCase) {
+      this._getNotificationListUseCase = new GetNotificationListUseCaseImpl(
+        this.getRepository()
+      );
+    }
+    return this._getNotificationListUseCase;
+  }
+}
+
+export function createNotificationServerContainer(): NotificationServerContainer {
+  return new NotificationServerContainer();
+}
+
+// domains/notification/di/notification-client-container.ts (Client-side)
+let clientContainer: NotificationClientContainer | null = null;
+
+export function getNotificationClientContainer(): NotificationClientContainer {
+  if (!clientContainer) {
+    clientContainer = new NotificationClientContainer();
+  }
+  return clientContainer;
+}
+```
+
+**Step 7: Use in Pages and Sections**
+
+```typescript
+// Page (Server-side prefetch)
+import { createNotificationServerContainer } from '@/src/domains/notification/di';
+
+const NotificationPage = async () => {
+  const container = createNotificationServerContainer();
+  const getNotificationListUseCase = container.getGetNotificationList();
+
+  const queryClient = getQueryClient();
+  await queryClient.prefetchQuery({
+    queryKey: ['notifications', 'list'],
+    queryFn: () => getNotificationListUseCase.execute()
+  });
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <NotificationView />
+    </HydrationBoundary>
+  );
+};
+
+// Section (Client-side fetch)
+'use client';
+import { getNotificationClientContainer } from '@/src/domains/notification/di';
+
+const NotificationListSection = () => {
+  const container = getNotificationClientContainer();
+  const getNotificationListUseCase = container.getGetNotificationList();
+
+  const { data } = useSuspenseQuery({
+    queryKey: ['notifications', 'list'],
+    queryFn: () => getNotificationListUseCase.execute()
+  });
+
+  return <NotificationList notifications={data.notifications} />;
+};
+```
+
+#### Replacing Mock with Real API
+
+When the backend API is ready, simply replace the Mock DataSource with a Remote DataSource:
+
+```typescript
+// Before (Mock)
+import { NotificationMockDataSource } from "../data-sources/notification-mock-data-source";
+
+private getDataSource(): NotificationMockDataSource {
+  if (!this._dataSource) {
+    this._dataSource = new NotificationMockDataSource();
+  }
+  return this._dataSource;
+}
+
+// After (Real API)
+import { NotificationRemoteDataSource } from "../data-sources/notification-remote-data-source";
+import { getHttpClient } from "@/src/shared/infrastructure/http-client";
+
+private getDataSource(): NotificationRemoteDataSource {
+  if (!this._dataSource) {
+    this._dataSource = new NotificationRemoteDataSource(getHttpClient());
+  }
+  return this._dataSource;
+}
+
+// Remote DataSource Implementation
+export class NotificationRemoteDataSource implements NotificationDataSource {
+  constructor(private readonly httpClient: HttpClient) {}
+
+  async getNotificationList(): Promise<GetNotificationListResponseDTO> {
+    return await this.httpClient.get<GetNotificationListResponseDTO>(
+      '/api/v1/notifications'
+    );
+  }
+
+  async markAsRead(notificationId: string): Promise<void> {
+    await this.httpClient.patch(`/api/v1/notifications/${notificationId}/read`);
+  }
+}
+```
+
+**Key Benefits of This Approach:**
+- ✅ Only the DI Container needs to change (2-3 lines)
+- ✅ Repository, UseCase, and UI components remain unchanged
+- ✅ Type safety maintained throughout
+- ✅ No breaking changes to existing code
+
 ---
 
 ## 🧹 Code Quality with Biome
@@ -1350,7 +1686,7 @@ pnpm storybook --filter=ui
 ### DON'Ts ❌
 
 - **NEVER** use ESLint or Prettier (use Biome)
-- **NEVER** bypass DI Containers (직접 Service/Repository 인스턴스 생성하지 말것)
+- **NEVER** bypass DI Containers (직접 UseCase/Repository 인스턴스 생성하지 말것)
 - **NEVER** use HttpClient directly (always use through DI Container)
 - **NEVER** create components that exist in packages
 - **NEVER** use PascalCase for file/folder names (except index.tsx)
@@ -1464,19 +1800,19 @@ pnpm commit                 # Commit with commitizen
 
 ```typescript
 // ✅ CORRECT - Within same domain (e.g., auth/sign-up)
-// From: src/domains/auth/sign-up/ui/views/sign-up-view/index.tsx
+// From: src/domains/auth/sign-up/presentation/ui/views/sign-up-view/index.tsx
 import { SignUpForm } from "../../components/sign-up-form";
 import { useSignUpStore } from "../../../stores/use-sign-up-store";
 import { signUpSchema } from "../../../schemas/sign-up-schema";
 import type { SignUpFormData } from "../../../types/sign-up";
 
 // ✅ CORRECT - From section to component in same domain
-// From: src/domains/auth/sign-up/ui/sections/sign-up-section/index.tsx
+// From: src/domains/auth/sign-up/presentation/ui/sections/sign-up-section/index.tsx
 import { EmailForm } from "../../components/sign-up-form/steps/email-form";
 import { PasswordForm } from "../../components/sign-up-form/steps/password-form";
 
 // ✅ CORRECT - Within same folder
-// From: src/domains/auth/sign-up/ui/components/sign-up-form/steps/email-form/index.tsx
+// From: src/domains/auth/sign-up/presentation/ui/components/sign-up-form/steps/email-form/index.tsx
 import * as styles from "./index.css";
 ```
 
@@ -1489,11 +1825,11 @@ import { useAuth } from "@/src/domains/auth/hooks/use-auth";
 
 // ✅ CORRECT - From app pages (public routes)
 // From: app/(public)/auth/sign-up/page.tsx
-import { SignUpView } from "@/src/domains/auth/sign-up/ui/views/sign-up-view";
+import { SignUpView } from "@/src/domains/auth/sign-up/presentation/ui/views/sign-up-view";
 
 // ✅ CORRECT - From app pages (protected routes)
 // From: app/(auth)/profile/page.tsx
-import { ProfilePageView } from "@/src/domains/auth/profile/ui/views/profile-page-view";
+import { ProfilePageView } from "@/src/domains/auth/profile/presentation/ui/views/profile-page-view";
 ```
 
 #### Package Imports - Always Use Package Path
@@ -1663,18 +1999,18 @@ export const BenefitCard = () => {};
 
 ```typescript
 // ✅ CORRECT - Named exports for ALL components/sections/views
-// domains/cafeteria/ui/components/cafeteria-menu-list/index.tsx
+// domains/cafeteria/presentation/ui/components/cafeteria-menu-list/index.tsx
 export const CafeteriaMenuList = () => {};
 
-// domains/cafeteria/ui/sections/cafeteria-recommend-section/index.tsx
+// domains/cafeteria/presentation/ui/sections/cafeteria-recommend-section/index.tsx
 export const CafeteriaRecommendSection = () => {};
 
-// domains/cafeteria/ui/views/cafeteria-home-view/index.tsx
+// domains/cafeteria/presentation/ui/views/cafeteria-home-view/index.tsx
 export const CafeteriaHomeView = () => {};
 
 // ✅ CORRECT - Default export ONLY for page.tsx files
 // app/page.tsx
-import { CafeteriaHomeView } from "@/src/domains/cafeteria/ui/views/cafeteria-home-view";
+import { CafeteriaHomeView } from "@/src/domains/cafeteria/presentation/ui/views/cafeteria-home-view";
 const HomePage = () => {
   return <CafeteriaHomeView />;
 };
@@ -1702,7 +2038,7 @@ export type CafeteriaData = {};
    - No business logic
    - Returns raw data
 
-4. **Service Pattern**: Business logic orchestration
+4. **UseCase Pattern**: Business logic orchestration
    - Combines multiple repositories
    - Handles complex workflows
    - Manages session/state
@@ -1721,8 +2057,8 @@ const container = createAuthServerContainer();  // New instance per request
 const loginUseCase = container.getLoginWithOAuth();
 
 // ❌ DON'T
-import { AuthServiceImpl } from '@/src/domains/auth/services/auth-service';
-const service = new AuthServiceImpl(...);  // Never instantiate directly
+import { LoginWithOAuthUseCaseImpl } from '@/src/domains/auth/domain/usecases/login-with-oauth.usecase';
+const useCase = new LoginWithOAuthUseCaseImpl(...);  // Never instantiate directly
 ```
 
 #### Client-Side (Client Components, Hooks)
@@ -1745,7 +2081,7 @@ const container = new AuthClientContainer();  // Never create new instance
 5. **Complete Package Setup**: Add to package.json + import styles
 6. **Naming Consistency**: Maintain consistent naming within domains
 7. **Import Conventions**: Relative within domain, absolute cross-domain
-8. **Test All Layers**: Unit tests for all Repository/Service/Infrastructure layers
+8. **Test All Layers**: Unit tests for all Repository/UseCase/Infrastructure layers
 
 Remember: This is a **DDD-based, package-first monorepo** - maximize reuse and respect architectural boundaries!
 
