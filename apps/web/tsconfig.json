@@ -11,7 +11,49 @@
       "@interface-adapters/*": ["./src/interface-adapters/*"],
       "@shared/*": ["./src/shared/*"],
       "@shared/interface-adapters/*": ["./src/shared/interface-adapters/*"],
-      "@shared/infrastructure/*": ["./src/shared/infrastructure/*"]
+      "@shared/infrastructure/*": ["./src/shared/infrastructure/*"],
+      "@auth/core/*": ["./src/domains/auth/core/*"],
+      "@auth/core": ["./src/domains/auth/core/index.ts"],
+      "@auth/domain/*": ["./src/domains/auth/domain/*"],
+      "@auth/domain": ["./src/domains/auth/domain/index.ts"],
+      "@auth/data/*": ["./src/domains/auth/data/*"],
+      "@auth/data": ["./src/domains/auth/data/index.ts"],
+      "@auth/infrastructure/*": ["./src/domains/auth/infrastructure/*"],
+      "@auth/infrastructure": ["./src/domains/auth/infrastructure/index.ts"],
+      "@auth/di/*": ["./src/domains/auth/di/*"],
+      "@auth/di": ["./src/domains/auth/di/index.ts"],
+      "@auth/presentation/*": ["./src/domains/auth/presentation/*"],
+      "@auth/presentation": ["./src/domains/auth/presentation/index.ts"],
+      "@benefit/presentation/*": ["./src/domains/benefit/presentation/*"],
+      "@benefit/presentation": ["./src/domains/benefit/presentation/index.ts"],
+      "@stamp/presentation/*": ["./src/domains/stamp/presentation/*"],
+      "@stamp/presentation": ["./src/domains/stamp/presentation/index.ts"],
+      "@notification/presentation/*": [
+        "./src/domains/notification/presentation/*"
+      ],
+      "@notification/presentation": [
+        "./src/domains/notification/presentation/index.ts"
+      ],
+      "@user/domain/*": ["./src/domains/user/domain/*"],
+      "@user/domain": ["./src/domains/user/domain/index.ts"],
+      "@user/data/*": ["./src/domains/user/data/*"],
+      "@user/data": ["./src/domains/user/data/index.ts"],
+      "@user/di/*": ["./src/domains/user/di/*"],
+      "@user/di": ["./src/domains/user/di/index.ts"],
+      "@user/presentation/*": ["./src/domains/user/presentation/*"],
+      "@user/presentation": ["./src/domains/user/presentation/index.ts"],
+      "@cafeteria/core/*": ["./src/domains/cafeteria/core/*"],
+      "@cafeteria/core": ["./src/domains/cafeteria/core/index.ts"],
+      "@cafeteria/domain/*": ["./src/domains/cafeteria/domain/*"],
+      "@cafeteria/domain": ["./src/domains/cafeteria/domain/index.ts"],
+      "@cafeteria/data/*": ["./src/domains/cafeteria/data/*"],
+      "@cafeteria/data": ["./src/domains/cafeteria/data/index.ts"],
+      "@cafeteria/di/*": ["./src/domains/cafeteria/di/*"],
+      "@cafeteria/di": ["./src/domains/cafeteria/di/index.ts"],
+      "@cafeteria/presentation/*": ["./src/domains/cafeteria/presentation/*"],
+      "@cafeteria/presentation": [
+        "./src/domains/cafeteria/presentation/index.ts"
+      ]
     },
     "plugins": [{ "name": "next" }]
   },

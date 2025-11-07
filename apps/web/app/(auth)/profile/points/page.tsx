@@ -1,4 +1,4 @@
-import { UserPointsView } from "@/src/domains/user/ui/views/user-points-view";
+import { UserPointsView } from "@/src/domains/user/presentation/ui/views/user-points-view";
 
 const ProfilePointsPage = () => {
   return <UserPointsView />;

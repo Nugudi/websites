@@ -1,6 +1,5 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { createAuthServerContainer } from "@/src/di/auth-server-container";
 import { logger } from "@/src/shared/infrastructure/logging/logger";
 
 const PUBLIC_PATHS = ["/auth", "/api/auth"];
@@ -64,9 +63,23 @@ function redirectToLogin(request: NextRequest): NextResponse {
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const container = createAuthServerContainer();
-  const sessionManager = container.getSessionManager();
-  const refreshToken = await sessionManager.getRefreshToken();
+  // Edge Runtime에서 명시적으로 API URL 전달 (환경변수가 비어있으면 에러 발생)
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  if (!apiUrl) {
+    logger.error(
+      "[Middleware] NEXT_PUBLIC_API_URL is not set. Cannot proceed with authentication.",
+      { pathname },
+    );
+    throw new Error(
+      "NEXT_PUBLIC_API_URL environment variable is required for middleware to function. " +
+        "Please check your .env file.",
+    );
+  }
+
+  // 미들웨어에서는 NextRequest의 cookies를 직접 사용
+  const refreshToken = request.cookies.get("refresh_token")?.value;
+  const userId = request.cookies.get("user_id")?.value;
 
   // 1. Auth 페이지 접근 시: 로그인한 사용자는 홈으로 리다이렉트
   if (isAuthPage(pathname)) {
@@ -90,29 +103,112 @@ export default async function middleware(request: NextRequest) {
 
   // 3. Protected 경로: 인증 상태 확인 및 Token 갱신
   try {
-    if (!refreshToken) {
-      logger.info("Refresh Token not found, redirecting to login", {
+    if (!refreshToken || !userId) {
+      logger.info("Refresh Token or User ID not found, redirecting to login", {
         pathname,
       });
       return redirectToLogin(request);
     }
 
     // 2. Access Token 체크 (Preventive Refresh)
-    let accessToken = await sessionManager.getAccessToken();
+    let accessToken = request.cookies.get("access_token")?.value;
 
     if (!accessToken) {
       logger.info("Access Token not found, attempting preventive refresh", {
         pathname,
       });
 
-      // RefreshTokenService로 즉시 갱신 (Middleware는 Cookie 수정 가능)
-      const refreshTokenService = container.getRefreshTokenService();
-      const result = await refreshTokenService.refresh();
+      // deviceId 조회 또는 생성
+      let deviceId = request.cookies.get("device_id")?.value;
+      if (!deviceId) {
+        deviceId = crypto.randomUUID();
+      }
 
-      if (!result.success) {
+      // 직접 API 호출하여 토큰 갱신
+      try {
+        const response = await fetch(`${apiUrl}/api/v1/auth/refresh`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${refreshToken}`,
+            "X-Device-ID": deviceId,
+          },
+          body: JSON.stringify({}),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Token refresh failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const newAccessToken = data.data?.accessToken;
+        const newRefreshToken = data.data?.refreshToken;
+
+        if (!newAccessToken || !newRefreshToken) {
+          throw new Error("Token refresh response is missing tokens");
+        }
+
+        // Type assertion: we've validated these tokens exist
+        accessToken = newAccessToken as string;
+
+        logger.info("Preventive refresh succeeded", {
+          pathname,
+          hasAccessToken: !!accessToken,
+          hasRefreshToken: !!newRefreshToken,
+        });
+
+        // Access Token이 준비되었으므로 SSR Prefetch 진행
+        const requestHeaders = new Headers(request.headers);
+        requestHeaders.set("x-access-token", accessToken);
+
+        const successResponse = NextResponse.next({
+          request: {
+            headers: requestHeaders,
+          },
+        });
+
+        // 새 토큰을 쿠키에 저장
+        successResponse.cookies.set("access_token", accessToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          maxAge: 60 * 15, // 15분
+          path: "/",
+        });
+
+        successResponse.cookies.set(
+          "refresh_token",
+          newRefreshToken as string,
+          {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 60 * 60 * 24 * 7, // 7일
+            path: "/",
+          },
+        );
+
+        // deviceId도 쿠키에 저장
+        successResponse.cookies.set("device_id", deviceId, {
+          httpOnly: false, // Client에서도 읽을 수 있도록
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          maxAge: 60 * 60 * 24 * 365, // 1년
+          path: "/",
+        });
+
+        logger.debug("Updated cookies with new tokens", { pathname });
+
+        return successResponse;
+      } catch (error) {
+        logger.error("Token refresh failed in middleware", {
+          pathname,
+          error: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined,
+        });
+
         logger.warn("Preventive refresh failed, redirecting to login", {
           pathname,
-          error: result.error,
         });
 
         // Issue #4 해결: 무효한 토큰 삭제하여 무한 루프 방지
@@ -120,6 +216,7 @@ export default async function middleware(request: NextRequest) {
         loginResponse.cookies.delete("access_token");
         loginResponse.cookies.delete("refresh_token");
         loginResponse.cookies.delete("user_id");
+        loginResponse.cookies.delete("device_id");
 
         logger.debug("Deleted invalid cookies to prevent redirect loop", {
           pathname,
@@ -127,13 +224,6 @@ export default async function middleware(request: NextRequest) {
 
         return loginResponse;
       }
-
-      logger.info("Preventive refresh succeeded, proceeding to SSR", {
-        pathname,
-      });
-
-      // 갱신된 Token을 다시 조회 (Cookie에 저장됨)
-      accessToken = await sessionManager.getAccessToken();
     }
 
     // Access Token이 준비되었으므로 SSR Prefetch 진행
@@ -142,10 +232,6 @@ export default async function middleware(request: NextRequest) {
     // Middleware에서 갱신한 Token을 Headers로 전달
     //
     // Issue #3 해결: 응답 헤더가 아닌 요청 헤더에 토큰 추가
-    if (!accessToken) {
-      return NextResponse.next();
-    }
-
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set("x-access-token", accessToken);
 

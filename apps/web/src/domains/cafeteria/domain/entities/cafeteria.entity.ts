@@ -1,0 +1,354 @@
+/**
+ * Cafeteria Entity
+ */
+
+import type { BusinessHours } from "./business-hours.entity";
+
+/** 구내식당 Entity - Constructor Props */
+export interface CafeteriaProps {
+  readonly id: number;
+  readonly name: string;
+  readonly address: string;
+  readonly addressDetail: string | null;
+  readonly latitude: number | null;
+  readonly longitude: number | null;
+  readonly phone: string | null;
+  readonly mealTicketPrice: number | null;
+  readonly takeoutAvailable: boolean;
+  readonly businessHours: BusinessHours | null;
+}
+
+/** 구내식당 Entity - Class */
+export class CafeteriaEntity {
+  private readonly _id: number;
+  private readonly _name: string;
+  private readonly _address: string;
+  private readonly _addressDetail: string | null;
+  private readonly _latitude: number | null;
+  private readonly _longitude: number | null;
+  private readonly _phone: string | null;
+  private readonly _mealTicketPrice: number | null;
+  private readonly _takeoutAvailable: boolean;
+  private readonly _businessHours: BusinessHours | null;
+
+  constructor(props: CafeteriaProps) {
+    // Validation
+    if (!props.name || props.name.trim().length === 0) {
+      throw new Error("Cafeteria name is required");
+    }
+    if (props.name.length > 100) {
+      throw new Error("Cafeteria name must be 100 characters or less");
+    }
+    if (!props.address || props.address.trim().length === 0) {
+      throw new Error("Cafeteria address is required");
+    }
+    if (props.address.length > 200) {
+      throw new Error("Cafeteria address must be 200 characters or less");
+    }
+
+    this._id = props.id;
+    this._name = props.name;
+    this._address = props.address;
+    this._addressDetail = props.addressDetail;
+    this._latitude = props.latitude;
+    this._longitude = props.longitude;
+    this._phone = props.phone;
+    this._mealTicketPrice = props.mealTicketPrice;
+    this._takeoutAvailable = props.takeoutAvailable;
+    this._businessHours = props.businessHours;
+  }
+
+  // Getters
+  getId(): number {
+    return this._id;
+  }
+
+  getName(): string {
+    return this._name;
+  }
+
+  getAddress(): string {
+    return this._address;
+  }
+
+  getAddressDetail(): string | null {
+    return this._addressDetail;
+  }
+
+  getLatitude(): number | null {
+    return this._latitude;
+  }
+
+  getLongitude(): number | null {
+    return this._longitude;
+  }
+
+  getPhone(): string | null {
+    return this._phone;
+  }
+
+  getMealTicketPrice(): number | null {
+    return this._mealTicketPrice;
+  }
+
+  getTakeoutAvailable(): boolean {
+    return this._takeoutAvailable;
+  }
+
+  getBusinessHours(): BusinessHours | null {
+    return this._businessHours;
+  }
+
+  // Business Logic Methods
+
+  // === State Validation ===
+
+  /**
+   * 영업시간 정보가 있는지 확인
+   */
+  hasBusinessHours(): boolean {
+    return this._businessHours !== null;
+  }
+
+  /**
+   * 위치 정보(좌표)가 있는지 확인
+   */
+  hasLocation(): boolean {
+    return this._latitude !== null && this._longitude !== null;
+  }
+
+  /**
+   * 전화번호 정보가 있는지 확인
+   */
+  hasPhone(): boolean {
+    return this._phone !== null && this._phone.trim().length > 0;
+  }
+
+  /**
+   * 식권 가격 정보가 있는지 확인
+   */
+  hasMealTicketPrice(): boolean {
+    return this._mealTicketPrice !== null && this._mealTicketPrice > 0;
+  }
+
+  // === Operating Status ===
+
+  /**
+   * 특정 시간에 영업 중인지 확인
+   * @param date 확인할 시간
+   * @returns 영업 중이면 true
+   */
+  isOpenAt(date: Date): boolean {
+    if (!this._businessHours) {
+      return false;
+    }
+
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+    const currentMinutes = hour * 60 + minute;
+
+    const { lunch, dinner } = this._businessHours;
+
+    // 점심 시간 체크
+    if (lunch) {
+      const lunchStart = lunch.start.hour * 60 + lunch.start.minute;
+      const lunchEnd = lunch.end.hour * 60 + lunch.end.minute;
+      if (currentMinutes >= lunchStart && currentMinutes < lunchEnd) {
+        return true;
+      }
+    }
+
+    // 저녁 시간 체크
+    if (dinner) {
+      const dinnerStart = dinner.start.hour * 60 + dinner.start.minute;
+      const dinnerEnd = dinner.end.hour * 60 + dinner.end.minute;
+      if (currentMinutes >= dinnerStart && currentMinutes < dinnerEnd) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * 현재 시간에 영업 중인지 확인
+   */
+  isOpenNow(): boolean {
+    return this.isOpenAt(new Date());
+  }
+
+  /**
+   * 현재 영업 시간대 확인
+   * @returns 'lunch' | 'dinner' | 'closed'
+   */
+  getCurrentPeriod(): "lunch" | "dinner" | "closed" {
+    if (!this._businessHours) {
+      return "closed";
+    }
+
+    const now = new Date();
+    const hour = now.getHours();
+    const minute = now.getMinutes();
+    const currentMinutes = hour * 60 + minute;
+
+    const { lunch, dinner } = this._businessHours;
+
+    // 점심 시간 체크
+    if (lunch) {
+      const lunchStart = lunch.start.hour * 60 + lunch.start.minute;
+      const lunchEnd = lunch.end.hour * 60 + lunch.end.minute;
+      if (currentMinutes >= lunchStart && currentMinutes < lunchEnd) {
+        return "lunch";
+      }
+    }
+
+    // 저녁 시간 체크
+    if (dinner) {
+      const dinnerStart = dinner.start.hour * 60 + dinner.start.minute;
+      const dinnerEnd = dinner.end.hour * 60 + dinner.end.minute;
+      if (currentMinutes >= dinnerStart && currentMinutes < dinnerEnd) {
+        return "dinner";
+      }
+    }
+
+    return "closed";
+  }
+
+  // === Feature Checks ===
+
+  /**
+   * 포장 가능 여부
+   */
+  canTakeout(): boolean {
+    return this._takeoutAvailable;
+  }
+
+  /**
+   * 식권 사용 가능 여부
+   */
+  acceptsMealTicket(): boolean {
+    return this._mealTicketPrice !== null && this._mealTicketPrice > 0;
+  }
+
+  // === Computed Values ===
+
+  /**
+   * 전체 주소 반환 (기본 주소 + 상세 주소)
+   */
+  getFullAddress(): string {
+    if (this._addressDetail) {
+      return `${this._address} ${this._addressDetail}`;
+    }
+    return this._address;
+  }
+
+  /**
+   * 포맷팅된 영업시간 문자열 반환
+   * @returns "점심 11:00 - 14:00 & 저녁 17:00 - 20:00" 형식
+   */
+  getFullBusinessHours(): string {
+    if (!this._businessHours) {
+      return "영업시간 정보 없음";
+    }
+
+    const { lunch, dinner } = this._businessHours;
+    const periods: string[] = [];
+
+    if (lunch) {
+      const start = this.formatTime(lunch.start);
+      const end = this.formatTime(lunch.end);
+      periods.push(`점심 ${start} - ${end}`);
+    }
+
+    if (dinner) {
+      const start = this.formatTime(dinner.start);
+      const end = this.formatTime(dinner.end);
+      periods.push(`저녁 ${start} - ${end}`);
+    }
+
+    return periods.length > 0 ? periods.join(" & ") : "영업시간 정보 없음";
+  }
+
+  /**
+   * 특정 위치로부터의 거리 계산 (Haversine formula)
+   * @param lat 목표 위도
+   * @param lng 목표 경도
+   * @returns 거리 (km), 위치 정보가 없으면 null
+   */
+  getDistanceFrom(lat: number, lng: number): number | null {
+    if (this._latitude === null || this._longitude === null) {
+      return null;
+    }
+
+    const cafeteriaLat = this._latitude;
+    const cafeteriaLng = this._longitude;
+
+    const R = 6371; // 지구 반경 (km)
+    const dLat = this.toRad(lat - cafeteriaLat);
+    const dLon = this.toRad(lng - cafeteriaLng);
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.toRad(cafeteriaLat)) *
+        Math.cos(this.toRad(lat)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c;
+
+    return Math.round(distance * 100) / 100; // 소수점 2자리까지
+  }
+
+  // === Validation ===
+
+  /**
+   * Entity 유효성 검증
+   * @returns 검증 에러 배열 (빈 배열이면 유효함)
+   */
+  validate(): string[] {
+    const errors: string[] = [];
+
+    if (!this._name || this._name.trim().length === 0) {
+      errors.push("Cafeteria name is required");
+    }
+    if (this._name.length > 100) {
+      errors.push("Cafeteria name must be 100 characters or less");
+    }
+    if (!this._address || this._address.trim().length === 0) {
+      errors.push("Cafeteria address is required");
+    }
+    if (this._address.length > 200) {
+      errors.push("Cafeteria address must be 200 characters or less");
+    }
+    if (this._phone && this._phone.length > 20) {
+      errors.push("Phone number must be 20 characters or less");
+    }
+    if (this._mealTicketPrice !== null && this._mealTicketPrice < 0) {
+      errors.push("Meal ticket price must be non-negative");
+    }
+
+    return errors;
+  }
+
+  // === Private Helper Methods ===
+
+  /**
+   * LocalTime을 "HH:MM" 형식으로 포맷팅
+   */
+  private formatTime(time: { hour: number; minute: number }): string {
+    const hour = time.hour.toString().padStart(2, "0");
+    const minute = time.minute.toString().padStart(2, "0");
+    return `${hour}:${minute}`;
+  }
+
+  /**
+   * 도를 라디안으로 변환
+   */
+  private toRad(degrees: number): number {
+    return (degrees * Math.PI) / 180;
+  }
+}
+
+/** 구내식당 Entity - Type Alias for compatibility */
+export type Cafeteria = CafeteriaEntity;

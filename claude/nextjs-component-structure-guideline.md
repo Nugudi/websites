@@ -73,17 +73,17 @@ Next.js 16 route groups organize pages by authentication requirements:
 
 ### Protected Routes (auth)
 ```
-/benefits          → domains/benefit/ui/views/benefit-page-view
-/cafeterias        → domains/cafeteria/home/ui/views/cafeteria-home-view
-/cafeterias/[id]   → domains/cafeteria/detail/ui/views/cafeteria-detail-view
-/my                → domains/user/ui/views/my-page-view
+/benefits          → domains/benefit/presentation/ui/views/benefit-page-view
+/cafeterias        → domains/cafeteria/home/presentation/ui/views/cafeteria-home-view
+/cafeterias/[id]   → domains/cafeteria/detail/presentation/ui/views/cafeteria-detail-view
+/my                → domains/user/presentation/ui/views/my-page-view
 ```
 
 ### Public Routes (public)
 ```
-/auth/sign-in       → domains/auth/ui/views/credentials-sign-in-view
-/auth/sign-up/social → domains/auth/ui/views/social-sign-up-view
-/home              → domains/cafeteria/home/ui/views/cafeteria-home-view (same as root)
+/auth/sign-in       → domains/auth/presentation/ui/views/credentials-sign-in-view
+/auth/sign-up/social → domains/auth/presentation/ui/views/social-sign-up-view
+/home              → domains/cafeteria/home/presentation/ui/views/cafeteria-home-view (same as root)
 ```
 
 ## Next.js App Router Specific Patterns
@@ -93,21 +93,21 @@ Next.js 16 route groups organize pages by authentication requirements:
 ```typescript
 // app/(auth)/benefits/page.tsx - Server Component by default
 import { getQueryClient } from '@/src/shared/infrastructure/configs/tanstack-query';
-import { createBenefitServerContainer } from '@/src/di';
+import { createBenefitServerContainer } from '@/src/domains/benefit/di';  // 🆕 Per-domain DI Container
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
-import { BenefitPageView } from '@/src/domains/benefit/ui/views/benefit-page-view';
+import { BenefitPageView } from '@/src/domains/benefit/presentation/ui/views/benefit-page-view';
 
 const BenefitsPage = async ({ searchParams }) => {
   const queryClient = getQueryClient();
 
-  // 🆕 Server Container로 Service 획득 (매번 새 인스턴스)
+  // 🆕 Server Container로 UseCase 획득 (매번 새 인스턴스)
   const container = createBenefitServerContainer();
-  const benefitService = container.getBenefitService();
+  const getBenefitsUseCase = container.getGetBenefits();
 
-  // Service를 통한 데이터 prefetch (자동 토큰 주입)
+  // UseCase를 통한 데이터 prefetch (자동 토큰 주입)
   await queryClient.prefetchQuery({
     queryKey: ['benefits', 'list'],
-    queryFn: () => benefitService.getBenefits()
+    queryFn: () => getBenefitsUseCase.execute()
   });
 
   return (
@@ -122,8 +122,8 @@ export default BenefitsPage; // Pages use default export
 
 **🆕 핵심 포인트**:
 - **Server Container**: 매 요청마다 새로운 컨테이너 인스턴스 생성
-- **Service 획득**: Container에서 필요한 Service를 주입받음
-- **자동 토큰 주입**: Service 내부의 Repository가 AuthenticatedHttpClient를 통해 자동으로 토큰 주입
+- **UseCase 획득**: Container에서 필요한 UseCase를 주입받음
+- **자동 토큰 주입**: UseCase 내부의 Repository가 AuthenticatedHttpClient를 통해 자동으로 토큰 주입
 - **NEVER**: Client Container (`xxxClientContainer`) 사용 금지 - Server에서는 항상 `createXXXServerContainer()` 사용
 
 ### 2. Route Parameters (🆕 with DI Container)
@@ -131,9 +131,9 @@ export default BenefitsPage; // Pages use default export
 ```typescript
 // app/(auth)/cafeterias/[cafeteriaId]/page.tsx
 import { getQueryClient } from '@/src/shared/infrastructure/configs/tanstack-query';
-import { createCafeteriaServerContainer } from '@/src/di';
+import { createCafeteriaServerContainer } from '@/src/domains/cafeteria/di';  // 🆕 Per-domain DI Container
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
-import { CafeteriaDetailView } from '@/src/domains/cafeteria/detail/ui/views/cafeteria-detail-view';
+import { CafeteriaDetailView } from '@/src/domains/cafeteria/detail/presentation/ui/views/cafeteria-detail-view';
 
 interface PageProps {
   params: { cafeteriaId: string };
@@ -146,14 +146,14 @@ const CafeteriaDetailPage = async ({ params, searchParams }: PageProps) => {
 
   const queryClient = getQueryClient();
 
-  // 🆕 Server Container로 Service 획득
+  // 🆕 Server Container로 UseCase 획득
   const container = createCafeteriaServerContainer();
-  const cafeteriaService = container.getCafeteriaService();
+  const getCafeteriaDetailUseCase = container.getGetCafeteriaDetail();
 
-  // Dynamic route parameter를 Service 메서드에 전달
+  // Dynamic route parameter를 UseCase 메서드에 전달
   await queryClient.prefetchQuery({
     queryKey: ['cafeteria', 'detail', cafeteriaId],
-    queryFn: () => cafeteriaService.getCafeteriaDetail(cafeteriaId)
+    queryFn: () => getCafeteriaDetailUseCase.execute(cafeteriaId)
   });
 
   return (
@@ -171,15 +171,15 @@ export default CafeteriaDetailPage;
 ```typescript
 // app/(auth)/cafeterias/[cafeteriaId]/page.tsx
 import { Metadata } from 'next';
-import { createCafeteriaServerContainer } from '@/src/di';
+import { createCafeteriaServerContainer } from '@/src/domains/cafeteria/di';  // 🆕 Per-domain DI Container
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  // 🆕 Server Container로 Service 획득
+  // 🆕 Server Container로 UseCase 획득
   const container = createCafeteriaServerContainer();
-  const cafeteriaService = container.getCafeteriaService();
+  const getCafeteriaDetailUseCase = container.getGetCafeteriaDetail();
 
-  // Service 메서드로 데이터 조회
-  const cafeteria = await cafeteriaService.getCafeteriaDetail(params.cafeteriaId);
+  // UseCase 메서드로 데이터 조회
+  const cafeteria = await getCafeteriaDetailUseCase.execute(params.cafeteriaId);
 
   return {
     title: cafeteria.name,
@@ -191,7 +191,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 **🆕 중요**:
 - `generateMetadata`에서도 Server Container 사용
 - 각 함수마다 새로운 Container 인스턴스 생성 (stateless)
-- Service는 자동으로 인증 토큰 주입 처리
+- UseCase는 자동으로 인증 토큰 주입 처리
 
 ### 4. Loading and Error UI
 ```typescript

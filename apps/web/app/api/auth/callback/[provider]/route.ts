@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { createAuthServerContainer } from "@/src/di/auth-server-container";
-import { handleAuthError } from "@/src/domains/auth/utils/error-handler";
-import { state } from "@/src/domains/auth/utils/url";
+import { handleAuthError } from "@/src/domains/auth/data/utils/error-handler";
+import { state } from "@/src/domains/auth/data/utils/url";
+import { createAuthServerContainer } from "@/src/domains/auth/di/auth-server-container";
 import { logger } from "@/src/shared/infrastructure/logging/logger";
 
 type OAuthProvider = "google" | "kakao" | "naver";
@@ -54,13 +54,13 @@ const handler = async (
     });
 
     const container = createAuthServerContainer();
-    const authService = container.getAuthService();
+    const loginWithOAuthUseCase = container.getLoginWithOAuth();
 
-    const result = await authService.loginWithOAuth(
-      providerType,
+    const result = await loginWithOAuthUseCase.execute({
+      provider: providerType,
       code,
       redirectUri,
-    );
+    });
 
     logger.info("OAuth login result", {
       type: result.type,
@@ -70,13 +70,14 @@ const handler = async (
     // 기존 회원 - 메인 페이지로 리다이렉트
     if (result.type === "EXISTING_USER") {
       const encoded = request.nextUrl.searchParams.get("state");
-      const targetUrl = encoded
-        ? new URL(state.decode<{ to: string }>(encoded).to, request.url)
+      const decoded = encoded ? state.decode(encoded) : null;
+      const targetUrl = decoded?.to
+        ? new URL(decoded.to, request.url)
         : new URL("/", request.url);
 
       logger.info("Redirecting existing user", {
-        userId: result.userId,
-        nickname: result.nickname,
+        userId: result.user.getUserId(),
+        name: result.user.getName(),
         targetUrl: targetUrl.toString(),
       });
 

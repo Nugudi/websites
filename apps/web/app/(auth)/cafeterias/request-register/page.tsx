@@ -1,6 +1,5 @@
-import { RequestRegisterView } from "@/src/domains/cafeteria/ui/views/request-register-view";
+import { RequestRegisterView } from "@/src/domains/cafeteria/presentation/ui/views/request-register-view";
 
-// 구내식당 등록 요청 페이지
 const CafeteriaRequestRegisterPage = () => {
   return <RequestRegisterView />;
 };

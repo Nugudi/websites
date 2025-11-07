@@ -94,6 +94,14 @@ export class ClientSessionManager implements SessionManager {
   }
 
   /**
+   * User ID 조회
+   */
+  async getUserId(): Promise<string | null> {
+    const session = await this.getSession();
+    return session?.userId ?? null;
+  }
+
+  /**
    * UUID v4 생성 (crypto.randomUUID 사용)
    */
   private generateDeviceId(): string {

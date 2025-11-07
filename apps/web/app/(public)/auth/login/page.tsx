@@ -1,4 +1,4 @@
-import { AuthLoginView } from "@/src/domains/auth/ui/views/auth-login-view";
+import { AuthLoginView } from "@/src/domains/auth/presentation/ui/views/auth-login-view";
 
 const LoginPage = () => {
   return <AuthLoginView />;

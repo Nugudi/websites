@@ -43,3 +43,6 @@ storybook-static
 
 # webstorm
 .idea
+
+# zed
+.zed/

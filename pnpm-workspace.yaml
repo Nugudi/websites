@@ -1,9 +1,15 @@
-onlyBuiltDependencies:
-  - sharp
-
 packages:
   - apps/*
   - packages/*
   - packages/assets/*
   - packages/react/components/*
   - packages/react/hooks/*
+
+ignoredBuiltDependencies:
+  - '@sentry/cli'
+  - esbuild
+  - msw
+  - simple-git-hooks
+
+onlyBuiltDependencies:
+  - sharp

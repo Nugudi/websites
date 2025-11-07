@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createAuthServerContainer } from "@/src/di/auth-server-container";
+import { createAuthServerContainer } from "@/src/domains/auth/di/auth-server-container";
 import { logger } from "@/src/shared/infrastructure/logging/logger";
 
 /**
@@ -25,32 +25,42 @@ import { logger } from "@/src/shared/infrastructure/logging/logger";
  */
 export async function POST() {
   try {
-    // 1. Server Container에서 RefreshTokenService 획득
+    // 1. Server Container에서 RefreshToken UseCase 획득
     const container = createAuthServerContainer();
-    const refreshTokenService = container.getRefreshTokenService();
+    const refreshTokenUseCase = container.getRefreshToken();
 
-    // 2. Service에 위임 (BFF는 오케스트레이션만)
-    const result = await refreshTokenService.refresh();
+    // 2. UseCase에 위임 (BFF는 오케스트레이션만)
+    const result = await refreshTokenUseCase.execute();
 
     if (!result.success) {
-      logger.warn("Token refresh failed via RefreshTokenService", {
-        error: result.error,
-      });
+      logger.warn("Token refresh failed via RefreshToken UseCase");
 
       return NextResponse.json(
-        { success: false, error: result.error || "Token refresh failed" },
+        { success: false, error: "Token refresh failed" },
         { status: 401 },
       );
     }
 
-    logger.info("Token refreshed successfully via RefreshTokenService");
+    logger.info("Token refreshed successfully via RefreshToken UseCase");
 
-    // Client-side localStorage 동기화를 위해 토큰 데이터 반환
+    // 세션에서 갱신된 refreshToken과 userId 가져오기 (Client-side localStorage 동기화용)
+    const sessionManager = container.getSessionManager();
+    const session = await sessionManager.getSession();
+
+    if (!session) {
+      logger.error("Session not found after successful token refresh");
+      return NextResponse.json(
+        { success: false, error: "Session not found" },
+        { status: 500 },
+      );
+    }
+
     return NextResponse.json({
       success: true,
       data: {
-        accessToken: result.accessToken,
-        refreshToken: result.refreshToken,
+        accessToken: result.accessToken, // UseCase에서 반환받은 accessToken 사용
+        refreshToken: session.refreshToken,
+        userId: session.userId, // Client-side localStorage 동기화를 위해 userId 포함
       },
     });
   } catch (error) {

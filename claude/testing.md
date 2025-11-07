@@ -12,9 +12,9 @@ Our goal is to maintain efficient test coverage while preventing productivity lo
 
 All modules that are not directly related to UI rendering **must** have comprehensive test coverage:
 
-- **🆕 Services (DDD)**: Business logic orchestration, domain operations
+- **🆕 UseCases (DDD)**: Business logic orchestration, domain operations
 - **🆕 Repositories (DDD)**: Data access layer, API integration
-- **Business Logic**: Domain services, state management, data transformations
+- **Business Logic**: Domain operations, state management, data transformations
 - **Utility Functions**: Helper functions, formatters, validators, parsers
 - **API Handlers**: Request/response processing, error handling, data mapping
 - **Hooks**: Custom React hooks with complex logic
@@ -106,23 +106,23 @@ describe('AuthRepository', () => {
 - ✅ 파라미터가 올바르게 전달되는지 검증
 - ✅ 응답 데이터가 올바르게 반환되는지 검증
 - ✅ 에러 상황 처리 검증
-- ❌ 비즈니스 로직 테스트 금지 (Service에서 담당)
+- ❌ 비즈니스 로직 테스트 금지 (UseCase에서 담당)
 
-#### Service Testing (Business Logic Layer)
+#### UseCase Testing (Business Logic Layer)
 
-**목적**: Service는 비즈니스 로직을 담당하므로, Repository와 SessionManager를 Mock하여 순수 로직만 테스트합니다.
+**목적**: UseCase는 비즈니스 로직을 담당하므로, Repository와 SessionManager를 Mock하여 순수 로직만 테스트합니다.
 
 ```typescript
-// domains/auth/services/__tests__/auth-service.test.ts
+// domains/auth/domain/usecases/__tests__/login-with-oauth.usecase.test.ts
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { AuthServiceImpl } from '../auth-service';
-import type { AuthRepository } from '../../repositories/auth-repository';
+import { LoginWithOAuthUseCaseImpl } from '../login-with-oauth.usecase';
+import type { AuthRepository } from '../../../data/repositories/auth-repository';
 import type { SessionManager } from '@/src/shared/infrastructure/storage';
 
-describe('AuthService', () => {
+describe('LoginWithOAuthUseCase', () => {
   let mockRepository: AuthRepository;
   let mockSessionManager: SessionManager;
-  let authService: AuthServiceImpl;
+  let loginWithOAuthUseCase: LoginWithOAuthUseCaseImpl;
 
   beforeEach(() => {
     // Repository Mock
@@ -141,10 +141,10 @@ describe('AuthService', () => {
       clearSession: vi.fn(),
     };
 
-    authService = new AuthServiceImpl(mockRepository, mockSessionManager);
+    loginWithOAuthUseCase = new LoginWithOAuthUseCaseImpl(mockRepository, mockSessionManager);
   });
 
-  describe('loginWithOAuth', () => {
+  describe('execute', () => {
     it('should save session for existing user and return user data', async () => {
       // Arrange
       const mockResponse = {
@@ -160,7 +160,7 @@ describe('AuthService', () => {
       vi.mocked(mockRepository.loginWithGoogle).mockResolvedValue(mockResponse);
 
       // Act
-      const result = await authService.loginWithOAuth(
+      const result = await loginWithOAuthUseCase.execute(
         'google',
         'auth-code-123',
         'http://localhost:3000/callback'
@@ -196,7 +196,7 @@ describe('AuthService', () => {
       vi.mocked(mockRepository.loginWithGoogle).mockResolvedValue(mockResponse);
 
       // Act
-      const result = await authService.loginWithOAuth(
+      const result = await loginWithOAuthUseCase.execute(
         'google',
         'auth-code-123',
         'http://localhost:3000/callback'
@@ -218,7 +218,7 @@ describe('AuthService', () => {
 
       // Act & Assert
       await expect(
-        authService.loginWithOAuth(
+        loginWithOAuthUseCase.execute(
           'google',
           'auth-code-123',
           'http://localhost:3000/callback'
@@ -239,15 +239,436 @@ describe('AuthService', () => {
 - ✅ 반환 값이 비즈니스 규칙에 맞는지 검증
 - ❌ 실제 API 호출 금지 (Repository가 담당)
 
+#### Adapter Testing (Presentation Layer)
+
+**목적**: Adapter는 Entity → UI Type 변환과 UI helper 메서드를 담당하므로, Entity를 Mock하여 순수 변환 로직과 UI 계산만 테스트합니다.
+
+**언제 테스트하는가**:
+- Adapter 메서드가 7+ Entity 메서드를 호출하는 복잡한 변환을 수행할 때
+- UI helper 메서드가 비즈니스 규칙 기반 계산을 수행할 때 (색상, 가용성, 포맷팅 등)
+- Type-safe 변환 헬퍼 함수가 있을 때
+
+```typescript
+// domains/benefit/presentation/adapters/__tests__/benefit.adapter.test.ts
+import { describe, it, expect } from 'vitest';
+import { BenefitAdapter } from '../benefit.adapter';
+import type { Benefit } from '../../../domain/entities/benefit.entity';
+
+describe('BenefitAdapter', () => {
+  // Mock Entity 생성 헬퍼
+  const createMockBenefit = (overrides?: Partial<Benefit>): Benefit => ({
+    getId: () => 1,
+    getCafeteriaName: () => '카페테리아 A',
+    getMenuName: () => '점심 메뉴',
+    getImageUrl: () => '/images/menu.jpg',
+    getDescription: () => '맛있는 점심',
+    getMenuTypeDisplayName: () => '점심',
+    getDiscountBadge: () => '특가',
+    getPrice: () => 10000,
+    getFinalPrice: () => 7000,
+    hasDiscount: () => true,
+    getDiscountPercentage: () => 30,
+    isAvailableNow: () => true,
+    isNew: () => false,
+    ...overrides,
+  } as Benefit);
+
+  describe('toUiItem', () => {
+    it('should transform Entity to UI Type with all required fields', () => {
+      // Arrange
+      const mockBenefit = createMockBenefit();
+
+      // Act
+      const result = BenefitAdapter.toUiItem(mockBenefit);
+
+      // Assert
+      expect(result).toEqual({
+        id: 1,
+        cafeteriaName: '카페테리아 A',
+        menuName: '점심 메뉴',
+        imageUrl: '/images/menu.jpg',
+        description: '맛있는 점심',
+        menuType: '점심',
+        discountBadge: '특가',
+        originalPrice: 10000,
+        finalPrice: 7000,
+        hasDiscount: true,
+        discountPercentage: 30,
+        isAvailable: true,
+        isNew: false,
+      });
+    });
+
+    it('should handle Entity with no discount', () => {
+      // Arrange
+      const mockBenefit = createMockBenefit({
+        hasDiscount: () => false,
+        getDiscountPercentage: () => 0,
+        getDiscountBadge: () => null,
+        getFinalPrice: () => 10000,
+      });
+
+      // Act
+      const result = BenefitAdapter.toUiItem(mockBenefit);
+
+      // Assert
+      expect(result.hasDiscount).toBe(false);
+      expect(result.discountPercentage).toBe(0);
+      expect(result.discountBadge).toBe(null);
+      expect(result.finalPrice).toBe(10000);
+    });
+  });
+
+  describe('getStatusColor', () => {
+    it('should return gray for unavailable benefits', () => {
+      // Arrange
+      const mockBenefit = createMockBenefit({
+        isAvailableNow: () => false,
+      });
+
+      // Act
+      const result = BenefitAdapter.getStatusColor(mockBenefit);
+
+      // Assert
+      expect(result).toBe('gray');
+    });
+
+    it('should return red for high discount (30%+)', () => {
+      // Arrange
+      const mockBenefit = createMockBenefit({
+        isAvailableNow: () => true,
+        getDiscountPercentage: () => 30,
+      });
+
+      // Act
+      const result = BenefitAdapter.getStatusColor(mockBenefit);
+
+      // Assert
+      expect(result).toBe('red');
+    });
+
+    it('should return orange for medium discount (10-29%)', () => {
+      // Arrange
+      const mockBenefit = createMockBenefit({
+        isAvailableNow: () => true,
+        getDiscountPercentage: () => 15,
+      });
+
+      // Act
+      const result = BenefitAdapter.getStatusColor(mockBenefit);
+
+      // Assert
+      expect(result).toBe('orange');
+    });
+
+    it('should return blue for low/no discount (<10%)', () => {
+      // Arrange
+      const mockBenefit = createMockBenefit({
+        isAvailableNow: () => true,
+        getDiscountPercentage: () => 5,
+      });
+
+      // Act
+      const result = BenefitAdapter.getStatusColor(mockBenefit);
+
+      // Assert
+      expect(result).toBe('blue');
+    });
+  });
+
+  describe('toUiList', () => {
+    it('should transform array of Entities to array of UI Types', () => {
+      // Arrange
+      const mockBenefits = [
+        createMockBenefit({ getId: () => 1 }),
+        createMockBenefit({ getId: () => 2 }),
+        createMockBenefit({ getId: () => 3 }),
+      ];
+
+      // Act
+      const result = BenefitAdapter.toUiList(mockBenefits);
+
+      // Assert
+      expect(result).toHaveLength(3);
+      expect(result[0].id).toBe(1);
+      expect(result[1].id).toBe(2);
+      expect(result[2].id).toBe(3);
+    });
+  });
+});
+```
+
+**핵심 포인트**:
+- ✅ Entity를 Mock하여 순수 변환 로직만 테스트
+- ✅ UI helper 메서드의 모든 분기 테스트 (색상, 가용성 등)
+- ✅ 엣지 케이스 테스트 (할인 없음, 품절 등)
+- ✅ Type-safe 변환이 올바른지 검증
+- ❌ Entity 비즈니스 로직 테스트 금지 (Entity 테스트에서 담당)
+- ❌ 실제 Entity 인스턴스 생성 금지 (Mock 사용)
+
+#### Entity Testing (Domain Layer)
+
+**목적**: Entity는 도메인 비즈니스 로직을 담당하므로, Entity 메서드의 계산과 규칙이 올바른지 테스트합니다.
+
+**언제 테스트하는가**:
+- Entity가 복잡한 계산 메서드를 가질 때 (할인율, 만료일 계산 등)
+- Entity가 비즈니스 규칙 검증 메서드를 가질 때 (가용성, 유효성 등)
+- Entity가 상태 변환 로직을 가질 때
+
+```typescript
+// domains/stamp/domain/entities/__tests__/stamp.entity.test.ts
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { Stamp } from '../stamp.entity';
+
+describe('Stamp Entity', () => {
+  beforeEach(() => {
+    // Mock current date for consistent testing
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2024-01-15T00:00:00Z'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  describe('isExpired', () => {
+    it('should return true for expired stamps', () => {
+      // Arrange - stamp expired 1 day ago
+      const stamp = new Stamp(
+        '1',                          // id
+        'user-1',                     // userId
+        'cafeteria-1',                // cafeteriaId
+        '카페테리아 A',                // cafeteriaName
+        '2024-01-01T00:00:00Z',       // issuedAt
+        false,                        // isUsed
+        '2024-01-14T00:00:00Z',       // expiresAt - Yesterday
+      );
+
+      // Act & Assert
+      expect(stamp.isExpired()).toBe(true);
+    });
+
+    it('should return false for valid stamps', () => {
+      // Arrange - stamp expires tomorrow
+      const stamp = new Stamp(
+        '1',                          // id
+        'user-1',                     // userId
+        'cafeteria-1',                // cafeteriaId
+        '카페테리아 A',                // cafeteriaName
+        '2024-01-01T00:00:00Z',       // issuedAt
+        false,                        // isUsed
+        '2024-01-16T00:00:00Z',       // expiresAt - Tomorrow
+      );
+
+      // Act & Assert
+      expect(stamp.isExpired()).toBe(false);
+    });
+  });
+
+  describe('isExpiringSoon', () => {
+    it('should return true for stamps expiring within 7 days', () => {
+      // Arrange - expires in 5 days
+      const stamp = new Stamp(
+        '1',                          // id
+        'user-1',                     // userId
+        'cafeteria-1',                // cafeteriaId
+        '카페테리아 A',                // cafeteriaName
+        '2024-01-01T00:00:00Z',       // issuedAt
+        false,                        // isUsed
+        '2024-01-20T00:00:00Z',       // expiresAt - 5 days from now
+      );
+
+      // Act & Assert
+      expect(stamp.isExpiringSoon()).toBe(true);
+    });
+
+    it('should return false for stamps expiring later than 7 days', () => {
+      // Arrange - expires in 10 days
+      const stamp = new Stamp(
+        '1',                          // id
+        'user-1',                     // userId
+        'cafeteria-1',                // cafeteriaId
+        '카페테리아 A',                // cafeteriaName
+        '2024-01-01T00:00:00Z',       // issuedAt
+        false,                        // isUsed
+        '2024-01-25T00:00:00Z',       // expiresAt - 10 days from now
+      );
+
+      // Act & Assert
+      expect(stamp.isExpiringSoon()).toBe(false);
+    });
+  });
+
+  describe('canBeUsed', () => {
+    it('should return false for used stamps', () => {
+      // Arrange
+      const stamp = new Stamp(
+        '1',                          // id
+        'user-1',                     // userId
+        'cafeteria-1',                // cafeteriaId
+        '카페테리아 A',                // cafeteriaName
+        '2024-01-01T00:00:00Z',       // issuedAt
+        true,                         // isUsed - Already used
+        '2024-01-20T00:00:00Z',       // expiresAt
+      );
+
+      // Act & Assert
+      expect(stamp.canBeUsed()).toBe(false);
+    });
+
+    it('should return false for expired stamps', () => {
+      // Arrange
+      const stamp = new Stamp(
+        '1',                          // id
+        'user-1',                     // userId
+        'cafeteria-1',                // cafeteriaId
+        '카페테리아 A',                // cafeteriaName
+        '2024-01-01T00:00:00Z',       // issuedAt
+        false,                        // isUsed
+        '2024-01-14T00:00:00Z',       // expiresAt - Expired
+      );
+
+      // Act & Assert
+      expect(stamp.canBeUsed()).toBe(false);
+    });
+
+    it('should return true for valid unused stamps', () => {
+      // Arrange
+      const stamp = new Stamp(
+        '1',                          // id
+        'user-1',                     // userId
+        'cafeteria-1',                // cafeteriaId
+        '카페테리아 A',                // cafeteriaName
+        '2024-01-01T00:00:00Z',       // issuedAt
+        false,                        // isUsed
+        '2024-01-20T00:00:00Z',       // expiresAt
+      );
+
+      // Act & Assert
+      expect(stamp.canBeUsed()).toBe(true);
+    });
+  });
+
+  describe('getDaysUntilExpiry', () => {
+    it('should calculate correct days until expiry', () => {
+      // Arrange - expires in 5 days
+      const stamp = new Stamp(
+        '1',                          // id
+        'user-1',                     // userId
+        'cafeteria-1',                // cafeteriaId
+        '카페테리아 A',                // cafeteriaName
+        '2024-01-01T00:00:00Z',       // issuedAt
+        false,                        // isUsed
+        '2024-01-20T00:00:00Z',       // expiresAt
+      );
+
+      // Act & Assert
+      expect(stamp.getDaysUntilExpiry()).toBe(5);
+    });
+
+    it('should return negative for expired stamps', () => {
+      // Arrange - expired 2 days ago
+      const stamp = new Stamp(
+        '1',                          // id
+        'user-1',                     // userId
+        'cafeteria-1',                // cafeteriaId
+        '카페테리아 A',                // cafeteriaName
+        '2024-01-01T00:00:00Z',       // issuedAt
+        false,                        // isUsed
+        '2024-01-13T00:00:00Z',       // expiresAt
+      );
+
+      // Act & Assert
+      expect(stamp.getDaysUntilExpiry()).toBe(-2);
+    });
+  });
+
+  describe('getStatusMessage', () => {
+    it('should return used message for used stamps', () => {
+      // Arrange
+      const stamp = new Stamp(
+        '1',                          // id
+        'user-1',                     // userId
+        'cafeteria-1',                // cafeteriaId
+        '카페테리아 A',                // cafeteriaName
+        '2024-01-01T00:00:00Z',       // issuedAt
+        true,                         // isUsed
+        '2024-01-20T00:00:00Z',       // expiresAt
+      );
+
+      // Act & Assert
+      expect(stamp.getStatusMessage()).toBe('사용 완료');
+    });
+
+    it('should return expired message for expired stamps', () => {
+      // Arrange
+      const stamp = new Stamp(
+        '1',                          // id
+        'user-1',                     // userId
+        'cafeteria-1',                // cafeteriaId
+        '카페테리아 A',                // cafeteriaName
+        '2024-01-01T00:00:00Z',       // issuedAt
+        false,                        // isUsed
+        '2024-01-14T00:00:00Z',       // expiresAt
+      );
+
+      // Act & Assert
+      expect(stamp.getStatusMessage()).toBe('기간 만료');
+    });
+
+    it('should return expiring soon message with days', () => {
+      // Arrange - expires in 2 days
+      const stamp = new Stamp(
+        '1',                          // id
+        'user-1',                     // userId
+        'cafeteria-1',                // cafeteriaId
+        '카페테리아 A',                // cafeteriaName
+        '2024-01-01T00:00:00Z',       // issuedAt
+        false,                        // isUsed
+        '2024-01-17T00:00:00Z',       // expiresAt
+      );
+
+      // Act & Assert
+      expect(stamp.getStatusMessage()).toBe('2일 후 만료');
+    });
+
+    it('should return valid message for normal stamps', () => {
+      // Arrange - expires in 10 days
+      const stamp = new Stamp(
+        '1',                          // id
+        'user-1',                     // userId
+        'cafeteria-1',                // cafeteriaId
+        '카페테리아 A',                // cafeteriaName
+        '2024-01-01T00:00:00Z',       // issuedAt
+        false,                        // isUsed
+        '2024-01-25T00:00:00Z',       // expiresAt
+      );
+
+      // Act & Assert
+      expect(stamp.getStatusMessage()).toBe('사용 가능');
+    });
+  });
+});
+```
+
+**핵심 포인트**:
+- ✅ Entity 비즈니스 로직의 모든 분기 테스트
+- ✅ 날짜 계산 시 시스템 시간 Mock (`vi.useFakeTimers()`)
+- ✅ 엣지 케이스 테스트 (만료, 사용됨, 임박 등)
+- ✅ 비즈니스 규칙이 올바르게 구현되었는지 검증
+- ✅ 상태별 메시지가 올바른지 검증
+- ❌ 데이터 접근 로직 테스트 금지 (Repository가 담당)
+- ❌ UI 변환 로직 테스트 금지 (Adapter가 담당)
+
 #### Example: Testing Business Logic (Legacy - 참고용)
 
 ```typescript
-// domains/auth/services/auth.service.test.ts
+// domains/auth/domain/usecases/validate-password.usecase.test.ts
 import { describe, it, expect } from 'vitest';
-import { validatePassword, hashPassword } from './auth.service';
+import { validatePassword, hashPassword } from './validate-password.usecase';
 
-describe('AuthService', () => {
-  describe('validatePassword', () => {
+describe('ValidatePasswordUseCase', () => {
+  describe('execute', () => {
     it('should reject passwords shorter than 8 characters', () => {
       expect(validatePassword('short')).toBe(false);
     });
@@ -464,10 +885,10 @@ Use **`.node.test.ts`** for code that:
 #### Examples of Node Tests
 
 ```typescript
-// services/auth.node.test.ts
-import { hashPassword, verifyPassword } from './auth.service';
+// domains/auth/domain/usecases/hash-password.usecase.node.test.ts
+import { hashPassword, verifyPassword } from './hash-password.usecase';
 
-describe('Auth Service', () => {
+describe('HashPasswordUseCase', () => {
   it('should hash and verify passwords', async () => {
     const password = 'SecurePass123!';
     const hash = await hashPassword(password);
@@ -753,8 +1174,8 @@ component-name/
 
 ### Test Location Strategy
 
-- **🆕 Repository tests**: In `domains/[domain]/repositories/__tests__/` directory
-- **🆕 Service tests**: In `domains/[domain]/services/__tests__/` directory
+- **🆕 Repository tests**: In `domains/[domain]/data/repositories/__tests__/` directory
+- **🆕 UseCase tests**: In `domains/[domain]/domain/usecases/__tests__/` directory
 - **Unit tests**: Co-located with source files
 - **Integration tests**: In `__tests__` directories
 - **E2E tests**: In root `e2e/` directory
@@ -764,14 +1185,16 @@ component-name/
 ```
 domains/
 └── auth/
-    ├── repositories/
-    │   ├── auth-repository.ts
-    │   └── __tests__/
-    │       └── auth-repository.test.ts       # Repository unit tests
-    ├── services/
-    │   ├── auth-service.ts
-    │   └── __tests__/
-    │       └── auth-service.test.ts          # Service unit tests
+    ├── data/
+    │   └── repositories/
+    │       ├── auth-repository.ts
+    │       └── __tests__/
+    │           └── auth-repository.test.ts   # Repository unit tests
+    ├── domain/
+    │   └── usecases/
+    │       ├── login-with-oauth.usecase.ts
+    │       └── __tests__/
+    │           └── login-with-oauth.usecase.test.ts  # UseCase unit tests
     └── ui/
         ├── components/
         │   └── auth-form/
@@ -961,7 +1384,7 @@ pnpm test:e2e
 #### 🆕 DDD Layer Testing (NEW)
 
 - **Repository Tests**: Mock HttpClient to test API integration
-- **Service Tests**: Mock Repository and SessionManager to test business logic
+- **UseCase Tests**: Mock Repository and SessionManager to test business logic
 - **Test all scenarios**: Success cases, error cases, edge cases
 - **Verify mock calls**: Check correct parameters are passed
 - **Isolated testing**: Each layer tested independently with mocks
@@ -983,9 +1406,9 @@ pnpm test:e2e
 #### 🆕 DDD Layer Testing (NEW)
 
 - **NEVER test Repository with real API calls**: Always mock HttpClient
-- **NEVER test Service with real Repository**: Always mock dependencies
+- **NEVER test UseCase with real Repository**: Always mock dependencies
 - **NEVER test business logic in Repository**: Repository는 순수 데이터 접근만
-- **NEVER test data access in Service**: Service는 비즈니스 로직만
+- **NEVER test data access in UseCase**: UseCase는 비즈니스 로직만
 - **NEVER test DI Containers directly**: Container는 설정일 뿐, 로직 없음
 - **NEVER skip error scenario tests**: 에러 처리는 필수 테스트 항목
 

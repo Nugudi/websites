@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createAuthServerContainer } from "@/src/di/auth-server-container";
+import { createAuthServerContainer } from "@/src/domains/auth/di/auth-server-container";
 
 /**
  * 세션 조회 API
@@ -7,9 +7,9 @@ import { createAuthServerContainer } from "@/src/di/auth-server-container";
  */
 export async function GET() {
   const container = createAuthServerContainer();
-  const authService = container.getAuthService();
+  const getCurrentSessionUseCase = container.getCurrentSession();
 
-  const session = await authService.getCurrentSession();
+  const session = await getCurrentSessionUseCase.execute();
 
   if (!session) {
     return NextResponse.json(null, { status: 401 });

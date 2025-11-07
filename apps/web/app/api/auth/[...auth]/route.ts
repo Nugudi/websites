@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { createAuthServerContainer } from "@/src/di/auth-server-container";
-import { handleAuthError } from "@/src/domains/auth/utils/error-handler";
-import { state } from "@/src/domains/auth/utils/url";
+import { handleAuthError } from "@/src/domains/auth/data/utils/error-handler";
+import { state } from "@/src/domains/auth/data/utils/url";
+import { createAuthServerContainer } from "@/src/domains/auth/di/auth-server-container";
 
 type OAuthProvider = "google" | "kakao" | "naver";
 const OAUTH_PROVIDERS: OAuthProvider[] = ["google", "kakao", "naver"];
@@ -21,11 +21,11 @@ const handler = async (
     const [providerOrAction, action] = segments;
 
     const container = createAuthServerContainer();
-    const authService = container.getAuthService();
 
     // /api/auth/session - 클라이언트용 세션 조회
     if (providerOrAction === "session" && !action) {
-      const session = await authService.getCurrentSession();
+      const getCurrentSessionUseCase = container.getCurrentSession();
+      const session = await getCurrentSessionUseCase.execute();
       if (!session) {
         return NextResponse.json(null, { status: 401 });
       }
@@ -34,7 +34,8 @@ const handler = async (
 
     // /api/auth/logout - 로그아웃
     if (providerOrAction === "logout" && !action) {
-      await authService.logout();
+      const logoutUseCase = container.getLogout();
+      await logoutUseCase.execute();
       const to = request.nextUrl.searchParams.get("to") || "/";
       return NextResponse.redirect(new URL(to, request.url));
     }
@@ -57,7 +58,8 @@ const handler = async (
         baseUrl,
       ).toString();
 
-      const authorizeUrl = await authService.getOAuthAuthorizeUrl(
+      const getOAuthAuthorizeUrlUseCase = container.getOAuthAuthorizeUrl();
+      const authorizeUrl = await getOAuthAuthorizeUrlUseCase.execute(
         providerType,
         redirectUri,
       );
