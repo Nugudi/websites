@@ -92,13 +92,13 @@ Next.js 16 route groups organize pages by authentication requirements:
 
 ```typescript
 // app/(auth)/benefits/page.tsx - Server Component by default
-import { get-query-client } from '@core/infrastructure/configs/tanstack-query';
+import { getQueryClient } from '@core/infrastructure/configs/tanstack-query';
 import { createBenefitServerContainer } from '@/src/domains/benefit/di';  // 🆕 Per-domain DI Container
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 import { BenefitPageView } from '@/src/domains/benefit/presentation/ui/views/benefit-page-view';
 
 const BenefitsPage = async ({ searchParams }) => {
-  const queryClient = get-query-client();
+  const queryClient = getQueryClient();
 
   // 🆕 Server Container로 UseCase 획득 (매번 새 인스턴스)
   const container = createBenefitServerContainer();
@@ -130,7 +130,7 @@ export default BenefitsPage; // Pages use default export
 
 ```typescript
 // app/(auth)/cafeterias/[cafeteriaId]/page.tsx
-import { get-query-client } from '@core/infrastructure/configs/tanstack-query';
+import { getQueryClient } from '@core/infrastructure/configs/tanstack-query';
 import { createCafeteriaServerContainer } from '@/src/domains/cafeteria/di';  // 🆕 Per-domain DI Container
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 import { CafeteriaDetailView } from '@/src/domains/cafeteria/detail/presentation/ui/views/cafeteria-detail-view';
@@ -144,7 +144,7 @@ const CafeteriaDetailPage = async ({ params, searchParams }: PageProps) => {
   const { cafeteriaId } = params;
   const { tab = 'menu' } = searchParams;
 
-  const queryClient = get-query-client();
+  const queryClient = getQueryClient();
 
   // 🆕 Server Container로 UseCase 획득
   const container = createCafeteriaServerContainer();

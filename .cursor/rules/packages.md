@@ -999,7 +999,6 @@ apps/web/
 │           ├── components/    # Shared components (AppHeader, etc)
 │           ├── providers/     # Providers
 │           └── styles/        # Global styles
-│           └── styles/        # Global styles
 └── tests/                      # Test files
 ```
 

@@ -4,7 +4,7 @@
  * Shared pagination types used across all domains.
  * These are NOT entities - they are pure data structures for pagination metadata.
  *
- * @module shared/core/types
+ * @module core/types
  */
 
 import { z } from "zod";

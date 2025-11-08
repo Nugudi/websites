@@ -155,8 +155,8 @@ This project follows **Domain-Driven Design (DDD)** principles with **Clean Arch
 | **Data**            | `domains/*/data/repositories/`, `data-sources/` | Repository implementations, data sources, DTO mappings                 | AuthRepositoryImpl, AuthDataSource, DTO Mappers             |
 | **Infrastructure**  | `domains/*/infrastructure/`, `core/infrastructure/` | External services, frameworks, databases, HTTP clients            | HttpClient, SessionManager, Logger, External APIs           |
 | **DI Container**    | `domains/*/di/` 🆕 (per-domain)            | Dependency injection, object creation, lifecycle management (per-domain)    | AuthServerContainer, AuthClientContainer                    |
-| **Shared Core**     | `shared/core/` 🆕                          | Domain-agnostic utilities, pure functions (no business logic)               | formatPriceWithCurrency, formatDate, validation helpers     |
-| **Interface Adapt** | `core/ui/`               | Shared UI components, providers (connects Infrastructure to Presentation)   | AppHeader, Providers, Global Sections                       |
+| **Core Utils**      | `core/utils/`, `core/types/` 🆕            | Domain-agnostic utilities, pure functions, shared types (no business logic) | formatPriceWithCurrency, formatDate, PaginatedResponse      |
+| **Core UI**         | `core/ui/` 🆕                              | Shared UI components, providers (connects Infrastructure to Presentation)   | AppHeader, Providers, Global Styles                         |
 
 ---
 
