@@ -1,4 +1,4 @@
-import type { HttpClient } from "@/src/shared/infrastructure/http";
+import type { HttpClient } from "@core/infrastructure/http";
 import type {
   CreateReviewCommentRequest,
   CreateReviewCommentResponse,

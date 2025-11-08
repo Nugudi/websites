@@ -6,7 +6,7 @@
  * - 비즈니스 로직 없음 (순수 데이터 액세스만)
  */
 
-import type { PageInfo } from "@shared/domain/entities";
+import type { PageInfo } from "@core/types";
 import type {
   CreateReviewCommentRequest,
   CreateReviewRequest,

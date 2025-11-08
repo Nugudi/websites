@@ -60,21 +60,21 @@ nugudi/
 │           │   │   ├── presentation/   # (same structure as auth above)
 │           │   │   └── core/           # (deprecated)
 │           │   └── [other-domains]/
-│           └── shared/    # Shared Infrastructure, Core, & Interface Adapters
-│               ├── core/            # 🆕 Domain-Agnostic Core Utilities
-│               │   └── utils/       # Pure utility functions
-│               │       ├── currency/   # Currency formatting (formatPriceWithCurrency)
-│               │       ├── date/       # Date utilities (formatDate, parseDate)
-│               │       └── validation/ # Common validation helpers
+│           └── core/       # Core Infrastructure & UI Components
+│               ├── types/          # 🆕 Domain-Agnostic TypeScript Types
+│               ├── utils/          # Pure utility functions
+│               │   ├── currency/   # Currency formatting (formatPriceWithCurrency)
+│               │   ├── date/       # Date utilities (formatDate, parseDate)
+│               │   └── validation/ # Common validation helpers
 │               ├── infrastructure/  # 🆕 Infrastructure Layer
 │               │   ├── http/       # HttpClient, TokenProvider
 │               │   ├── storage/    # SessionManager
 │               │   ├── logging/    # Logger
 │               │   └── configs/    # TanStack Query, PWA
-│               └── interface-adapters/  # 🆕 UI Components & Providers
+│               └── ui/              # 🆕 UI Components & Providers
 │                   ├── components/
 │                   ├── providers/
-│                   └── sections/
+│                   └── styles/
 ├── packages/               # Shared packages (ALWAYS use these!)
 │   ├── ui/                # Aggregated UI library with Storybook
 │   ├── types/             # 🆕 Shared TypeScript types
@@ -134,7 +134,7 @@ This project follows **Domain-Driven Design (DDD)** principles with **Clean Arch
                             ↓ depends on
 ┌─────────────────────────────────────────────────────────────┐
 │                  Infrastructure Layer                       │
-│      (shared/infrastructure/http/, storage/, logging/)      │
+│      (core/infrastructure/http/, storage/, logging/)      │
 │         HttpClient, SessionManager, External APIs           │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -153,10 +153,10 @@ This project follows **Domain-Driven Design (DDD)** principles with **Clean Arch
 | **Application**     | `domains/*/domain/usecases/`               | Business logic, orchestration, use cases                                    | LoginWithOAuthUseCase, GetMyProfileUseCase                  |
 | **Domain**          | `domains/*/domain/repositories/`, `entities/` | Data access interfaces, domain models, domain logic                      | AuthRepository, UserRepository, User Entity                 |
 | **Data**            | `domains/*/data/repositories/`, `data-sources/` | Repository implementations, data sources, DTO mappings                 | AuthRepositoryImpl, AuthDataSource, DTO Mappers             |
-| **Infrastructure**  | `domains/*/infrastructure/`, `shared/infrastructure/` | External services, frameworks, databases, HTTP clients            | HttpClient, SessionManager, Logger, External APIs           |
+| **Infrastructure**  | `domains/*/infrastructure/`, `core/infrastructure/` | External services, frameworks, databases, HTTP clients            | HttpClient, SessionManager, Logger, External APIs           |
 | **DI Container**    | `domains/*/di/` 🆕 (per-domain)            | Dependency injection, object creation, lifecycle management (per-domain)    | AuthServerContainer, AuthClientContainer                    |
 | **Shared Core**     | `shared/core/` 🆕                          | Domain-agnostic utilities, pure functions (no business logic)               | formatPriceWithCurrency, formatDate, validation helpers     |
-| **Interface Adapt** | `shared/interface-adapters/`               | Shared UI components, providers (connects Infrastructure to Presentation)   | AppHeader, Providers, Global Sections                       |
+| **Interface Adapt** | `core/ui/`               | Shared UI components, providers (connects Infrastructure to Presentation)   | AppHeader, Providers, Global Sections                       |
 
 ---
 
@@ -272,7 +272,7 @@ class AuthenticatedHttpClient implements HttpClient {
 
 ```typescript
 // ❌ WRONG - Don't use HttpClient directly
-import { FetchHttpClient } from '@/src/shared/infrastructure/http';
+import { FetchHttpClient } from '@core/infrastructure/http';
 const client = new FetchHttpClient({ baseUrl: '...' });
 
 // ✅ CORRECT - Use through DI Container
@@ -285,7 +285,7 @@ const loginUseCase = container.getLoginWithOAuth();  // 개별 UseCase 획득
 
 **Server-side (`ServerSessionManager`)**:
 ```typescript
-import { ServerSessionManager } from '@/src/shared/infrastructure/storage';
+import { ServerSessionManager } from '@core/infrastructure/storage';
 
 // 내부 구현: Next.js cookies() 사용
 class ServerSessionManager implements SessionManager {
@@ -306,7 +306,7 @@ class ServerSessionManager implements SessionManager {
 
 **Client-side (`ClientSessionManager`)**:
 ```typescript
-import { ClientSessionManager } from '@/src/shared/infrastructure/storage';
+import { ClientSessionManager } from '@core/infrastructure/storage';
 
 // 내부 구현: localStorage 사용
 class ClientSessionManager implements SessionManager {
@@ -977,7 +977,7 @@ apps/web/
 │   │       ├── infrastructure/
 │   │       ├── presentation/
 │   │       └── core/
-│   └── shared/                  # Shared Infrastructure & Adapters
+│   └── core/                  # Shared Infrastructure & Adapters
 │       ├── infrastructure/     # 🆕 Infrastructure Layer
 │       │   ├── http/          # HttpClient, AuthenticatedHttpClient
 │       │   │   ├── http-client.interface.ts
@@ -995,10 +995,10 @@ apps/web/
 │       │   └── configs/       # TanStack Query, PWA
 │       │       ├── tanstack-query/
 │       │       └── pwa/
-│       └── interface-adapters/ # 🆕 UI Interface Adapters
+│       └── ui/ # 🆕 UI Interface Adapters
 │           ├── components/    # Shared components (AppHeader, etc)
 │           ├── providers/     # Providers
-│           ├── sections/      # Shared sections
+│           └── styles/        # Global styles
 │           └── styles/        # Global styles
 └── tests/                      # Test files
 ```
@@ -1130,7 +1130,7 @@ import * as styles from "./index.css";
 // app/(auth)/profile/page.tsx
 import { createUserServerContainer } from '@/src/domains/user/di/user-server-container';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
-import getQueryClient from '@/src/shared/infrastructure/configs/tanstack-query/get-query-client';
+import getQueryClient from '@core/infrastructure/configs/tanstack-query/get-query-client';
 
 const ProfilePage = async () => {
   // 1. DI Container로 UseCase 획득
@@ -1504,7 +1504,7 @@ private getDataSource(): NotificationMockDataSource {
 
 // After (Real API)
 import { NotificationRemoteDataSource } from "../data-sources/notification-remote-data-source";
-import { getHttpClient } from "@/src/shared/infrastructure/http-client";
+import { getHttpClient } from "@core/infrastructure/http-client";
 
 private getDataSource(): NotificationRemoteDataSource {
   if (!this._dataSource) {
@@ -1614,7 +1614,7 @@ export const MyComponent: React.FC = () => {};
 interface MyComponentProps {}
 
 // Hooks: camelCase with 'use' prefix
-export function useMyCustomHook() {}
+export const useMyCustomHook = () => {};
 
 // Event handlers: on + Action + Target
 const onClickSubmit = () => {};

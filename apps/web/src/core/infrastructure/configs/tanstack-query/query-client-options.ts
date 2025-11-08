@@ -1,5 +1,5 @@
+import { HttpError } from "@core/infrastructure/http/fetch-http-client";
 import { defaultShouldDehydrateQuery, type Query } from "@tanstack/react-query";
-import { HttpError } from "@/src/shared/infrastructure/http/fetch-http-client";
 
 /**
  * TanStack Query Configuration

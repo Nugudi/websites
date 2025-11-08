@@ -2,7 +2,7 @@
  * Cafeteria Repository Implementation
  */
 
-import type { PageInfo } from "@shared/domain/entities";
+import type { PageInfo } from "@core/types";
 import type {
   Cafeteria,
   CafeteriaMenu,

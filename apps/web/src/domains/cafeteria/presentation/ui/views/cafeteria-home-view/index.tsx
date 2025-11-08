@@ -1,7 +1,7 @@
+import { CafeteriaRecommendSection } from "@cafeteria/presentation/sections";
+import { AppHeader } from "@core/ui/components/app-header";
 import { Flex } from "@nugudi/react-components-layout";
-import { AppHeader } from "@/src/shared/interface-adapters/components/app-header";
-import { CafeteriaRecommendSection } from "@/src/shared/interface-adapters/sections/cafeteria-recommend-section";
-import { UserWelcomeSection } from "@/src/shared/interface-adapters/sections/user-welcome-section";
+import { UserWelcomeSection } from "@user/presentation/sections";
 import { CafeteriaBrowseMenuSection } from "../../sections/cafeteria-browse-menu-section";
 import * as styles from "./index.css";
 

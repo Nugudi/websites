@@ -7,7 +7,7 @@
  * - 비즈니스 로직 없음 (순수 데이터 접근만)
  */
 
-import type { HttpClient } from "@/src/shared/infrastructure/http/http-client.interface";
+import type { HttpClient } from "@core/infrastructure/http/http-client.interface";
 import type {
   CreateReviewCommentRequest,
   CreateReviewCommentResponse,

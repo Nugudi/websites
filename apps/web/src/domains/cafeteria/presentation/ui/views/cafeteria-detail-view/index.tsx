@@ -1,5 +1,5 @@
+import { NavBar } from "@core/ui/components/nav-bar";
 import { VStack } from "@nugudi/react-components-layout";
-import { NavBar } from "@/src/shared/interface-adapters/components/nav-bar";
 import { CafeteriaHeroSection } from "../../sections/cafeteria-hero-section";
 import { CafeteriaTabSection } from "../../sections/cafeteria-tab-section";
 

@@ -2,7 +2,7 @@
  * Cafeteria Mapper
  */
 
-import { PageInfoSchema } from "@shared/domain/entities";
+import { PageInfoSchema } from "@core/types";
 // Import types from Domain Layer
 import {
   type Cafeteria,

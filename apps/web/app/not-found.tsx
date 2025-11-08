@@ -1,4 +1,4 @@
-import { NotFoundView } from "@/src/shared/interface-adapters/components/not-found-view";
+import { NotFoundView } from "@core/ui/components/not-found-view";
 
 const NotFoundPage = () => {
   return <NotFoundView />;

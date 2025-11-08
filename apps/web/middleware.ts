@@ -1,6 +1,6 @@
+import { logger } from "@core/infrastructure/logging/logger";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { logger } from "@/src/shared/infrastructure/logging/logger";
 
 const PUBLIC_PATHS = ["/auth", "/api/auth"];
 const LOGIN_PATH = "/auth/login";

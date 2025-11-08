@@ -2,7 +2,7 @@
 
 import { Flex } from "@nugudi/react-components-layout";
 import { usePathname } from "next/navigation";
-import TabBar from "../tab-bar";
+import { TabBar } from "../tab-bar";
 import * as styles from "./index.css";
 
 interface MobileFirstLayoutProps {

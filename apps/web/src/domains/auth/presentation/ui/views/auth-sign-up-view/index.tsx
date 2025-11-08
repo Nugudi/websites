@@ -1,5 +1,5 @@
+import { NavBar } from "@core/ui/components/nav-bar";
 import { Flex } from "@nugudi/react-components-layout";
-import { NavBar } from "@/src/shared/interface-adapters/components/nav-bar";
 import { AuthSignUpSection } from "../../sections/auth-sign-up-section";
 import * as styles from "./index.css";
 

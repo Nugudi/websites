@@ -316,7 +316,7 @@ export default defineConfig({
 import { useState, useCallback, useMemo } from "react";
 import type { UseHookNameProps, UseHookNameReturn } from "./types";
 
-export function useHookName(props?: UseHookNameProps): UseHookNameReturn {
+export const useHookName = (props?: UseHookNameProps): UseHookNameReturn => {
   const [state, setState] = useState(props?.initialValue ?? false);
 
   const handlers = useMemo(
@@ -332,7 +332,7 @@ export function useHookName(props?: UseHookNameProps): UseHookNameReturn {
     value: state,
     ...handlers,
   };
-}
+};
 ```
 
 ### Hook Types

@@ -92,13 +92,13 @@ Next.js 16 route groups organize pages by authentication requirements:
 
 ```typescript
 // app/(auth)/benefits/page.tsx - Server Component by default
-import { getQueryClient } from '@/src/shared/infrastructure/configs/tanstack-query';
+import { get-query-client } from '@core/infrastructure/configs/tanstack-query';
 import { createBenefitServerContainer } from '@/src/domains/benefit/di';  // 🆕 Per-domain DI Container
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 import { BenefitPageView } from '@/src/domains/benefit/presentation/ui/views/benefit-page-view';
 
 const BenefitsPage = async ({ searchParams }) => {
-  const queryClient = getQueryClient();
+  const queryClient = get-query-client();
 
   // 🆕 Server Container로 UseCase 획득 (매번 새 인스턴스)
   const container = createBenefitServerContainer();
@@ -130,7 +130,7 @@ export default BenefitsPage; // Pages use default export
 
 ```typescript
 // app/(auth)/cafeterias/[cafeteriaId]/page.tsx
-import { getQueryClient } from '@/src/shared/infrastructure/configs/tanstack-query';
+import { get-query-client } from '@core/infrastructure/configs/tanstack-query';
 import { createCafeteriaServerContainer } from '@/src/domains/cafeteria/di';  // 🆕 Per-domain DI Container
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 import { CafeteriaDetailView } from '@/src/domains/cafeteria/detail/presentation/ui/views/cafeteria-detail-view';
@@ -144,7 +144,7 @@ const CafeteriaDetailPage = async ({ params, searchParams }: PageProps) => {
   const { cafeteriaId } = params;
   const { tab = 'menu' } = searchParams;
 
-  const queryClient = getQueryClient();
+  const queryClient = get-query-client();
 
   // 🆕 Server Container로 UseCase 획득
   const container = createCafeteriaServerContainer();
@@ -196,22 +196,26 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 ### 4. Loading and Error UI
 ```typescript
 // app/(auth)/cafeterias/loading.tsx
-export default function Loading() {
+const Loading = () => {
   return <CafeteriaListSkeleton />;
-}
+};
+
+export default Loading;
 
 // app/(auth)/cafeterias/error.tsx
 'use client';
 
-export default function Error({ error, reset }: { error: Error; reset: () => void }) {
+const Error = ({ error, reset }: { error: Error; reset: () => void }) => {
   return <ErrorBoundary error={error} onRetry={reset} />;
-}
+};
+
+export default Error;
 ```
 
 ### 5. Layout Files
 ```typescript
 // app/(auth)/layout.tsx - Authentication layout
-export default function AuthLayout({ children }: { children: React.ReactNode }) {
+const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="auth-layout">
       <AuthGuard>
@@ -220,10 +224,12 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       </AuthGuard>
     </div>
   );
-}
+};
+
+export default AuthLayout;
 
 // app/(public)/layout.tsx - Public layout
-export default function PublicLayout({ children }: { children: React.ReactNode }) {
+const PublicLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="public-layout">
       <PublicHeader />
@@ -231,7 +237,9 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       <Footer />
     </div>
   );
-}
+};
+
+export default PublicLayout;
 ```
 
 ## Key Differences from Pages Router

@@ -1,8 +1,8 @@
+import { logger } from "@core/infrastructure/logging/logger";
 import { type NextRequest, NextResponse } from "next/server";
 import { handleAuthError } from "@/src/domains/auth/data/utils/error-handler";
 import { state } from "@/src/domains/auth/data/utils/url";
 import { createAuthServerContainer } from "@/src/domains/auth/di/auth-server-container";
-import { logger } from "@/src/shared/infrastructure/logging/logger";
 
 type OAuthProvider = "google" | "kakao" | "naver";
 const OAUTH_PROVIDERS: OAuthProvider[] = ["google", "kakao", "naver"];

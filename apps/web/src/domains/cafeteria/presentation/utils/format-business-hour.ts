@@ -1,7 +1,7 @@
 import {
   formatTimeRange as formatTimeRangeUtil,
   formatTime as formatTimeUtil,
-} from "@/src/shared/core/utils/date";
+} from "@core/utils/date";
 import type { Cafeteria, LocalTime, TimeRange } from "../../domain/entities";
 
 type BusinessPeriod = "lunch" | "dinner";

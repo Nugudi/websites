@@ -1,4 +1,4 @@
-import type { PageInfo } from "@shared/domain/entities";
+import type { PageInfo } from "@core/types";
 import type { ReviewCommentWithMetadata } from "../entities";
 import type { CafeteriaReviewRepository } from "../repositories";
 

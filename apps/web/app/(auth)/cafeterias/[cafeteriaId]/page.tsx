@@ -1,8 +1,8 @@
 import { createCafeteriaServerContainer } from "@cafeteria/di";
+import getQueryClient from "@core/infrastructure/configs/tanstack-query/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { CafeteriaAdapter } from "@/src/domains/cafeteria/presentation/adapters";
 import { CafeteriaDetailView } from "@/src/domains/cafeteria/presentation/ui/views/cafeteria-detail-view";
-import getQueryClient from "@/src/shared/infrastructure/configs/tanstack-query/get-query-client";
 
 interface PageProps {
   params: Promise<{
