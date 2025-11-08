@@ -36,7 +36,7 @@ Before writing ANY new code, you MUST check existing package documentation:
 
 #### When Working with Next.js Components:
 
-- **IF** creating or modifying pages in `app/(auth)/` or `app/(public)/` or components in `src/domains/*/ui/`
+- **IF** creating or modifying pages in `app/(auth)/` or `app/(public)/` or components in `src/domains/*/presentation/ui/`
 - **THEN** read [claude/frontend.md](./claude/frontend.md) — Complete component architecture rules (Page → View → Section → Component hierarchy)
 - **AND** read [claude/nextjs-component-structure-guideline.md](./claude/nextjs-component-structure-guideline.md) — Next.js App Router route structure and specific patterns
 

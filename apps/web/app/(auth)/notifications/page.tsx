@@ -1,8 +1,8 @@
+import { getQueryClient } from "@core/infrastructure/configs/tanstack-query";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { createNotificationServerContainer } from "@/src/domains/notification/di/notification-server-container";
 import { NotificationAdapter } from "@/src/domains/notification/presentation/adapters";
 import { NotificationView } from "@/src/domains/notification/presentation/ui/views/notification-view";
-import { getQueryClient } from "@/src/shared/infrastructure/configs/tanstack-query";
 
 const NotificationsPage = async () => {
   const queryClient = getQueryClient();

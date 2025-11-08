@@ -1,3 +1,4 @@
+import { formatPriceWithCurrency } from "@core/utils/currency";
 import { InfoIcon } from "@nugudi/assets-icons";
 import {
   Body,
@@ -6,7 +7,6 @@ import {
   Title,
   VStack,
 } from "@nugudi/react-components-layout";
-import { formatPriceWithCurrency } from "@/src/shared/core/utils/currency";
 import type { CafeteriaDetailItem } from "../../../types";
 import * as styles from "./index.css";
 

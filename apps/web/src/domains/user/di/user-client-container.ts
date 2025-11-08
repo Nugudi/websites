@@ -2,6 +2,10 @@
  * User Client DI Container
  */
 
+import { AuthenticatedHttpClient } from "@core/infrastructure/http/authenticated-http-client";
+import { ClientTokenProvider } from "@core/infrastructure/http/client-token-provider";
+import { FetchHttpClient } from "@core/infrastructure/http/fetch-http-client";
+import { ClientSessionManager } from "@core/infrastructure/storage/client-session-manager";
 import {
   type UserRemoteDataSource,
   UserRemoteDataSourceImpl,
@@ -14,10 +18,6 @@ import {
   type GetMyProfileUseCase,
   GetMyProfileUseCaseImpl,
 } from "@user/domain";
-import { AuthenticatedHttpClient } from "@/src/shared/infrastructure/http/authenticated-http-client";
-import { ClientTokenProvider } from "@/src/shared/infrastructure/http/client-token-provider";
-import { FetchHttpClient } from "@/src/shared/infrastructure/http/fetch-http-client";
-import { ClientSessionManager } from "@/src/shared/infrastructure/storage/client-session-manager";
 
 export interface UserClientContainer {
   getGetMyProfile(): GetMyProfileUseCase;

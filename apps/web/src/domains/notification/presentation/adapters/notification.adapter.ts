@@ -1,4 +1,4 @@
-import { formatRelativeTime } from "@/src/shared/core/utils/date";
+import { formatRelativeTime } from "@core/utils/date";
 import {
   NOTIFICATION_CATEGORY,
   type Notification,

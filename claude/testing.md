@@ -30,7 +30,7 @@ All modules that are not directly related to UI rendering **must** have comprehe
 // domains/auth/repositories/__tests__/auth-repository.test.ts
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { AuthRepositoryImpl } from '../auth-repository';
-import type { HttpClient, HttpResponse } from '@/src/shared/infrastructure/http';
+import type { HttpClient, HttpResponse } from '@core/infrastructure/http';
 
 describe('AuthRepository', () => {
   let mockHttpClient: HttpClient;
@@ -117,7 +117,7 @@ describe('AuthRepository', () => {
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { LoginWithOAuthUseCaseImpl } from '../login-with-oauth.usecase';
 import type { AuthRepository } from '../../../data/repositories/auth-repository';
-import type { SessionManager } from '@/src/shared/infrastructure/storage';
+import type { SessionManager } from '@core/infrastructure/storage';
 
 describe('LoginWithOAuthUseCase', () => {
   let mockRepository: AuthRepository;
@@ -683,7 +683,7 @@ describe('ValidatePasswordUseCase', () => {
 #### Example: Testing Utility Functions
 
 ```typescript
-// shared/utils/format.test.ts
+// core/utils/format.test.ts
 import { describe, it, expect } from 'vitest';
 import { formatCurrency, formatDate } from './format';
 

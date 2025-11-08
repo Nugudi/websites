@@ -1,6 +1,6 @@
+import { logger } from "@core/infrastructure/logging/logger";
 import { NextResponse } from "next/server";
 import { createAuthServerContainer } from "@/src/domains/auth/di/auth-server-container";
-import { logger } from "@/src/shared/infrastructure/logging/logger";
 
 /**
  * Refresh Token API Route (BFF)

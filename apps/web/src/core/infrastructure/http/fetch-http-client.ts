@@ -125,7 +125,19 @@ export class FetchHttpClient implements HttpClient {
         if (error.name === "AbortError") {
           throw new HttpError("Request timeout", 408, null);
         }
-        throw new HttpError(error.message, 0, null);
+
+        // Fetch API 에러의 경우 cause를 포함한 상세 정보 제공
+        const errorMessage = error.cause
+          ? `${error.message} (cause: ${JSON.stringify(error.cause)})`
+          : error.message;
+
+        console.error(`[FetchHttpClient] Request failed:`, {
+          url: fullUrl,
+          error: errorMessage,
+          stack: error.stack,
+        });
+
+        throw new HttpError(errorMessage, 0, null);
       }
 
       throw new HttpError("Unknown error", 0, null);

@@ -1,6 +1,6 @@
+import SwiperWithCounter from "@core/ui/components/swiper-with-counter";
 import type { MenuItem } from "@nugudi/react-components-menu-card";
 import { MenuCard } from "@nugudi/react-components-menu-card";
-import SwiperWithCounter from "@/src/shared/interface-adapters/components/swiper-with-counter";
 
 // TODO: Phase 4 - Replace with proper OpenAPI types
 type Cafeteria = {

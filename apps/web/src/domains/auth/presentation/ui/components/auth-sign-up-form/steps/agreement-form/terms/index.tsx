@@ -1,5 +1,5 @@
+import Agreement from "@core/ui/components/agreement";
 import type { MouseEvent } from "react";
-import Agreement from "@/src/shared/interface-adapters/components/agreement";
 import { TERMS_AND_CONDITIONS_LIST } from "../../../../../../constants/sign-up";
 import type { TermsComponentProps } from "../../../../../../types/terms";
 

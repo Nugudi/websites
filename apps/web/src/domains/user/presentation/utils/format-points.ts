@@ -22,4 +22,4 @@ export const formatPointBalance = (balance: number): string => {
 
 // Re-export from shared utils for backward compatibility
 // TODO: 점진적으로 직접 import로 마이그레이션 권장
-export { formatPriceWithCurrency } from "@/src/shared/core/utils/currency/format-currency";
+export { formatPriceWithCurrency } from "@core/utils/currency/format-currency";

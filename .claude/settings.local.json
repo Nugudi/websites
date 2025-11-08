@@ -1,6 +1,18 @@
 {
   "permissions": {
-    "allow": [],
+    "allow": [
+      "mcp__next-devtools__init",
+      "Bash(npx tsc:*)",
+      "Bash(done)",
+      "Bash(tree:*)",
+      "Bash(git mv:*)",
+      "Bash(xargs sed:*)",
+      "Bash(find:*)",
+      "Bash(pnpm build:*)",
+      "Bash(git -C /Users/kim-yongmin/Workspace/personal/nugudi/apps/web diff HEAD -- src/shared/core/types/)",
+      "Bash(cat:*)",
+      "Bash(git log:*)"
+    ],
     "deny": [],
     "ask": []
   }

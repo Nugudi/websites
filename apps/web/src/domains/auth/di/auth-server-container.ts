@@ -21,10 +21,10 @@ import {
   type SignUpWithSocialUseCase,
   SignUpWithSocialUseCaseImpl,
 } from "@auth/domain";
-import { AuthenticatedHttpClient } from "@/src/shared/infrastructure/http/authenticated-http-client";
-import { FetchHttpClient } from "@/src/shared/infrastructure/http/fetch-http-client";
-import { ServerTokenProvider } from "@/src/shared/infrastructure/http/server-token-provider";
-import { ServerSessionManager } from "@/src/shared/infrastructure/storage/server-session-manager";
+import { AuthenticatedHttpClient } from "@core/infrastructure/http/authenticated-http-client";
+import { FetchHttpClient } from "@core/infrastructure/http/fetch-http-client";
+import { ServerTokenProvider } from "@core/infrastructure/http/server-token-provider";
+import { ServerSessionManager } from "@core/infrastructure/storage/server-session-manager";
 // Infrastructure Layer
 import { RefreshTokenService } from "../infrastructure/services/refresh-token.service";
 

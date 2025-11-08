@@ -1,8 +1,8 @@
 "use client";
 
 import type { ReviewCommentWithMetadata } from "@cafeteria/domain";
+import { formatRelativeTime } from "@core/utils/date";
 import { useQuery } from "@tanstack/react-query";
-import { formatRelativeTime } from "@/src/shared/core/utils/date";
 import { getCafeteriaClientContainer } from "../../../di/cafeteria-client-container";
 import type { CafeteriaReviewCommentData } from "../../types";
 

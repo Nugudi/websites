@@ -1,4 +1,4 @@
-import type { PageInfo } from "@shared/domain/entities";
+import type { PageInfo } from "@core/types";
 import type { CafeteriaMenuTimeline } from "../entities";
 import type { CafeteriaRepository } from "../repositories";
 

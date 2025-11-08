@@ -1,5 +1,5 @@
+import { AppHeader } from "@core/ui/components/app-header";
 import { Flex } from "@nugudi/react-components-layout";
-import { AppHeader } from "@/src/shared/interface-adapters/components/app-header";
 import { UserProfileLogoutButton } from "../../components/user-profile-logout-button";
 import { UserProfileMenuSection } from "../../sections/user-profile-menu-section";
 import { UserProfilePointSection } from "../../sections/user-profile-point-section";

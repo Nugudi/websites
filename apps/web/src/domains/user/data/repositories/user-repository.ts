@@ -1,5 +1,5 @@
+import type { HttpClient } from "@core/infrastructure/http";
 import type { paths } from "@nugudi/types";
-import type { HttpClient } from "@/src/shared/infrastructure/http";
 
 type GetMyProfileResponse =
   paths["/api/v1/users/me"]["get"]["responses"]["200"]["content"]["*/*"];

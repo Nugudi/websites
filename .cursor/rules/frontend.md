@@ -397,7 +397,7 @@ export const BenefitAdapter = {
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { createUserServerContainer } from "@/src/domains/user/di/user-server-container";  // 🆕 Per-domain DI Container
 import { CafeteriaHomeView } from "@/src/domains/cafeteria/presentation/views/cafeteria-home-view";
-import getQueryClient from "@/src/shared/infrastructure/configs/tanstack-query/get-query-client";
+import getQueryClient from "@core/infrastructure/configs/tanstack-query/get-query-client";
 
 const Page = async ({ params, searchParams }) => {
   const queryClient = getQueryClient();
@@ -448,9 +448,9 @@ export default Page; // Pages MUST use default export
 
 // Example: domains/cafeteria/presentation/ui/views/cafeteria-home-view/index.tsx
 import { Flex } from "@nugudi/react-components-layout";
-import { AppHeader } from "@/src/shared/ui/components/app-header";
+import { AppHeader } from "@/src/core/ui/components/app-header";
 import { CafeteriaBrowseMenuSection } from "../../sections/cafeteria-browse-menu-section";
-import { CafeteriaRecommendSection } from "../../sections/cafeteria-recommend-section";
+import { CafeteriaRecommendSection } from "../../sections/cafeteria-recommend-section"  // Now in domains/cafeteria/presentation/sections/;
 import * as styles from "./index.css";
 
 export const CafeteriaHomeView = ({ filter }) => {
@@ -483,7 +483,7 @@ export const CafeteriaHomeView = ({ filter }) => {
 // NEVER: Define page layout
 // NEVER: Import other sections
 
-// Example: shared/ui/sections/user-welcome-section/index.tsx
+// Example: domains/user/presentation/ui/sections/user-welcome-section/index.tsx
 "use client";
 
 import { Box } from "@nugudi/react-components-layout";
@@ -739,7 +739,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getUserClientContainer } from "@/src/domains/user/di/user-client-container";
 import { USER_PROFILE_QUERY_KEY } from "../../constants/query-keys";
 
-export function useGetUserProfile() {
+export const useGetUserProfile = () => {
   // 🆕 Client Container에서 UseCase 획득 (Lazy-initialized Singleton)
   const container = getUserClientContainer();
   const getMyProfileUseCase = container.getGetMyProfile();
@@ -750,7 +750,7 @@ export function useGetUserProfile() {
     staleTime: 10 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
   });
-}
+};
 ```
 
 **패턴 2: Adapter를 사용하는 Custom Hook (복잡한 변환)**
@@ -762,7 +762,7 @@ import { getBenefitClientContainer } from "@/src/domains/benefit/di/benefit-clie
 import { BenefitAdapter } from "../../adapters/benefit.adapter";
 import { BENEFIT_LIST_QUERY_KEY } from "../../constants/query-keys";
 
-export function useGetBenefitList() {
+export const useGetBenefitList = () => {
   const container = getBenefitClientContainer();
   const getBenefitListUseCase = container.getGetBenefitList();
 
@@ -778,7 +778,7 @@ export function useGetBenefitList() {
     staleTime: 5 * 60 * 1000,
     gcTime: 15 * 60 * 1000,
   });
-}
+};
 ```
 
 **패턴 3: Infinite Query Custom Hook (무한스크롤)**
@@ -938,7 +938,7 @@ import { CafeteriaHomeView } from "@/src/domains/cafeteria/presentation/ui/views
 import { useAuth } from "@/src/domains/auth/presentation/hooks/use-auth";
 import { LoginWelcome } from "@/src/domains/auth/presentation/ui/components/login-welcome";
 
-// In: apps/web/src/shared/interface-adapters/components/...
+// In: apps/web/src/core/ui/components/...
 import { ProfileSection } from "@/src/domains/user/presentation/ui/sections/profile-section";
 
 // ❌ WRONG - Don't use relative imports for cross-domain
@@ -986,7 +986,7 @@ import { api } from "@nugudi/api"; // ✅ Named
 // 1. Page: Server Container + UseCases로 Prefetch (SSR)
 // File: app/page.tsx
 import { createUserServerContainer } from "@/src/domains/user/di/user-server-container";
-import getQueryClient from "@/src/shared/infrastructure/configs/tanstack-query/get-query-client";
+import getQueryClient from "@core/infrastructure/configs/tanstack-query/get-query-client";
 
 const HomePage = async () => {
   const queryClient = getQueryClient();
@@ -1020,7 +1020,7 @@ export const CafeteriaHomeView = () => {
 };
 
 // 3. Section: Client Container + UseCase로 캐시 재사용
-// File: shared/interface-adapters/sections/user-welcome-section/index.tsx
+// File: domains/user/presentation/ui/sections/user-welcome-section/index.tsx
 import { getUserClientContainer } from "@/src/domains/user/di/user-client-container";
 
 const UserWelcomeSectionContent = () => {
@@ -1040,7 +1040,7 @@ const UserWelcomeSectionContent = () => {
 };
 
 // 4. Component: Pure UI rendering (변경 없음)
-// File: shared/interface-adapters/components/welcome-message/index.tsx
+// File: core/ui/components/welcome-message/index.tsx
 export const WelcomeMessage = ({ nickname }: { nickname: string }) => {
   return <span>{nickname}님 환영합니다</span>;
 };
@@ -1221,7 +1221,7 @@ interface [Component]Props {
 | From → To               | Same Domain                                                          | Cross Domain                                                  | Shared/App      | Packages                                                   |
 | ----------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------- | --------------- | ---------------------------------------------------------- |
 | **Pattern**             | Relative                                                             | Absolute                                                      | Absolute        | Package                                                    |
-| **Example**             | `../../sections/`                                                    | `@/domains/auth/`                                             | `@/src/shared/` | `@nugudi/themes`                                           |
+| **Example**             | `../../sections/`                                                    | `@/domains/auth/`                                             | `@core/` | `@nugudi/themes`                                           |
 | **View → Section**      | `import { SignUpSection } from '../../sections/sign-up-section'`     | N/A                                                           | N/A             | N/A                                                        |
 | **Section → Component** | `import { SignUpForm } from '../../components/sign-up-form'`         | N/A                                                           | N/A             | N/A                                                        |
 | **Component → Store**   | `import { useSignUpStore } from '../../../stores/use-sign-up-store'` | `import { useAuth } from '@/src/domains/auth/presentation/hooks/use-auth'` | N/A             | N/A                                                        |
@@ -1239,10 +1239,10 @@ import { useSignUpStore } from "../../../stores/use-sign-up-store";
 import { LoginWelcome } from "@/src/domains/auth/presentation/ui/components/login-welcome";
 
 // Shared components
-import { AppHeader } from "@/src/shared/interface-adapters/components/app-header";
+import { AppHeader } from "@core/ui/components/app-header";
 
 // Shared utilities
-import { formatPriceWithCurrency } from "@/src/shared/core/utils/currency";
+import { formatPriceWithCurrency } from "@core/utils/currency";
 
 // Packages
 import { Button } from "@nugudi/react-components-button";

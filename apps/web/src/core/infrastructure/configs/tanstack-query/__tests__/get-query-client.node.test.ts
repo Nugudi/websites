@@ -1,5 +1,5 @@
+import getQueryClient from "@core/infrastructure/configs/tanstack-query/get-query-client";
 import { describe, expect, it } from "vitest";
-import getQueryClient from "@/src/shared/infrastructure/configs/tanstack-query/get-query-client";
 
 describe("getQueryClient", () => {
   it("should return the different instance", () => {

@@ -46,7 +46,7 @@
  * - 현재는 오버엔지니어링 없이 실용적인 구조 유지
  */
 
-import { logger } from "@/src/shared/infrastructure/logging/logger";
+import { logger } from "@core/infrastructure/logging/logger";
 import type { SessionManager } from "../../domain/interfaces/session-manager.interface";
 
 export class RefreshTokenService {

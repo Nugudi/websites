@@ -5,7 +5,7 @@ import { RegisterServiceWorkerClient } from "../../infrastructure/configs/pwa/re
 import QueryProvider from "./modules/query-provider";
 import { ThemeScript } from "./scripts/theme-script";
 
-function Providers({ children }: PropsWithChildren) {
+const Providers = ({ children }: PropsWithChildren) => {
   return (
     <>
       <RegisterServiceWorkerClient />
@@ -13,6 +13,6 @@ function Providers({ children }: PropsWithChildren) {
       <QueryProvider>{children}</QueryProvider>
     </>
   );
-}
+};
 
 export default Providers;

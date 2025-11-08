@@ -1,8 +1,8 @@
 "use client";
 
+import { NavBar } from "@core/ui/components/nav-bar";
 import { VStack } from "@nugudi/react-components-layout";
 import { useState } from "react";
-import { NavBar } from "@/src/shared/interface-adapters/components/nav-bar";
 import { CafeteriaReviewCommentBottomSheet } from "../../components/cafeteria-review-comment-bottom-sheet";
 import { CafeteriaDateReviewsSection } from "../../sections/cafeteria-date-reviews-section";
 

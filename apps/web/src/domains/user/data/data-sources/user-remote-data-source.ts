@@ -7,7 +7,7 @@
  * - No business logic (only data fetching)
  */
 
-import type { HttpClient } from "@/src/shared/infrastructure/http";
+import type { HttpClient } from "@core/infrastructure/http";
 import type {
   CheckNicknameAvailabilityParams,
   CheckNicknameAvailabilityResponse,

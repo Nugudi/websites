@@ -1,6 +1,6 @@
+import { CafeteriaRecommendSection } from "@cafeteria/presentation/sections";
+import { AppHeader } from "@core/ui/components/app-header";
 import { VStack } from "@nugudi/react-components-layout";
-import { AppHeader } from "@/src/shared/interface-adapters/components/app-header";
-import { CafeteriaRecommendSection } from "@/src/shared/interface-adapters/sections/cafeteria-recommend-section";
 import { BenefitMenuSection } from "../../sections/benefit-menu-section";
 import * as styles from "./index.css";
 

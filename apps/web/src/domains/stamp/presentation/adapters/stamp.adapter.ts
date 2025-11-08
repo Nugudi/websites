@@ -1,4 +1,4 @@
-import { formatDate } from "@/src/shared/core/utils/date";
+import { formatDate } from "@core/utils/date";
 import type {
   Stamp,
   StampCollection,

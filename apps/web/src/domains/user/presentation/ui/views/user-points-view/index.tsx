@@ -1,7 +1,7 @@
 "use client";
 
+import { NavBar } from "@core/ui/components/nav-bar";
 import { VStack } from "@nugudi/react-components-layout";
-import { NavBar } from "@/src/shared/interface-adapters/components/nav-bar";
 import { UserPointsBalanceSection } from "../../sections/user-points-balance-section";
 import { UserPointsHistorySection } from "../../sections/user-points-history-section";
 import * as styles from "./index.css";
