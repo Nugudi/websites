@@ -1,4 +1,4 @@
-import { StampVerifyView } from "@/src/domains/stamp/presentation/ui/views/stamp-verify-view";
+import { StampVerifyView } from "@/src/domains/stamp/presentation/shared/ui/views/stamp-verify-view";
 
 const CafeteriaStampsVerifyPage = () => {
   return <StampVerifyView />;

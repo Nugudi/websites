@@ -7,13 +7,15 @@
  */
 
 import type { PageInfo } from "@core/types";
+// Import Request DTOs
 import type {
   CreateReviewCommentRequest,
   CreateReviewRequest,
-  Review,
-  ReviewComment,
-  ReviewCommentWithMetadata,
-} from "../entities";
+} from "../../data/remote/dto";
+// Import Domain Types (simple data structures)
+import type { ReviewCommentWithMetadata } from "../../data/remote/dto/response/cafeteria-review-types";
+// Import Entity classes (with business logic)
+import type { Review, ReviewComment } from "../entities";
 
 export interface CafeteriaReviewRepository {
   createReview(data: CreateReviewRequest): Promise<Review>;

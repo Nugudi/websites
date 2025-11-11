@@ -6,8 +6,9 @@ import "server-only";
 
 // Data Layer
 import {
-  CafeteriaRepositoryStub,
-  CafeteriaReviewMockDataSource,
+  CafeteriaRemoteDataSourceMockImpl,
+  CafeteriaRepositoryImpl,
+  CafeteriaReviewRemoteDataSourceMockImpl,
   CafeteriaReviewRepositoryImpl,
 } from "@cafeteria/data";
 // Domain Layer (UseCases)
@@ -38,8 +39,8 @@ import {
 import { AuthenticatedHttpClient } from "@core/infrastructure/http/authenticated-http-client";
 import { FetchHttpClient } from "@core/infrastructure/http/fetch-http-client";
 import { ServerTokenProvider } from "@core/infrastructure/http/server-token-provider";
+import { RefreshTokenService } from "@core/infrastructure/services/auth/refresh-token.service";
 import { ServerSessionManager } from "@core/infrastructure/storage/server-session-manager";
-import { RefreshTokenService } from "@/src/domains/auth/infrastructure/services/refresh-token.service";
 
 class CafeteriaServerContainer {
   // Cafeteria UseCases
@@ -76,9 +77,12 @@ class CafeteriaServerContainer {
       refreshTokenService, // Server-side: RefreshTokenService 주입
     );
 
-    // Data Layer - Use Stub for Mock Data
-    const cafeteriaRepository = new CafeteriaRepositoryStub();
-    const reviewDataSource = new CafeteriaReviewMockDataSource();
+    // Data Layer - Use mock DataSource for both cafeteria and reviews (for development)
+    const cafeteriaDataSource = new CafeteriaRemoteDataSourceMockImpl();
+    const cafeteriaRepository = new CafeteriaRepositoryImpl(
+      cafeteriaDataSource,
+    );
+    const reviewDataSource = new CafeteriaReviewRemoteDataSourceMockImpl();
     const reviewRepository = new CafeteriaReviewRepositoryImpl(
       reviewDataSource,
     );

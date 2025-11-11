@@ -1,7 +1,7 @@
-import { SESSION_CONFIG } from "../../core/config/constants";
-import { AuthError } from "../../core/errors/auth-error";
+import type { SessionManager } from "@core/infrastructure/storage/session-manager";
+import { SESSION_CONFIG } from "../config/constants";
 import type { Session } from "../entities/session.entity";
-import type { SessionManager } from "../interfaces/session-manager.interface";
+import { AUTH_ERROR_CODES, AuthError } from "../errors/auth-error";
 import type { AuthRepository } from "../repositories/auth-repository";
 
 export type RefreshTokenResult =
@@ -62,14 +62,15 @@ export class RefreshTokenUseCaseImpl implements RefreshTokenUseCase {
   }
 
   private shouldClearSessionOnError(error: unknown): boolean {
-    if (error && typeof error === "object" && "status" in error) {
-      const status = (error as { status: number }).status;
-      return status === 401 || status === 403;
-    }
-
+    // ✅ Domain Layer: 비즈니스 에러 코드만 확인 (HTTP 상태 코드 제거)
     if (error instanceof AuthError) {
-      const clearCodes = ["TOKEN_EXPIRED", "INVALID_TOKEN", "UNAUTHORIZED"];
-      return error.code ? clearCodes.includes(error.code) : false;
+      const clearCodes = [
+        AUTH_ERROR_CODES.SESSION_EXPIRED,
+        AUTH_ERROR_CODES.INVALID_TOKEN,
+        AUTH_ERROR_CODES.UNAUTHORIZED_ACCESS,
+        AUTH_ERROR_CODES.AUTHENTICATION_REQUIRED,
+      ] as const;
+      return (clearCodes as readonly string[]).includes(error.code);
     }
 
     return false;
@@ -83,16 +84,14 @@ export class RefreshTokenUseCaseImpl implements RefreshTokenUseCase {
     if (error instanceof Error) {
       return new AuthError(
         error.message || "Failed to refresh token",
-        "REFRESH_FAILED",
-        undefined,
+        AUTH_ERROR_CODES.TOKEN_REFRESH_FAILED,
         error,
       );
     }
 
     return new AuthError(
       "Unknown error occurred during token refresh",
-      "REFRESH_FAILED",
-      undefined,
+      AUTH_ERROR_CODES.TOKEN_REFRESH_FAILED,
       error,
     );
   }

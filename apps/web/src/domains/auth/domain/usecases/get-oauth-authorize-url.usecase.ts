@@ -1,5 +1,5 @@
-import type { OAuthProvider } from "../../core/types/common";
 import type { AuthRepository } from "../repositories/auth-repository";
+import type { OAuthProvider } from "../types/common";
 
 export interface GetOAuthAuthorizeUrlUseCase {
   execute(provider: OAuthProvider, redirectUri: string): Promise<string>;

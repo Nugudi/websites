@@ -1,19 +1,24 @@
-// Actions
-export * from "./actions";
-// Constants
-export * from "./constants";
-// Hooks
-export * from "./hooks";
-// Schemas
-export * from "./schemas";
+/**
+ * Auth Presentation Layer Exports
+ *
+ * 3-Tier Architecture:
+ * - server/   : Server Actions ('use server')
+ * - client/   : Client-side hooks and stores ('use client')
+ * - shared/   : Shared schemas, types, constants, and UI components
+ */
 
-// Stores
-export * from "./stores";
+// Client Layer
+export * from "./client/hooks";
+export * from "./client/stores";
+// Server Layer
+export * from "./server/actions";
 
-// Types
-export * from "./types";
+// Shared Layer
+export * from "./shared/constants";
+export * from "./shared/schemas";
+export * from "./shared/types";
 
 // UI Components
-export * from "./ui/components";
-export * from "./ui/sections";
-export * from "./ui/views";
+export * from "./shared/ui/components";
+export * from "./shared/ui/sections";
+export * from "./shared/ui/views";

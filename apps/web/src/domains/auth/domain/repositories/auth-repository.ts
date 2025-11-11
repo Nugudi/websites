@@ -7,7 +7,7 @@
  * - 테스트 시 Mock 객체로 대체 가능
  */
 
-import type { DeviceInfo, SignUpData } from "../../core/types/common";
+import type { DeviceInfo, SignUpData } from "@auth/domain/types/common";
 import type { Session } from "../entities/session.entity";
 import type { NicknameAvailability, User } from "../entities/user.entity";
 

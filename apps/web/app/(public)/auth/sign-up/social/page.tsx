@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import { AuthSocialSignUpInitializer } from "@/src/domains/auth/presentation/ui/components/auth-social-sign-up-initializer";
-import { AuthSocialSignUpView } from "@/src/domains/auth/presentation/ui/views/auth-social-sign-up-view";
+import { AuthSocialSignUpInitializer } from "@/src/domains/auth/presentation/shared/ui/components/auth-social-sign-up-initializer";
+import { AuthSocialSignUpView } from "@/src/domains/auth/presentation/shared/ui/views/auth-social-sign-up-view";
 
 const SignUpSocialPage = () => {
   return (

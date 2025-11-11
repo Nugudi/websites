@@ -1,14 +1,25 @@
 /**
  * Benefit Entity
+ *
+ * Domain Layer의 비즈니스 객체
+ *
+ * @remarks
+ * - Clean Architecture: Domain 계층의 핵심 비즈니스 로직
+ * - 불변성 보장 (readonly properties)
+ * - 생성자에서 검증 수행 (BenefitError 사용)
+ * - 비즈니스 규칙은 constants 사용 (하드코딩 방지)
  */
 
-export const MENU_TYPE = {
-  LUNCH: "LUNCH",
-  DINNER: "DINNER",
-  SNACK: "SNACK",
-} as const;
-
-export type MenuType = (typeof MENU_TYPE)[keyof typeof MENU_TYPE];
+import {
+  BENEFIT_ID_VALIDATION,
+  DISCOUNT_VALIDATION,
+  MENU_NAME_VALIDATION,
+  MENU_TYPE,
+  NEW_ITEM_DURATION_DAYS,
+  PRICE_VALIDATION,
+} from "../config/constants";
+import { BENEFIT_ERROR_CODES, BenefitError } from "../errors/benefit-error";
+import type { MenuType } from "../types/common";
 
 export class Benefit {
   private readonly _id: string;
@@ -36,6 +47,65 @@ export class Benefit {
     description?: string,
     imageUrl?: string,
   ) {
+    // Benefit ID 검증
+    if (!id || id.trim().length === 0) {
+      throw new BenefitError(
+        BENEFIT_ID_VALIDATION.MESSAGES.REQUIRED,
+        BENEFIT_ERROR_CODES.BENEFIT_ID_REQUIRED,
+      );
+    }
+
+    // Menu Name 검증
+    const trimmedMenuName = menuName?.trim() ?? "";
+    if (trimmedMenuName.length === 0) {
+      throw new BenefitError(
+        MENU_NAME_VALIDATION.MESSAGES.REQUIRED,
+        BENEFIT_ERROR_CODES.INVALID_MENU_NAME,
+      );
+    }
+    if (trimmedMenuName.length < MENU_NAME_VALIDATION.MIN_LENGTH) {
+      throw new BenefitError(
+        MENU_NAME_VALIDATION.MESSAGES.TOO_SHORT,
+        BENEFIT_ERROR_CODES.INVALID_MENU_NAME,
+      );
+    }
+    if (trimmedMenuName.length > MENU_NAME_VALIDATION.MAX_LENGTH) {
+      throw new BenefitError(
+        MENU_NAME_VALIDATION.MESSAGES.TOO_LONG,
+        BENEFIT_ERROR_CODES.INVALID_MENU_NAME,
+      );
+    }
+
+    // Price 검증
+    if (price < PRICE_VALIDATION.MIN_VALUE) {
+      throw new BenefitError(
+        PRICE_VALIDATION.MESSAGES.TOO_LOW,
+        BENEFIT_ERROR_CODES.INVALID_PRICE,
+      );
+    }
+    if (price > PRICE_VALIDATION.MAX_VALUE) {
+      throw new BenefitError(
+        PRICE_VALIDATION.MESSAGES.TOO_HIGH,
+        BENEFIT_ERROR_CODES.INVALID_PRICE,
+      );
+    }
+
+    // Discounted Price 검증
+    if (discountedPrice !== undefined) {
+      if (discountedPrice < PRICE_VALIDATION.MIN_VALUE) {
+        throw new BenefitError(
+          DISCOUNT_VALIDATION.MESSAGES.INVALID,
+          BENEFIT_ERROR_CODES.INVALID_DISCOUNT_PRICE,
+        );
+      }
+      if (discountedPrice > price) {
+        throw new BenefitError(
+          DISCOUNT_VALIDATION.MESSAGES.HIGHER_THAN_PRICE,
+          BENEFIT_ERROR_CODES.INVALID_DISCOUNT_PRICE,
+        );
+      }
+    }
+
     this._id = id;
     this._cafeteriaId = cafeteriaId;
     this._cafeteriaName = cafeteriaName;
@@ -212,38 +282,25 @@ export class Benefit {
     const diffInDays = Math.floor(
       (now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24),
     );
-    return diffInDays <= 7;
+    return diffInDays <= NEW_ITEM_DURATION_DAYS;
   }
 
   /**
-   * Business Logic: 할인율에 따른 배지 텍스트 반환
-   * - 30% 이상: "특가"
-   * - 10-29%: "할인"
-   * - 10% 미만: null
-   * @returns 배지 텍스트 또는 null
+   * Business Logic: 특가 할인 여부 확인 (30% 이상)
+   * @returns 특가 여부
    */
-  getDiscountBadge(): string | null {
+  isSpecialSale(): boolean {
     const discountPercentage = this.getDiscountPercentage();
-    if (discountPercentage >= 30) {
-      return "특가";
-    }
-    if (discountPercentage >= 10) {
-      return "할인";
-    }
-    return null;
+    return discountPercentage >= DISCOUNT_VALIDATION.SPECIAL_SALE_THRESHOLD;
   }
 
   /**
-   * Business Logic: 메뉴 유형에 따른 한글 표시명 반환
-   * @returns 한글 메뉴 유형
+   * Business Logic: 일반 할인 여부 확인 (10% 이상)
+   * @returns 할인 여부
    */
-  getMenuTypeDisplayName(): string {
-    const displayNameMap: Record<MenuType, string> = {
-      [MENU_TYPE.LUNCH]: "점심",
-      [MENU_TYPE.DINNER]: "저녁",
-      [MENU_TYPE.SNACK]: "간식",
-    };
-    return displayNameMap[this._menuType];
+  isSale(): boolean {
+    const discountPercentage = this.getDiscountPercentage();
+    return discountPercentage >= DISCOUNT_VALIDATION.SALE_THRESHOLD;
   }
 }
 
@@ -251,3 +308,7 @@ export interface BenefitList {
   benefits: Benefit[];
   totalCount: number;
 }
+
+// Re-export commonly used types and constants
+export { MENU_TYPE } from "../config/constants";
+export type { MenuType } from "../types/common";

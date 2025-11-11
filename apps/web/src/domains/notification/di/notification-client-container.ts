@@ -2,8 +2,11 @@
  * Notification Client DI Container
  */
 
-import { NotificationMockDataSource } from "../data/data-sources/notification-mock-data-source";
-import { NotificationRepositoryImpl } from "../data/repositories/notification-repository.impl";
+// Data Layer
+import {
+  NotificationRemoteDataSourceMockImpl,
+  NotificationRepositoryImpl,
+} from "@notification/data";
 import {
   type GetNotificationListUseCase,
   GetNotificationListUseCaseImpl,
@@ -17,16 +20,24 @@ import {
   MarkAsReadUseCaseImpl,
 } from "../domain/usecases/mark-as-read.usecase";
 
-export class NotificationClientContainer {
-  private _dataSource?: NotificationMockDataSource;
+export interface NotificationClientContainer {
+  getGetNotificationList(): GetNotificationListUseCase;
+  getMarkAsRead(): MarkAsReadUseCase;
+  getMarkAllAsRead(): MarkAllAsReadUseCase;
+}
+
+export class NotificationClientContainerImpl
+  implements NotificationClientContainer
+{
+  private _dataSource?: NotificationRemoteDataSourceMockImpl;
   private _repository?: NotificationRepositoryImpl;
   private _getNotificationListUseCase?: GetNotificationListUseCase;
   private _markAsReadUseCase?: MarkAsReadUseCase;
   private _markAllAsReadUseCase?: MarkAllAsReadUseCase;
 
-  private getDataSource(): NotificationMockDataSource {
+  private getDataSource(): NotificationRemoteDataSourceMockImpl {
     if (!this._dataSource) {
-      this._dataSource = new NotificationMockDataSource();
+      this._dataSource = new NotificationRemoteDataSourceMockImpl();
     }
     return this._dataSource;
   }
@@ -68,7 +79,7 @@ let clientContainerInstance: NotificationClientContainer | null = null;
 
 export function getNotificationClientContainer(): NotificationClientContainer {
   if (!clientContainerInstance) {
-    clientContainerInstance = new NotificationClientContainer();
+    clientContainerInstance = new NotificationClientContainerImpl();
   }
   return clientContainerInstance;
 }

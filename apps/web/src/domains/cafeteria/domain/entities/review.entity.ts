@@ -1,60 +1,50 @@
 /**
  * Review Entity
+ *
+ * 리뷰 도메인 엔티티
+ * - API DTO 구조에 맞춘 Entity
+ * - restaurantId, reviewDate, mealType, tasteTypeId 등 실제 API 필드 사용
  */
 
 export interface Review {
   // Getter methods
   getId(): number;
   getContent(): string;
-  getRating(): number;
-  getImages(): string[] | undefined;
-  getCreatedAt(): Date;
-  getAuthorId(): number;
-  getAuthorName(): string;
-  getCafeteriaId(): number;
-  getMenuId(): number;
+  getRestaurantId(): number;
+  getReviewDate(): string;
+  getMealType(): string;
+  getTasteTypeId(): number;
+  getMainImageUrl(): string | null;
+  getLikeCount(): number;
+  getCreatedAt(): string;
 
   // Business logic methods
-  hasImages(): boolean;
-  isPositive(): boolean;
-  isNegative(): boolean;
-  isRecent(): boolean;
-  isAuthoredBy(userId: number): boolean;
-  toPlainObject(): {
-    id: number;
-    content: string;
-    rating: number;
-    images?: string[];
-    createdAt: Date;
-    authorId: number;
-    authorName: string;
-    cafeteriaId: number;
-    menuId: number;
-  };
+  hasMainImage(): boolean;
+  isLiked(): boolean;
   equals(other: Review): boolean;
 }
 
 export class ReviewEntity implements Review {
   private readonly _id: number;
   private readonly _content: string;
-  private readonly _rating: number;
-  private readonly _images?: string[];
-  private readonly _createdAt: Date;
-  private readonly _authorId: number;
-  private readonly _authorName: string;
-  private readonly _cafeteriaId: number;
-  private readonly _menuId: number;
+  private readonly _restaurantId: number;
+  private readonly _reviewDate: string;
+  private readonly _mealType: string;
+  private readonly _tasteTypeId: number;
+  private readonly _mainImageUrl: string | null;
+  private readonly _likeCount: number;
+  private readonly _createdAt: string;
 
   constructor(params: {
     id: number;
     content: string;
-    rating: number;
-    images?: string[];
-    createdAt: Date;
-    authorId: number;
-    authorName: string;
-    cafeteriaId: number;
-    menuId: number;
+    restaurantId: number;
+    reviewDate: string;
+    mealType: string;
+    tasteTypeId: number;
+    mainImageUrl: string | null;
+    likeCount: number;
+    createdAt: string;
   }) {
     if (!params.id || params.id <= 0) {
       throw new Error("Review ID must be a positive number");
@@ -62,8 +52,14 @@ export class ReviewEntity implements Review {
     if (!params.content || params.content.trim().length === 0) {
       throw new Error("Review content is required");
     }
-    if (params.rating < 1 || params.rating > 5) {
-      throw new Error("Rating must be between 1 and 5");
+    if (!params.restaurantId || params.restaurantId <= 0) {
+      throw new Error("Restaurant ID must be a positive number");
+    }
+    if (!params.reviewDate) {
+      throw new Error("Review date is required");
+    }
+    if (!params.mealType) {
+      throw new Error("Meal type is required");
     }
     if (!params.createdAt) {
       throw new Error("Created date is required");
@@ -71,13 +67,13 @@ export class ReviewEntity implements Review {
 
     this._id = params.id;
     this._content = params.content;
-    this._rating = params.rating;
-    this._images = params.images;
+    this._restaurantId = params.restaurantId;
+    this._reviewDate = params.reviewDate;
+    this._mealType = params.mealType;
+    this._tasteTypeId = params.tasteTypeId;
+    this._mainImageUrl = params.mainImageUrl;
+    this._likeCount = params.likeCount;
     this._createdAt = params.createdAt;
-    this._authorId = params.authorId;
-    this._authorName = params.authorName;
-    this._cafeteriaId = params.cafeteriaId;
-    this._menuId = params.menuId;
   }
 
   // Getter methods
@@ -89,68 +85,41 @@ export class ReviewEntity implements Review {
     return this._content;
   }
 
-  getRating(): number {
-    return this._rating;
+  getRestaurantId(): number {
+    return this._restaurantId;
   }
 
-  getImages(): string[] | undefined {
-    return this._images;
+  getReviewDate(): string {
+    return this._reviewDate;
   }
 
-  getCreatedAt(): Date {
+  getMealType(): string {
+    return this._mealType;
+  }
+
+  getTasteTypeId(): number {
+    return this._tasteTypeId;
+  }
+
+  getMainImageUrl(): string | null {
+    return this._mainImageUrl;
+  }
+
+  getLikeCount(): number {
+    return this._likeCount;
+  }
+
+  getCreatedAt(): string {
     return this._createdAt;
   }
 
-  getAuthorId(): number {
-    return this._authorId;
+  // Business logic methods
+  hasMainImage(): boolean {
+    return !!this._mainImageUrl;
   }
 
-  getAuthorName(): string {
-    return this._authorName;
-  }
-
-  getCafeteriaId(): number {
-    return this._cafeteriaId;
-  }
-
-  getMenuId(): number {
-    return this._menuId;
-  }
-
-  hasImages(): boolean {
-    return !!this._images && this._images.length > 0;
-  }
-
-  isPositive(): boolean {
-    return this._rating >= 4;
-  }
-
-  isNegative(): boolean {
-    return this._rating <= 2;
-  }
-
-  isRecent(): boolean {
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    return this._createdAt >= sevenDaysAgo;
-  }
-
-  isAuthoredBy(userId: number): boolean {
-    return this._authorId === userId;
-  }
-
-  toPlainObject() {
-    return {
-      id: this._id,
-      content: this._content,
-      rating: this._rating,
-      images: this._images,
-      createdAt: this._createdAt,
-      authorId: this._authorId,
-      authorName: this._authorName,
-      cafeteriaId: this._cafeteriaId,
-      menuId: this._menuId,
-    };
+  isLiked(): boolean {
+    return this._likeCount > 0;
   }
 
   equals(other: Review): boolean {

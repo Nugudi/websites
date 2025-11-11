@@ -28,80 +28,147 @@ import { ClientTokenProvider } from "@core/infrastructure/http/client-token-prov
 import { FetchHttpClient } from "@core/infrastructure/http/fetch-http-client";
 import { ClientSessionManager } from "@core/infrastructure/storage/client-session-manager";
 
+export interface AuthClientContainer {
+  getLoginWithOAuth(): LoginWithOAuthUseCase;
+  getLogout(): LogoutUseCase;
+  getRefreshToken(): RefreshTokenUseCase;
+  getSignUpWithSocial(): SignUpWithSocialUseCase;
+  getCurrentSession(): GetCurrentSessionUseCase;
+  getCheckNicknameAvailability(): CheckNicknameAvailabilityUseCase;
+}
+
 /**
- * Auth Client Container
+ * Auth Client Container Implementation
  */
-class AuthClientContainer {
-  private loginWithOAuthUseCase: LoginWithOAuthUseCase;
-  private logoutUseCase: LogoutUseCase;
-  private refreshTokenUseCase: RefreshTokenUseCase;
-  private signUpWithSocialUseCase: SignUpWithSocialUseCase;
-  private getCurrentSessionUseCase: GetCurrentSessionUseCase;
-  private checkNicknameAvailabilityUseCase: CheckNicknameAvailabilityUseCase;
+class AuthClientContainerImpl implements AuthClientContainer {
+  private baseUrl: string;
+
+  // Infrastructure Layer (Lazy)
+  private _sessionManager?: ClientSessionManager;
+  private _tokenProvider?: ClientTokenProvider;
+  private _baseClient?: FetchHttpClient;
+  private _httpClient?: AuthenticatedHttpClient;
+
+  // Data Layer (Lazy)
+  private _authDataSource?: AuthRemoteDataSource;
+  private _authRepository?: AuthRepositoryImpl;
+
+  // Domain Layer (UseCases - Lazy)
+  private _loginWithOAuthUseCase?: LoginWithOAuthUseCase;
+  private _logoutUseCase?: LogoutUseCase;
+  private _refreshTokenUseCase?: RefreshTokenUseCase;
+  private _signUpWithSocialUseCase?: SignUpWithSocialUseCase;
+  private _getCurrentSessionUseCase?: GetCurrentSessionUseCase;
+  private _checkNicknameAvailabilityUseCase?: CheckNicknameAvailabilityUseCase;
 
   constructor(baseUrl: string = process.env.NEXT_PUBLIC_API_URL || "") {
-    // Infrastructure Layer
-    const sessionManager = new ClientSessionManager();
-    const tokenProvider = new ClientTokenProvider(sessionManager);
-    const baseClient = new FetchHttpClient({ baseUrl });
-    const httpClient = new AuthenticatedHttpClient(
-      baseClient,
-      tokenProvider,
-      sessionManager, // Client-side: provide session manager for localStorage sync
-      undefined, // Client-side: BFF 사용 (RefreshTokenService 불필요)
-    );
-
-    // Data Layer
-    const authDataSource = new AuthRemoteDataSource(httpClient);
-    const authRepository = new AuthRepositoryImpl(authDataSource);
-
-    // Domain Layer (UseCases)
-    this.loginWithOAuthUseCase = new LoginWithOAuthUseCaseImpl(
-      authRepository,
-      sessionManager,
-    );
-
-    this.logoutUseCase = new LogoutUseCaseImpl(authRepository, sessionManager);
-
-    this.refreshTokenUseCase = new RefreshTokenUseCaseImpl(
-      authRepository,
-      sessionManager,
-    );
-
-    this.signUpWithSocialUseCase = new SignUpWithSocialUseCaseImpl(
-      authRepository,
-    );
-
-    this.getCurrentSessionUseCase = new GetCurrentSessionUseCaseImpl(
-      sessionManager,
-    );
-
-    this.checkNicknameAvailabilityUseCase =
-      new CheckNicknameAvailabilityUseCaseImpl(authRepository);
+    this.baseUrl = baseUrl;
   }
 
+  // Infrastructure Layer Getters (Private - Lazy Initialization)
+  private getSessionManager(): ClientSessionManager {
+    if (!this._sessionManager) {
+      this._sessionManager = new ClientSessionManager();
+    }
+    return this._sessionManager;
+  }
+
+  private getTokenProvider(): ClientTokenProvider {
+    if (!this._tokenProvider) {
+      this._tokenProvider = new ClientTokenProvider(this.getSessionManager());
+    }
+    return this._tokenProvider;
+  }
+
+  private getBaseClient(): FetchHttpClient {
+    if (!this._baseClient) {
+      this._baseClient = new FetchHttpClient({ baseUrl: this.baseUrl });
+    }
+    return this._baseClient;
+  }
+
+  private getHttpClient(): AuthenticatedHttpClient {
+    if (!this._httpClient) {
+      this._httpClient = new AuthenticatedHttpClient(
+        this.getBaseClient(),
+        this.getTokenProvider(),
+        this.getSessionManager(), // Client-side: provide session manager for localStorage sync
+        undefined, // Client-side: BFF 사용 (RefreshTokenService 불필요)
+      );
+    }
+    return this._httpClient;
+  }
+
+  // Data Layer Getters (Private - Lazy Initialization)
+  private getDataSource(): AuthRemoteDataSource {
+    if (!this._authDataSource) {
+      this._authDataSource = new AuthRemoteDataSource(this.getHttpClient());
+    }
+    return this._authDataSource;
+  }
+
+  private getRepository(): AuthRepositoryImpl {
+    if (!this._authRepository) {
+      this._authRepository = new AuthRepositoryImpl(this.getDataSource());
+    }
+    return this._authRepository;
+  }
+
+  // Domain Layer UseCase Getters (Public - Lazy Initialization)
   getLoginWithOAuth(): LoginWithOAuthUseCase {
-    return this.loginWithOAuthUseCase;
+    if (!this._loginWithOAuthUseCase) {
+      this._loginWithOAuthUseCase = new LoginWithOAuthUseCaseImpl(
+        this.getRepository(),
+        this.getSessionManager(),
+      );
+    }
+    return this._loginWithOAuthUseCase;
   }
 
   getLogout(): LogoutUseCase {
-    return this.logoutUseCase;
+    if (!this._logoutUseCase) {
+      this._logoutUseCase = new LogoutUseCaseImpl(
+        this.getRepository(),
+        this.getSessionManager(),
+      );
+    }
+    return this._logoutUseCase;
   }
 
   getRefreshToken(): RefreshTokenUseCase {
-    return this.refreshTokenUseCase;
+    if (!this._refreshTokenUseCase) {
+      this._refreshTokenUseCase = new RefreshTokenUseCaseImpl(
+        this.getRepository(),
+        this.getSessionManager(),
+      );
+    }
+    return this._refreshTokenUseCase;
   }
 
   getSignUpWithSocial(): SignUpWithSocialUseCase {
-    return this.signUpWithSocialUseCase;
+    if (!this._signUpWithSocialUseCase) {
+      this._signUpWithSocialUseCase = new SignUpWithSocialUseCaseImpl(
+        this.getRepository(),
+      );
+    }
+    return this._signUpWithSocialUseCase;
   }
 
   getCurrentSession(): GetCurrentSessionUseCase {
-    return this.getCurrentSessionUseCase;
+    if (!this._getCurrentSessionUseCase) {
+      this._getCurrentSessionUseCase = new GetCurrentSessionUseCaseImpl(
+        this.getSessionManager(),
+      );
+    }
+    return this._getCurrentSessionUseCase;
   }
 
   getCheckNicknameAvailability(): CheckNicknameAvailabilityUseCase {
-    return this.checkNicknameAvailabilityUseCase;
+    if (!this._checkNicknameAvailabilityUseCase) {
+      this._checkNicknameAvailabilityUseCase =
+        new CheckNicknameAvailabilityUseCaseImpl(this.getRepository());
+    }
+    return this._checkNicknameAvailabilityUseCase;
   }
 }
 
@@ -112,7 +179,7 @@ let clientContainerInstance: AuthClientContainer | null = null;
 
 export function getAuthClientContainer(): AuthClientContainer {
   if (!clientContainerInstance) {
-    clientContainerInstance = new AuthClientContainer();
+    clientContainerInstance = new AuthClientContainerImpl();
   }
   return clientContainerInstance;
 }

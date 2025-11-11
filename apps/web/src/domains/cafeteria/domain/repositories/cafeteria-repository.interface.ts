@@ -7,14 +7,19 @@
  */
 
 import type { PageInfo } from "@core/types";
+// Import Request DTOs
 import type {
-  Cafeteria,
+  RegisterCafeteriaMenuRequest,
+  RegisterCafeteriaRequest,
+} from "../../data/remote/dto";
+// Import Domain Types (simple data structures without business logic)
+import type {
   CafeteriaMenu,
   CafeteriaMenuTimeline,
   MenuAvailability,
-  RegisterCafeteriaMenuRequest,
-  RegisterCafeteriaRequest,
-} from "../entities";
+} from "../../data/remote/dto/response/cafeteria-menu-types";
+// Import Entity classes
+import type { Cafeteria } from "../entities";
 
 export interface CafeteriaRepository {
   getCafeteriasWithMenu(params: {

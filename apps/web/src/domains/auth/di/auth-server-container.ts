@@ -24,9 +24,9 @@ import {
 import { AuthenticatedHttpClient } from "@core/infrastructure/http/authenticated-http-client";
 import { FetchHttpClient } from "@core/infrastructure/http/fetch-http-client";
 import { ServerTokenProvider } from "@core/infrastructure/http/server-token-provider";
+// Infrastructure Layer (Global)
+import { RefreshTokenService } from "@core/infrastructure/services/auth/refresh-token.service";
 import { ServerSessionManager } from "@core/infrastructure/storage/server-session-manager";
-// Infrastructure Layer
-import { RefreshTokenService } from "../infrastructure/services/refresh-token.service";
 
 class AuthServerContainer {
   private sessionManager: ServerSessionManager;

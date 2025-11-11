@@ -165,24 +165,6 @@ export class Stamp {
     );
     return diffInDays <= 7;
   }
-
-  /**
-   * Business Logic: 스탬프 사용 가능 상태를 설명하는 메시지 반환
-   * @returns 상태 메시지
-   */
-  getStatusMessage(): string {
-    if (this._isUsed) {
-      return "사용 완료";
-    }
-    if (this.isExpired()) {
-      return "기간 만료";
-    }
-    if (this.isExpiringSoon()) {
-      const days = this.getDaysUntilExpiry();
-      return `${days}일 후 만료`;
-    }
-    return "사용 가능";
-  }
 }
 
 export interface StampCollection {

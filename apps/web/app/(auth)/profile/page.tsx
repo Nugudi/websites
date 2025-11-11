@@ -1,14 +1,17 @@
 import getQueryClient from "@core/infrastructure/configs/tanstack-query/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { userProfileQueryServer } from "@/src/domains/user/presentation/hooks/queries/user-profile.query.server";
-import { UserProfileView } from "@/src/domains/user/presentation/ui/views/user-profile-view";
+import { createUserServerContainer } from "@/src/domains/user/di/user-server-container";
+import { createUserProfileQuery } from "@/src/domains/user/presentation/shared/queries";
+import { UserProfileView } from "@/src/domains/user/presentation/shared/ui/views/user-profile-view";
 
 export const dynamic = "force-dynamic";
 
 const ProfilePage = async () => {
   const queryClient = getQueryClient();
 
-  await queryClient.prefetchQuery(userProfileQueryServer);
+  await queryClient.prefetchQuery(
+    createUserProfileQuery(createUserServerContainer()),
+  );
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

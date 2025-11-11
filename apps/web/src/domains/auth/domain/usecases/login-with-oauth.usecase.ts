@@ -1,11 +1,11 @@
-import { AuthError } from "../../core/errors/auth-error";
-import type { OAuthProvider } from "../../core/types/common";
+import type { SessionManager } from "@core/infrastructure/storage/session-manager";
 import type { User } from "../entities/user.entity";
-import type { SessionManager } from "../interfaces/session-manager.interface";
+import { AUTH_ERROR_CODES, AuthError } from "../errors/auth-error";
 import type {
   AuthRepository,
   LoginResult as RepositoryLoginResult,
 } from "../repositories/auth-repository";
+import type { OAuthProvider } from "../types/common";
 
 export interface LoginWithOAuthParams {
   provider: OAuthProvider;
@@ -145,16 +145,14 @@ export class LoginWithOAuthUseCaseImpl implements LoginWithOAuthUseCase {
     if (error instanceof Error) {
       return new AuthError(
         error.message || "Failed to login with OAuth",
-        "INVALID_CODE",
-        undefined,
+        AUTH_ERROR_CODES.INVALID_CODE,
         error,
       );
     }
 
     return new AuthError(
       "Unknown error occurred during OAuth login",
-      "INVALID_CODE",
-      undefined,
+      AUTH_ERROR_CODES.INVALID_CODE,
       error,
     );
   }

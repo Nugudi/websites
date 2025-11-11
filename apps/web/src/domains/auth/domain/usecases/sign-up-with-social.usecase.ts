@@ -1,7 +1,8 @@
-import { AuthError } from "../../core/errors/auth-error";
-import type { SignUpData } from "../../core/types/common";
+import { NICKNAME_RULES } from "../config/constants";
 import type { User } from "../entities/user.entity";
+import { AUTH_ERROR_CODES, AuthError } from "../errors/auth-error";
 import type { AuthRepository } from "../repositories/auth-repository";
+import type { SignUpData } from "../types/common";
 
 export interface SignUpWithSocialParams {
   registrationToken: string;
@@ -32,31 +33,59 @@ export class SignUpWithSocialUseCaseImpl implements SignUpWithSocialUseCase {
 
   private validateParams(params: SignUpWithSocialParams): void {
     if (!params.registrationToken) {
-      throw new AuthError("Registration token is required", "INVALID_CODE");
+      throw new AuthError(
+        "Registration token is required",
+        AUTH_ERROR_CODES.INVALID_CODE,
+      );
     }
 
     if (!params.userData.nickname) {
-      throw new AuthError("Nickname is required");
+      throw new AuthError(
+        "Nickname is required",
+        AUTH_ERROR_CODES.INVALID_NICKNAME,
+      );
     }
 
-    if (params.userData.nickname.length < 2) {
-      throw new AuthError("Nickname must be at least 2 characters");
+    if (params.userData.nickname.length < NICKNAME_RULES.MIN_LENGTH) {
+      throw new AuthError(
+        `Nickname must be at least ${NICKNAME_RULES.MIN_LENGTH} characters`,
+        AUTH_ERROR_CODES.INVALID_NICKNAME,
+      );
     }
 
-    if (params.userData.nickname.length > 20) {
-      throw new AuthError("Nickname must be less than 20 characters");
+    if (params.userData.nickname.length > NICKNAME_RULES.MAX_LENGTH) {
+      throw new AuthError(
+        `Nickname must be less than ${NICKNAME_RULES.MAX_LENGTH} characters`,
+        AUTH_ERROR_CODES.INVALID_NICKNAME,
+      );
+    }
+
+    if (!NICKNAME_RULES.PATTERN.test(params.userData.nickname)) {
+      throw new AuthError(
+        "Nickname must contain only Korean, English, or numbers",
+        AUTH_ERROR_CODES.INVALID_NICKNAME,
+      );
     }
 
     if (!params.userData.privacyPolicy) {
-      throw new AuthError("Privacy policy agreement is required");
+      throw new AuthError(
+        "Privacy policy agreement is required",
+        AUTH_ERROR_CODES.INVALID_USER_DATA,
+      );
     }
 
     if (!params.userData.termsOfService) {
-      throw new AuthError("Terms of service agreement is required");
+      throw new AuthError(
+        "Terms of service agreement is required",
+        AUTH_ERROR_CODES.INVALID_USER_DATA,
+      );
     }
 
     if (!params.userData.locationInfo) {
-      throw new AuthError("Location info agreement is required");
+      throw new AuthError(
+        "Location info agreement is required",
+        AUTH_ERROR_CODES.INVALID_USER_DATA,
+      );
     }
   }
 
@@ -68,16 +97,14 @@ export class SignUpWithSocialUseCaseImpl implements SignUpWithSocialUseCase {
     if (error instanceof Error) {
       return new AuthError(
         error.message || "Failed to sign up",
-        undefined,
-        undefined,
+        AUTH_ERROR_CODES.INVALID_USER_DATA,
         error,
       );
     }
 
     return new AuthError(
       "Unknown error occurred during sign up",
-      undefined,
-      undefined,
+      AUTH_ERROR_CODES.INVALID_USER_DATA,
       error,
     );
   }

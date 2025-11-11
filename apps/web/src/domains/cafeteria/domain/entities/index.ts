@@ -1,18 +1,25 @@
 /**
  * Cafeteria Domain Entities Barrel Export
+ *
+ * Domain entities만 export (DTO re-export 제거)
+ * User domain pattern을 따름
  */
 
-/**
- * Re-export Request DTOs from Data Layer
- * (이전 코드 호환성 유지 - Domain Layer에서 import 가능하도록)
- */
 export type {
+  CreateReviewCommentRequest,
+  CreateReviewRequest,
   RegisterCafeteriaMenuRequest,
   RegisterCafeteriaRequest,
-} from "../../data/dto/cafeteria.dto";
+} from "../../data/remote/dto";
+// Re-export domain types from data layer for usecase convenience
+export type {
+  CafeteriaMenu,
+  CafeteriaMenuTimeline,
+  MenuAvailability,
+} from "../../data/remote/dto/response/cafeteria-menu-types";
+export type { ReviewCommentWithMetadata } from "../../data/remote/dto/response/cafeteria-review-types";
 export * from "./business-hours.entity";
 export * from "./cafeteria.entity";
-export * from "./cafeteria-menu.entity";
-export * from "./cafeteria-menu-timeline.entity";
-export * from "./cafeteria-review.entity";
-export * from "./cafeteria-review-comment.entity";
+export * from "./menu.entity";
+export * from "./review.entity";
+export * from "./review-comment.entity";
