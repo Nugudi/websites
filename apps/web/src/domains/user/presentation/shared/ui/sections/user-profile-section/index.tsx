@@ -1,7 +1,8 @@
 "use client";
 
 import { PencilIcon } from "@nugudi/assets-icons";
-import { Flex } from "@nugudi/react-components-layout";
+import { Badge } from "@nugudi/react-components-badge";
+import { Body, Flex, HStack, Title } from "@nugudi/react-components-layout";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -24,12 +25,17 @@ export const UserProfileSection = () => {
 const UserProfileSectionSkeleton = () => {
   return (
     <Flex className={styles.container}>
-      <div className="h-[60px] w-[60px] animate-pulse rounded-full bg-zinc-200" />
+      <div className="h-[130px] w-[165px] animate-pulse bg-zinc-200" />
       <Flex className={styles.infoWrapper}>
-        <div className="h-5 w-32 animate-pulse rounded bg-zinc-200" />
-        <div className="h-7 w-24 animate-pulse rounded bg-zinc-200" />
+        <div className="h-5 w-10 animate-pulse rounded bg-zinc-200" />
+        <Flex direction="column" gap={4}>
+          <div className="h-6 w-24 animate-pulse rounded bg-zinc-200" />
+          <Flex gap={4} align="center">
+            <div className="h-5 w-16 animate-pulse rounded bg-zinc-200" />
+            <div className="h-4 w-4 animate-pulse rounded bg-zinc-200" />
+          </Flex>
+        </Flex>
       </Flex>
-      <div className="h-10 w-10 animate-pulse rounded-full bg-zinc-200" />
     </Flex>
   );
 };
@@ -40,23 +46,30 @@ const UserProfileSectionError = () => {
     <Flex className={styles.container}>
       <Image
         priority
-        src="/images/nuguri.webp"
+        src="/images/intern-nuguri.png"
         alt="profile"
-        width={60}
-        height={60}
+        width={165}
+        height={130}
         className={styles.profileImage}
       />
       <Flex className={styles.infoWrapper}>
-        <span className={styles.levelText}>Lv.1 기본 너구리</span>
-        <Flex gap={4} align="end">
-          <h1 className={styles.nameText}>
-            손님 <span className={styles.nameSuffix}>님</span>
-          </h1>
+        <Badge tone="positive" size="xs" variant="weak">
+          Lv.1
+        </Badge>
+        <Flex direction="column" gap={4}>
+          <Title fontSize="t3" color="main" colorShade={800}>
+            인턴 너구리
+          </Title>
+          <HStack gap={4} align="center">
+            <Body fontSize="b3b" colorShade={700}>
+              손님
+            </Body>
+            <Link href="/profile/edit" className={styles.editButton}>
+              <PencilIcon width={16} height={16} />
+            </Link>
+          </HStack>
         </Flex>
       </Flex>
-      <Link href="/profile/edit" className={styles.editButton}>
-        <PencilIcon />
-      </Link>
     </Flex>
   );
 };
@@ -72,23 +85,30 @@ const UserProfileSectionContent = () => {
     <Flex className={styles.container}>
       <Image
         priority
-        src={profileImageUrl ?? "/images/nuguri.webp"}
+        src={profileImageUrl ?? "/images/intern-nuguri.png"}
         alt="profile"
-        width={60}
-        height={60}
+        width={165}
+        height={130}
         className={styles.profileImage}
       />
       <Flex className={styles.infoWrapper}>
-        <span className={styles.levelText}>Lv.1 기본 너구리</span>
-        <Flex gap={4} align="end">
-          <h1 className={styles.nameText}>
-            {nickname} <span className={styles.nameSuffix}>님</span>
-          </h1>
+        <Badge tone="positive" size="xs" variant="weak">
+          Lv.1
+        </Badge>
+        <Flex direction="column" gap={4}>
+          <Title fontSize="t3" color="main" colorShade={800}>
+            인턴 너구리
+          </Title>
+          <HStack gap={4} align="center">
+            <Body fontSize="b3b" colorShade={700}>
+              {nickname}
+            </Body>
+            <Link href="/profile/edit" className={styles.editButton}>
+              <PencilIcon width={16} height={16} />
+            </Link>
+          </HStack>
         </Flex>
       </Flex>
-      <Link href="/profile/edit" className={styles.editButton}>
-        <PencilIcon />
-      </Link>
     </Flex>
   );
 };

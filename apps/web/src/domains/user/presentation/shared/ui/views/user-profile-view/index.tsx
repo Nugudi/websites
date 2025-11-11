@@ -1,5 +1,5 @@
 import { AppHeader } from "@core/ui/components/app-header";
-import { Flex } from "@nugudi/react-components-layout";
+import { Flex, VStack } from "@nugudi/react-components-layout";
 import { UserProfileLogoutButton } from "../../components/user-profile-logout-button";
 import { UserProfileMenuSection } from "../../sections/user-profile-menu-section";
 import { UserProfilePointSection } from "../../sections/user-profile-point-section";
@@ -10,8 +10,10 @@ export const UserProfileView = () => {
   return (
     <Flex direction="column" className={styles.container}>
       <AppHeader />
-      <UserProfileSection />
-      <UserProfilePointSection />
+      <VStack w="full">
+        <UserProfileSection />
+        <UserProfilePointSection />
+      </VStack>
       <UserProfileMenuSection />
       <UserProfileLogoutButton />
     </Flex>
