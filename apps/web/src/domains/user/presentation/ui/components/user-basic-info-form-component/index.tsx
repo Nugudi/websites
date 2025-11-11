@@ -7,7 +7,6 @@ import type { ProfileEditFormData } from "../../../schemas/profile-edit.schema";
 interface UserBasicInfoFormComponentProps {
   register: UseFormRegister<ProfileEditFormData>;
   errors: FieldErrors<ProfileEditFormData>;
-  defaultNickname: string;
   onCheckNickname: () => void;
   onNicknameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   isCheckingNickname: boolean;
@@ -16,7 +15,6 @@ interface UserBasicInfoFormComponentProps {
 export const UserBasicInfoFormComponent = ({
   register,
   errors,
-  defaultNickname,
   onCheckNickname,
   onNicknameChange,
   isCheckingNickname,
@@ -27,7 +25,6 @@ export const UserBasicInfoFormComponent = ({
       <UserNicknameField
         register={register}
         errors={errors}
-        defaultNickname={defaultNickname}
         onCheckNickname={onCheckNickname}
         onNicknameChange={onNicknameChange}
         isCheckingNickname={isCheckingNickname}
@@ -44,7 +41,6 @@ type UserNicknameFieldProps = Pick<
   UserBasicInfoFormComponentProps,
   | "register"
   | "errors"
-  | "defaultNickname"
   | "onCheckNickname"
   | "onNicknameChange"
   | "isCheckingNickname"
@@ -53,7 +49,6 @@ type UserNicknameFieldProps = Pick<
 function UserNicknameField({
   register,
   errors,
-  defaultNickname,
   onCheckNickname,
   onNicknameChange,
   isCheckingNickname,
@@ -65,7 +60,6 @@ function UserNicknameField({
           label="닉네임"
           variant="filled"
           {...register("nickname")}
-          defaultValue={defaultNickname}
           onChange={(e) => {
             register("nickname").onChange(e);
             onNicknameChange(e);

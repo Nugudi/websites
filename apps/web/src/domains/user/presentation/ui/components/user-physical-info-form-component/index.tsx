@@ -90,7 +90,11 @@ function UserHeightInput({
       label="키"
       variant="filled"
       {...register("height", {
-        setValueAs: (v) => (v === "" ? undefined : Number(v)),
+        setValueAs: (v) => {
+          if (!v || v === "") return undefined;
+          const n = Number(v);
+          return Number.isNaN(n) ? undefined : n;
+        },
       })}
       defaultValue={defaultHeight}
       type="number"
@@ -107,19 +111,18 @@ interface UserWeightInputProps
     "register" | "errors" | "defaultWeight"
   > {}
 
-function UserWeightInput({
-  register,
-  errors,
-  defaultWeight,
-}: UserWeightInputProps) {
+function UserWeightInput({ register, errors }: UserWeightInputProps) {
   return (
     <Input
       label="몸무게"
       variant="filled"
       {...register("weight", {
-        setValueAs: (v) => (v === "" ? undefined : Number(v)),
+        setValueAs: (v) => {
+          if (!v || v === "") return undefined;
+          const n = Number(v);
+          return Number.isNaN(n) ? undefined : n;
+        },
       })}
-      defaultValue={defaultWeight}
       type="number"
       placeholder="80"
       isError={!!errors.weight}

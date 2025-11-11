@@ -47,18 +47,12 @@ export const UserProfileEditFormSectionMock = () => {
         <UserBasicInfoFormComponent
           register={register}
           errors={errors}
-          defaultNickname={MOCK_PROFILE.nickname}
           onCheckNickname={() => console.log("닉네임 중복 체크")}
           onNicknameChange={() => {}}
           isCheckingNickname={false}
         />
 
-        <UserPhysicalInfoFormComponent
-          register={register}
-          errors={errors}
-          defaultHeight={MOCK_PROFILE.height}
-          defaultWeight={MOCK_PROFILE.weight}
-        />
+        <UserPhysicalInfoFormComponent register={register} errors={errors} />
       </VStack>
 
       <Button type="submit" size="lg" variant="brand" color="zinc" width="full">
