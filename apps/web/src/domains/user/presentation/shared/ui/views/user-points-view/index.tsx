@@ -15,10 +15,8 @@ export const UserPointsView = () => {
       w="full"
       className={styles.container}
     >
-      <VStack gap={24} p={16} className={styles.content}>
-        <NavBar title="내 포인트" />
-        <UserPointsBalanceSection />
-      </VStack>
+      <NavBar title="내 포인트" background="transparent" />
+      <UserPointsBalanceSection />
       <UserPointsHistorySection />
     </VStack>
   );
