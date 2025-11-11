@@ -13,6 +13,37 @@ alwaysApply: true
 
 Client Containers are used in Client Components and hooks. They follow a **lazy singleton** pattern where one instance is shared across the entire client-side application lifetime.
 
+## ⚠️ Critical Import Pattern
+
+**ALWAYS import directly from the client-container file, NOT from the barrel export:**
+
+```typescript
+// ✅ CORRECT: Direct import from client-container file
+import { getUserClientContainer } from '@/src/domains/user/di/user-client-container';
+
+// ❌ WRONG: Barrel export from @user/di
+import { getUserClientContainer } from '@user/di';
+```
+
+### Why Direct Imports?
+
+The barrel export at `@user/di` re-exports BOTH `*-server-container.ts` AND `*-client-container.ts`:
+
+```typescript
+// domains/user/di/index.ts
+export * from './user-server-container'; // ❌ Bundles server-only code
+export * from './user-client-container';
+```
+
+**Problems:**
+1. **Bundler can't tree-shake**: When you import from `@user/di`, webpack bundles BOTH server and client code together
+2. **"server-only" package error**: Server-container uses `server-only` package, which CANNOT be bundled in client code
+3. **Larger bundle size**: Client gets unnecessary server code
+4. **Build failures**: Next.js build fails with "server-only cannot be imported from a Client Component"
+
+**Solution:**
+Always import directly from `*-client-container.ts` files to ensure only client code is bundled.
+
 ## Core Principles
 
 ### 1. Lazy Singleton

@@ -13,6 +13,33 @@ alwaysApply: true
 
 Server Containers are used in Server Components, Server Actions, and API Routes. They follow a **stateless, per-request** pattern where each request creates a fresh container instance.
 
+## ⚠️ Critical Import Pattern
+
+**ALWAYS import Server Containers directly from the specific file**, NOT from barrel exports at `@domain/di`.
+
+```typescript
+// ✅ CORRECT: Direct import from server-container file
+import { createUserServerContainer } from '@/src/domains/user/di/user-server-container';
+
+// ❌ WRONG: Barrel export from @user/di
+import { createUserServerContainer } from '@user/di';
+```
+
+### Why Direct Imports?
+
+Using barrel exports at `@domain/di` causes **both server and client containers to bundle together**, breaking webpack's tree-shaking:
+
+**The Problem:**
+- Barrel export bundles BOTH `*-server-container.ts` AND `*-client-container.ts`
+- Bundler can't tree-shake properly
+- `server-only` package gets bundled in client code → **Build fails**
+- Client code becomes bloated with unused server dependencies
+
+**The Solution:**
+- ✅ **ALWAYS** import directly from `*-server-container.ts` files
+- ✅ Use absolute path imports: `@/src/domains/domain/di/*-server-container`
+- ✅ This ensures ONLY server code is bundled in Server Components/Actions
+
 ## Core Principles
 
 ### 1. Stateless Per-Request

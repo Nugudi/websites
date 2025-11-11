@@ -50,6 +50,20 @@ A **Section** is a feature-specific component that:
 
 ## Client Container Usage
 
+### ⚠️ Critical: Direct Import Required
+
+**ALWAYS import Client Container directly from the specific file**, NOT from barrel exports:
+
+```typescript
+// ✅ CORRECT: Direct import from client-container file
+import { getUserClientContainer } from '@/src/domains/user/di/user-client-container';
+
+// ❌ WRONG: Barrel export from @user/di
+import { getUserClientContainer } from '@user/di';
+```
+
+**Why?** Barrel exports bundle both server and client containers together, causing webpack to fail tree-shaking. This leads to `server-only` package errors in client code and build failures.
+
 ### Why Client Container?
 
 Sections run on the client and need:

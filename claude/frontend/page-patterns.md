@@ -49,6 +49,20 @@ A **Page** is a Next.js App Router route entry point that:
 
 ## Server Container Usage
 
+### ⚠️ Critical: Direct Import Required
+
+**ALWAYS import Server Container directly from the specific file**, NOT from barrel exports:
+
+```typescript
+// ✅ CORRECT: Direct import from server-container file
+import { createUserServerContainer } from '@/src/domains/user/di/user-server-container';
+
+// ❌ WRONG: Barrel export from @user/di
+import { createUserServerContainer } from '@user/di';
+```
+
+**Why?** Barrel exports bundle both server and client containers together, causing webpack to fail tree-shaking. This leads to `server-only` package errors in client code and build failures.
+
 ### Why Server Container?
 
 Pages run on the server and need:

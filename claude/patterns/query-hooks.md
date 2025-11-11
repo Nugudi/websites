@@ -132,6 +132,30 @@ export function useGetStampCollection() {
 ❌ export function useFetchBenefitList() { } // Use 'Get' not 'Fetch'
 ```
 
+## ⚠️ Critical: Client Container Import Pattern
+
+**ALWAYS import Client Container directly from the specific file**, NOT from barrel exports:
+
+```typescript
+// ✅ CORRECT: Direct import from client-container file
+import { getBenefitClientContainer } from '@/src/domains/benefit/di/benefit-client-container';
+import { getUserClientContainer } from '@/src/domains/user/di/user-client-container';
+
+// ❌ WRONG: Barrel export from @domain/di
+import { getBenefitClientContainer } from '@benefit/di';
+import { getUserClientContainer } from '@user/di';
+```
+
+**Why Direct Imports?**
+
+Using barrel exports at `@domain/di` causes serious bundling issues:
+- Barrel exports bundle BOTH `*-server-container.ts` AND `*-client-container.ts`
+- Webpack cannot tree-shake properly
+- `server-only` package gets bundled in client code → **Build fails**
+- Bundle size increases with unused server dependencies
+
+**Solution:** Always use direct file imports with absolute paths (`@/src/domains/.../di/*-client-container`).
+
 ## Container Method Naming
 
 ### ✅ CORRECT: Individual UseCase Getters
@@ -196,7 +220,7 @@ const useCase = container.createGetBenefitsUseCase();
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { getBenefitClientContainer } from '@benefit/di/benefit-client-container';
+import { getBenefitClientContainer } from '@/src/domains/benefit/di/benefit-client-container';
 import { BenefitAdapter } from '@benefit/presentation/shared/adapters';
 import { BENEFIT_QUERY_KEYS } from '@benefit/presentation/shared/constants';
 
@@ -238,7 +262,7 @@ export function useGetBenefitList() {
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { getBenefitClientContainer } from '@benefit/di/benefit-client-container';
+import { getBenefitClientContainer } from '@/src/domains/benefit/di/benefit-client-container';
 import { BenefitAdapter } from '@benefit/presentation/shared/adapters';
 import { BENEFIT_QUERY_KEYS } from '@benefit/presentation/shared/constants';
 
@@ -506,7 +530,7 @@ export function useGetUserPreferences(options?: { enabled?: boolean }) {
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { getUserClientContainer } from '@user/di/user-client-container';
+import { getUserClientContainer } from '@/src/domains/user/di/user-client-container';
 import { UserAdapter } from '@user/presentation/shared/adapters';
 import { USER_QUERY_KEYS } from '@user/presentation/shared/constants';
 
@@ -537,7 +561,7 @@ export function useGetMyProfile() {
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { getCafeteriaClientContainer } from '@cafeteria/di/cafeteria-client-container';
+import { getCafeteriaClientContainer } from '@/src/domains/cafeteria/di/cafeteria-client-container';
 import { CafeteriaAdapter } from '@cafeteria/presentation/shared/adapters';
 import { CAFETERIA_QUERY_KEYS } from '@cafeteria/presentation/shared/constants';
 
@@ -575,7 +599,7 @@ export function useGetCafeteriaDetail(
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { getBenefitClientContainer } from '@benefit/di/benefit-client-container';
+import { getBenefitClientContainer } from '@/src/domains/benefit/di/benefit-client-container';
 import { BenefitAdapter } from '@benefit/presentation/shared/adapters';
 import { BENEFIT_QUERY_KEYS } from '@benefit/presentation/shared/constants';
 
@@ -618,7 +642,7 @@ export function useGetBenefitList(options?: BenefitListOptions) {
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useGetBenefitList } from '../get-benefit-list.query';
-import { getBenefitClientContainer } from '@benefit/di/benefit-client-container';
+import { getBenefitClientContainer } from '@/src/domains/benefit/di/benefit-client-container';
 
 // Mock DI Container
 vi.mock('@benefit/di/benefit-client-container');

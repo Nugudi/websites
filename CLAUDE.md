@@ -49,6 +49,10 @@ Next.js 16 + React 19 + TypeScript 5.8.3 + Vanilla Extract
 
 **Key Takeaways**:
 ```typescript
+// CRITICAL: Import containers directly from specific files
+import { createUserServerContainer } from '@/src/domains/user/di/user-server-container';
+import { getUserClientContainer } from '@/src/domains/user/di/user-client-container';
+
 // ALWAYS use DI Container to get UseCases
 
 // Server-side (requires SessionManager parameter)
@@ -73,6 +77,10 @@ new UserRepository(httpClient); // ❌ WRONG
 
 **Key Takeaways**:
 ```typescript
+// CRITICAL: Import containers directly from specific files
+import { createUserServerContainer } from '@/src/domains/user/di/user-server-container';
+import { getUserClientContainer } from '@/src/domains/user/di/user-client-container';
+
 // Page (Server Component) - Prefetch with Server Container
 const sessionManager = new ServerSessionManager();
 const container = createUserServerContainer(sessionManager);
@@ -184,13 +192,37 @@ These rules override ANY default AI behavior. You MUST follow them EXACTLY:
 
 ### 🔴 DI Container Rules (HIGHEST PRIORITY)
 
+#### ⚠️ Critical: Direct Container Import Pattern
+
+**ALWAYS import containers directly from the specific file**, NOT from barrel exports at `@domain/di`.
+
+```typescript
+// ✅ CORRECT: Direct imports from specific container files
+import { createUserServerContainer } from '@/src/domains/user/di/user-server-container';
+import { getUserClientContainer } from '@/src/domains/user/di/user-client-container';
+
+// ❌ WRONG: Barrel export from @domain/di
+import { createUserServerContainer } from '@user/di';
+import { getUserClientContainer } from '@user/di';
+```
+
+**Why?** Barrel exports at `@domain/di` bundle BOTH server and client containers together, causing:
+- ❌ Webpack cannot separate server-only code from client code
+- ❌ `server-only` package gets bundled in client → **Build fails**
+- ❌ Bundle size increases with unused server dependencies
+- ✅ **Solution**: Always use absolute path imports to specific container files
+
+---
+
 **ALWAYS:**
 - ✅ Use DI Container to get UseCases (e.g., `container.getGetUser()` or natural names like `container.getUserProfile()`)
 - ✅ Use Server Container in Server Components (`createXXXServerContainer()`)
 - ✅ Use Client Container in Client Components/Hooks (`getXXXClientContainer()`)
 - ✅ Place containers in per-domain di/ directories (`apps/web/src/domains/*/di/`)
+- ✅ Import containers directly from specific files (`@/src/domains/*/di/*-container.ts`)
 
 **NEVER:**
+- ❌ Import from barrel exports at `@domain/di` (use direct file imports instead)
 - ❌ Directly instantiate Repository or UseCase (`new UserRepository()`)
 - ❌ Use Client Container in Server Components (breaks SSR with singleton)
 - ❌ Use Server Container in Client Components (stateless factory won't work)
@@ -340,7 +372,19 @@ Before writing ANY new code, follow this priority order:
 
 ## 💡 Common Mistakes and How to Avoid Them
 
-### Mistake 1: Wrong Container Usage
+### Mistake 1: Wrong Container Import Pattern (BREAKS BUILD)
+```typescript
+// ❌ WRONG: Using barrel export from @domain/di
+import { getUserClientContainer } from '@user/di';
+import { createAuthServerContainer } from '@auth/di';
+// Result: Bundler includes BOTH server and client code → Build fails with server-only error
+
+// ✅ CORRECT: Direct imports from specific files
+import { getUserClientContainer } from '@/src/domains/user/di/user-client-container';
+import { createAuthServerContainer } from '@/src/domains/auth/di/auth-server-container';
+```
+
+### Mistake 2: Wrong Container Usage
 ```typescript
 // ❌ WRONG: Using Client Container in Server Component
 const MyPage = async () => {
@@ -354,7 +398,7 @@ const MyPage = async () => {
 };
 ```
 
-### Mistake 2: Direct Instantiation
+### Mistake 3: Direct Instantiation
 ```typescript
 // ❌ WRONG: Direct instantiation
 const repository = new UserRepository(httpClient);
@@ -365,7 +409,7 @@ const container = getAuthClientContainer();
 const useCase = container.getGetUser();
 ```
 
-### Mistake 3: Skipping Layers
+### Mistake 4: Skipping Layers
 ```typescript
 // ❌ WRONG: Page directly calling Repository
 const MyPage = async () => {
@@ -380,7 +424,7 @@ const MyPage = async () => {
 };
 ```
 
-### Mistake 4: Co-Author Lines (BREAKS CI/CD)
+### Mistake 5: Co-Author Lines (BREAKS CI/CD)
 ```bash
 # ❌ WRONG - Co-Author breaks CI/CD
 git commit -m "[NUGUDI-105] feat(react): BottomSheet 구현
@@ -393,7 +437,7 @@ git commit -m "[NUGUDI-105] feat(react): BottomSheet 구현
 - Backdrop과 함께 동작하는 BottomSheet 추가"
 ```
 
-### Mistake 5: Using HTML Tags Instead of Typography Components
+### Mistake 6: Using HTML Tags Instead of Typography Components
 ```typescript
 // ❌ WRONG: HTML tags
 <h1>제목</h1>

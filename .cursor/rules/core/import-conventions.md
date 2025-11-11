@@ -212,6 +212,28 @@ vars.typography.lineHeight
 
 ## DI Container Imports
 
+### ⚠️ Critical: Direct File Imports Required
+
+**ALWAYS import containers directly from the specific container file**, NOT from barrel exports at `@domain/di`.
+
+```typescript
+// ✅ CORRECT: Direct imports from specific files
+import { createUserServerContainer } from '@/src/domains/user/di/user-server-container';
+import { getUserClientContainer } from '@/src/domains/user/di/user-client-container';
+
+// ❌ WRONG: Barrel export from @user/di
+import { createUserServerContainer } from '@user/di';
+import { getUserClientContainer } from '@user/di';
+```
+
+**Why Direct Imports?**
+- Barrel exports bundle BOTH `*-server-container.ts` AND `*-client-container.ts` together
+- Webpack cannot tree-shake properly → server code leaks into client bundles
+- `server-only` package error in client code → **Build fails**
+- Bundle size increases with unused server dependencies
+
+**Solution:** Always use absolute path imports to specific container files.
+
 ### Server Container
 
 **Location**: `domains/{domain}/di/{domain}-server-container.ts`

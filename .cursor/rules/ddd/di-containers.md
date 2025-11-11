@@ -8,6 +8,26 @@ alwaysApply: true
 
 # DI Container Rules
 
+## ⚠️ Critical Import Pattern
+
+**ALWAYS import containers directly from the specific file**, NOT from barrel exports at `@domain/di`.
+
+```typescript
+// ✅ CORRECT: Direct imports from specific files
+import { createUserServerContainer } from '@/src/domains/user/di/user-server-container';
+import { getUserClientContainer } from '@/src/domains/user/di/user-client-container';
+
+// ❌ WRONG: Barrel export from @user/di
+import { createUserServerContainer, getUserClientContainer } from '@user/di';
+```
+
+**Why?** Barrel exports bundle BOTH server and client containers together, breaking webpack tree-shaking:
+- Bundler can't separate server-only code from client code
+- `server-only` package gets bundled in client → **Build fails**
+- Bundle size increases with unused dependencies
+
+**Solution:** Always use direct file imports with absolute paths.
+
 ## Container Types
 
 ### Server Container (Stateless, Per-Request)
