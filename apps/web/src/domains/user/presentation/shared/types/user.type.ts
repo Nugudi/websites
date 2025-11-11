@@ -3,6 +3,8 @@ export interface UserProfileItem {
   nickname: string;
   email?: string;
   profileImageUrl?: string;
+  height?: number;
+  weight?: number;
   createdAt?: string;
   updatedAt?: string;
 }

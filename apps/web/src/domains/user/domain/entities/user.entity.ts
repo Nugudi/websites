@@ -23,6 +23,8 @@ export interface UserProfile {
   getNickname(): string;
   getEmail(): string | undefined;
   getProfileImageUrl(): string | undefined;
+  getHeight(): number | undefined;
+  getWeight(): number | undefined;
   getCreatedAt(): string | undefined;
   getUpdatedAt(): string | undefined;
 
@@ -59,6 +61,8 @@ export class UserProfileEntity implements UserProfile {
   private readonly _nickname: string;
   private readonly _email?: string;
   private readonly _profileImageUrl?: string;
+  private readonly _height?: number;
+  private readonly _weight?: number;
   private readonly _createdAt?: string;
   private readonly _updatedAt?: string;
 
@@ -67,6 +71,8 @@ export class UserProfileEntity implements UserProfile {
     nickname: string;
     email?: string;
     profileImageUrl?: string;
+    height?: number;
+    weight?: number;
     createdAt?: string;
     updatedAt?: string;
   }) {
@@ -123,6 +129,8 @@ export class UserProfileEntity implements UserProfile {
     this._nickname = params.nickname;
     this._email = params.email;
     this._profileImageUrl = params.profileImageUrl;
+    this._height = params.height;
+    this._weight = params.weight;
     this._createdAt = params.createdAt;
     this._updatedAt = params.updatedAt;
   }
@@ -142,6 +150,14 @@ export class UserProfileEntity implements UserProfile {
 
   getProfileImageUrl(): string | undefined {
     return this._profileImageUrl;
+  }
+
+  getHeight(): number | undefined {
+    return this._height;
+  }
+
+  getWeight(): number | undefined {
+    return this._weight;
   }
 
   getCreatedAt(): string | undefined {
@@ -279,6 +295,8 @@ export class UserProfileEntity implements UserProfile {
       nickname: this._nickname,
       email: this._email,
       profileImageUrl: this._profileImageUrl,
+      height: this._height,
+      weight: this._weight,
       createdAt: this._createdAt,
       updatedAt: this._updatedAt,
     };
