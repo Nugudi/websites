@@ -4,12 +4,16 @@
  * 모든 데이터 레이어 모듈을 export
  */
 
-// DataSources
-export * from "./data-sources";
-// DTOs
-export * from "./dto";
 // Mappers
-export * from "./mappers";
+export * from "./mapper";
+// Remote API (DataSource Implementations)
+export { AuthRemoteDataSourceImpl as AuthRemoteDataSource } from "./remote/api/auth-remote-data-source-impl";
+// DTOs
+export * from "./remote/dto";
+// Error Mappers
+export * from "./remote/error";
 
+// DataSource Interfaces (for Repository layer)
+export * from "./repository/datasource";
 // Repositories
-export * from "./repositories";
+export * from "./repository/impl";

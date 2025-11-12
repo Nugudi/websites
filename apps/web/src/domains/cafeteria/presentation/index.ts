@@ -1,29 +1,21 @@
 /**
- * Cafeteria Presentation Layer Barrel Export
+ * Cafeteria Presentation Layer Exports
  *
- * Clean Architecture: Presentation Layer는 UI와 관련된 모든 것을 포함
- * - UI Components: Views, Sections, Components (Page → View → Section → Component hierarchy)
- * - Hooks: Custom React hooks for data fetching and state management
- * - Types: UI-specific types (NOT DTOs - those are in data layer)
- * - Schemas: Zod validation schemas for forms
- * - Constants: UI constants and configurations
- * - Utils: UI utility functions (formatting, transformation)
+ * 3-Tier Architecture:
+ * - client/   : Client-side hooks and stores ('use client')
+ * - shared/   : Shared schemas, types, constants, adapters, utils, and UI components
  */
 
-// Constants
-export * from "./constants";
+// Client Layer
+export * from "./client/hooks";
 
-// Hooks
-export * from "./hooks";
-
-// Schemas
-export * from "./schemas";
-
-// Types
-export * from "./types";
-
+// Shared Layer
+export * from "./shared/adapters";
+export * from "./shared/constants";
+export * from "./shared/schemas";
+export * from "./shared/types";
 // UI Components
-export * from "./ui";
-
-// Utils
-export * from "./utils";
+export * from "./shared/ui/components";
+export * from "./shared/ui/sections";
+export * from "./shared/ui/views";
+export * from "./shared/utils";

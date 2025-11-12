@@ -1,5 +1,5 @@
-import { AuthError } from "../../core/errors/auth-error";
-import type { SessionManager } from "../interfaces/session-manager.interface";
+import type { SessionManager } from "@core/infrastructure/storage/session-manager";
+import { AUTH_ERROR_CODES, AuthError } from "../errors/auth-error";
 import type { AuthRepository } from "../repositories/auth-repository";
 
 export interface LogoutUseCase {
@@ -43,16 +43,14 @@ export class LogoutUseCaseImpl implements LogoutUseCase {
     if (error instanceof Error) {
       return new AuthError(
         error.message || "Failed to logout",
-        undefined,
-        undefined,
+        AUTH_ERROR_CODES.SESSION_EXPIRED,
         error,
       );
     }
 
     return new AuthError(
       "Unknown error occurred during logout",
-      undefined,
-      undefined,
+      AUTH_ERROR_CODES.SESSION_EXPIRED,
       error,
     );
   }

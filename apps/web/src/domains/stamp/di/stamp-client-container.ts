@@ -2,8 +2,11 @@
  * Stamp Client DI Container
  */
 
-import { StampMockDataSource } from "../data/data-sources/stamp-mock-data-source";
-import { StampRepositoryImpl } from "../data/repositories/stamp-repository.impl";
+// Data Layer
+import {
+  StampRemoteDataSourceMockImpl,
+  StampRepositoryImpl,
+} from "@stamp/data";
 import {
   type ConsumeStampUseCase,
   ConsumeStampUseCaseImpl,
@@ -13,15 +16,20 @@ import {
   GetStampCollectionUseCaseImpl,
 } from "../domain/usecases/get-stamp-collection.usecase";
 
-export class StampClientContainer {
-  private _dataSource?: StampMockDataSource;
+export interface StampClientContainer {
+  getGetStampCollection(): GetStampCollectionUseCase;
+  getConsumeStamp(): ConsumeStampUseCase;
+}
+
+export class StampClientContainerImpl implements StampClientContainer {
+  private _dataSource?: StampRemoteDataSourceMockImpl;
   private _repository?: StampRepositoryImpl;
   private _getStampCollectionUseCase?: GetStampCollectionUseCase;
   private _consumeStampUseCase?: ConsumeStampUseCase;
 
-  private getDataSource(): StampMockDataSource {
+  private getDataSource(): StampRemoteDataSourceMockImpl {
     if (!this._dataSource) {
-      this._dataSource = new StampMockDataSource();
+      this._dataSource = new StampRemoteDataSourceMockImpl();
     }
     return this._dataSource;
   }
@@ -56,7 +64,7 @@ let clientContainer: StampClientContainer | null = null;
 
 export function getStampClientContainer(): StampClientContainer {
   if (!clientContainer) {
-    clientContainer = new StampClientContainer();
+    clientContainer = new StampClientContainerImpl();
   }
   return clientContainer;
 }

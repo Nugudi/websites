@@ -1,4 +1,4 @@
-import { AuthForgotPasswordView } from "@/src/domains/auth/presentation/ui/views/auth-forgot-password-view";
+import { AuthForgotPasswordView } from "@/src/domains/auth/presentation/shared/ui/views/auth-forgot-password-view";
 
 const ForgotPasswordPage = () => {
   return <AuthForgotPasswordView />;

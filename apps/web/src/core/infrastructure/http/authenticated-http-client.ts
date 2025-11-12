@@ -1,4 +1,4 @@
-import type { RefreshTokenService } from "@/src/domains/auth/infrastructure/services/refresh-token.service";
+import type { RefreshTokenService } from "@core/infrastructure/services/auth/refresh-token.service";
 import type { SessionManager } from "../storage/session-manager";
 import { HttpError } from "./fetch-http-client";
 import type {

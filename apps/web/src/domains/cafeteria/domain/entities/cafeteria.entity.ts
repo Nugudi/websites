@@ -145,29 +145,12 @@ export class CafeteriaEntity {
 
     const hour = date.getHours();
     const minute = date.getMinutes();
-    const currentMinutes = hour * 60 + minute;
 
-    const { lunch, dinner } = this._businessHours;
-
-    // 점심 시간 체크
-    if (lunch) {
-      const lunchStart = lunch.start.hour * 60 + lunch.start.minute;
-      const lunchEnd = lunch.end.hour * 60 + lunch.end.minute;
-      if (currentMinutes >= lunchStart && currentMinutes < lunchEnd) {
-        return true;
-      }
-    }
-
-    // 저녁 시간 체크
-    if (dinner) {
-      const dinnerStart = dinner.start.hour * 60 + dinner.start.minute;
-      const dinnerEnd = dinner.end.hour * 60 + dinner.end.minute;
-      if (currentMinutes >= dinnerStart && currentMinutes < dinnerEnd) {
-        return true;
-      }
-    }
-
-    return false;
+    // Delegate to BusinessHoursEntity
+    return (
+      this._businessHours.isOpenAt(hour, minute, "lunch") ||
+      this._businessHours.isOpenAt(hour, minute, "dinner")
+    );
   }
 
   /**
@@ -189,26 +172,14 @@ export class CafeteriaEntity {
     const now = new Date();
     const hour = now.getHours();
     const minute = now.getMinutes();
-    const currentMinutes = hour * 60 + minute;
 
-    const { lunch, dinner } = this._businessHours;
-
-    // 점심 시간 체크
-    if (lunch) {
-      const lunchStart = lunch.start.hour * 60 + lunch.start.minute;
-      const lunchEnd = lunch.end.hour * 60 + lunch.end.minute;
-      if (currentMinutes >= lunchStart && currentMinutes < lunchEnd) {
-        return "lunch";
-      }
+    // Delegate to BusinessHoursEntity
+    if (this._businessHours.isOpenAt(hour, minute, "lunch")) {
+      return "lunch";
     }
 
-    // 저녁 시간 체크
-    if (dinner) {
-      const dinnerStart = dinner.start.hour * 60 + dinner.start.minute;
-      const dinnerEnd = dinner.end.hour * 60 + dinner.end.minute;
-      if (currentMinutes >= dinnerStart && currentMinutes < dinnerEnd) {
-        return "dinner";
-      }
+    if (this._businessHours.isOpenAt(hour, minute, "dinner")) {
+      return "dinner";
     }
 
     return "closed";
@@ -240,33 +211,6 @@ export class CafeteriaEntity {
       return `${this._address} ${this._addressDetail}`;
     }
     return this._address;
-  }
-
-  /**
-   * 포맷팅된 영업시간 문자열 반환
-   * @returns "점심 11:00 - 14:00 & 저녁 17:00 - 20:00" 형식
-   */
-  getFullBusinessHours(): string {
-    if (!this._businessHours) {
-      return "영업시간 정보 없음";
-    }
-
-    const { lunch, dinner } = this._businessHours;
-    const periods: string[] = [];
-
-    if (lunch) {
-      const start = this.formatTime(lunch.start);
-      const end = this.formatTime(lunch.end);
-      periods.push(`점심 ${start} - ${end}`);
-    }
-
-    if (dinner) {
-      const start = this.formatTime(dinner.start);
-      const end = this.formatTime(dinner.end);
-      periods.push(`저녁 ${start} - ${end}`);
-    }
-
-    return periods.length > 0 ? periods.join(" & ") : "영업시간 정보 없음";
   }
 
   /**
@@ -332,15 +276,6 @@ export class CafeteriaEntity {
   }
 
   // === Private Helper Methods ===
-
-  /**
-   * LocalTime을 "HH:MM" 형식으로 포맷팅
-   */
-  private formatTime(time: { hour: number; minute: number }): string {
-    const hour = time.hour.toString().padStart(2, "0");
-    const minute = time.minute.toString().padStart(2, "0");
-    return `${hour}:${minute}`;
-  }
 
   /**
    * 도를 라디안으로 변환

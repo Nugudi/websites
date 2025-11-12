@@ -12,4 +12,4 @@ export {
   logout,
   refreshToken,
   signUpWithSocial,
-} from "./presentation/actions";
+} from "./presentation/server/actions";

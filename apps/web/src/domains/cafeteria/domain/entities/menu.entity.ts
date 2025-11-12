@@ -15,38 +15,7 @@ export interface NutritionInfo {
   readonly runningMinutes?: number;
 }
 
-export interface Menu {
-  // Getter methods
-  getId(): number | undefined;
-  getDate(): string;
-  getMealType(): "LUNCH" | "DINNER";
-  getItems(): MenuItem[];
-  getNutritionInfo(): NutritionInfo | undefined;
-  getAverageRating(): number | undefined;
-  getTotalReviews(): number | undefined;
-
-  // Business logic methods
-  isLunch(): boolean;
-  isDinner(): boolean;
-  hasReviews(): boolean;
-  hasNutritionInfo(): boolean;
-  getTotalCalories(): number;
-  isHighlyRated(): boolean;
-  getMainItems(): MenuItem[];
-  getSideItems(): MenuItem[];
-  toPlainObject(): {
-    id?: number;
-    date: string;
-    mealType: "LUNCH" | "DINNER";
-    items: MenuItem[];
-    nutritionInfo?: NutritionInfo;
-    averageRating?: number;
-    totalReviews?: number;
-  };
-  equals(other: Menu): boolean;
-}
-
-export class MenuEntity implements Menu {
+export class Menu {
   private readonly _id?: number;
   private readonly _date: string;
   private readonly _mealType: "LUNCH" | "DINNER";

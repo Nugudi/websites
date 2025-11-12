@@ -2,6 +2,8 @@
  * Session Entity
  */
 
+import { AUTH_ERROR_CODES, AuthError } from "../errors/auth-error";
+
 export interface Session {
   // Getter methods
   getAccessToken(): string;
@@ -14,7 +16,6 @@ export interface Session {
   willExpireSoon(thresholdMinutes?: number): boolean;
   isValid(): boolean;
   getRemainingTimeInSeconds(): number;
-  getRemainingTimeFormatted(): string;
   toPlainObject(): {
     accessToken: string;
     refreshToken: string;
@@ -35,23 +36,39 @@ export class SessionEntity implements Session {
     userId: string;
     expiresAt: Date;
   }) {
-    if (!params.accessToken) {
-      throw new Error("Access token is required");
-    }
-    if (!params.refreshToken) {
-      throw new Error("Refresh token is required");
-    }
-    if (!params.userId) {
-      throw new Error("User ID is required");
-    }
-    if (!(params.expiresAt instanceof Date)) {
-      throw new Error("Expires at must be a Date");
-    }
-
     this._accessToken = params.accessToken;
     this._refreshToken = params.refreshToken;
     this._userId = params.userId;
     this._expiresAt = params.expiresAt;
+
+    this.validate();
+  }
+
+  private validate(): void {
+    if (!this._accessToken) {
+      throw new AuthError(
+        "Access token is required",
+        AUTH_ERROR_CODES.INVALID_TOKEN,
+      );
+    }
+    if (!this._refreshToken) {
+      throw new AuthError(
+        "Refresh token is required",
+        AUTH_ERROR_CODES.INVALID_TOKEN,
+      );
+    }
+    if (!this._userId) {
+      throw new AuthError(
+        "User ID is required",
+        AUTH_ERROR_CODES.INVALID_USER_DATA,
+      );
+    }
+    if (!(this._expiresAt instanceof Date)) {
+      throw new AuthError(
+        "Expires at must be a Date",
+        AUTH_ERROR_CODES.INVALID_TOKEN,
+      );
+    }
   }
 
   // Getter methods
@@ -99,26 +116,6 @@ export class SessionEntity implements Session {
     const remaining = Math.floor((expiresAt - now) / 1000);
 
     return Math.max(0, remaining);
-  }
-
-  getRemainingTimeFormatted(): string {
-    const seconds = this.getRemainingTimeInSeconds();
-
-    if (seconds === 0) {
-      return "만료됨";
-    }
-
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const remainingSeconds = seconds % 60;
-
-    if (hours > 0) {
-      return `${hours}시간 ${minutes}분`;
-    }
-    if (minutes > 0) {
-      return `${minutes}분 ${remainingSeconds}초`;
-    }
-    return `${remainingSeconds}초`;
   }
 
   toPlainObject() {

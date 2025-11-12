@@ -5,7 +5,7 @@
  */
 
 import { type NextRequest, NextResponse } from "next/server";
-import { AuthError } from "../../core/errors/auth-error";
+import { AUTH_ERROR_CODES, AuthError } from "../../domain/errors/auth-error";
 
 /**
  * Auth 에러를 처리하여 적절한 NextResponse 반환
@@ -50,15 +50,24 @@ export function handleAuthError(
 /**
  * AuthError 코드를 HTTP 상태 코드로 변환
  */
-function getStatusFromErrorCode(code?: string): number {
+function getStatusFromErrorCode(code: string): number {
   switch (code) {
-    case "INVALID_CODE":
-    case "INVALID_TOKEN":
+    case AUTH_ERROR_CODES.INVALID_CODE:
+    case AUTH_ERROR_CODES.INVALID_TOKEN:
+    case AUTH_ERROR_CODES.SESSION_EXPIRED:
+    case AUTH_ERROR_CODES.AUTHENTICATION_REQUIRED:
       return 401;
-    case "REFRESH_FAILED":
-      return 401;
-    case "SESSION_NOT_FOUND":
-      return 401;
+    case AUTH_ERROR_CODES.UNAUTHORIZED_ACCESS:
+      return 403;
+    case AUTH_ERROR_CODES.DUPLICATE_NICKNAME:
+      return 409;
+    case AUTH_ERROR_CODES.INVALID_CREDENTIALS:
+    case AUTH_ERROR_CODES.INVALID_OAUTH_PROVIDER:
+    case AUTH_ERROR_CODES.INVALID_USER_DATA:
+    case AUTH_ERROR_CODES.INVALID_NICKNAME:
+      return 400;
+    case AUTH_ERROR_CODES.TOKEN_REFRESH_FAILED:
+      return 500;
     default:
       return 500;
   }

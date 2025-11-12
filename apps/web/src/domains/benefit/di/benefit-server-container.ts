@@ -2,8 +2,8 @@
  * Benefit Server DI Container
  */
 
-import { BenefitMockDataSource } from "../data/data-sources/benefit-mock-data-source";
-import { BenefitRepositoryImpl } from "../data/repositories/benefit-repository.impl";
+import { BenefitMockDataSource } from "../data/remote/mock/benefit-mock-data-source";
+import { BenefitRepositoryImpl } from "../data/repository/impl/benefit-repository-impl";
 import {
   type GetBenefitListUseCase,
   GetBenefitListUseCaseImpl,

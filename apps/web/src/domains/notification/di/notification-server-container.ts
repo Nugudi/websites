@@ -2,8 +2,11 @@
  * Notification Server DI Container
  */
 
-import { NotificationMockDataSource } from "../data/data-sources/notification-mock-data-source";
-import { NotificationRepositoryImpl } from "../data/repositories/notification-repository.impl";
+// Data Layer
+import {
+  NotificationRemoteDataSourceMockImpl,
+  NotificationRepositoryImpl,
+} from "@notification/data";
 import {
   type GetNotificationListUseCase,
   GetNotificationListUseCaseImpl,
@@ -18,15 +21,15 @@ import {
 } from "../domain/usecases/mark-as-read.usecase";
 
 export class NotificationServerContainer {
-  private _dataSource?: NotificationMockDataSource;
+  private _dataSource?: NotificationRemoteDataSourceMockImpl;
   private _repository?: NotificationRepositoryImpl;
   private _getNotificationListUseCase?: GetNotificationListUseCase;
   private _markAsReadUseCase?: MarkAsReadUseCase;
   private _markAllAsReadUseCase?: MarkAllAsReadUseCase;
 
-  private getDataSource(): NotificationMockDataSource {
+  private getDataSource(): NotificationRemoteDataSourceMockImpl {
     if (!this._dataSource) {
-      this._dataSource = new NotificationMockDataSource();
+      this._dataSource = new NotificationRemoteDataSourceMockImpl();
     }
     return this._dataSource;
   }

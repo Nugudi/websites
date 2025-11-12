@@ -2,14 +2,18 @@
  * Benefit Client DI Container
  */
 
-import { BenefitMockDataSource } from "../data/data-sources/benefit-mock-data-source";
-import { BenefitRepositoryImpl } from "../data/repositories/benefit-repository.impl";
+import { BenefitMockDataSource } from "../data/remote/mock/benefit-mock-data-source";
+import { BenefitRepositoryImpl } from "../data/repository/impl/benefit-repository-impl";
 import {
   type GetBenefitListUseCase,
   GetBenefitListUseCaseImpl,
 } from "../domain/usecases/get-benefit-list.usecase";
 
-export class BenefitClientContainer {
+export interface BenefitClientContainer {
+  getGetBenefitList(): GetBenefitListUseCase;
+}
+
+export class BenefitClientContainerImpl implements BenefitClientContainer {
   private _dataSource?: BenefitMockDataSource;
   private _repository?: BenefitRepositoryImpl;
   private _getBenefitListUseCase?: GetBenefitListUseCase;
@@ -42,7 +46,7 @@ let clientContainer: BenefitClientContainer | null = null;
 
 export function getBenefitClientContainer(): BenefitClientContainer {
   if (!clientContainer) {
-    clientContainer = new BenefitClientContainer();
+    clientContainer = new BenefitClientContainerImpl();
   }
   return clientContainer;
 }

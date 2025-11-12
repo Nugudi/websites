@@ -1,7 +1,7 @@
-import { AuthError } from "../../core/errors/auth-error";
+import type { SessionManager } from "@core/infrastructure/storage/session-manager";
 import type { Session } from "../entities/session.entity";
 import { SessionEntity } from "../entities/session.entity";
-import type { SessionManager } from "../interfaces/session-manager.interface";
+import { AUTH_ERROR_CODES, AuthError } from "../errors/auth-error";
 
 export interface CurrentSessionResult {
   session: Session | null;
@@ -51,16 +51,14 @@ export class GetCurrentSessionUseCaseImpl implements GetCurrentSessionUseCase {
     if (error instanceof Error) {
       return new AuthError(
         error.message || "Failed to get current session",
-        undefined,
-        undefined,
+        AUTH_ERROR_CODES.SESSION_EXPIRED,
         error,
       );
     }
 
     return new AuthError(
       "Unknown error occurred while getting session",
-      undefined,
-      undefined,
+      AUTH_ERROR_CODES.SESSION_EXPIRED,
       error,
     );
   }

@@ -5,12 +5,10 @@
 import { AuthenticatedHttpClient } from "@core/infrastructure/http/authenticated-http-client";
 import { FetchHttpClient } from "@core/infrastructure/http/fetch-http-client";
 import { ServerTokenProvider } from "@core/infrastructure/http/server-token-provider";
+import { RefreshTokenService } from "@core/infrastructure/services/auth/refresh-token.service";
 import { ServerSessionManager } from "@core/infrastructure/storage/server-session-manager";
-import {
-  type UserRemoteDataSource,
-  UserRemoteDataSourceImpl,
-  UserRepositoryImpl,
-} from "@user/data";
+import type { UserRemoteDataSource } from "@user/data";
+import { UserRemoteDataSourceImpl, UserRepositoryImpl } from "@user/data";
 import type { UserRepository } from "@user/domain";
 import {
   type CheckNicknameAvailabilityUseCase,
@@ -18,7 +16,6 @@ import {
   type GetMyProfileUseCase,
   GetMyProfileUseCaseImpl,
 } from "@user/domain";
-import { RefreshTokenService } from "@/src/domains/auth/infrastructure/services/refresh-token.service";
 
 export interface UserServerContainer {
   getGetMyProfile(): GetMyProfileUseCase;

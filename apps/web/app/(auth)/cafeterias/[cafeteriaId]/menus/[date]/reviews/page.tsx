@@ -1,4 +1,4 @@
-import { CafeteriaDateReviewsView } from "@/src/domains/cafeteria/presentation/ui/views/cafeteria-date-reviews-view";
+import { CafeteriaDateReviewsView } from "@/src/domains/cafeteria/presentation/shared/ui/views/cafeteria-date-reviews-view";
 
 interface PageProps {
   params: Promise<{

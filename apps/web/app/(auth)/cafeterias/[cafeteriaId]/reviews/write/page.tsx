@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { CafeteriaReviewWriteView } from "@/src/domains/cafeteria/presentation/ui/views/cafeteria-review-write-view";
+import { CafeteriaReviewWriteView } from "@/src/domains/cafeteria/presentation/shared/ui/views/cafeteria-review-write-view";
 
 interface PageProps {
   params: Promise<{

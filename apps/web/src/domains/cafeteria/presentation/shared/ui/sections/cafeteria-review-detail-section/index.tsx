@@ -1,0 +1,15 @@
+import { MOCK_CAFETERIA_REVIEW } from "@cafeteria/presentation/shared/constants";
+import { ReviewCard } from "@nugudi/react-components-review-card";
+
+export const CafeteriaReviewDetailSection = () => {
+  return (
+    <ReviewCard
+      username={MOCK_CAFETERIA_REVIEW.username}
+      userLevel={MOCK_CAFETERIA_REVIEW.userLevel}
+      imageUrl={MOCK_CAFETERIA_REVIEW.imageUrl}
+      date={MOCK_CAFETERIA_REVIEW.date}
+      reviewText={MOCK_CAFETERIA_REVIEW.reviewText}
+      badges={MOCK_CAFETERIA_REVIEW.badges}
+    />
+  );
+};

@@ -6,16 +6,12 @@
     "paths": {
       "@/*": ["./*"],
       "@application/*": ["./src/application/*"],
-      "@auth/core": ["./src/domains/auth/core/index.ts"],
-      "@auth/core/*": ["./src/domains/auth/core/*"],
       "@auth/data": ["./src/domains/auth/data/index.ts"],
       "@auth/data/*": ["./src/domains/auth/data/*"],
       "@auth/di": ["./src/domains/auth/di/index.ts"],
       "@auth/di/*": ["./src/domains/auth/di/*"],
       "@auth/domain": ["./src/domains/auth/domain/index.ts"],
       "@auth/domain/*": ["./src/domains/auth/domain/*"],
-      "@auth/infrastructure": ["./src/domains/auth/infrastructure/index.ts"],
-      "@auth/infrastructure/*": ["./src/domains/auth/infrastructure/*"],
       "@auth/presentation": ["./src/domains/auth/presentation/index.ts"],
       "@auth/presentation/*": ["./src/domains/auth/presentation/*"],
       "@benefit/data": ["./src/domains/benefit/data/index.ts"],
@@ -39,11 +35,11 @@
       ],
       "@cafeteria/presentation/*": ["./src/domains/cafeteria/presentation/*"],
       "@core/infrastructure/*": ["./src/core/infrastructure/*"],
-      "@core/types": ["./src/core/types/index.ts"],
-      "@core/types/*": ["./src/core/types/*"],
+      "@core/types": ["./src/core/shared/type/index.ts"],
+      "@core/types/*": ["./src/core/shared/type/*"],
       "@core/ui/*": ["./src/core/ui/*"],
-      "@core/utils": ["./src/core/utils"],
-      "@core/utils/*": ["./src/core/utils/*"],
+      "@core/utils": ["./src/core/shared/util"],
+      "@core/utils/*": ["./src/core/shared/util/*"],
       "@entities/*": ["./src/entities/*"],
       "@infrastructure/*": ["./src/infrastructure/*"],
       "@interface-adapters/*": ["./src/interface-adapters/*"],
@@ -91,6 +87,7 @@
     "**/*.test.ts",
     "**/*.test.tsx",
     "**/*.spec.ts",
-    "**/*.spec.tsx"
+    "**/*.spec.tsx",
+    "**/*-old/**"
   ]
 }
