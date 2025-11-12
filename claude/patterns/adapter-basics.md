@@ -267,7 +267,7 @@ For detailed implementation guidance:
 - **Testing Guide**: [adapter-testing.md](./adapter-testing.md) - Testing patterns and examples
 
 For usage in application code:
-- **Query Hooks**: [../hooks-guide.md](../hooks-guide.md) - Using Adapters in Query Hooks
+- **Query Hooks**: [./hooks-guide.md](./hooks-guide.md) - Using Adapters in Query Hooks
 - **Entity Design**: [../ddd-guide.md](../ddd-guide.md) - Entity design patterns for boolean methods
 
 ---
@@ -275,5 +275,5 @@ For usage in application code:
 **Cross-References**:
 - [Adapter Implementation Guide](./adapter-implementation.md) - Detailed patterns and rules
 - [Adapter Testing Guide](./adapter-testing.md) - Testing strategies
-- [Hooks Guide](../hooks-guide.md) - Using Adapters in Query Hooks
+- [Hooks Guide](./hooks-guide.md) - Using Adapters in Query Hooks
 - [DDD Guide](../ddd-guide.md) - Entity design patterns

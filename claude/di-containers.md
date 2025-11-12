@@ -17,10 +17,10 @@ alwaysApply: true
 
 This is the **central index** for understanding Dependency Injection (DI) Containers in Nugudi. Read this first to understand:
 
-- 🏭 **Container Types**: Server vs Client containers
+- 🏭 **DI Container Types**: Server DI vs Client DI containers
 - 🎯 **Usage Patterns**: When to use each container type
-- 🔧 **Container Methods**: Factory pattern for UseCases
-- 🚫 **Critical Rules**: Never instantiate directly, always use containers
+- 🔧 **DI Container Methods**: Factory pattern for UseCases
+- 🚫 **Critical Rules**: Never instantiate directly, always use DI containers
 
 ---
 
@@ -30,12 +30,12 @@ This is the **central index** for understanding Dependency Injection (DI) Contai
 
 **📄 [ddd/di-server-containers.md](./ddd/di-server-containers.md)**
 
-**Server containers** for stateless, per-request dependency injection (Server Components, API routes).
+**Server DI containers** for stateless, per-request dependency injection (Server Components, API routes).
 
 **What You'll Learn**:
 - Factory pattern: `createXXXServerContainer()` creates NEW instance per request
 - Server-side infrastructure: `ServerSessionManager`, `AuthenticatedHttpClient`
-- When to use Server Containers (Pages, API routes, Server Actions)
+- When to use Server DI Containers (Pages, API routes, Server Actions)
 - Per-request isolation for SSR safety
 - UseCase instantiation in server context
 
@@ -52,7 +52,7 @@ import { createUserServerContainer } from '@user/di/user-server-container';
 import { ServerSessionManager } from '@core/infrastructure/storage/server-session-manager';
 
 const MyPage = async () => {
-  // ✅ CORRECT - Create NEW container instance per request
+  // ✅ CORRECT - Create NEW DI container instance per request
   const sessionManager = new ServerSessionManager();
   const container = createUserServerContainer(sessionManager);
 
@@ -67,8 +67,8 @@ const MyPage = async () => {
 **Critical Rules**:
 - ✅ **ALWAYS** use `createXXXServerContainer()` (factory function)
 - ✅ **ALWAYS** pass `ServerSessionManager` instance
-- ❌ **NEVER** use Client Container in Server Components (singleton breaks SSR)
-- ❌ **NEVER** reuse Server Container across requests (must be per-request)
+- ❌ **NEVER** use Client DI Container in Server Components (singleton breaks SSR)
+- ❌ **NEVER** reuse Server DI Container across requests (must be per-request)
 
 ---
 
@@ -76,13 +76,13 @@ const MyPage = async () => {
 
 **📄 [ddd/di-client-containers.md](./ddd/di-client-containers.md)**
 
-**Client containers** for lazy singleton pattern (Client Components, browser environment).
+**Client DI containers** for lazy singleton pattern (Client Components, browser environment).
 
 **What You'll Learn**:
 - Singleton pattern: `getXXXClientContainer()` returns same instance
-- Lazy initialization: Container created only when first accessed
+- Lazy initialization: DI Container created only when first accessed
 - Client-side infrastructure: `ClientSessionManager`, `FetchHttpClient`
-- When to use Client Containers (Sections, Client Components)
+- When to use Client DI Containers (Sections, Client Components)
 - Browser-safe singleton usage
 
 **When to Read**:
@@ -99,7 +99,7 @@ const MyPage = async () => {
 import { getUserClientContainer } from '@user/di/user-client-container';
 
 export const ProfileSection = ({ userId }: { userId: string }) => {
-  // ✅ CORRECT - Get lazy singleton container
+  // ✅ CORRECT - Get lazy singleton DI container
   const container = getUserClientContainer();
 
   // Use in TanStack Query hook
@@ -127,7 +127,7 @@ export const ProfileSection = ({ userId }: { userId: string }) => {
 
 ### "I'm creating a Page (Server Component)"
 
-**Step 1**: Use Server Container
+**Step 1**: Use Server DI Container
 ```typescript
 import { createUserServerContainer } from '@user/di/user-server-container';
 import { ServerSessionManager } from '@core/infrastructure/storage/server-session-manager';
@@ -162,7 +162,7 @@ await queryClient.prefetchQuery({
 
 ### "I'm creating a Section (Client Component)"
 
-**Step 1**: Use Client Container
+**Step 1**: Use Client DI Container
 ```typescript
 'use client';
 
@@ -232,9 +232,9 @@ it('should fetch user through container', async () => {
 
 ---
 
-## 📋 Container Comparison
+## 📋 DI Container Comparison
 
-| Aspect | Server Container | Client Container |
+| Aspect | Server DI Container | Client DI Container |
 |--------|-----------------|------------------|
 | **Pattern** | Factory (`createXXX()`) | Lazy Singleton (`getXXX()`) |
 | **Instance** | NEW per request | SAME instance (singleton) |
@@ -249,28 +249,28 @@ it('should fetch user through container', async () => {
 
 ## 🚨 Critical Rules (MUST READ)
 
-### Server vs Client Container Usage
+### Server vs Client DI Container Usage
 
 ```typescript
-// ✅ CORRECT - Server Container in Page (Server Component)
+// ✅ CORRECT - Server DI Container in Page (Server Component)
 const MyPage = async () => {
   const sessionManager = new ServerSessionManager();
   const container = createUserServerContainer(sessionManager); // Factory
   // ...
 };
 
-// ✅ CORRECT - Client Container in Section (Client Component)
+// ✅ CORRECT - Client DI Container in Section (Client Component)
 const MySection = () => {
   const container = getUserClientContainer(); // Singleton
   // ...
 };
 
-// ❌ WRONG - Client Container in Server Component
+// ❌ WRONG - Client DI Container in Server Component
 const MyPage = async () => {
   const container = getUserClientContainer(); // NO! Singleton breaks SSR
 };
 
-// ❌ WRONG - Server Container in Client Component
+// ❌ WRONG - Server DI Container in Client Component
 const MySection = () => {
   const sessionManager = new ServerSessionManager(); // NO! Wrong context
   const container = createUserServerContainer(sessionManager);
@@ -289,10 +289,10 @@ const container = getUserClientContainer();
 const useCase = container.getGetUser(); // Container handles dependencies
 ```
 
-### Container Method Naming
+### DI Container Method Naming
 
 ```typescript
-// ✅ CORRECT - Container method naming pattern
+// ✅ CORRECT - DI Container method naming pattern
 container.getGetUser();       // Returns GetUserUseCase instance
 container.getUpdateUser();    // Returns UpdateUserUseCase instance
 container.getUserRepository(); // Returns UserRepository instance
@@ -302,11 +302,11 @@ container.getUserRepository(); // Returns UserRepository instance
 
 ---
 
-## 🏗️ Container Structure
+## 🏗️ DI Container Structure
 
-Each domain has TWO container files in `src/domains/{domain}/di/`:
+Each domain has TWO DI container files in `src/domains/{domain}/di/`:
 
-### Server Container (`{domain}-server-container.ts`)
+### Server DI Container (`{domain}-server-container.ts`)
 ```typescript
 // Factory function - creates NEW instance per call
 export const createAuthServerContainer = (
@@ -322,7 +322,7 @@ export const createAuthServerContainer = (
   // Domain Layer
   const getUserUseCase = new GetUserUseCase(userRepository, sessionManager);
 
-  // Return container with getter methods
+  // Return DI container with getter methods
   return {
     getGetUser: () => getUserUseCase,
     getUserRepository: () => userRepository,
@@ -330,7 +330,7 @@ export const createAuthServerContainer = (
 };
 ```
 
-### Client Container (`{domain}-client-container.ts`)
+### Client DI Container (`{domain}-client-container.ts`)
 ```typescript
 // Lazy singleton - same instance across all calls
 let container: AuthClientContainer | null = null;
@@ -367,8 +367,8 @@ export const getAuthClientContainer = (): AuthClientContainer => {
 - [../ddd/repository-patterns.md](./ddd/repository-patterns.md) — Repository patterns
 
 ### Frontend Architecture
-- [../frontend/page-patterns.md](./frontend/page-patterns.md) — Server Container usage in Pages
-- [../frontend/section-patterns.md](./frontend/section-patterns.md) — Client Container usage in Sections
+- [../frontend/page-patterns.md](./frontend/page-patterns.md) — Server DI Container usage in Pages
+- [../frontend/section-patterns.md](./frontend/section-patterns.md) — Client DI Container usage in Sections
 
 ### Infrastructure
 - [../core/architecture.md](./core/architecture.md) — Infrastructure layer overview

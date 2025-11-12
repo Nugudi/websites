@@ -287,10 +287,10 @@ if (!user.isActive()) {
 **DI Containers** manage dependencies and UseCase instantiation.
 
 **What You'll Learn**:
-- Server Container (factory pattern)
-- Client Container (lazy singleton)
+- Server DI Container (factory pattern)
+- Client DI Container (lazy singleton)
 - When to use each container type
-- Container method naming patterns
+- DI Container method naming patterns
 
 **When to Read**:
 - ✅ Creating new domains
@@ -341,7 +341,7 @@ Each domain is a **bounded context** with:
 - **Domain Layer**: Entities, UseCases, Repository interfaces
 - **Data Layer**: Repository implementations, DTOs, Mappers
 - **Presentation Layer**: UI components, Adapters, Hooks
-- **DI Layer**: Server Container, Client Container
+- **DI Layer**: Server DI Container, Client DI Container
 
 ---
 
@@ -409,8 +409,8 @@ Each domain is a **bounded context** with:
 
 **Step 5**: Register in DI Container
 - Add to `src/domains/{domain}/di/` containers
-- Server Container for SSR
-- Client Container for browser
+- Server DI Container for SSR
+- Client DI Container for browser
 - Read: [di-containers.md](./di-containers.md)
 
 ---
@@ -423,7 +423,7 @@ Each domain is a **bounded context** with:
    ↓
 2. TanStack Query Hook (Presentation)
    ↓
-3. Client Container (DI)
+3. Client DI Container (DI)
    ↓
 4. UseCase.execute() (Domain)
    ↓
@@ -497,8 +497,8 @@ export class UserRepository { ... } // NO! Must be in Data layer
 - [../core/architecture.md](./core/architecture.md) — High-level architecture overview
 
 ### Frontend Integration
-- [../frontend/page-patterns.md](./frontend/page-patterns.md) — Server Container usage
-- [../frontend/section-patterns.md](./frontend/section-patterns.md) — Client Container usage
+- [../frontend/page-patterns.md](./frontend/page-patterns.md) — Server DI Container usage
+- [../frontend/section-patterns.md](./frontend/section-patterns.md) — Client DI Container usage
 - [../patterns/adapter-basics.md](./patterns/adapter-basics.md) — Entity → UI transformation
 
 ### Testing

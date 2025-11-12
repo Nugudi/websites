@@ -14,7 +14,8 @@ alwaysApply: true
 > - [monorepo-structure.md](./monorepo-structure.md) — Monorepo architecture and DDD structure
 > - [package-setup.md](./package-setup.md) — Package setup requirements
 > - [../frontend.md](../frontend.md) — Frontend component architecture
-> - [../ddd/di-containers.md](../ddd/di-containers.md) — DI Container patterns
+> - [../ddd/di-server-containers.md](../ddd/di-server-containers.md) — Server-side DI Container patterns
+> - [../ddd/di-client-containers.md](../ddd/di-client-containers.md) — Client-side DI Container patterns
 > **Last Updated**: 2025-11-11
 
 ## 📦 Package Usage Guidelines
@@ -342,8 +343,8 @@ const { data: profile } = useSuspenseQuery({
 1. **Identify the API call** you want to migrate (e.g., `api.users.getProfile()`)
 2. **Find or create the UseCase** in the domain layer (e.g., `GetMyProfileUseCase`)
 3. **Add UseCase to DI Container** getter method (e.g., `container.getGetMyProfile()`)
-4. **Use Server Container** in Pages/Server Actions (stateless, per-request)
-5. **Use Client Container** in Client Components (singleton, lazy-initialized)
+4. **Use Server DI Container** in Pages/Server Actions (stateless, per-request)
+5. **Use Client DI Container** in Client Components (singleton, lazy-initialized)
 
 **See `../migration-guide.md` for detailed migration examples.**
 

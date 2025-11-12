@@ -10,6 +10,18 @@ alwaysApply: true
 
 # Query & Mutation Hooks Rules
 
+## Table of Contents
+
+- [File Naming](#file-naming)
+- [Hook Naming](#hook-naming)
+- [Container Method Naming](#container-method-naming)
+- [Query Hook Pattern](#query-hook-pattern)
+- [Mutation Hook Pattern](#mutation-hook-pattern)
+- [Query Key Conventions](#query-key-conventions)
+- [MUST Rules](#must-rules)
+- [NEVER Rules](#never-rules)
+- [Quick Reference](#quick-reference)
+
 ## File Naming
 
 ### Query Hook Files
@@ -326,6 +338,104 @@ queryClient.invalidateQueries({ queryKey: BENEFIT_QUERY_KEYS.detail("123") });
 - **MUST** include parameters in queryKey for proper caching
 - **MUST** invalidate related queries after mutations
 - **MUST** document hooks with JSDoc
+
+**Why These Rules Exist:**
+
+**MUST Rules Explained:**
+
+1. **Why MUST use Client Container?**
+   - **Client-Side Execution**: React hooks ONLY run in browser, not on server
+   - **Lazy Singleton**: Client Container reuses same instance across all hooks (performance)
+   - **Session Persistence**: Client Container uses ClientSessionManager with localStorage
+   - **No SSR Conflicts**: Client Container designed for browser environment only
+   - **Credentials Included**: Client Container's HttpClient includes `credentials: 'include'` for cookies
+
+2. **Why MUST use individual UseCase getter?**
+   - **Clear Intent**: `container.getGetBenefits()` explicitly names the UseCase being used
+   - **Type Safety**: Individual getters provide autocomplete and type checking
+   - **Deprecation**: Factory pattern (`createGetBenefitsUseCase`) is deprecated and harder to read
+   - **Consistency**: All hooks across codebase use same getter pattern
+   - **Testability**: Easy to verify specific UseCase getter was called in tests
+
+3. **Why MUST include 'use client' directive?**
+   - **React Server Components**: Next.js 16 treats files as Server Components by default
+   - **Hook Requirement**: React hooks (`useQuery`, `useMutation`) ONLY work in Client Components
+   - **Build Error Prevention**: Missing directive = "Hooks can only be used in Client Components" error
+   - **Explicit Boundary**: Directive clearly marks where server/client boundary is
+   - **Framework Requirement**: Next.js App Router requires explicit client-side marking
+
+4. **Why MUST transform Entity → UI Type with Adapter?**
+   - **Separation of Concerns**: Domain Entities don't belong in Presentation layer
+   - **Type Safety**: Adapter eliminates unsafe `as` assertions with validated conversions
+   - **UI-Specific Data**: Adapter adds UI-only fields (colors, badges, formatted strings)
+   - **Reusability**: Same Entity can be transformed differently for mobile/desktop UIs
+   - **Maintainability**: UI changes don't require Domain layer changes
+
+5. **Why MUST include parameters in queryKey?**
+   - **Cache Separation**: Different params = Different cache entries (no data collision)
+   - **Automatic Refetch**: Param change = TanStack Query automatically refetches
+   - **Cache Invalidation**: Can invalidate specific param combinations precisely
+   - **Stale Data Prevention**: Without params in key, stale data shown for wrong params
+   - **React Query Requirement**: Query key MUST uniquely identify the query data
+
+6. **Why MUST invalidate related queries after mutations?**
+   - **Cache Synchronization**: Mutation changes server data, cache must update to match
+   - **Stale Data Prevention**: Without invalidation, users see outdated data until manual refresh
+   - **UX Consistency**: Immediate UI update reflects backend changes
+   - **Optimistic Updates**: Invalidation triggers background refetch to confirm optimistic UI
+   - **Related Data**: Mutation may affect multiple queries (e.g., list + detail + count)
+
+7. **Why MUST document hooks with JSDoc?**
+   - **Developer Experience**: IDE shows JSDoc hints during hook usage
+   - **Usage Examples**: `@example` shows correct hook invocation patterns
+   - **Parameter Clarity**: `@param` explains what parameters mean and expect
+   - **Return Type Clarity**: `@returns` explains query result structure
+   - **Maintainability**: New developers understand hook purpose without reading implementation
+   - **Contract Documentation**: JSDoc is the hook's public API contract
+
+**NEVER Rules Explained:**
+
+1. **Why NEVER use Server Container in hooks?**
+   - **Stateless Factory**: Server Container creates new instance per call (not singleton)
+   - **Wrong SessionManager**: Server Container uses ServerSessionManager (httpOnly cookies)
+   - **No `cookies()` API**: Client Components can't access `cookies()` from `next/headers`
+   - **Build Error**: Server-only code in client = Webpack bundling error
+   - **Performance**: Creating new container per hook call = Wasteful re-initialization
+
+2. **Why NEVER use deprecated factory pattern?**
+   - **Naming Confusion**: `createGetBenefitsUseCase()` implies factory, but it's a getter
+   - **Code Clarity**: `getGetBenefits()` is more explicit about returning a UseCase
+   - **Migration Completed**: All new code uses getter pattern, factory is legacy
+   - **Consistency**: Mixed patterns = Harder to learn and maintain codebase
+   - **Deprecation Warning**: Using factory pattern = Code smell, should be refactored
+
+3. **Why NEVER return Entity directly?**
+   - **Layer Violation**: Returning Entity = Domain leaking into Presentation layer
+   - **Type Mismatch**: UI components expect UI Types, not Domain Entities
+   - **Missing UI Data**: Entities lack UI-specific fields (colors, badges, formatted strings)
+   - **Coupling**: UI tied to Entity shape = Can't change Entity without breaking UI
+   - **Adapter Purpose**: Adapter exists to decouple Domain from Presentation
+
+4. **Why NEVER forget parameters in queryKey?**
+   - **Cache Collision**: Same key for different params = Wrong data shown to user
+   - **Stale Data Bug**: Changing params doesn't refetch = User sees old results
+   - **Invalidation Failure**: Can't invalidate specific param queries without params in key
+   - **React Query Violation**: Query key MUST uniquely identify data, params are part of identity
+   - **Production Bug**: Hard-to-debug issue where cache returns wrong data
+
+5. **Why NEVER forget to invalidate queries after mutations?**
+   - **Stale Cache**: Mutation updates server, but cache still has old data
+   - **User Confusion**: User performs action, but UI doesn't reflect the change
+   - **Manual Refresh Required**: User must refresh page to see updated data
+   - **Lost Trust**: Users think action failed because UI didn't update
+   - **Cache Consistency**: Cache and server must stay synchronized
+
+6. **Why NEVER skip error handling?**
+   - **User Experience**: Unhandled errors = Blank screen or crash
+   - **TanStack Query Built-in**: `useQuery` provides `error` state automatically, no extra work
+   - **Network Failures**: API calls can fail (timeout, 500 error, network offline)
+   - **User Feedback**: Error state allows showing retry button or fallback UI
+   - **Production Stability**: Graceful error handling prevents cascading failures
 
 ## NEVER Rules
 

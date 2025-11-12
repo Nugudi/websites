@@ -597,4 +597,4 @@ Repositories provide:
 - **Separation**: Clear boundary between domain and data layers
 - **Flexibility**: Can swap implementations (remote, local, mock)
 
-For more on how Repositories are instantiated, see [di-server-patterns.md](./di-server-patterns.md) and [di-client-patterns.md](./di-client-patterns.md).
+For more on how Repositories are instantiated, see [di-server-containers.md](./di-server-containers.md) and [di-client-containers.md](./di-client-containers.md).

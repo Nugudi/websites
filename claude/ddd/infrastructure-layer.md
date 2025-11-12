@@ -7,7 +7,7 @@ alwaysApply: true
 
 # Infrastructure Layer
 
-> **Related Documents**: [repository-patterns.md](./repository-patterns.md), [di-server-patterns.md](./di-server-patterns.md), [di-client-patterns.md](./di-client-patterns.md)
+> **Related Documents**: [repository-patterns.md](./repository-patterns.md), [di-server-containers.md](./di-server-containers.md), [di-client-containers.md](./di-client-containers.md)
 
 ## Overview
 
@@ -515,7 +515,7 @@ export class RefreshTokenService {
 
 ## Usage in DI Containers
 
-### Server Container
+### Server DI Container
 
 ```typescript
 export function createUserServerContainer(
@@ -545,7 +545,7 @@ export function createUserServerContainer(
 }
 ```
 
-### Client Container
+### Client DI Container
 
 ```typescript
 class UserClientContainerImpl implements UserClientContainer {

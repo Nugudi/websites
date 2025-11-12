@@ -412,17 +412,25 @@ toUiItem(benefit: Benefit): BenefitItem {
 ### ✅ MUST
 
 1. **MUST** use Adapter when Entity → UI transformation requires **7+ Entity method calls**
+
+   **Why?** When transformations require 7+ Entity method calls, inline mapping creates repetitive, error-prone code scattered across multiple files, making changes difficult. Adapters centralize this complex logic, eliminate code duplication, provide single source of truth for transformations, and make updates easier (change once, benefits everywhere). The 7+ threshold indicates complexity justifying dedicated abstraction.
+
    ```typescript
    // ✅ CORRECT: 9 Entity methods = Use Adapter
    BenefitAdapter.toUiItem(benefit);
    ```
 
 2. **MUST** place Adapters in `presentation/shared/adapters/`
+
+   **Why?** Consistent placement in `presentation/shared/adapters/` makes Adapters easily discoverable, establishes clear conventions, and signals that Adapters are shared presentation utilities accessible to all presentation sub-layers (Pages, Views, Sections). Placing Adapters elsewhere creates confusion about ownership, makes them harder to find, and breaks architectural consistency across domains.
+
    ```
    ✅ domains/benefit/presentation/shared/adapters/benefit.adapter.ts
    ```
 
 3. **MUST** use private helper functions for type-safe conversions
+
+   **Why?** Private helper functions eliminate unsafe type assertions (`as`) by encapsulating validation logic and providing type-safe conversions with runtime checks. Without helpers, you'd scatter unsafe `as` casts throughout the Adapter, creating type safety violations and runtime errors when assumptions fail. Helpers centralize validation, provide safe fallbacks, and ensure type correctness through explicit logic rather than compiler suppression.
    ```typescript
    // ✅ CORRECT: Private helper eliminates unsafe 'as'
    function getMenuTypeUi(benefit: Benefit): "점심" | "저녁" | "간식" {
@@ -431,6 +439,9 @@ toUiItem(benefit: Benefit): BenefitItem {
    ```
 
 4. **MUST** use Entity's boolean methods to determine state
+
+   **Why?** Entity boolean methods like `isSpecialSale()`, `isSale()`, `isAvailable()` encapsulate business logic and are the single source of truth for state determination. Directly accessing Entity properties (e.g., `benefit.salePercentage > 30`) duplicates business logic in Adapters, creates inconsistencies when business rules change, and violates DDD principles. Using Entity methods ensures correctness, maintainability, and adherence to "Entity owns business logic."
+
    ```typescript
    // ✅ CORRECT: Use boolean methods
    if (benefit.isSpecialSale()) return "특가";
@@ -438,6 +449,9 @@ toUiItem(benefit: Benefit): BenefitItem {
    ```
 
 5. **MUST** use Day.js for all time/date formatting
+
+   **Why?** Day.js is the standardized date/time library in this codebase, providing i18n support (Korean locale), small bundle size, immutable API, and consistent date manipulation. Using native `Date` methods or other libraries creates inconsistent formatting, lacks i18n support, increases bundle size, and makes maintenance harder. Standardizing on Day.js ensures consistent date handling across the entire application.
+
    ```typescript
    // ✅ CORRECT: Day.js with Korean locale
    import dayjs from "dayjs";
@@ -446,12 +460,17 @@ toUiItem(benefit: Benefit): BenefitItem {
    ```
 
 6. **MUST** set Korean locale globally at module level
+
+   **Why?** Setting Korean locale globally at module top (`dayjs.locale("ko")`) ensures all Day.js operations in the file use Korean formatting without per-call configuration, preventing locale mixing bugs where some dates show in English and others in Korean. Per-call locale setting is error-prone (easy to forget), verbose, and creates inconsistent output. Global setup provides one-time configuration with guaranteed consistency.
    ```typescript
    // ✅ CORRECT: Global at top of file
    dayjs.locale("ko");
    ```
 
 7. **MUST** provide comprehensive JSDoc for ALL Adapter methods
+
+   **Why?** Comprehensive JSDoc with `@description`, `@param`, `@returns` enables IDE autocomplete, provides inline documentation for developers, documents transformation logic, and improves code maintainability by explaining "what" and "why" without reading implementation. Without JSDoc, developers must read source code to understand Adapter behavior, slowing development and increasing errors. JSDoc serves as living documentation that stays in sync with code.
+
    ```typescript
    // ✅ CORRECT: Complete JSDoc with @description, @param, @returns
    /**
@@ -464,6 +483,9 @@ toUiItem(benefit: Benefit): BenefitItem {
    ```
 
 8. **MUST** handle edge cases with console errors and safe fallbacks
+
+   **Why?** Edge case handling with `console.error()` + safe fallbacks prevents runtime crashes, aids debugging by logging unexpected values to console, provides graceful degradation for production users, and documents invalid states through error messages. Without error handling, invalid Entity states cause crashes or silent failures, making bugs hard to diagnose. Error logging + fallbacks ensures application stability and developer visibility into problems.
+
    ```typescript
    // ✅ CORRECT: Error logging + fallback
    if (!isValid) {
@@ -473,6 +495,9 @@ toUiItem(benefit: Benefit): BenefitItem {
    ```
 
 9. **MUST** export Adapter as object (NOT class)
+
+   **Why?** Exporting Adapters as objects (`const BenefitAdapter = { ... }`) provides functional programming style, eliminates need for `new` keyword, simplifies imports/usage, prevents accidental instantiation, and matches JavaScript module patterns. Class-based Adapters add unnecessary complexity (constructor, `this` context, `new` keyword), create confusion about stateful vs stateless design, and violate the functional nature of pure transformations.
+
    ```typescript
    // ✅ CORRECT: Object with methods
    export const BenefitAdapter = {
@@ -481,6 +506,9 @@ toUiItem(benefit: Benefit): BenefitItem {
    ```
 
 10. **MUST** provide batch conversion helper methods
+
+    **Why?** Batch conversion helpers like `toUiList()` eliminate code duplication (DRY), ensure consistent transformations across all items, provide performance optimization opportunities (single map operation), and improve code readability. Without batch helpers, developers manually map arrays in multiple locations, creating duplicate transformation logic that's error-prone and hard to maintain when transformation logic changes.
+
     ```typescript
     // ✅ CORRECT: toUiList for array transformations
     toUiList(benefits: Benefit[]): BenefitItem[] {
@@ -491,6 +519,9 @@ toUiItem(benefit: Benefit): BenefitItem {
 ### ❌ MUST NOT
 
 1. **MUST NOT** use Adapter for transformations requiring < 7 Entity methods
+
+   **Why?** Creating Adapters for simple transformations (< 7 methods) is over-engineering that adds unnecessary abstraction, creates extra files to maintain, and violates the principle of using the right tool for complexity. Simple transformations should use lightweight Mappers (inline functions) that are easier to understand, colocated with usage, and don't require dedicated files. The 7+ threshold separates "simple mapping" from "complex transformation requiring abstraction."
+
    ```typescript
    // ❌ WRONG: Only 3 methods, use Mapper instead
    function userToUi(user: User) {
@@ -503,6 +534,8 @@ toUiItem(benefit: Benefit): BenefitItem {
    ```
 
 2. **MUST NOT** put Korean text or formatting in Entity layer
+
+   **Why?** Korean text and UI formatting are presentation concerns that violate Clean Architecture layer separation when placed in Domain Entities. Entities with Korean text become coupled to UI requirements, untestable without UI context, and break when internationalization is needed (cannot support English). Entities should provide boolean methods (`isLunchMenu()`), and Adapters handle Korean text transformation ("점심"), maintaining proper layer boundaries.
    ```typescript
    // ❌ WRONG: Entity returning Korean text
    class BenefitEntity {
@@ -520,6 +553,9 @@ toUiItem(benefit: Benefit): BenefitItem {
    ```
 
 3. **MUST NOT** use unsafe `as` assertions
+
+   **Why?** Unsafe type assertions (`as`) bypass TypeScript's type checking, creating runtime errors when assumptions fail (e.g., unexpected Entity values), remove compiler protection against invalid states, and hide bugs until production. Type assertions are particularly dangerous in Adapters because they assume Entity data validity without verification. Private helper functions with explicit validation provide type safety through runtime checks, not compiler suppression.
+
    ```typescript
    // ❌ WRONG: Unsafe type assertion
    const menuType = benefit.getMenuTypeDisplayName() as "점심" | "저녁" | "간식";
@@ -531,6 +567,9 @@ toUiItem(benefit: Benefit): BenefitItem {
    ```
 
 4. **MUST NOT** export private helper functions
+
+   **Why?** Exporting private helper functions leaks implementation details, creates unintended public API that external code might depend on (making refactoring harder), and violates encapsulation principles. Private helpers are internal implementation details specific to the Adapter's transformation logic and should remain hidden. Only the main Adapter methods (e.g., `toUiItem()`, `toUiList()`) should be exported as the public API.
+
    ```typescript
    // ❌ WRONG: Exporting private helper
    export function getMenuTypeUi(benefit: Benefit) { /* ... */ }
@@ -540,6 +579,9 @@ toUiItem(benefit: Benefit): BenefitItem {
    ```
 
 5. **MUST NOT** skip JSDoc documentation
+
+   **Why?** Skipping JSDoc eliminates IDE autocomplete, removes inline documentation that explains transformation logic, forces developers to read implementation code to understand behavior, and makes Adapters harder to use correctly. JSDoc is especially critical for Adapters because they perform complex Entity → UI transformations with subtle rules (e.g., boolean method priority, safe fallbacks) that aren't obvious from signatures alone.
+
    ```typescript
    // ❌ WRONG: No JSDoc
    toUiItem(benefit: Benefit): BenefitItem { /* ... */ }
@@ -555,6 +597,8 @@ toUiItem(benefit: Benefit): BenefitItem {
    ```
 
 6. **MUST NOT** format time/date without Day.js
+
+   **Why?** Manual date/time formatting (e.g., template literals `${hour}:${minute}`) creates inconsistent formatting, lacks i18n support (cannot show Korean date formats), doesn't handle edge cases (single-digit hours/minutes, timezones), and duplicates logic across files. Day.js provides standardized formatting with Korean locale, handles all edge cases, and ensures consistency. Manual formatting creates maintenance nightmares and bugs.
    ```typescript
    // ❌ WRONG: Manual formatting
    const formatted = `${hour}:${minute}`;
@@ -564,6 +608,9 @@ toUiItem(benefit: Benefit): BenefitItem {
    ```
 
 7. **MUST NOT** use Adapter in Domain or Data layers
+
+   **Why?** Adapters are Presentation layer utilities for Entity → UI transformations, and using them in Domain (UseCases) or Data layers violates Clean Architecture layer dependencies (inner layers cannot depend on outer layers). UseCases should return Entities, and Presentation layer handles transformation to UI types. Using Adapters in Domain/Data couples business logic to UI concerns, makes UseCases untestable without UI context, and breaks layer isolation.
+
    ```typescript
    // ❌ WRONG: Adapter used in UseCase (Domain layer)
    class GetBenefitsUseCase {
@@ -582,11 +629,8 @@ toUiItem(benefit: Benefit): BenefitItem {
    ```
 
 8. **MUST NOT** create Adapter as a class
-   ```typescript
-   // ❌ WRONG: Adapter as class
-   export class BenefitAdapter {
-     toUiItem(benefit: Benefit): BenefitItem { /* ... */ }
-   }
+
+   **Why?** Class-based Adapters add unnecessary complexity (constructor, `this` context, `new` keyword requirement), suggest stateful behavior when Adapters should be stateless transformations, complicate imports/usage (must remember to instantiate), and violate functional programming principles. Object-based Adapters are simpler, more idiomatic JavaScript, prevent accidental instantiation, and clearly communicate stateless nature through structure.
 
    // ✅ CORRECT: Adapter as object
    export const BenefitAdapter = {
@@ -812,5 +856,5 @@ This guide covers the complete implementation patterns for Adapters:
 **Cross-References**:
 - [Adapter Basics](./adapter-basics.md) - When to use, structure overview
 - [Adapter Testing Guide](./adapter-testing.md) - Testing strategies
-- [Hooks Guide](../hooks-guide.md) - Using Adapters in Query Hooks
+- [Hooks Guide](./hooks-guide.md) - Using Adapters in Query Hooks
 - [DDD Guide](../ddd-guide.md) - Entity design patterns

@@ -444,24 +444,70 @@ export const CafeteriaMenuView = () => {
 ### ✅ MUST Rules
 
 1. **MUST compose Sections** - Views are Section containers
+
+   **Why?** Views serve as composition layers that orchestrate multiple Sections into cohesive pages, providing clear separation of concerns where Views handle layout while Sections handle data and logic. This composition pattern enables independent Section development, reusability across different Views, and easier testing. Without Section composition, Views would either duplicate Section logic or become monolithic components.
+
 2. **MUST define page-level layout** - Use Layout components (Flex, Grid)
+
+   **Why?** Page-level layout is View's primary responsibility in the component hierarchy, determining how Sections are arranged spatially (grid, flex, columns). Defining layout in Views keeps this concern centralized and separate from Section business logic, making layout changes easier and ensuring Sections remain focused on their domain responsibilities without layout coupling.
+
 3. **MUST pass props to Sections** - Forward params from Page to Sections
+
+   **Why?** Sections need route parameters (IDs, slugs, filters) to fetch appropriate data, but they can't access Next.js route params directly as Server Component features. Views bridge this gap by receiving params from Pages and forwarding them to Sections, maintaining proper data flow in the component hierarchy and keeping Sections decoupled from routing implementation.
+
 4. **MUST use named export** - `export const MyView`
+
+   **Why?** Named exports provide better IDE autocomplete, explicit imports, and consistency with Section/Component patterns, improving code maintainability and developer experience. Unlike Pages which require default exports for Next.js routing, Views have no such constraint and benefit from named exports' advantages including better refactoring support and preventing naming inconsistencies.
+
 5. **MUST be stateless or minimal state** - Only page-level UI state
+
+   **Why?** Views should manage only presentational state (sidebar open/closed, tab selection) that affects page-level layout, not business data or complex state. Complex state belongs in Sections (via TanStack Query) or global stores (Zustand), keeping Views lightweight and focused on composition. Stateless Views are easier to understand, test, and maintain.
+
 6. **MUST respect import patterns** - Relative for same domain, absolute for cross-domain
+
+   **Why?** Consistent import patterns improve code readability and make domain boundaries explicit—relative imports (`../../sections`) indicate same-domain coupling while absolute imports (`@user/presentation`) signal cross-domain dependencies. This convention helps identify and prevent unwanted cross-domain coupling, supports refactoring, and makes dependency graphs clearer for maintaining bounded contexts.
+
 7. **MUST use Layout components** - Box, Flex, Grid from `@nugudi/react-components-layout`
+
+   **Why?** Layout components from the design system provide consistent spacing, responsive behavior, and design tokens integration, preventing hard-coded layout styles and ensuring visual consistency across the application. Using standardized Layout components makes code more maintainable, reduces CSS duplication, and ensures layouts follow design system guidelines automatically.
+
 8. **MUST use design tokens** - vars and classes from `@nugudi/themes`
+
+   **Why?** Design tokens centralize design decisions (colors, spacing, typography) ensuring visual consistency and making theme changes (like dark mode) trivial across the entire application. Hard-coded values create maintenance nightmares and visual inconsistencies. Design tokens provide single source of truth for styling, type safety, and automatic updates when the design system changes.
 
 ### ❌ NEVER Rules
 
 1. **NEVER fetch data** - No API calls, no UseCases, no TanStack Query
+
+   **Why?** Data fetching is Section layer's responsibility in the component hierarchy, ensuring proper error boundaries, loading states, and cache management. Views fetching data violates separation of concerns, duplicates Section functionality, and prevents proper Suspense/ErrorBoundary implementation. Keeping data fetching in Sections maintains clear layer boundaries and enables independent Section testing and reusability.
+
 2. **NEVER contain business logic** - Business logic belongs in Domain layer
+
+   **Why?** Business logic (validation, calculations, rules) belongs in the Domain layer (Entities, UseCases), not Presentation layer. Views with business logic violate Clean Architecture, create tight coupling to business rules, and make logic untestable and unreusable. Domain layer provides single source of truth for business rules, ensuring consistency and enabling independent testing.
+
 3. **NEVER implement error/loading states** - Sections handle their own boundaries
+
+   **Why?** Error and loading boundaries are Section-level concerns, allowing each Section to fail or load independently without affecting others. View-level error handling would create all-or-nothing scenarios where one Section error breaks the entire View. Section-level boundaries provide fault isolation, better UX (partial page loading), and more granular error handling.
+
 4. **NEVER import Components directly** - Use hierarchy (View → Section → Component)
+
+   **Why?** Skipping the Section layer violates component hierarchy (View → Section → Component), creating tight coupling and preventing proper data fetching and boundary implementation. Direct Component imports force Views to duplicate Section logic (data fetching, error handling), reduce reusability, and make testing difficult. Respecting hierarchy maintains clear separation of concerns.
+
 5. **NEVER use DI Container** - Views don't fetch data
+
+   **Why?** DI Containers exist for dependency injection when fetching data via UseCases, which Views never do by design. Views using DI Containers indicates architectural violation—data fetching belongs in Sections, not Views. This rule enforces proper layer boundaries and ensures Views remain focused on composition and layout, not data management.
+
 6. **NEVER manage complex state** - Use Zustand stores or move to Section
+
+   **Why?** Complex state (form data, filters, multi-step flows) requires sophisticated state management that clutters Views and violates Single Responsibility Principle. Global state belongs in Zustand stores (cross-Section state) or Sections (Section-specific state with TanStack Query). Views should manage only simple presentational state like UI toggles, keeping them lightweight and focused.
+
 7. **NEVER handle authentication** - Auth checks happen in Page or middleware
+
+   **Why?** Authentication is a cross-cutting concern handled at Page level (SSR) or middleware (edge), not in Views, ensuring consistent auth checks before any UI renders. View-level auth checks create security gaps (client-side only), duplicate logic across Views, and provide poor UX (rendering then redirecting). Centralized auth in Pages/middleware ensures security and consistency.
+
 8. **NEVER call Server Actions directly** - Sections handle mutations
+
+   **Why?** Server Actions are data mutation mechanisms that Sections manage with proper error handling, optimistic updates, and cache invalidation via TanStack Query mutations. Views calling Server Actions bypasses Section boundaries, prevents proper error/loading states, and duplicates mutation logic. Sections provide the correct layer for mutation handling with all necessary patterns.
 
 ## Common Patterns
 

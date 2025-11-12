@@ -28,7 +28,7 @@ This directory contains focused documentation for Next.js App Router component a
 Complete guide for Page layer implementation
 
 - Server Component patterns
-- Server Container usage (`createXXXServerContainer()`)
+- Server DI Container usage (`createXXXServerContainer()`)
 - Data prefetching with TanStack Query
 - HydrationBoundary setup
 - Metadata generation (static & dynamic)
@@ -51,7 +51,7 @@ Complete guide for View layer implementation
 Complete guide for Section layer implementation
 
 - Client Component patterns
-- Client Container usage (`getXXXClientContainer()`)
+- Client DI Container usage (`getXXXClientContainer()`)
 - Data fetching with TanStack Query
 - Suspense/ErrorBoundary implementation
 - Skeleton and Error fallback best practices
@@ -97,10 +97,10 @@ Complete guide for Component layer implementation
 ## Related Documentation
 
 - **[../packages.md](../packages.md)** - DDD Architecture, DI Containers, Repository/UseCase patterns
-- **[../adapter-pattern.md](../adapter-pattern.md)** - Entity → UI Type transformation guide
-- **[../hooks-guide.md](../hooks-guide.md)** - TanStack Query custom hooks and general hooks
-- **[../nextjs-component-structure-guideline.md](../nextjs-component-structure-guideline.md)** - Next.js App Router route structure
-- **[../storybook-guideline.md](../storybook-guideline.md)** - Storybook development workflow
+- **[../patterns/adapter-basics.md](../patterns/adapter-basics.md)** - Entity → UI Type transformation guide
+- **[../patterns/hooks-guide.md](../patterns/hooks-guide.md)** - TanStack Query custom hooks and general hooks
+- **[../packages/monorepo-structure.md](../packages/monorepo-structure.md)** - Monorepo structure and Next.js App Router route structure
+- **[../patterns/storybook-guideline.md](../patterns/storybook-guideline.md)** - Storybook development workflow
 
 ## Key Principles
 
@@ -111,16 +111,16 @@ Page → View → Section → Component
 
 ### 2. Data Flow (Server → Client)
 ```
-Page (Server Container, Prefetch)
+Page (Server DI Container, Prefetch)
   → View (Compose)
-    → Section (Client Container, Fetch)
+    → Section (Client DI Container, Fetch)
       → Component (Props)
 ```
 
-### 3. Container Usage (CRITICAL)
-- **Server Container**: Pages only (`createXXXServerContainer()`)
-- **Client Container**: Sections only (`getXXXClientContainer()`)
-- **NO Container**: Views and Components (no data fetching)
+### 3. DI Container Usage (CRITICAL)
+- **Server DI Container**: Pages only (`createXXXServerContainer()`)
+- **Client DI Container**: Sections only (`getXXXClientContainer()`)
+- **NO DI Container**: Views and Components (no data fetching)
 
 ### 4. Import Rules
 - **Same Domain**: Relative imports (`../../sections/user-section`)
@@ -136,15 +136,15 @@ Page (Server Container, Prefetch)
 
 ## Common Mistakes
 
-### ❌ Wrong Container Usage
+### ❌ Wrong DI Container Usage
 ```typescript
-// ❌ WRONG - Client Container in Page (Server Component)
+// ❌ WRONG - Client DI Container in Page (Server Component)
 const Page = async () => {
   const container = getUserClientContainer(); // NO!
   // ...
 };
 
-// ❌ WRONG - Server Container in Section (Client Component)
+// ❌ WRONG - Server DI Container in Section (Client Component)
 "use client";
 const Section = () => {
   const container = createUserServerContainer(); // NO!
@@ -199,6 +199,6 @@ When updating these documentation files:
 ## Questions?
 
 - For DDD Architecture questions: See [../packages.md](../packages.md)
-- For Adapter Pattern questions: See [../adapter-pattern.md](../adapter-pattern.md)
-- For Query Hooks questions: See [../hooks-guide.md](../hooks-guide.md)
+- For Adapter Pattern questions: See [../patterns/adapter-basics.md](../patterns/adapter-basics.md)
+- For Query Hooks questions: See [../patterns/hooks-guide.md](../patterns/hooks-guide.md)
 - For general architecture questions: Start with [component-hierarchy.md](./component-hierarchy.md)

@@ -17,7 +17,7 @@ alwaysApply: true
 1. [What are Query Hooks?](#what-are-query-hooks)
 2. [File Naming Conventions](#file-naming-conventions)
 3. [Hook Naming Conventions](#hook-naming-conventions)
-4. [Container Method Naming](#container-method-naming)
+4. [DI Container Method Naming](#di-container-method-naming)
 5. [Query Hook Pattern](#query-hook-pattern)
 6. [MUST / MUST NOT Rules](#must--must-not-rules)
 7. [Real-World Examples](#real-world-examples)
@@ -27,7 +27,7 @@ alwaysApply: true
 
 **Query Hooks** are custom React hooks that wrap TanStack Query's `useQuery` to provide:
 
-- **DI Container integration**: Access to UseCases via Client Container
+- **DI Container integration**: Access to UseCases via Client DI Container
 - **Adapter integration**: Entity → UI Type transformation
 - **Type safety**: Full TypeScript inference
 - **Reusability**: Centralized data fetching logic
@@ -132,9 +132,9 @@ export function useGetStampCollection() {
 ❌ export function useFetchBenefitList() { } // Use 'Get' not 'Fetch'
 ```
 
-## ⚠️ Critical: Client Container Import Pattern
+## ⚠️ Critical: Client DI Container Import Pattern
 
-**ALWAYS import Client Container directly from the specific file**, NOT from barrel exports:
+**ALWAYS import Client DI Container directly from the specific file**, NOT from barrel exports:
 
 ```typescript
 // ✅ CORRECT: Direct import from client-container file
@@ -156,11 +156,11 @@ Using barrel exports at `@domain/di` causes serious bundling issues:
 
 **Solution:** Always use direct file imports with absolute paths (`@/src/domains/.../di/*-client-container`).
 
-## Container Method Naming
+## DI Container Method Naming
 
 ### ✅ CORRECT: Individual UseCase Getters
 
-**Pattern**: Container provides `getGet[UseCase]()` method
+**Pattern**: DI Container provides `getGet[UseCase]()` method
 
 ```typescript
 // File: domains/benefit/di/benefit-client-container.ts
@@ -229,13 +229,13 @@ import { BENEFIT_QUERY_KEYS } from '@benefit/presentation/shared/constants';
  *
  * @description
  * Fetches benefits from API via UseCase and transforms to UI type using Adapter.
- * Uses Client Container for singleton UseCase instance.
+ * Uses Client DI Container for singleton UseCase instance.
  * Automatically caches with TanStack Query.
  *
  * @returns TanStack Query result with BenefitItem[]
  */
 export function useGetBenefitList() {
-  // 1. Get Client Container (lazy singleton)
+  // 1. Get Client DI Container (lazy singleton)
   const container = getBenefitClientContainer();
 
   // 2. Get individual UseCase
@@ -339,14 +339,18 @@ export function useGetUserPreferences(options?: { enabled?: boolean }) {
 
 ### ✅ MUST
 
-1. **MUST** use Client Container in Query Hooks
+1. **MUST** use Client DI Container in Query Hooks
+
+   **Why?** Client DI Container uses lazy singleton pattern, ensuring the same UseCase instance is reused across all hook calls, which is essential for TanStack Query cache consistency. This prevents duplicate HttpClient instances and maintains proper state management. Server DI Container would create new instances on every hook call, breaking the cache.
 
    ```typescript
-   // ✅ CORRECT: Client Container in hook
+   // ✅ CORRECT: Client DI Container in hook
    const container = getBenefitClientContainer();
    ```
 
 2. **MUST** use individual UseCase getters from container
+
+   **Why?** Individual getters (e.g., `container.getGetBenefits()`) follow modern naming conventions and provide cleaner API surface than deprecated factory methods (e.g., `createGetBenefitsUseCase()`). Getters clearly communicate intent, are more concise, and align with JavaScript getter conventions, making code more readable and maintainable.
 
    ```typescript
    // ✅ CORRECT: Individual getter
@@ -355,12 +359,16 @@ export function useGetUserPreferences(options?: { enabled?: boolean }) {
 
 3. **MUST** follow file naming convention: `get-[feature].query.ts`
 
+   **Why?** Consistent file naming convention makes Query Hooks immediately identifiable in the codebase (`.query.ts` suffix), distinguishes them from Mutation Hooks (`.mutation.ts`), and enables IDE file search and autocomplete. The `get-` prefix clearly indicates read operations, improving code organization and discoverability across the monorepo.
+
    ```
    ✅ get-benefit-list.query.ts
    ✅ get-my-profile.query.ts
    ```
 
 4. **MUST** follow hook naming convention: `useGet[Feature]`
+
+   **Why?** The `useGet` prefix follows React Hooks naming convention (`use` prefix for hooks), clearly indicates read operations (GET), and distinguishes Query Hooks from Mutation Hooks (`useMutate` prefix). Consistent naming improves code readability, makes hooks easy to discover via autocomplete, and follows established React ecosystem patterns.
 
    ```typescript
    // ✅ CORRECT: Hook names
@@ -374,6 +382,8 @@ export function useGetUserPreferences(options?: { enabled?: boolean }) {
 
 5. **MUST** use Adapter to transform Entity → UI Type
 
+   **Why?** Adapters ensure type-safe transformations from Domain Entities to Presentation UI Types, eliminating unsafe `as` type assertions and potential runtime errors. They centralize transformation logic (making changes easier), enforce presentation layer boundaries, and ensure UI components receive properly shaped data that matches their needs, not raw domain models.
+
    ```typescript
    // ✅ CORRECT: Using Adapter
    queryFn: async () => {
@@ -384,6 +394,8 @@ export function useGetUserPreferences(options?: { enabled?: boolean }) {
 
 6. **MUST** include all parameters in queryKey
 
+   **Why?** Including all parameters in queryKey is essential for TanStack Query cache to work correctly. Different parameter values should produce different cache entries (e.g., `list({category: 'lunch'})` vs `list({category: 'dinner'})`). Missing parameters cause cache collisions where requests with different parameters incorrectly share cached data, leading to stale or wrong data being displayed.
+
    ```typescript
    // ✅ CORRECT: Parameters in queryKey
    queryKey: BENEFIT_QUERY_KEYS.detail(benefitId),
@@ -391,12 +403,16 @@ export function useGetUserPreferences(options?: { enabled?: boolean }) {
 
 7. **MUST** use constants for queryKeys
 
+   **Why?** Centralized queryKey constants prevent typos (hardcoded strings are error-prone), enable type-safe invalidation (TypeScript autocomplete for keys), and make cache management easier (single source of truth for all query keys). When refactoring, you only need to change keys in one place, and grep/find-all works reliably for tracking key usage.
+
    ```typescript
    // ✅ CORRECT: Centralized queryKeys
    queryKey: BENEFIT_QUERY_KEYS.list(),
    ```
 
 8. **MUST** add `'use client'` directive at top of file
+
+   **Why?** The 'use client' directive ensures the Query Hook executes in browser context where React hooks (useQuery), browser APIs (localStorage via ClientSessionManager), and client-side state management work. Without it, Next.js may try to execute the hook during SSR, causing runtime errors. This directive marks the client/server boundary explicitly.
 
    ```typescript
    // ✅ CORRECT: Client directive
@@ -407,6 +423,8 @@ export function useGetUserPreferences(options?: { enabled?: boolean }) {
 
 9. **MUST** provide comprehensive JSDoc for hook
 
+   **Why?** Comprehensive JSDoc documents the hook's purpose, behavior, parameters, and return type, making it easier for other developers (and AI assistants) to understand usage without reading implementation. JSDoc enables IDE autocomplete and inline documentation, reduces onboarding time for new developers, and serves as living documentation that stays in sync with code.
+
    ```typescript
    // ✅ CORRECT: Complete JSDoc
    /**
@@ -414,7 +432,7 @@ export function useGetUserPreferences(options?: { enabled?: boolean }) {
     *
     * @description
     * Fetches benefits from API via UseCase and transforms to UI type using Adapter.
-    * Uses Client Container for singleton UseCase instance.
+    * Uses Client DI Container for singleton UseCase instance.
     *
     * @param options - Query options
     * @returns TanStack Query result with BenefitItem[]
@@ -422,6 +440,9 @@ export function useGetUserPreferences(options?: { enabled?: boolean }) {
    ```
 
 10. **MUST** use `enabled` option for conditional queries
+
+    **Why?** The `enabled` option prevents unnecessary API calls when required parameters are missing (e.g., `benefitId` is null/undefined), avoiding 400/404 errors and wasted network requests. It ensures queries only run when data dependencies are satisfied, improving performance and preventing console errors. TanStack Query will automatically refetch when `enabled` becomes true.
+
     ```typescript
     // ✅ CORRECT: Conditional fetching
     return useQuery({
@@ -435,14 +456,18 @@ export function useGetUserPreferences(options?: { enabled?: boolean }) {
 
 ### ❌ MUST NOT
 
-1. **MUST NOT** use Server Container in Query Hooks
+1. **MUST NOT** use Server DI Container in Query Hooks
+
+   **Why?** Server DI Container uses factory pattern (`createXXX()`), creating a NEW instance on every hook call (every component render), wasting memory and breaking TanStack Query cache (each container has different UseCase instances, so cache keys don't match). Client DI Container uses singleton pattern, ensuring all components share the same instance for proper caching.
 
    ```typescript
-   // ❌ WRONG: Server Container in client hook
+   // ❌ WRONG: Server DI Container in client hook
    const container = createBenefitServerContainer();
    ```
 
 2. **MUST NOT** use deprecated factory method pattern
+
+   **Why?** The factory method pattern (`createGetBenefitsUseCase()`) is deprecated because it's verbose, creates unnecessary friction for developers, and doesn't align with modern JavaScript conventions. Individual getters (`getGetBenefits()`) are more concise, readable, and follow established patterns. Using deprecated patterns creates inconsistency and technical debt.
 
    ```typescript
    // ❌ WRONG: Deprecated pattern
@@ -454,6 +479,8 @@ export function useGetUserPreferences(options?: { enabled?: boolean }) {
 
 3. **MUST NOT** directly instantiate UseCase
 
+   **Why?** Direct instantiation bypasses dependency injection, making code untestable (can't mock dependencies), tightly coupled (hard to change implementations), error-prone (easy to forget dependencies), and breaks the architecture. DI Container ensures all dependencies are properly initialized and maintains clean architecture boundaries between layers.
+
    ```typescript
    // ❌ WRONG: Direct instantiation
    const useCase = new GetBenefitsUseCase(repository);
@@ -463,6 +490,8 @@ export function useGetUserPreferences(options?: { enabled?: boolean }) {
    ```
 
 4. **MUST NOT** skip Adapter transformation
+
+   **Why?** Skipping Adapter transformation exposes Domain Entities directly to Presentation layer, violating layer boundaries and creating tight coupling. UI components would depend on Entity structure, making Entity changes break components. Adapters ensure proper separation, enable Entity evolution without UI changes, and eliminate unsafe `as` type assertions that cause runtime errors.
 
    ```typescript
    // ❌ WRONG: Returning Entity directly
@@ -477,6 +506,8 @@ export function useGetUserPreferences(options?: { enabled?: boolean }) {
 
 5. **MUST NOT** hardcode query keys
 
+   **Why?** Hardcoded queryKeys are error-prone (easy to make typos), difficult to maintain (changes require finding all occurrences), and impossible to type-check (no autocomplete). Centralized constants enable type-safe invalidation, make refactoring easy (change in one place), and allow grep/find-all to reliably track key usage across the codebase.
+
    ```typescript
    // ❌ WRONG: Hardcoded queryKey
    queryKey: ['benefit', 'list'],
@@ -486,6 +517,8 @@ export function useGetUserPreferences(options?: { enabled?: boolean }) {
    ```
 
 6. **MUST NOT** omit parameters from queryKey
+
+   **Why?** Omitting parameters from queryKey causes cache collisions where requests with different parameters incorrectly share cached data. For example, `list()` for `category: 'lunch'` and `list()` for `category: 'dinner'` would use the same cache key, returning wrong data. Including all parameters ensures each unique request has its own cache entry, preventing stale/incorrect data bugs.
 
    ```typescript
    // ❌ WRONG: Parameter not in queryKey
@@ -497,6 +530,8 @@ export function useGetUserPreferences(options?: { enabled?: boolean }) {
    ```
 
 7. **MUST NOT** use hooks in non-React functions
+
+   **Why?** React Hooks (including custom hooks that use useQuery) can only be called inside React components or other hooks. Calling hooks in regular functions violates React's Rules of Hooks, causing runtime errors ("Hooks can only be called inside the body of a function component"). This is a fundamental React constraint for proper hook state management.
 
    ```typescript
    // ❌ WRONG: Hook in regular function
@@ -511,6 +546,8 @@ export function useGetUserPreferences(options?: { enabled?: boolean }) {
    ```
 
 8. **MUST NOT** skip `'use client'` directive
+
+   **Why?** Without 'use client' directive, Next.js may try to execute the Query Hook during Server-Side Rendering, causing runtime errors when accessing browser-only APIs (useQuery, localStorage via ClientSessionManager, window object). The directive explicitly marks the file as client-side code, ensuring it only runs in browser context where React hooks and client APIs work correctly.
 
    ```typescript
    // ❌ WRONG: No client directive
@@ -689,7 +726,7 @@ Query Hooks are the **bridge between UseCases and React Components**:
 
 1. **File Naming**: `get-[feature].query.ts`
 2. **Hook Naming**: `useGet[Feature]`
-3. **Container**: Use Client Container (`getXXXClientContainer()`)
+3. **Container**: Use Client DI Container (`getXXXClientContainer()`)
 4. **UseCase Getter**: Individual getter pattern (`container.getGetBenefits()`)
 5. **Transformation**: Entity → UI Type with Adapter
 6. **Query Keys**: Centralized constants with hierarchical structure (see [query-keys.md](./query-keys.md))
@@ -703,6 +740,6 @@ Query Hooks are the **bridge between UseCases and React Components**:
 
 - [mutation-hooks.md](./mutation-hooks.md) - Mutation hooks and invalidation patterns
 - [query-keys.md](./query-keys.md) - Query key conventions and hierarchical structure
-- [adapter-pattern.md](./adapter-pattern.md) - Entity → UI transformations
-- [di-containers.md](../di-containers.md) - Client Container patterns
+- [adapter-pattern.md](./adapter-basics.md) - Entity → UI transformations
+- [di-containers.md](../di-containers.md) - Client DI Container patterns
 - [frontend.md](../frontend.md) - Component integration

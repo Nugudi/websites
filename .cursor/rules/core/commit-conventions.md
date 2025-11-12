@@ -7,6 +7,17 @@ alwaysApply: true
 
 # Commit Convention Rules
 
+## Table of Contents
+
+- [Format](#format)
+- [Commit Types (9 types only)](#commit-types-9-types-only)
+- [Scope Options](#scope-options)
+- [MUST Rules](#must-rules)
+- [NEVER Rules (CRITICAL)](#never-rules-critical)
+- [Quick Examples](#quick-examples)
+- [Branch Naming Pattern](#branch-naming-pattern)
+- [Configuration Files](#configuration-files)
+
 ## Format
 
 ```
@@ -86,6 +97,40 @@ alwaysApply: true
 5. **NEVER** mix multiple types
    - ❌ `feat+fix(auth): 로그인 추가 및 버그 수정`
    - ✅ Split into two commits
+
+**Why These NEVER Rules Exist:**
+
+1. **Why NEVER add Co-Author lines?** 🚨 **MOST CRITICAL**
+   - **CI/CD Breakage**: Commitlint config does NOT allow Co-Author trailers
+   - **Build Pipeline Failure**: Pre-commit hook runs commitlint → Rejects commit → Blocks push
+   - **Team Convention**: This project attributes work through commit author, not co-authors
+   - **AI Agent Safety**: AI tools (Claude, Copilot) often auto-add these lines → Always remove them
+   - **Git History**: Co-Authors pollute git log, making it harder to track actual contributors
+
+2. **Why NEVER exceed subject limit (72 chars)?**
+   - **Git Log Display**: 72 chars fits in standard terminal width (80 cols with decorations)
+   - **GitHub UI**: Truncates subjects beyond 72 chars with "..." (loses information)
+   - **Commitlint Enforcement**: Automated rejection prevents merging
+   - **Readability**: Short subjects force clear, concise messaging
+
+3. **Why NEVER exceed body limit (100 chars/line)?**
+   - **Terminal Readability**: Long lines wrap awkwardly in `git log`
+   - **Code Review**: GitHub/GitLab diff view has limited width
+   - **Best Practice**: Industry standard from Linux kernel conventions
+   - **Commitlint Enforcement**: Automated rejection
+
+4. **Why NEVER use undefined types?**
+   - **Changelog Generation**: Only defined types (9 types) get included in CHANGELOG
+   - **Semantic Versioning**: Types map to version bumps (feat = minor, fix = patch)
+   - **Team Understanding**: Everyone knows what `feat`, `fix`, `refactor` mean
+   - **CI/CD Automation**: Scripts rely on type classification for release notes
+
+5. **Why NEVER mix multiple types?**
+   - **Atomic Commits**: Each commit should do ONE thing (Single Responsibility)
+   - **Revert Safety**: Can't partially revert a mixed commit
+   - **Changelog Clarity**: Mixed commits confuse changelog categorization
+   - **Code Review**: Easier to review focused commits
+   - **Git Bisect**: Binary search for bugs works better with atomic commits
 
 ## Quick Examples
 

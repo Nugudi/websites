@@ -580,4 +580,4 @@ UseCases are the entry point for all business operations. They:
 - Provide a clear API for the Presentation layer
 - Are easily testable with mocked dependencies
 
-For more on how UseCases are instantiated and used, see [di-server-patterns.md](./di-server-patterns.md) and [di-client-patterns.md](./di-client-patterns.md).
+For more on how UseCases are instantiated and used, see [di-server-containers.md](./di-server-containers.md) and [di-client-containers.md](./di-client-containers.md).

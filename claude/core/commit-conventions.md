@@ -79,31 +79,46 @@ Use these for cross-cutting changes:
 
 1. **MUST** include ticket number from branch name
 
+   **Why?** Ticket numbers (`[NUGUDI-XXX]`) link commits to project management issues, enable traceability (find all commits for a feature/bug), support automated changelog generation, and facilitate code review by providing context. Without ticket numbers, commits are orphaned from project tracking, making it impossible to understand why changes were made or track feature completion.
+
    - Branch: `feature/NUGUDI-105-bottomsheet` → Commit: `[NUGUDI-105]`
 
 2. **MUST** use one of the defined commit types
+
+   **Why?** Defined commit types (`feat`, `fix`, etc.) enable automated semantic versioning, support conventional changelog generation, provide instant commit categorization (feature vs bugfix), and enforce consistent commit structure. Undefined types break automation tools, make commit history unreadable, and prevent semantic release workflows. The 9 defined types cover all development scenarios.
 
    - Valid: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `perf`, `ci`
 
 3. **MUST** keep subject line under 72 characters
 
+   **Why?** 72-character limit ensures subject lines display correctly in all Git tools (GitHub, GitLab, terminal `git log --oneline`), prevent truncation/wrapping, remain readable in side-by-side diffs, and force concise, focused commit messages. Longer subjects get cut off in most Git UIs, making commit history unreadable. This limit is Git best practice enforced by commitlint.
+
    - Subject is after `{type}({scope}):`
 
 4. **MUST** keep body lines under 100 characters
+
+   **Why?** 100-character body line limit ensures readability in terminal/Git UIs, prevents horizontal scrolling, maintains proper wrapping in code review tools, and enforces focused explanations. Long lines become unreadable in narrow terminal windows and make commit messages difficult to review. Line breaks improve readability and are Git best practice.
 
    - Use line breaks for longer descriptions
 
 5. **MUST** use imperative mood in subject
 
+   **Why?** Imperative mood ("추가", "수정") is Git convention matching auto-generated messages ("Merge branch..."), creates action-oriented commit history, and maintains consistency. Past tense ("추가했음") reads like diary entries instead of commands, breaks Git conventions, and makes history less professional. Imperative mood describes what the commit will do when applied.
+
    - ✅ CORRECT: `feat(react): BottomSheet 컴포넌트 추가`
    - ❌ WRONG: `feat(react): BottomSheet 컴포넌트를 추가했음`
 
 6. **MUST** write commit messages in Korean for this project
+
+   **Why?** Korean commit messages provide consistency with project language, improve readability for Korean-speaking team, match issue tracker language (Jira uses Korean), and reduce translation overhead. English messages create language mixing, make commits harder to understand for primary team, and break consistency with other project documentation. This is project-specific convention.
+
    - This is a project-specific convention
 
 ### ❌ MUST NOT
 
 1. **MUST NOT** add Co-Author lines
+
+   **Why?** Co-Author lines (`Co-Authored-By: ...`) break the CI/CD pipeline's commitlint validation, causing build failures and preventing deployment. The commitlint configuration explicitly rejects commits with Co-Author footers because they're unnecessary for AI-assisted development and create noise in commit history. This is CRITICAL - commits with Co-Author lines will be rejected by CI/CD and must be rewritten.
 
    - ❌ NO `Co-Authored-By: Claude <noreply@anthropic.com>`
    - ❌ NO `Co-Authored-By: GitHub Copilot <...>`
@@ -111,17 +126,26 @@ Use these for cross-cutting changes:
 
 2. **MUST NOT** exceed subject line limit (72 chars)
 
+   **Why?** Commitlint enforces 72-character subject limit as hard rule, immediately rejecting commits that exceed it and preventing push to repository. Exceeding this limit breaks Git UI display, makes commit history unreadable, and forces commit rewrite (wasted time). The limit exists for technical reasons (Git tool compatibility) and is non-negotiable in this project.
+
    - Commitlint will reject the commit
 
 3. **MUST NOT** exceed body line limit (100 chars)
+
+   **Why?** Commitlint enforces 100-character body line limit, rejecting commits that exceed it and blocking push. Long body lines break terminal display, make commit messages unreadable in code review, and indicate poorly formatted explanations. Use line breaks to wrap long descriptions - it's Git best practice and enforced by tooling.
 
    - Commitlint will reject the commit
 
 4. **MUST NOT** use undefined commit types
 
+   **Why?** Undefined commit types break semantic versioning automation, prevent changelog generation, fail commitlint validation (blocking push), and create inconsistent commit history. Only the 9 defined types (`feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `perf`, `ci`) are allowed - they cover all development scenarios. Custom types will be rejected by CI/CD.
+
    - Only use the 9 types listed above
 
 5. **MUST NOT** mix multiple types in one commit
+
+   **Why?** Mixing types (`feat+fix`) violates single responsibility principle, breaks semantic versioning (commit cannot determine version bump), complicates rollbacks (cannot revert feature without reverting fix), and makes commit history unclear. Each commit should do one thing well - split mixed changes into separate commits with appropriate types for clean history and proper versioning.
+
    - ❌ WRONG: `feat+fix(auth): 로그인 추가 및 버그 수정`
    - ✅ CORRECT: Split into two commits
 

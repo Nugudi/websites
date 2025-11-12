@@ -1,5 +1,5 @@
 ---
-description: Next.js Page patterns - Server Container usage, data prefetching with UseCases, HydrationBoundary setup, and metadata generation
+description: Next.js Page patterns - Server DI Container usage, data prefetching with UseCases, HydrationBoundary setup, and metadata generation
 globs:
   - "app/**/page.tsx"
   - "app/**/page.ts"
@@ -31,7 +31,7 @@ A **Page** is a Next.js App Router route entry point that:
 ### ✅ What Pages MUST Do
 
 1. **Server Component by Default** - Pages are Server Components in Next.js 16 App Router
-2. **Use Server Container** - Get UseCases from `createXXXServerContainer()` (creates new instance per request)
+2. **Use Server DI Container** - Get UseCases from `createXXXServerContainer()` (creates new instance per request)
 3. **Prefetch Data for SSR** - Use `queryClient.prefetchQuery()` with UseCase for server-side data fetching
 4. **Wrap with HydrationBoundary** - Wrap View in `<HydrationBoundary state={dehydrate(queryClient)}>` for cache hydration
 5. **Use Default Export** - Pages MUST use `export default` (Next.js routing requirement)
@@ -43,15 +43,15 @@ A **Page** is a Next.js App Router route entry point that:
 1. **Contain UI Logic** - Pages are routing entry points, not UI components
 2. **Use Hooks** - Server Components cannot use `useState`, `useEffect`, etc.
 3. **Use Browser APIs** - Server Components run on server, no `window`, `document`, etc.
-4. **Use Client Container** - NEVER use `getXXXClientContainer()` on server (breaks SSR with singleton)
+4. **Use Client DI Container** - NEVER use `getXXXClientContainer()` on server (breaks SSR with singleton)
 5. **Instantiate Repository/UseCase Directly** - ALWAYS get from DI Container
 6. **Use Named Export** - Pages require default export for Next.js routing
 
-## Server Container Usage
+## Server DI Container Usage
 
 ### ⚠️ Critical: Direct Import Required
 
-**ALWAYS import Server Container directly from the specific file**, NOT from barrel exports:
+**ALWAYS import Server DI Container directly from the specific file**, NOT from barrel exports:
 
 ```typescript
 // ✅ CORRECT: Direct import from server-container file
@@ -63,21 +63,21 @@ import { createUserServerContainer } from '@user/di';
 
 **Why?** Barrel exports bundle both server and client containers together, causing webpack to fail tree-shaking. This leads to `server-only` package errors in client code and build failures.
 
-### Why Server Container?
+### Why Server DI Container?
 
 Pages run on the server and need:
 - **Fresh instances per request** - Stateless, no shared state between requests
-- **Automatic token injection** - Server Container reads cookies/headers automatically
+- **Automatic token injection** - Server DI Container reads cookies/headers automatically
 - **Type-safe UseCase access** - Individual getters for each UseCase
 
-### Server Container Pattern
+### Server DI Container Pattern
 
 ```typescript
-// ✅ CORRECT - Server Container in Page
+// ✅ CORRECT - Server DI Container in Page
 import { createUserServerContainer } from '@/src/domains/user/di/user-server-container';
 
 const Page = async () => {
-  // 1. Create Server Container (new instance per request)
+  // 1. Create Server DI Container (new instance per request)
   const container = createUserServerContainer();
 
   // 2. Get individual UseCase
@@ -95,7 +95,7 @@ export default Page;
 ### ❌ Wrong Patterns
 
 ```typescript
-// ❌ WRONG - Using Client Container on server
+// ❌ WRONG - Using Client DI Container on server
 import { getUserClientContainer } from '@/src/domains/user/di/user-client-container';
 
 const Page = async () => {
@@ -143,7 +143,7 @@ const Page = async () => {
   // 1. Get TanStack Query Client (server-side instance)
   const queryClient = getQueryClient();
 
-  // 2. Create Server Container
+  // 2. Create Server DI Container
   const container = createUserServerContainer();
   const getMyProfileUseCase = container.getGetMyProfile();
 
@@ -206,7 +206,7 @@ import getQueryClient from '@core/infrastructure/configs/tanstack-query/get-quer
 const Page = async () => {
   const queryClient = getQueryClient();
 
-  // Server Container for User domain
+  // Server DI Container for User domain
   const container = createUserServerContainer();
   const getMyProfileUseCase = container.getGetMyProfile();
 
@@ -239,7 +239,7 @@ import getQueryClient from '@core/infrastructure/configs/tanstack-query/get-quer
 const Page = async () => {
   const queryClient = getQueryClient();
 
-  // Multiple Server Containers
+  // Multiple Server DI Containers
   const userContainer = createUserServerContainer();
   const benefitContainer = createBenefitServerContainer();
 
@@ -289,7 +289,7 @@ const Page = async ({ params }: PageProps) => {
   // Await params (Next.js 16 requirement)
   const { cafeteriaId } = await params;
 
-  // Server Container
+  // Server DI Container
   const container = createCafeteriaServerContainer();
   const getCafeteriaDetailUseCase = container.getGetCafeteriaDetail();
 
@@ -333,7 +333,7 @@ const Page = async ({ searchParams }: PageProps) => {
   const filter = params.filter ?? 'all';
   const page = parseInt(params.page ?? '1', 10);
 
-  // Server Container
+  // Server DI Container
   const container = createCafeteriaServerContainer();
   const getCafeteriaListUseCase = container.getGetCafeteriaList();
 
@@ -394,7 +394,7 @@ type PageProps = {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { cafeteriaId } = await params;
 
-  // Fetch cafeteria data for metadata
+  // Fetch cafeteria data for metadata with Server DI Container
   const container = createCafeteriaServerContainer();
   const getCafeteriaDetailUseCase = container.getGetCafeteriaDetail();
   const cafeteria = await getCafeteriaDetailUseCase.execute({ id: cafeteriaId });
@@ -423,24 +423,70 @@ export default Page;
 ### ✅ MUST Rules
 
 1. **MUST be Server Component** - Pages are Server Components by default in Next.js 16
-2. **MUST use Server Container** - Use `createXXXServerContainer()` for UseCase injection
+
+   **Why?** Server Components enable SSR data prefetching for faster initial page loads, reduce JavaScript bundle size (no client-side React for static content), and allow secure server-only operations (database queries, API keys). Pages being Server Components by default in Next.js 16 App Router provides better performance, SEO, and security compared to client-side rendering.
+
+2. **MUST use Server DI Container** - Use `createXXXServerContainer()` for UseCase injection
+
+   **Why?** Server DI Container uses factory pattern (creates new instance per request), ensuring each page request gets fresh instances for proper SSR isolation and preventing state leakage between requests. Client DI Container uses lazy singleton pattern, which would share state across all requests in SSR, causing security issues and data corruption. Server Container provides request-level isolation.
+
 3. **MUST prefetch data for SSR** - Use `queryClient.prefetchQuery()` with UseCase
+
+   **Why?** Prefetching data during SSR populates TanStack Query cache before hydration, enabling instant page display without loading states (better UX and perceived performance). Without prefetching, users see Skeleton components even though the server could have rendered complete content, wasting SSR benefits. Prefetching provides fast initial loads and smooth hydration with no loading flicker.
+
 4. **MUST wrap with HydrationBoundary** - Wrap View in `<HydrationBoundary state={dehydrate(queryClient)}>`
+
+   **Why?** HydrationBoundary transfers server-prefetched data to the client TanStack Query cache, enabling seamless hydration without refetching (preventing duplicate requests and loading states). Without HydrationBoundary, client-side queries refetch data the server already loaded, wasting bandwidth and showing unnecessary loading states. HydrationBoundary ensures efficient cache reuse between server and client.
+
 5. **MUST use default export** - Pages require `export default` (Next.js requirement)
+
+   **Why?** Next.js App Router file-based routing requires default exports to identify page components, making this a framework requirement not a convention choice. Named exports won't be recognized as pages by Next.js, causing routing failures. Default export is the standard contract between Next.js and page components for automatic route generation.
+
 6. **MUST get UseCases from Container** - Use `container.getGetXXX()` pattern
+
+   **Why?** DI Container provides dependency injection, loose coupling, and testability by abstracting UseCase instantiation and dependency management. Direct instantiation creates tight coupling to concrete implementations, makes testing difficult (can't mock dependencies), and violates dependency inversion principle. Containers enable clean architecture, test isolation, and flexible dependency swapping.
+
 7. **MUST call UseCase.execute()** - UseCases are executed with `.execute()` method
+
+   **Why?** The `.execute()` method is the standard interface for all UseCases, providing consistent API across the entire application and clear intent (executing business logic). This convention makes code predictable, improves IDE autocomplete, and follows Command pattern where UseCases encapsulate operations. Consistency in UseCase invocation improves code readability and maintainability.
+
 8. **MUST await params/searchParams** - In Next.js 16, params and searchParams are Promises
+
+   **Why?** Next.js 16 changed params and searchParams to Promises to support streaming and partial prerendering, requiring await for proper SSR. Without await, you get Promise objects instead of actual values, causing runtime errors and type mismatches. This breaking change in Next.js 16 ensures compatibility with modern rendering features and proper async data flow.
 
 ### ❌ NEVER Rules
 
 1. **NEVER contain UI logic** - Pages are routing entry points, not UI components
+
+   **Why?** Pages mixing UI logic with routing concerns violates Single Responsibility Principle, reduces component reusability (UI becomes coupled to specific routes), and makes testing difficult. Pages should delegate UI rendering to View components, focusing solely on data prefetching, authentication, and routing. Separating concerns improves maintainability, testability, and allows Views to be reused across different routes.
+
 2. **NEVER use hooks** - Server Components cannot use `useState`, `useEffect`, etc.
+
+   **Why?** React hooks (useState, useEffect, useContext) are client-side APIs that rely on browser runtime and component lifecycle, causing runtime errors in Server Components ("Hooks can only be called from Client Components"). Server Components run during SSR without browser context, making hooks incompatible. Use Server Components for data prefetching and Client Components (Sections) for interactive features requiring hooks.
+
 3. **NEVER use browser APIs** - No `window`, `document`, `localStorage`, etc.
-4. **NEVER use Client Container** - `getXXXClientContainer()` breaks SSR with singleton
+
+   **Why?** Browser APIs (window, document, localStorage) don't exist in Node.js server environment where Server Components execute during SSR, causing runtime errors ("window is not defined"). Attempting to access these APIs breaks SSR and causes hydration mismatches. Browser APIs must be used only in Client Components where they safely execute in the browser environment.
+
+4. **NEVER use Client DI Container** - `getXXXClientContainer()` breaks SSR with singleton
+
+   **Why?** Client DI Container uses lazy singleton pattern, which shares a single instance across all SSR requests, causing state leakage between different users' requests (security vulnerability) and data corruption. Server Components need Server DI Container's factory pattern to create fresh instances per request, ensuring proper isolation. Using Client Container in SSR creates critical security and correctness issues.
+
 5. **NEVER instantiate Repository/UseCase directly** - Always get from DI Container
+
+   **Why?** Direct instantiation bypasses dependency injection, creating tight coupling to concrete implementations (making code untestable and inflexible). It forces manual dependency management (error-prone, especially with complex dependency graphs), and violates dependency inversion principle. DI Containers provide loose coupling, testability through mock injection, and centralized dependency configuration.
+
 6. **NEVER use named export** - Pages require default export for Next.js routing
+
+   **Why?** Next.js App Router file-based routing system specifically looks for default exports to identify page components, making named exports invisible to the routing system and causing 404 errors. This is a framework requirement, not a style choice. Default export is the contract between Next.js and developers for automatic route generation from file structure.
+
 7. **NEVER skip HydrationBoundary** - Required for cache hydration
+
+   **Why?** Without HydrationBoundary, server-prefetched data in TanStack Query cache doesn't transfer to the client, forcing complete refetching of all data (wasting SSR effort, bandwidth, and showing loading states). HydrationBoundary serializes server cache and rehydrates it on the client, enabling instant page display with prefetched data. Skipping it negates the main benefit of SSR data prefetching.
+
 8. **NEVER use deprecated `@nugudi/api`** - Use UseCase layer instead
+
+   **Why?** The deprecated `@nugudi/api` package bypasses the UseCase layer, violating Clean Architecture by allowing Presentation to directly call Data layer. This eliminates business logic encapsulation (no validation, no single place for rules), creates tight coupling to API implementation, and prevents proper testing. UseCases provide business logic layer, testability, and clean separation of concerns following architectural principles.
 
 ## Common Patterns
 
@@ -511,6 +557,7 @@ const Page = async ({ searchParams }: PageProps) => {
   const params = await searchParams;
   const tab = params.tab ?? 'profile';
 
+  // Server DI Container
   const container = createUserServerContainer();
 
   // Conditional prefetch based on active tab
@@ -542,6 +589,6 @@ export default Page;
 
 - **[component-hierarchy.md](./component-hierarchy.md)** - Overall component hierarchy and layer responsibilities
 - **[view-patterns.md](./view-patterns.md)** - View layer implementation guide
-- **[section-patterns.md](./section-patterns.md)** - Section layer with Client Container usage
-- **[../packages.md](../packages.md)** - DDD Architecture, DI Containers, Server vs Client Containers
-- **[../hooks-guide.md](../hooks-guide.md)** - TanStack Query custom hooks for client-side data fetching
+- **[section-patterns.md](./section-patterns.md)** - Section layer with Client DI Container usage
+- **[../packages.md](../packages.md)** - DDD Architecture, DI Containers, Server vs Client DI Containers
+- **[../patterns/hooks-guide.md](../patterns/hooks-guide.md)** - TanStack Query custom hooks for client-side data fetching

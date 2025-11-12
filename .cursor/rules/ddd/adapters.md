@@ -7,6 +7,16 @@ globs:
 
 # Adapter Pattern Rules
 
+## Table of Contents
+
+- [When to Use Adapter vs Mapper](#when-to-use-adapter-vs-mapper)
+- [Adapter Structure](#adapter-structure)
+- [Entity Boolean-Based Logic](#entity-boolean-based-logic)
+- [Time Formatting with Day.js](#time-formatting-with-dayjs)
+- [JSDoc Documentation Standards](#jsdoc-documentation-standards)
+- [NEVER Rules](#never-rules)
+- [Quick Reference](#quick-reference)
+
 ## When to Use Adapter vs Mapper
 
 ### Decision Rule
@@ -370,6 +380,54 @@ export const CafeteriaAdapter = {
 
 - **NEVER** use Adapter when < 7 Entity methods
   - Use simple mapper function instead
+
+**Why These NEVER Rules Exist:**
+
+1. **Why NEVER export private helper functions?**
+   - **Encapsulation**: Helper functions are implementation details, not public API
+   - **Prevents Misuse**: External code shouldn't bypass Adapter's main methods
+   - **Refactoring Freedom**: Can change/remove helpers without breaking external code
+   - **Clear API Surface**: Only export methods are the public Adapter interface
+   - **Testing**: Test public Adapter methods, not internal helpers
+
+2. **Why NEVER use unsafe 'as' assertions?**
+   - **Runtime Safety**: `as` bypasses type checking, can cause runtime errors
+   - **TypeScript Lies**: `as` tells TypeScript "trust me" without validation
+   - **Production Crashes**: Invalid value cast to type = Uncaught error
+   - **Use Private Helpers**: Helpers validate and provide safe fallbacks
+   - **Debugging**: Validation errors logged with context, easier to debug
+
+3. **Why NEVER put Korean text in Entity methods?**
+   - **Domain Purity**: Domain layer should be language-agnostic
+   - **Separation of Concerns**: Presentation concerns (Korean text) don't belong in Domain
+   - **Reusability**: Entity with Korean text can't be reused in English UI
+   - **Testability**: Testing Korean strings in Domain = Brittle tests
+   - **Maintainability**: UI text changes shouldn't require Domain layer changes
+   - **Use Boolean Methods**: `isLunchMenu()` in Entity, Adapter maps to "점심"
+
+4. **Why NEVER format time/date in Entity?**
+   - **Domain Purity**: Formatting is presentation concern, not business logic
+   - **Testability**: Testing formatted strings = Fragile tests
+   - **Reusability**: Different UIs need different formats (mobile vs desktop)
+   - **Localization**: Formatting varies by locale (12h vs 24h, date order)
+   - **Separation**: Entity returns raw `LocalTime`, Adapter formats with Day.js
+   - **Multiple Formats**: Same entity can be formatted differently in different contexts
+
+5. **Why NEVER skip JSDoc on public Adapter methods?**
+   - **Developer Experience**: IDE shows JSDoc hints during autocomplete
+   - **Maintainability**: New developers understand method purpose without reading code
+   - **Usage Examples**: `@example` shows how to use complex methods
+   - **Parameter Clarity**: `@param` explains what each parameter means
+   - **Return Type Clarity**: `@returns` explains what the return value represents
+   - **Contract Documentation**: JSDoc is the method's public contract
+
+6. **Why NEVER use Adapter when < 7 Entity methods?**
+   - **Over-Engineering**: Adapter pattern adds complexity without benefit
+   - **Simpler Alternatives**: Pure function mapper is faster to read and write
+   - **Performance**: Adapter object creation overhead for simple transformations
+   - **Cognitive Load**: Unnecessary abstraction makes code harder to follow
+   - **Threshold Rationale**: 7+ methods = Complex enough to justify Adapter pattern
+   - **KISS Principle**: Keep it simple - use mapper for simple transformations
 
 ## Quick Reference
 

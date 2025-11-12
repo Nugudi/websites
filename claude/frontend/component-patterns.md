@@ -892,24 +892,70 @@ export const EmailSignInForm = ({
 ### ✅ MUST Rules
 
 1. **MUST be pure/presentational** - Only render UI based on props
+
+   **Why?** Pure components are predictable (same props = same output), easily testable (no side effects to mock), and reusable across different contexts. Mixing side effects (data fetching, business logic) into components makes them context-dependent, difficult to test, and couples them to specific use cases. Pure components following functional programming principles provide maintainability and reliability.
+
 2. **MUST accept data via props** - All data from parent components
+
+   **Why?** Props-driven data flow creates clear dependency graphs where data flows down from parent to child, making components predictable and testable. Components fetching their own data violate component hierarchy, create hidden dependencies, and prevent reusability in different contexts. Props make dependencies explicit, enable component composition, and support testing with mock data.
+
 3. **MUST emit events via callbacks** - Use callback props for interactions
+
+   **Why?** Callback props (onClick, onChange) enable upward communication while maintaining unidirectional data flow (props down, events up), keeping components decoupled from parent implementation details. Direct parent manipulation or shared state couples components tightly, reduces reusability, and makes testing difficult. Callbacks provide loose coupling and clear component contracts.
+
 4. **MUST be reusable** - Work in any context with same props
+
+   **Why?** Reusable components eliminate code duplication, ensure visual consistency, reduce maintenance burden (fix once, benefits everywhere), and amortize development cost across multiple use cases. Context-specific components create maintenance nightmares (duplicate fixes), visual inconsistencies, and wasted development time. Design for reusability from the start maximizes component value.
+
 5. **MUST use named export** - `export const MyComponent`
+
+   **Why?** Named exports provide better IDE autocomplete, explicit imports showing exactly what's imported, and prevent naming inconsistencies across the codebase. Named exports support tree-shaking better, enable multiple exports per file, and align with component library best practices. Default exports hide the actual component name and reduce discoverability.
+
 6. **MUST have minimal state** - Only UI state (isOpen, isHovered)
+
+   **Why?** Components should manage only presentational state (UI toggles, hover states) that doesn't affect business logic, keeping them lightweight and focused. Complex state (data, forms, workflows) belongs in parent Sections or Zustand stores, preventing components from becoming bloated and tightly coupled. Minimal state improves testability and makes components easier to understand.
+
 7. **MUST use design tokens** - vars and classes from `@nugudi/themes`
+
+   **Why?** Design tokens ensure visual consistency, enable theme switching (dark mode) automatically, provide type-safe styling, and centralize design decisions. Hard-coded values create maintenance nightmares (find all instances for changes), visual inconsistencies, and make theming impossible. Tokens provide single source of truth for design system.
+
 8. **MUST use Vanilla Extract** - `index.css.ts` for styling
+
+   **Why?** Vanilla Extract provides type-safe CSS-in-TypeScript with zero runtime cost, design token integration, and build-time CSS generation for optimal performance. CSS Modules lack type safety and design system integration. Vanilla Extract enforces consistent styling patterns, prevents CSS conflicts with scoped styles, and enables compile-time validation.
 
 ### ❌ NEVER Rules
 
 1. **NEVER fetch data** - No API calls, UseCases, or TanStack Query
+
+   **Why?** Data fetching is Section layer's responsibility with proper error boundaries, loading states, and cache management. Components fetching data violate component hierarchy, prevent reusability (tied to specific endpoints), make testing difficult (need to mock network), and duplicate Section functionality. Pure presentational components receiving data via props are predictable, testable, and reusable.
+
 2. **NEVER use DI Container** - Components don't need data sources
+
+   **Why?** DI Containers exist for dependency injection when using UseCases to fetch data, which Components never do by design. Components using DI Containers indicate architectural violation—they should be pure presentational units receiving data via props. This rule enforces component purity and proper separation of concerns in the component hierarchy.
+
 3. **NEVER contain business logic** - Business logic in Domain layer
+
+   **Why?** Business logic (validation, calculations, domain rules) belongs in Domain layer (Entities, UseCases), not Presentation layer, following Clean Architecture principles. Components with business logic create duplicate logic across the codebase, make changes difficult (update in multiple places), prevent reusability, and violate single source of truth. Domain layer ensures consistency.
+
 4. **NEVER know about routes** - No `useRouter` or navigation
+
+   **Why?** Components knowing about routes couples them to specific application navigation structure, preventing reusability across different routes or applications. Navigation is a cross-cutting concern handled by parent Sections or Pages through callback props. Route-aware components become context-dependent and difficult to test, violating component purity principles.
+
 5. **NEVER import Sections/Views** - Lowest layer in hierarchy
+
+   **Why?** Components are the lowest layer in component hierarchy (Page → View → Section → Component), importing higher layers creates circular dependencies and violates architectural rules. Upward imports prevent proper testing (can't test Component without Section), reduce reusability, and create tight coupling. Hierarchy must flow downward only for maintainable architecture.
+
 6. **NEVER manage complex state** - Use Zustand or move to Section
+
+   **Why?** Complex state (forms, multi-step workflows, shared data) requires sophisticated state management that bloats Components and violates Single Responsibility Principle. Components should manage only simple UI state (toggles, hovers). Complex state belongs in Zustand stores (global) or Sections (local with TanStack Query), keeping Components lightweight and focused on presentation.
+
 7. **NEVER use hard-coded values** - Always use design tokens
+
+   **Why?** Hard-coded colors, spacing, or typography create maintenance nightmares (must find and change all occurrences), visual inconsistencies across the app, and make theming impossible. Design tokens provide single source of truth, enable automatic theme switching, ensure consistency, and allow design changes to propagate automatically. Hard-coding violates DRY principle.
+
 8. **NEVER use CSS Modules** - Use Vanilla Extract only
+
+   **Why?** Vanilla Extract is the standardized styling solution providing type-safe CSS-in-TypeScript, design token integration, zero runtime cost, and build-time validation. CSS Modules lack type safety, can't access design tokens easily, and create inconsistent styling patterns across the codebase. Standardizing on Vanilla Extract ensures consistent styling approach and better developer experience.
 
 ## Common Patterns
 

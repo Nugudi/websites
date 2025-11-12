@@ -1,5 +1,5 @@
 ---
-description: Section patterns - Client Container usage, data fetching with TanStack Query, Suspense/ErrorBoundary implementation, Adapter usage, and feature state management
+description: Section patterns - Client DI Container usage, data fetching with TanStack Query, Suspense/ErrorBoundary implementation, Adapter usage, and feature state management
 globs:
   - "**/presentation/ui/sections/**/*.tsx"
 alwaysApply: true
@@ -16,7 +16,7 @@ alwaysApply: true
 
 A **Section** is a feature-specific component that:
 - Encapsulates a self-contained feature with its own data and logic
-- Fetches data using Client Container and TanStack Query
+- Fetches data using Client DI Container and TanStack Query
 - Implements error and loading boundaries (ErrorBoundary + Suspense)
 - Manages feature-specific state (form state, selection, etc.)
 - Orchestrates multiple Components to build the feature UI
@@ -34,25 +34,25 @@ A **Section** is a feature-specific component that:
 3. **Implement ErrorBoundary** - Wrap Suspense with `<ErrorBoundary fallback={<Error />}>`
 4. **Provide Skeleton Component** - Create Skeleton that matches actual layout
 5. **Provide Error Component** - Create Error fallback for failed data fetching
-6. **Use Client Container** - Get UseCases from `getXXXClientContainer()` (Lazy-initialized Singleton)
+6. **Use Client DI Container** - Get UseCases from `getXXXClientContainer()` (Lazy-initialized Singleton)
 7. **Fetch Data with TanStack Query** - Use `useSuspenseQuery` or `useQuery` with UseCase
 8. **Use Named Export** - `export const MySection`
 9. **Create Content Sub-component** - Separate data fetching logic from boundary setup
 
 ### ❌ What Sections MUST NOT Do
 
-1. **Use Server Container** - NEVER use `createXXXServerContainer()` in Client Components
+1. **Use Server DI Container** - NEVER use `createXXXServerContainer()` in Client Components
 2. **Skip Error Handling** - Every Section MUST have ErrorBoundary
 3. **Skip Loading State** - Every Section MUST have Suspense with Skeleton
 4. **Define Page Layout** - Layout structure is View's responsibility
 5. **Import Other Sections** - Sections are independent, composed by Views
 6. **Instantiate Repository/UseCase Directly** - ALWAYS get from DI Container
 
-## Client Container Usage
+## Client DI Container Usage
 
 ### ⚠️ Critical: Direct Import Required
 
-**ALWAYS import Client Container directly from the specific file**, NOT from barrel exports:
+**ALWAYS import Client DI Container directly from the specific file**, NOT from barrel exports:
 
 ```typescript
 // ✅ CORRECT: Direct import from client-container file
@@ -64,25 +64,25 @@ import { getUserClientContainer } from '@user/di';
 
 **Why?** Barrel exports bundle both server and client containers together, causing webpack to fail tree-shaking. This leads to `server-only` package errors in client code and build failures.
 
-### Why Client Container?
+### Why Client DI Container?
 
 Sections run on the client and need:
 - **Lazy-initialized Singleton** - One shared instance across all components
-- **Automatic token injection** - Client Container reads from cookies/storage
+- **Automatic token injection** - Client DI Container reads from cookies/storage
 - **Type-safe UseCase access** - Individual getters for each UseCase
 - **Optimized for client-side** - Reuses connection pools, caches tokens
 
-### Client Container Pattern
+### Client DI Container Pattern
 
 ```typescript
-// ✅ CORRECT - Client Container in Section
+// ✅ CORRECT - Client DI Container in Section
 "use client";
 
 import { getUserClientContainer } from '@/src/domains/user/di/user-client-container';
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 const UserWelcomeSectionContent = () => {
-  // 1. Get Client Container (Lazy-initialized Singleton)
+  // 1. Get Client DI Container (Lazy-initialized Singleton)
   const container = getUserClientContainer();
 
   // 2. Get individual UseCase
@@ -101,7 +101,7 @@ const UserWelcomeSectionContent = () => {
 ### ❌ Wrong Patterns
 
 ```typescript
-// ❌ WRONG - Using Server Container in Client Component
+// ❌ WRONG - Using Server DI Container in Client Component
 "use client";
 
 import { createUserServerContainer } from '@/src/domains/user/di/user-server-container';
@@ -346,7 +346,7 @@ export const BenefitListSection = () => {
 
 Use **Adapter Pattern** when Entity → UI Type transformation requires **7+ Entity method calls**.
 
-**See**: [../adapter-pattern.md](../adapter-pattern.md) for comprehensive guide
+**See**: [../patterns/adapter-basics.md](../patterns/adapter-basics.md) for comprehensive guide
 
 ### Section with Adapter Example
 
@@ -440,7 +440,7 @@ const BenefitListSectionContent = () => {
 };
 ```
 
-**See**: [../hooks-guide.md](../hooks-guide.md) for complete Query Hook patterns
+**See**: [../patterns/hooks-guide.md](../patterns/hooks-guide.md) for complete Query Hook patterns
 
 ## Feature-Specific State Management
 
@@ -749,25 +749,74 @@ export const ReviewCreateSection = ({
 ### ✅ MUST Rules
 
 1. **MUST be Client Component** - Add `"use client"` directive
+
+   **Why?** Sections use browser-only APIs (TanStack Query, React hooks, event handlers) that cannot run on the server, causing runtime errors in Next.js App Router without the directive. The 'use client' directive marks the module boundary between Server and Client Components, ensuring Sections only execute in the browser where they can safely access client-side features.
+
 2. **MUST implement Suspense boundary** - Wrap Content with `<Suspense>`
+
+   **Why?** Suspense boundaries enable React's concurrent rendering features, allowing the UI to show loading states (Skeleton) while data fetches, preventing the entire page from blocking. Without Suspense, users see a blank screen during data loading, degrading UX. Suspense provides granular loading states at the Section level, making the UI feel more responsive.
+
 3. **MUST implement ErrorBoundary** - Wrap Suspense with `<ErrorBoundary>`
+
+   **Why?** ErrorBoundary prevents runtime errors in one Section from crashing the entire application, providing fault isolation and graceful degradation. Without ErrorBoundary, a failed data fetch or rendering error crashes the whole page, showing users a blank screen. ErrorBoundary catches errors and displays a fallback UI, allowing other Sections to continue working normally.
+
 4. **MUST provide Skeleton component** - Matches actual layout
+
+   **Why?** Skeleton components prevent layout shift by reserving space that matches the actual content's dimensions, providing better perceived performance and UX. Without Skeletons, users see content suddenly appearing (jarring), or the page jumping as content loads (poor UX). Skeletons give users visual feedback that content is loading, making the app feel faster and more polished.
+
 5. **MUST provide Error component** - Graceful degradation
-6. **MUST use Client Container** - `getXXXClientContainer()` for UseCases
+
+   **Why?** Custom Error components provide user-friendly error messages and recovery actions (retry, contact support), maintaining a professional UX even when things go wrong. Generic error boundaries show technical stack traces or blank screens, confusing users. Well-designed Error components guide users on what went wrong and how to proceed, preserving trust in the application.
+
+6. **MUST use Client DI Container** - `getXXXClientContainer()` for UseCases
+
+   **Why?** Client DI Container uses lazy singleton pattern, ensuring all Sections and hooks share the same container instance for consistent cache behavior with TanStack Query. Server DI Container uses factory pattern (creates new instance per call), which would create different UseCase instances on every render, breaking cache management and wasting memory. Client Container provides testability and loose coupling.
+
 7. **MUST fetch data with TanStack Query** - `useSuspenseQuery` or `useQuery`
+
+   **Why?** TanStack Query provides built-in caching, request deduplication, background refetching, and optimistic updates, eliminating boilerplate and preventing common bugs (race conditions, stale data, duplicate requests). Manual data fetching with useState/useEffect is error-prone, requires extensive custom code, and lacks these critical features. TanStack Query is the industry standard for React data fetching.
+
 8. **MUST use named export** - `export const MySection`
+
+   **Why?** Named exports provide better IDE autocomplete, tree-shaking, and refactoring support compared to default exports. Named exports make imports explicit (`import { MySection }` vs `import MySection from '...'`), prevent naming inconsistencies across the codebase, and align with component hierarchy conventions, improving code maintainability and developer experience.
+
 9. **MUST create Content sub-component** - Separate boundaries from content
+
+   **Why?** Separating Content from boundary components (Suspense, ErrorBoundary) keeps concerns isolated—boundaries handle loading/error states while Content focuses on rendering data. This pattern improves testability (test Content independently), readability (clear separation of concerns), and maintainability (change boundaries without affecting Content logic). It follows the Single Responsibility Principle.
 
 ### ❌ NEVER Rules
 
-1. **NEVER use Server Container** - `createXXXServerContainer()` breaks on client
+1. **NEVER use Server DI Container** - `createXXXServerContainer()` breaks on client
+
+   **Why?** Server DI Container uses factory pattern (creates new instance per call) and is designed for Server Components where each request gets a fresh instance. In Client Components/Sections, this creates different container and UseCase instances on every render, breaking TanStack Query's cache management, wasting memory, and causing hydration mismatches. Client Sections MUST use Client DI Container's lazy singleton pattern.
+
 2. **NEVER skip error handling** - Every Section needs ErrorBoundary
+
+   **Why?** Without ErrorBoundary, runtime errors in one Section crash the entire application, showing users a blank screen or error page instead of just the affected Section. This violates fault isolation principles and creates poor UX. ErrorBoundary provides graceful degradation, allowing other Sections to continue working normally even when one Section fails, maintaining application stability.
+
 3. **NEVER skip loading state** - Every Section needs Suspense with Skeleton
+
+   **Why?** Without Suspense and Skeleton, users see blank screens or layout shifts during data loading, creating jarring UX and making the app feel slow. Suspense enables concurrent rendering for better perceived performance, while Skeleton components prevent layout shift by reserving space. Skipping loading states is a common UX anti-pattern that significantly degrades user experience.
+
 4. **NEVER define page layout** - Use Components, not layout structure
+
+   **Why?** Sections are responsible for data fetching and business logic presentation, NOT page-level layout structure (headers, footers, navigation). Mixing layout concerns into Sections violates Single Responsibility Principle, reduces reusability (Section becomes coupled to specific layouts), and creates maintenance issues. Layout structure belongs in Page or View layers, Sections focus on domain-specific content.
+
 5. **NEVER import other Sections** - Sections are independent
+
+   **Why?** Sections importing other Sections creates tight coupling and breaks component hierarchy (Sections should be composed by Views, not by other Sections). This prevents independent development, makes testing difficult (can't test one Section without its dependencies), and creates circular dependency risks. Sections should be loosely coupled, composable units that Views orchestrate, not hierarchical trees.
+
 6. **NEVER instantiate Repository/UseCase directly** - Use DI Container
+
+   **Why?** Direct instantiation bypasses dependency injection, creating tight coupling between Sections and concrete implementations (making code untestable and inflexible). It forces manual dependency management (error-prone), breaks the DI pattern, and makes it impossible to swap implementations or mock dependencies in tests. DI Containers provide loose coupling, testability, and centralized dependency management.
+
 7. **NEVER use deprecated `@nugudi/api`** - Use UseCase layer
+
+   **Why?** The deprecated `@nugudi/api` package bypasses the UseCase layer, violating Clean Architecture by allowing Presentation to directly call Data layer. This skips business logic validation, eliminates the single place for business rules, and creates tight coupling to API implementation details. UseCases provide business logic encapsulation, testability, and proper layer separation following Clean Architecture principles.
+
 8. **NEVER skip Content component** - Always separate boundaries from logic
+
+   **Why?** Mixing boundary logic (Suspense, ErrorBoundary) with content rendering creates components with multiple responsibilities, reducing testability (can't test content independently from boundaries), readability (unclear separation of concerns), and reusability. The Content sub-component pattern enforces Single Responsibility Principle, improves test isolation, and makes the code structure clearer and more maintainable.
 
 ## Common Patterns
 
@@ -816,9 +865,9 @@ const CafeteriaInfiniteListSectionContent = () => {
 ## Related Documentation
 
 - **[component-hierarchy.md](./component-hierarchy.md)** - Overall component hierarchy
-- **[page-patterns.md](./page-patterns.md)** - Page layer with Server Container
+- **[page-patterns.md](./page-patterns.md)** - Page layer with Server DI Container
 - **[view-patterns.md](./view-patterns.md)** - View layer composition
 - **[component-patterns.md](./component-patterns.md)** - Component layer patterns
-- **[../packages.md](../packages.md)** - DDD Architecture, Client Container, UseCase patterns
-- **[../adapter-pattern.md](../adapter-pattern.md)** - Entity → UI Type transformation guide
-- **[../hooks-guide.md](../hooks-guide.md)** - TanStack Query custom hooks patterns
+- **[../packages.md](../packages.md)** - DDD Architecture, Client DI Container, UseCase patterns
+- **[../patterns/adapter-basics.md](../patterns/adapter-basics.md)** - Entity → UI Type transformation guide
+- **[../patterns/hooks-guide.md](../patterns/hooks-guide.md)** - TanStack Query custom hooks patterns

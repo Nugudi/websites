@@ -175,8 +175,9 @@ This project follows **Domain-Driven Design (DDD)** principles with **Clean Arch
 ## 📦 DDD Architecture Patterns
 
 > **Note**: For detailed guides on DDD patterns, see the following documents:
-> - **[../ddd/di-containers.md](../ddd/di-containers.md)** — Complete guide to Dependency Injection Containers (Server vs Client)
-> - **[../ddd/ddd-guide.md](../ddd/ddd-guide.md)** — Complete guide to Repository & UseCase patterns
+> - **[../ddd/di-server-containers.md](../ddd/di-server-containers.md)** — Server-side DI Container patterns
+> - **[../ddd/di-client-containers.md](../ddd/di-client-containers.md)** — Client-side DI Container patterns
+> - **[../ddd-guide.md](../ddd-guide.md)** — Complete guide to Repository & UseCase patterns
 
 ### Quick Reference: DI Container Usage
 
@@ -194,10 +195,10 @@ const useCase = container.getLoginWithOAuth();
 
 **Key Rules:**
 - ✅ ALWAYS use DI Container to get UseCases (NEVER instantiate directly)
-- ✅ ALWAYS use Server Container in Server Components
-- ✅ ALWAYS use Client Container in Client Components
-- ❌ NEVER mix Server Container with Client Components
-- ❌ NEVER mix Client Container with Server Components
+- ✅ ALWAYS use Server DI Container in Server Components
+- ✅ ALWAYS use Client DI Container in Client Components
+- ❌ NEVER mix Server DI Container with Client Components
+- ❌ NEVER mix Client DI Container with Server Components
 
 ---
 
@@ -389,7 +390,7 @@ import Button from './components/button'; // NO!
 
 ## 📝 Commit Convention
 
-> **Note**: For complete commit convention guide, see **[../commit-conventions.md](../commit-conventions.md)**
+> **Note**: For complete commit convention guide, see **[../core/commit-conventions.md](../core/commit-conventions.md)**
 
 ### Quick Reference
 
@@ -641,4 +642,4 @@ pnpm commit                 # Commit with commitizen
 - **NEVER** use any type in TypeScript
 - **NEVER** skip tests for new features
 - **NEVER** mix server and client containers (서버는 서버 컨테이너, 클라이언트는 클라이언트 컨테이너)
-- **NEVER** create new instances of Client Container (항상 singleton 사용)
+- **NEVER** create new instances of Client DI Container (항상 singleton 사용)

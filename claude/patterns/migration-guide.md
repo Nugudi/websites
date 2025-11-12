@@ -468,9 +468,9 @@ function ProfileSection() {
 - ❌ Slower initial page load
 - ❌ SEO impact (data not in initial HTML)
 
-### ✅ New Pattern: Server Container + Prefetch + Client Hydration
+### ✅ New Pattern: Server DI Container + Prefetch + Client Hydration
 
-#### Step 1: Create Server Container
+#### Step 1: Create Server DI Container
 
 ```typescript
 // apps/web/src/domains/user/di/user-server-container.ts
@@ -511,7 +511,7 @@ import { ProfileSection } from '@/domains/user/presentation/sections/profile-sec
 
 export default async function ProfilePage() {
   const queryClient = new QueryClient();
-  const container = createUserServerContainer(); // ✅ Server Container
+  const container = createUserServerContainer(); // ✅ Server DI Container
   const getMyProfileUseCase = container.getGetMyProfile();
 
   // ✅ Prefetch data on server
@@ -546,10 +546,10 @@ export function ProfileSection() {
 
 ### 🔄 Migration Checklist
 
-- [ ] Create Server Container (`create[Domain]ServerContainer`)
+- [ ] Create Server DI Container (`create[Domain]ServerContainer`)
 - [ ] Make Page component `async`
 - [ ] Create `QueryClient` in Page
-- [ ] Prefetch data using Server Container
+- [ ] Prefetch data using Server DI Container
 - [ ] Wrap Section with `HydrationBoundary`
 - [ ] Verify: Data appears in initial HTML (View Source)
 - [ ] Verify: No loading spinner on first load
@@ -699,7 +699,7 @@ After completing any migration:
 
 ## Common Pitfalls
 
-### ❌ Using Client Container in Server Components
+### ❌ Using Client DI Container in Server Components
 
 ```typescript
 // ❌ WRONG
@@ -780,7 +780,7 @@ export class BenefitAdapter {
 
 ## Need Help?
 
-- **Architecture questions**: See [architecture.md](./architecture.md)
-- **Component patterns**: See [frontend.md](./frontend.md)
-- **Package usage**: See [packages.md](./packages.md)
-- **Testing strategies**: See [testing.md](./testing.md)
+- **Architecture questions**: See [architecture.md](../core/architecture.md)
+- **Component patterns**: See [frontend.md](../frontend.md)
+- **Package usage**: See [packages.md](../packages.md)
+- **Testing strategies**: See [testing.md](../testing.md)

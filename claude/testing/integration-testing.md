@@ -936,8 +936,8 @@ describe('useGetBenefits Query Hook', () => {
 **What to Test**:
 - Container provides correct instances
 - Dependencies are properly injected
-- Singleton behavior (for Client Containers)
-- New instance behavior (for Server Containers)
+- Singleton behavior (for Client DI Containers)
+- New instance behavior (for Server DI Containers)
 
 ### Complete DI Container Test Example
 
@@ -1025,8 +1025,8 @@ describe('Auth Server Container', () => {
 ```
 
 **Key Points**:
-- ✅ Test singleton behavior for Client Containers
-- ✅ Test new instance behavior for Server Containers
+- ✅ Test singleton behavior for Client DI Containers
+- ✅ Test new instance behavior for Server DI Containers
 - ✅ Test all dependencies are provided
 - ✅ Test dependencies are correctly injected
 - ❌ Don't test UseCase/Repository logic (tested separately)

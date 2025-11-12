@@ -569,42 +569,126 @@ format.util.ts   |   87.5  |   75.0   |  100.0  |   87.5  | 12-15
 ### MUST ✅
 
 #### DDD Layer Testing
+
 - **MUST** test all UseCases with mock Repository and SessionManager
+
+  **Why?** UseCases contain business logic that must be verified in isolation without real database/API calls. Mocking Repository and SessionManager enables fast tests, predictable results, test isolation, and verification that UseCases call dependencies correctly with right parameters. Real dependencies make tests slow, flaky, and dependent on external services.
+
 - **MUST** test all Repositories with mock HttpClient
+
+  **Why?** Repositories handle data access logic (mapping, error handling, caching) that requires testing without real API calls. Mock HttpClient enables fast tests, predictable responses, testing error scenarios, and verification of request construction. Real API calls make tests slow, flaky, network-dependent, and potentially cost money.
+
 - **MUST** test all Entities with complex business logic
+
+  **Why?** Entities with complex business logic (validation, state transitions, calculations) are core domain models requiring thorough testing to ensure correctness. Entity tests are fast (pure functions), isolated, and catch business logic bugs early. Untested Entity logic leads to runtime errors and business rule violations.
+
 - **MUST** test all Adapters with 7+ Entity method calls
+
+  **Why?** Adapters with 7+ Entity method calls contain complex transformation logic that's error-prone and requires verification. Testing Adapters ensures correct Entity → UI transformations, proper handling of edge cases, safe fallbacks, and prevention of unsafe type assertions. Complex Adapters without tests create runtime errors and inconsistent UI state.
+
 - **MUST** test error scenarios for all layers
+
+  **Why?** Error scenarios (network failures, validation errors, edge cases) are often untested but critical for production stability. Testing error paths ensures graceful degradation, proper error messages, correct fallbacks, and no crashes. Error scenarios are where most production bugs occur - untested error paths create critical failures.
+
 - **MUST** verify mock calls with correct parameters
 
+  **Why?** Verifying mock calls ensures components call dependencies correctly with expected parameters, detecting integration issues early. Without verification, tests may pass even when calling dependencies incorrectly (wrong parameters, missing calls), creating bugs that only appear in production when real dependencies are used.
+
 #### General Testing
+
 - **MUST** write tests for all business logic
+
+  **Why?** Business logic is the most critical code requiring testing - it contains rules that affect business operations and user experience. Untested business logic creates costly bugs, incorrect calculations, violated business rules, and poor user experience. Business logic tests provide confidence, enable refactoring, and serve as documentation.
+
 - **MUST** test user-facing behavior, not implementation
+
+  **Why?** Testing behavior (what users see/experience) creates resilient tests that survive refactoring, while testing implementation details (internal state, private methods) creates brittle tests that break with every code change. Behavior tests are maintainable, valuable, and align with real user requirements.
+
 - **MUST** use descriptive test names (what, when, expected)
+
+  **Why?** Descriptive test names document expected behavior, make test failures immediately understandable, serve as living documentation, and help reviewers understand intent. Vague test names ("test1", "works correctly") provide no value when tests fail - you can't tell what broke without reading implementation.
+
 - **MUST** follow AAA pattern (Arrange, Act, Assert)
+
+  **Why?** AAA pattern (Arrange setup, Act execution, Assert verification) creates clear, readable tests with explicit structure that's easy to understand and maintain. Without AAA, tests become confusing soup of mixed setup/execution/verification that's hard to debug and modify.
+
 - **MUST** test error states and edge cases
+
+  **Why?** Error states and edge cases (null values, empty arrays, boundary conditions) are where most bugs hide and are often overlooked in development. Testing these scenarios prevents production crashes, improves error handling, and ensures graceful degradation. Edge cases are often the difference between good and great software.
+
 - **MUST** mock system time for date-dependent tests
+
+  **Why?** Mocking system time (e.g., `vi.setSystemTime()`) creates deterministic, reproducible tests that don't depend on when they're run. Real system time makes tests flaky (pass/fail based on time of day), unreliable (fail at midnight), and impossible to test time-specific scenarios (year boundaries, special dates).
+
 - **MUST** isolate tests (no shared state between tests)
+
+  **Why?** Test isolation ensures tests can run in any order, in parallel, and independently without affecting each other. Shared state creates flaky tests that pass/fail based on execution order, making debugging impossible and CI/CD unreliable. Isolated tests are predictable and maintainable.
+
 - **MUST** run tests locally before committing
+
+  **Why?** Running tests locally catches failures before CI/CD, prevents broken builds, saves team time (no waiting for CI to fail), and maintains green build status. Committing without testing creates broken main branch, blocks other developers, and wastes CI/CD resources. Local testing is professional courtesy and best practice.
 
 ### NEVER ❌
 
 #### DDD Layer Testing
+
 - **NEVER** test Repository with real API calls (always mock HttpClient)
+
+  **Why?** Real API calls make tests slow, flaky, network-dependent, environment-specific, and potentially costly (API rate limits/billing). Repository tests should verify data access logic (mapping, error handling) in isolation using mock HttpClient for fast, predictable, reliable tests. Real API calls are integration tests, not unit tests.
+
 - **NEVER** test UseCase with real Repository (always mock dependencies)
+
+  **Why?** Real Repository couples UseCase tests to data layer, making tests slow, database-dependent, and non-isolated. UseCase tests must verify business logic in isolation using mock Repository to ensure fast, predictable tests that don't require database setup. Real dependencies blur layer boundaries and create brittle tests.
+
 - **NEVER** test business logic in Repository (Repository는 순수 데이터 접근만)
+
+  **Why?** Repository should only handle data access (CRUD, mapping), not business logic, following Clean Architecture layer separation. Testing business logic in Repository indicates architectural violation - business logic belongs in UseCases. Repositories with business logic violate single responsibility and create untestable code.
+
 - **NEVER** test data access in UseCase (UseCase는 비즈니스 로직만)
+
+  **Why?** UseCase should contain business logic, not data access, following Clean Architecture separation. Testing data access in UseCase indicates architectural violation - data access belongs in Repository. UseCases with data access violate single responsibility, create tight coupling, and become untestable without databases.
+
 - **NEVER** test DI Containers directly (Container는 설정일 뿐, 로직 없음)
+
+  **Why?** DI Containers are pure configuration/wiring with no business logic to test. Testing containers wastes time and creates maintenance burden (tests break when adding new dependencies). Container correctness is verified through integration when testing components that use them - direct container tests provide no value.
+
 - **NEVER** skip error scenario tests (에러 처리는 필수 테스트 항목)
 
+  **Why?** Error scenarios (network failures, validation errors, edge cases) are critical for production stability but often untested, causing production crashes. Skipping error tests creates vulnerabilities where most real-world bugs occur. Error handling is not optional - it's essential for robust applications and must be tested.
+
 #### General Testing
+
 - **NEVER** test third-party libraries (TanStack Query, React Hook Form, Zod, etc.)
+
+  **Why?** Third-party libraries are already tested by their maintainers. Testing them duplicates effort, wastes time, creates maintenance burden, and tests implementation details you don't control. Trust well-maintained libraries and test only YOUR code that uses them. Library tests provide no value and break when library internals change.
+
 - **NEVER** test implementation details (internal state, private methods)
+
+  **Why?** Implementation details (internal state, private methods, component structure) change frequently during refactoring, creating brittle tests that break with every code change while providing no value. Test public API and user-facing behavior instead - these remain stable during refactoring and actually verify user requirements.
+
 - **NEVER** test trivial code (simple getters, constants)
+
+  **Why?** Trivial code (simple getters, constants, one-line functions) has no complexity worth testing and creates maintenance burden (more tests to update) with zero value. Testing trivial code wastes time, increases test suite size, and distracts from testing complex logic that actually needs verification.
+
 - **NEVER** test pure styling components without logic
+
+  **Why?** Pure styling components (UI-only, no logic/state) should use visual regression testing (Chromatic) or Storybook, not unit tests. Unit tests for styling create brittle tests that break with CSS changes while providing no value. Visual testing tools are designed for this purpose and provide better coverage.
+
 - **NEVER** write brittle tests that break with refactoring
+
+  **Why?** Brittle tests (testing implementation details, exact DOM structure, internal state) break with every refactoring, creating maintenance nightmare and discouraging code improvements. Good tests verify behavior and survive refactoring, providing value through confidence without maintenance burden. Brittle tests are worse than no tests.
+
 - **NEVER** use real system time in date-dependent tests
+
+  **Why?** Real system time creates flaky tests that pass/fail based on when they're run (time of day, day of month), making CI/CD unreliable and debugging impossible. Mock system time (e.g., `vi.setSystemTime()`) for deterministic, reproducible tests that always behave the same. Time-dependent tests must be deterministic.
+
 - **NEVER** skip tests for complex or critical components
+
+  **Why?** Complex or critical components (business logic, data transformations, error handling) are where bugs hide and have highest impact on users. Skipping tests for these creates technical debt, production bugs, and user-facing failures. If code is complex/critical enough to write, it's critical enough to test.
+
 - **NEVER** commit code with failing tests
+
+  **Why?** Committing failing tests breaks main branch, blocks other developers, fails CI/CD, and indicates incomplete work. Failing tests must be fixed before commit - no exceptions. Green tests are baseline for professional development. Broken main branch wastes entire team's time and destroys CI/CD value.
 
 ## Testing Workflow
 

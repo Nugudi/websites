@@ -8,7 +8,21 @@ alwaysApply: true
 
 # DI Container Rules
 
-## ⚠️ Critical Import Pattern
+## Table of Contents
+
+- [⚠️ Critical Import Pattern (HIGHEST PRIORITY)](#️-critical-import-pattern-highest-priority)
+  - [Why Direct Imports? (Understanding the Problem)](#why-direct-imports-understanding-the-problem)
+- [Container Types](#container-types)
+  - [Server Container (Stateless, Per-Request)](#server-container-stateless-per-request)
+  - [Client Container (Singleton, Lazy Initialized)](#client-container-singleton-lazy-initialized)
+- [Infrastructure Layer](#infrastructure-layer)
+  - [HttpClient (Decorator Pattern)](#httpclient-decorator-pattern)
+  - [SessionManager (Server vs Client)](#sessionmanager-server-vs-client)
+- [NEVER Rules](#never-rules)
+- [Quick Reference](#quick-reference)
+- [baseUrl Parameter (Edge Runtime)](#baseurl-parameter-edge-runtime)
+
+## ⚠️ Critical Import Pattern (HIGHEST PRIORITY)
 
 **ALWAYS import containers directly from the specific file**, NOT from barrel exports at `@domain/di`.
 
@@ -21,10 +35,32 @@ import { getUserClientContainer } from '@/src/domains/user/di/user-client-contai
 import { createUserServerContainer, getUserClientContainer } from '@user/di';
 ```
 
-**Why?** Barrel exports bundle BOTH server and client containers together, breaking webpack tree-shaking:
-- Bundler can't separate server-only code from client code
-- `server-only` package gets bundled in client → **Build fails**
-- Bundle size increases with unused dependencies
+### Why Direct Imports? (Understanding the Problem)
+
+Using barrel exports at `@domain/di` causes **both server and client containers to bundle together**, breaking webpack's tree-shaking:
+
+**The Problem:**
+1. Barrel export (`export * from './di'`) bundles BOTH `*-server-container.ts` AND `*-client-container.ts`
+2. Webpack cannot tree-shake properly when using `export *`
+3. `server-only` package gets bundled in client code → **Build fails with error**
+4. Client bundle becomes bloated with unused server dependencies (SessionManager, localStorage, etc.)
+
+**Real-World Impact:**
+```typescript
+// domains/user/di/index.ts (barrel export)
+export * from './user-server-container'; // ❌ Contains server-only imports
+export * from './user-client-container';
+
+// Client Component using barrel export
+'use client';
+import { getUserClientContainer } from '@user/di'; // ❌ WRONG
+
+// What happens:
+// 1. Webpack bundles BOTH server-container.ts AND client-container.ts
+// 2. server-container.ts imports 'server-only' package and next/headers
+// 3. Build fails with: "You're importing a component that needs 'server-only'"
+// 4. Even if it doesn't fail, client bundle includes unnecessary server code
+```
 
 **Solution:** Always use direct file imports with absolute paths.
 
@@ -50,6 +86,37 @@ import { createUserServerContainer, getUserClientContainer } from '@user/di';
 - **MUST** use `ServerTokenProvider` (reads from cookies)
 - **MUST** accept optional `baseUrl` parameter for Edge Runtime
 - **MUST** throw error if no baseUrl and no env var
+
+**Why These Rules Exist:**
+
+1. **Why stateless (new instance per request)?**
+   - Prevents memory leaks in server environment (each request gets fresh container)
+   - Avoids state pollution between concurrent requests
+   - Ensures thread safety in Next.js server runtime
+   - Container lifecycle = Request lifecycle (automatic cleanup)
+
+2. **Why ServerSessionManager (httpOnly cookies)?**
+   - **Security**: httpOnly cookies are immune to XSS attacks (JavaScript cannot access)
+   - **SSR Compatibility**: Server Components can read cookies via `cookies()` from `next/headers`
+   - **Automatic Token Injection**: SessionManager provides tokens to ServerTokenProvider
+   - **No localStorage**: Server environment has no browser APIs
+
+3. **Why ServerTokenProvider?**
+   - Automatically injects Authorization headers from cookies
+   - Decouples authentication logic from repositories
+   - Centralized token refresh logic
+   - Works seamlessly with httpOnly cookies
+
+4. **Why optional baseUrl parameter?**
+   - **Edge Runtime Compatibility**: Edge Runtime cannot access Node.js `process.env` directly
+   - **Testing**: Allows mocking API URL in tests
+   - **Multi-tenant**: Different tenants might use different API URLs
+   - **Fallback to env var**: Regular Server Components use `process.env.NEXT_PUBLIC_API_URL`
+
+5. **Why throw error if no baseUrl?**
+   - **Fail Fast**: Better to fail at container creation than during API call
+   - **Clear Error Message**: Immediately tells developer what's missing
+   - **Prevents Silent Failures**: No undefined URL in HTTP client
 
 #### Implementation Pattern
 
@@ -130,6 +197,38 @@ export async function middleware(request: NextRequest) {
 - **MUST** use `ClientTokenProvider` (reads from localStorage)
 - **MUST** include `'use client'` directive at top
 - **MUST** set `credentials: 'include'` in FetchHttpClient
+
+**Why These Rules Exist:**
+
+1. **Why lazy singleton (one instance per app)?**
+   - **Performance**: Creating repositories/HttpClients is expensive, do it once
+   - **State Consistency**: Same container = Same session manager = Consistent auth state
+   - **Memory Efficiency**: One container for entire client-side app lifecycle
+   - **Lazy Initialization**: Container only created when first needed, not on module load
+
+2. **Why ClientSessionManager (localStorage)?**
+   - **Browser Environment**: Client Components run in browser, have access to localStorage
+   - **Token Persistence**: Tokens survive page refreshes (unlike in-memory state)
+   - **Accessibility**: JavaScript can read/write tokens (needed for client-side auth flows)
+   - **Complementary to httpOnly**: Works alongside server's httpOnly cookies
+
+3. **Why ClientTokenProvider?**
+   - Automatically injects Authorization headers from localStorage
+   - Centralized token refresh logic for client-side requests
+   - Decouples auth logic from business logic
+   - Consistent with Server Container pattern (same interface)
+
+4. **Why 'use client' directive at top?**
+   - **Required by Next.js**: Container uses browser APIs (localStorage, window)
+   - **Build Error Prevention**: Without directive, Next.js tries to bundle for server
+   - **Clear Intent**: Signals this code ONLY runs in browser
+   - **Tree-shaking**: Helps bundler separate client from server code
+
+5. **Why credentials: 'include'?**
+   - **httpOnly Cookie Transmission**: Browser must send httpOnly cookies with requests
+   - **CORS Credentials**: Required for cross-origin requests with cookies
+   - **Dual Auth**: Client uses localStorage tokens + server uses httpOnly cookies
+   - **Security**: Ensures server can validate httpOnly session cookie
 
 #### Implementation Pattern
 

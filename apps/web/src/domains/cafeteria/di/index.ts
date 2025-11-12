@@ -1,45 +1,35 @@
 /**
- * Cafeteria DI Layer
+ * Cafeteria DI Container Barrel Export
  *
- * Dependency Injection Containers
+ * ⚠️ CRITICAL: ALWAYS import containers directly from specific files!
  *
- * @warning ⚠️ CRITICAL: DO NOT use barrel exports (`export *`) for DI containers!
- *
- * ## Why Barrel Exports are PROHIBITED:
- *
- * 1. **Next.js 16 Bundling Issue**: Barrel exports (`export *`) bundle BOTH
- *    client and server containers together, causing server-only code
- *    (like `ServerSessionManager` with `next/headers`) to be included in
- *    client bundles, which breaks the build.
- *
- * 2. **"use client" / "server-only" Conflicts**: Server containers contain
- *    `"server-only"` directive and server-only APIs. When bundled with
- *    client code via barrel exports, Next.js throws:
- *    "You're importing a component that needs 'server-only'"
- *
- * 3. **Tree-shaking Defeated**: `export *` prevents webpack from properly
- *    tree-shaking unused code, increasing bundle size unnecessarily.
- *
- * 4. **Build Failure**: This WILL break production builds with errors like:
- *    "Error: You're importing a component that needs next/headers"
- *
- * ## ✅ CORRECT Pattern (Auth Domain):
- *
- * Use a wrapper file that re-exports ONLY function references:
+ * ## ✅ CORRECT Import Pattern:
  *
  * ```typescript
- * // cafeteria-container.ts (wrapper)
- * export { getCafeteriaClientContainer } from "./cafeteria-client-container";
- * export { createCafeteriaServerContainer } from "./cafeteria-server-container";
+ * // ✅ CORRECT: Direct import from specific file
+ * import { getCafeteriaClientContainer } from '@/src/domains/cafeteria/di/cafeteria-client-container';
+ * import { createCafeteriaServerContainer } from '@/src/domains/cafeteria/di/cafeteria-server-container';
  *
- * // index.ts
- * export * from "./cafeteria-container"; // ✅ Safe - only function references
+ * // ❌ WRONG: Importing from barrel export (even through wrapper)
+ * import { getCafeteriaClientContainer } from '@cafeteria/di';
  * ```
  *
- * This pattern allows webpack to properly tree-shake and prevents server-only
- * code from being bundled into client bundles.
+ * ## Why Direct Imports?
  *
- * @see {@link https://nextjs.org/docs/app/building-your-application/rendering/server-components}
+ * **The Problem**: Importing from `@cafeteria/di` (this barrel export) bundles BOTH
+ * server and client containers together, even with wrapper files:
+ *
+ * 1. **Build Failure**: Server-only code (`ServerSessionManager`, `next/headers`)
+ *    gets included in client bundles → "You're importing a component that needs 'server-only'"
+ * 2. **Tree-shaking Broken**: Webpack can't separate server/client code when using barrel exports
+ * 3. **Bundle Size**: Client bundle includes unnecessary server dependencies
+ *
+ * ## What This File Does:
+ *
+ * This barrel export exists ONLY for internal convenience (e.g., re-exporting types).
+ * It is NOT safe for importing containers. Always use direct file imports.
+ *
+ * @see .cursor/rules/ddd/di-containers.md for complete DI Container rules
  */
 
 export * from "./cafeteria-container";

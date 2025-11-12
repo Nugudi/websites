@@ -14,7 +14,7 @@ alwaysApply: true
 > **Related Documents**:
 > - [monorepo-structure.md](./monorepo-structure.md) — Monorepo architecture
 > - [package-usage.md](./package-usage.md) — Package usage and import patterns
-> - [../storybook-guideline.md](../storybook-guideline.md) — Storybook development workflow
+> - [../patterns/storybook-guideline.md](../patterns/storybook-guideline.md) — Storybook development workflow
 > **Last Updated**: 2025-11-11
 
 ## 📋 Package Setup Requirements
@@ -698,7 +698,7 @@ pnpm build --filter="@nugudi/*"
 
 - **[monorepo-structure.md](./monorepo-structure.md)** — Understanding the monorepo architecture
 - **[package-usage.md](./package-usage.md)** — How to use packages in your code
-- **[../storybook-guideline.md](../storybook-guideline.md)** — Creating Storybook documentation
+- **[../patterns/storybook-guideline.md](../patterns/storybook-guideline.md)** — Creating Storybook documentation
 - **[../frontend.md](../frontend.md)** — Frontend development patterns
 
 ---

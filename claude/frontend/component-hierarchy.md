@@ -32,7 +32,7 @@ This hierarchy ensures:
 ┌─────────────────────────────────────────────────────────────────┐
 │ PAGE (Server Component)                                         │
 │ - Route entry point                                             │
-│ - Server Container (createXXXServerContainer)                   │
+│ - Server DI Container (createXXXServerContainer)                │
 │ - Data prefetching with UseCases                                │
 │ - HydrationBoundary setup                                       │
 │ - Metadata generation                                           │
@@ -52,7 +52,7 @@ This hierarchy ensures:
 ┌─────────────────────────────────────────────────────────────────┐
 │ SECTION (Client Component)                                      │
 │ - Feature-specific logic encapsulation                          │
-│ - Client Container (getXXXClientContainer)                      │
+│ - Client DI Container (getXXXClientContainer)                   │
 │ - Data fetching with TanStack Query                             │
 │ - ErrorBoundary + Suspense boundaries                           │
 │ - Feature-specific state management                             │
@@ -72,7 +72,7 @@ This hierarchy ensures:
 
 ## Layer Responsibilities Table
 
-| Layer     | Type           | Container                    | Data Fetching | State Management             | Error Handling   | Export Pattern      |
+| Layer     | Type           | DI Container                 | Data Fetching | State Management             | Error Handling   | Export Pattern      |
 | --------- | -------------- | ---------------------------- | ------------- | ---------------------------- | ---------------- | ------------------- |
 | **Page**  | Server         | `createXXXServerContainer()` | Prefetch only | URL (params, searchParams)   | N/A              | `export default`    |
 | **View**  | Client/Server  | None                         | NO            | Page-level UI (tabs, active) | NO               | `export const`      |
@@ -117,6 +117,8 @@ This hierarchy ensures:
 
 ### Rule 1: Same Domain - MUST Use Relative Imports
 
+**Why?** Relative imports within the same domain make component colocation clear, enable easier domain extraction (moving entire domain folder), prevent import path breakage during domain restructuring, and signal that components are tightly coupled within the domain boundary. Absolute imports within the same domain create unnecessary path verbosity and make domain structure harder to understand at a glance.
+
 Components within the same domain MUST use relative imports:
 
 ```typescript
@@ -139,6 +141,8 @@ import { SignUpSection } from '@/src/domains/auth/presentation/ui/sections/sign-
 
 ### Rule 2: Page to View - MUST Use Absolute Imports
 
+**Why?** Absolute imports from Pages to Views make domain boundaries explicit (Pages are in `app/` router, Views in `src/domains/`), prevent relative path complexity (`../../../../src/domains/...`), and clarify that Pages are orchestrating Views from specific domains. This pattern makes it immediately obvious which domain a View belongs to and maintains clean separation between Next.js routing and domain structure.
+
 Pages MUST use absolute imports when importing Views:
 
 ```typescript
@@ -158,6 +162,8 @@ import { CafeteriaHomeView } from '@/src/domains/cafeteria/presentation/ui/views
 
 ### Rule 3: Cross-Domain - MUST Use Absolute Imports
 
+**Why?** Absolute imports for cross-domain dependencies make domain coupling explicit and visible, prevent relative path hell across different domain folders (`../../../auth/...`), enable easier refactoring (move domains without breaking imports), and signal architectural decisions (this domain depends on another). Cross-domain imports should be rare (domains should be isolated) - absolute paths make them stand out for review.
+
 Cross-domain imports MUST use absolute paths:
 
 ```typescript
@@ -174,6 +180,8 @@ import { useAuth } from '../../../auth/presentation/hooks/use-auth'; // NO!
 ```
 
 ### Rule 4: Shared Components - Use @core Alias
+
+**Why?** The `@core` alias makes shared/cross-cutting code immediately recognizable, provides shorter and cleaner imports than full paths, signals that code is not domain-specific, and enforces architectural boundary between domain code and shared utilities. Using full `@/src/core/...` paths is verbose and doesn't clearly communicate "this is shared infrastructure" like `@core` does.
 
 Shared components in `src/core` use `@core` alias:
 
@@ -271,7 +279,7 @@ export const EmailForm = () => {};
 
 #### ✅ MUST
 1. Be Server Component by default
-2. Use Server Container (`createXXXServerContainer()`)
+2. Use Server DI Container (`createXXXServerContainer()`)
 3. Prefetch data with `queryClient.prefetchQuery()`
 4. Wrap View in `<HydrationBoundary>`
 5. Use default export (`export default Page`)
@@ -281,7 +289,7 @@ export const EmailForm = () => {};
 1. Contain UI logic
 2. Use hooks (`useState`, `useEffect`)
 3. Use browser APIs
-4. Use Client Container (`getXXXClientContainer()`)
+4. Use Client DI Container (`getXXXClientContainer()`)
 5. Instantiate Repository/UseCase directly
 6. Use named export
 
@@ -313,13 +321,13 @@ export const EmailForm = () => {};
 3. Implement ErrorBoundary
 4. Provide Skeleton component
 5. Provide Error component
-6. Use Client Container (`getXXXClientContainer()`)
+6. Use Client DI Container (`getXXXClientContainer()`)
 7. Fetch data with TanStack Query
 8. Use named export
 9. Create Content sub-component
 
 #### ❌ MUST NOT
-1. Use Server Container
+1. Use Server DI Container
 2. Skip error handling
 3. Skip loading state
 4. Define page layout
@@ -487,5 +495,5 @@ export const ProfileCard = ({ data }) => {
 - **[section-patterns.md](./section-patterns.md)** - Complete Section layer implementation guide
 - **[component-patterns.md](./component-patterns.md)** - Complete Component layer implementation guide
 - **[../packages.md](../packages.md)** - DDD Architecture, DI Containers, Repository/UseCase patterns
-- **[../adapter-pattern.md](../adapter-pattern.md)** - Entity → UI Type transformation guide
-- **[../hooks-guide.md](../hooks-guide.md)** - TanStack Query custom hooks and general hooks
+- **[../patterns/adapter-basics.md](../patterns/adapter-basics.md)** - Entity → UI Type transformation guide
+- **[../patterns/hooks-guide.md](../patterns/hooks-guide.md)** - TanStack Query custom hooks and general hooks

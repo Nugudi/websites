@@ -18,7 +18,7 @@ alwaysApply: true
 This is the **central index** for understanding the frontend architecture in Nugudi. Read this first to understand:
 
 - 🏗️ **4-Layer Hierarchy**: Page → View → Section → Component
-- 🔄 **Data Flow**: Server Container → TanStack Query → Client Container
+- 🔄 **Data Flow**: Server DI Container → TanStack Query → Client DI Container
 - 🎯 **Layer Responsibilities**: What each layer can and cannot do
 - 🔗 **Import Patterns**: How layers communicate with each other
 
@@ -65,7 +65,7 @@ Component (Pure/Presentational)
 
 **What You'll Learn**:
 - Next.js App Router page structure (`app/(auth)/`, `app/(public)/`)
-- Server Container usage (`createXXXServerContainer()`)
+- Server DI Container usage (`createXXXServerContainer()`)
 - SSR data prefetching with UseCases
 - HydrationBoundary setup for streaming SSR
 - Metadata generation
@@ -136,7 +136,7 @@ export const ProfileView = ({ userId }: { userId: string }) => {
 **Feature sections** with data fetching, error boundaries, and loading states (Client Components).
 
 **What You'll Learn**:
-- Client Container usage (`getXXXClientContainer()`)
+- Client DI Container usage (`getXXXClientContainer()`)
 - TanStack Query hooks for data fetching
 - ErrorBoundary + Suspense implementation
 - Adapter pattern for Entity → UI Type transformation
@@ -237,13 +237,13 @@ export const UserProfile = ({ user, onEdit, onDelete }: UserProfileProps) => {
 
 **Server-Side (SSR Prefetch)**:
 - **Where**: Page layer (Server Component)
-- **Container**: `createXXXServerContainer(sessionManager)`
+- **DI Container**: `createXXXServerContainer(sessionManager)`
 - **Pattern**: `queryClient.prefetchQuery()` + HydrationBoundary
 - **Read**: [frontend/page-patterns.md](./frontend/page-patterns.md)
 
 **Client-Side (Interactive Data)**:
 - **Where**: Section layer (Client Component)
-- **Container**: `getXXXClientContainer()`
+- **DI Container**: `getXXXClientContainer()`
 - **Pattern**: TanStack Query hooks (`useQuery`, `useMutation`)
 - **Read**: [frontend/section-patterns.md](./frontend/section-patterns.md)
 
@@ -290,7 +290,7 @@ export const UserProfile = ({ user, onEdit, onDelete }: UserProfileProps) => {
 
 ## 📋 Layer Responsibility Matrix
 
-| Layer         | Type          | Container                    | Data Fetching         | State Management             | Error Handling              | Export     |
+| Layer         | Type          | DI Container                 | Data Fetching         | State Management             | Error Handling              | Export     |
 |---------------|---------------|------------------------------|----------------------|------------------------------|-----------------------------|-----------
 | **Page**      | Server        | `createXXXServerContainer()` | Prefetch only        | URL (params, searchParams)   | N/A                         | `default`  |
 | **View**      | Client/Server | None                         | ❌ NO                | Page-level UI (tabs, active) | ❌ NO                       | `const`    |
@@ -335,16 +335,16 @@ Page → Component  // NO! Must go through View and Section
 View → Component  // NO! Must go through Section
 ```
 
-### Container Usage (Server vs Client)
+### DI Container Usage (Server vs Client)
 
 ```typescript
-// ✅ CORRECT - Server Container in Page (Server Component)
+// ✅ CORRECT - Server DI Container in Page (Server Component)
 const container = createUserServerContainer(sessionManager); // New instance per request
 
-// ✅ CORRECT - Client Container in Section (Client Component)
+// ✅ CORRECT - Client DI Container in Section (Client Component)
 const container = getUserClientContainer(); // Lazy singleton
 
-// ❌ WRONG - Client Container in Server Component
+// ❌ WRONG - Client DI Container in Server Component
 const container = getUserClientContainer(); // NO! Singleton breaks SSR
 ```
 

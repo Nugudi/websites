@@ -11,7 +11,7 @@ alwaysApply: true
 
 > **Document Type**: Storybook Development Workflow Guide
 > **Target Audience**: Developers creating shared components and writing Storybook stories
-> **Related Documents**: [../packages/package-usage.md](../packages/package-usage.md), [../frontend/component-layer.md](../frontend/component-layer.md)
+> **Related Documents**: [../packages/package-usage.md](../packages/package-usage.md), [../frontend/component-patterns.md](../frontend/component-patterns.md)
 > **Last Updated**: 2025-11-10
 
 ---
@@ -378,7 +378,7 @@ export type { UseHookNameProps, UseHookNameReturn } from './types';
 
 ## 📤 Package Import Patterns
 
-**Important**: For detailed package import patterns, export rules, and usage examples, see **[claude/packages.md](./packages.md)**.
+**Important**: For detailed package import patterns, export rules, and usage examples, see **[claude/packages.md](../packages.md)**.
 
 This section focuses on Storybook-specific import requirements.
 
@@ -408,7 +408,7 @@ Helper components don't need CSS imports or underscore aliases.
 
 ### ⭐ PRIORITY: Always Use Existing Packages First
 
-**Important**: For package usage priorities and component selection guidelines, see **[claude/packages.md](./packages.md)**.
+**Important**: For package usage priorities and component selection guidelines, see **[claude/packages.md](../packages.md)**.
 
 In stories, always use existing `@nugudi/*` packages rather than creating custom components.
 

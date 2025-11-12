@@ -917,4 +917,4 @@ Adapter testing ensures transformation logic is correct and handles edge cases p
 - [Adapter Basics](./adapter-basics.md) - When to use, structure overview
 - [Adapter Implementation](./adapter-implementation.md) - Implementation patterns and rules
 - [General Testing Guide](../testing.md) - Overall testing strategies
-- [Hooks Guide](../hooks-guide.md) - Integration with Query Hooks
+- [Hooks Guide](./hooks-guide.md) - Integration with Query Hooks

@@ -173,14 +173,14 @@ import { CAFETERIA_QUERY_KEYS } from '@cafeteria/presentation/shared/constants';
  *
  * @description
  * Creates a new review via UseCase and invalidates related queries.
- * Uses Client Container for UseCase instance.
+ * Uses Client DI Container for UseCase instance.
  *
  * @returns TanStack Mutation result
  */
 export function useCreateCafeteriaReview() {
   const queryClient = useQueryClient();
 
-  // 1. Get Client Container
+  // 1. Get Client DI Container
   const container = getCafeteriaClientContainer();
 
   // 2. Get individual UseCase
@@ -449,14 +449,18 @@ onSuccess: (data, variables) => {
 
 ### ✅ MUST
 
-1. **MUST** use Client Container in Mutation Hooks
+1. **MUST** use Client DI Container in Mutation Hooks
+
+   **Why?** Client DI Container uses lazy singleton pattern, ensuring all mutation hooks share the same container instance for consistent cache behavior with TanStack Query. Server DI Container uses factory pattern (creates new instance per call), which would create different UseCase instances on every hook call/render, breaking cache invalidation and wasting memory.
 
    ```typescript
-   // ✅ CORRECT: Client Container in hook
+   // ✅ CORRECT: Client DI Container in hook
    const container = getCafeteriaClientContainer();
    ```
 
 2. **MUST** use `useQueryClient` for invalidations
+
+   **Why?** `useQueryClient` provides access to the TanStack Query client instance required for cache invalidation operations. Without it, you cannot invalidate queries after mutations, leaving stale data in the cache and causing UI to show outdated information after successful mutations.
 
    ```typescript
    // ✅ CORRECT: Get queryClient instance
@@ -465,6 +469,8 @@ onSuccess: (data, variables) => {
 
 3. **MUST** follow file naming convention: `[action]-[resource].mutation.ts`
 
+   **Why?** Consistent file naming makes mutation hooks immediately identifiable in the codebase, distinguishes them from query hooks (`.query.ts`), and enables efficient IDE search by action type (e.g., search "create-" to find all creation hooks). The `.mutation.ts` suffix clearly separates mutations from queries, preventing confusion.
+
    ```
    ✅ create-cafeteria-review.mutation.ts
    ✅ update-benefit-status.mutation.ts
@@ -472,6 +478,8 @@ onSuccess: (data, variables) => {
    ```
 
 4. **MUST** follow hook naming convention: `use[Action][Resource]`
+
+   **Why?** The `use` prefix is a React convention that signals custom hooks (enforced by ESLint), enabling React's Rules of Hooks validation and IDE autocomplete. Action-first naming (e.g., `useCreateReview` not `useReviewCreate`) clearly indicates the operation being performed, making hooks more discoverable and readable.
 
    ```typescript
    // ✅ CORRECT: Hook names
@@ -485,6 +493,8 @@ onSuccess: (data, variables) => {
 
 5. **MUST** invalidate related queries after mutation
 
+   **Why?** Query invalidation is essential for keeping the UI in sync with server state after mutations. Without invalidation, cached data becomes stale (e.g., after creating a review, the list doesn't show the new review). Invalidating in `onSuccess` triggers automatic refetching, ensuring users see the latest data immediately.
+
    ```typescript
    // ✅ CORRECT: Invalidate on success
    onSuccess: (data, variables) => {
@@ -496,6 +506,8 @@ onSuccess: (data, variables) => {
 
 6. **MUST** use constants for query keys in invalidations
 
+   **Why?** Centralized query key constants (e.g., `BENEFIT_QUERY_KEYS`) prevent typos, ensure type-safe invalidation (TypeScript autocomplete), and make refactoring easier (change key structure in one place). Hardcoded keys cause bugs when keys don't match between queries and invalidations, resulting in failed cache updates.
+
    ```typescript
    // ✅ CORRECT: Centralized queryKeys
    queryClient.invalidateQueries({
@@ -505,6 +517,8 @@ onSuccess: (data, variables) => {
 
 7. **MUST** add `'use client'` directive at top of file
 
+   **Why?** The `'use client'` directive marks this file as client-side code in Next.js App Router, enabling React hooks (`useMutation`, `useQueryClient`) and browser APIs. Without it, Next.js attempts to execute the code on the server, causing runtime errors because TanStack Query hooks are client-only and require browser context.
+
    ```typescript
    // ✅ CORRECT: Client directive
    'use client';
@@ -513,6 +527,8 @@ onSuccess: (data, variables) => {
    ```
 
 8. **MUST** provide comprehensive JSDoc for hook
+
+   **Why?** Comprehensive JSDoc provides documentation that appears in IDE hover tooltips and autocomplete, explaining what the hook does, its side effects (query invalidations), and return type. This improves developer experience, reduces onboarding time for new developers, and serves as inline documentation without needing to read implementation details.
 
    ```typescript
    // ✅ CORRECT: Complete JSDoc
@@ -528,6 +544,8 @@ onSuccess: (data, variables) => {
 
 9. **MUST** return context from `onMutate` for optimistic updates
 
+   **Why?** Returning context from `onMutate` provides a snapshot of previous data that can be used to rollback optimistic updates if the mutation fails. Without this context, failed mutations leave the UI in an incorrect state (showing optimistic changes that didn't succeed on the server), causing data inconsistencies and confusing users.
+
    ```typescript
    // ✅ CORRECT: Return context for rollback
    onMutate: async (variables) => {
@@ -538,6 +556,9 @@ onSuccess: (data, variables) => {
    ```
 
 10. **MUST** use `onSettled` for final refetch after optimistic update
+
+    **Why?** `onSettled` runs after the mutation completes (success or failure), ensuring a final refetch to synchronize UI with actual server state. This corrects any discrepancies between optimistic updates and server reality (e.g., server might modify additional fields), guaranteeing the UI shows the true state regardless of mutation outcome.
+
     ```typescript
     // ✅ CORRECT: Always refetch after optimistic update
     onSettled: () => {
@@ -547,14 +568,18 @@ onSuccess: (data, variables) => {
 
 ### ❌ MUST NOT
 
-1. **MUST NOT** use Server Container in Mutation Hooks
+1. **MUST NOT** use Server DI Container in Mutation Hooks
+
+   **Why?** Server DI Container uses factory pattern (`createXXX()`), creating a NEW instance on every hook call (every component render), wasting memory and breaking TanStack Query cache (different container instances have different UseCase instances, so invalidations target different objects). Client DI Container uses singleton pattern, ensuring consistent instances across all hooks.
 
    ```typescript
-   // ❌ WRONG: Server Container in client hook
+   // ❌ WRONG: Server DI Container in client hook
    const container = createCafeteriaServerContainer();
    ```
 
 2. **MUST NOT** directly instantiate UseCase
+
+   **Why?** Direct instantiation bypasses Dependency Injection, making code untestable (cannot mock dependencies), tightly couples code to concrete implementations (hard to change), and requires manual wiring of all dependencies (error-prone). DI Container handles dependency graph automatically, enabling easy testing and loose coupling.
 
    ```typescript
    // ❌ WRONG: Direct instantiation
@@ -565,6 +590,8 @@ onSuccess: (data, variables) => {
    ```
 
 3. **MUST NOT** forget to invalidate queries after mutation
+
+   **Why?** Without query invalidation, TanStack Query cache becomes stale after mutations, showing outdated data to users (e.g., after creating a review, the list still shows old count). Users see incorrect state until they manually refresh the page, causing confusion and poor UX. Invalidation triggers automatic refetching to sync UI with server state.
 
    ```typescript
    // ❌ WRONG: No invalidation
@@ -585,6 +612,8 @@ onSuccess: (data, variables) => {
 
 4. **MUST NOT** hardcode query keys in invalidations
 
+   **Why?** Hardcoded query keys are error-prone (typos break invalidation silently), difficult to maintain (must update in multiple places when keys change), and lack type safety (no autocomplete or compile-time checks). Using constants prevents typos, enables refactoring with find-all-references, and ensures consistency between queries and invalidations.
+
    ```typescript
    // ❌ WRONG: Hardcoded queryKey
    queryClient.invalidateQueries({
@@ -598,6 +627,8 @@ onSuccess: (data, variables) => {
    ```
 
 5. **MUST NOT** skip `onError` rollback for optimistic updates
+
+   **Why?** Optimistic updates without rollback leave the UI in an incorrect state when mutations fail (showing changes that never happened on the server), causing data inconsistencies and confusing users. Implementing `onError` rollback restores the previous state, ensuring the UI accurately reflects server state even when mutations fail, maintaining data integrity.
 
    ```typescript
    // ❌ WRONG: Optimistic update without rollback
@@ -620,6 +651,8 @@ onSuccess: (data, variables) => {
 
 6. **MUST NOT** use hooks in non-React functions
 
+   **Why?** React hooks violate the Rules of Hooks when called outside React components or custom hooks, causing runtime errors ("Hooks can only be called inside the body of a function component"). Hooks rely on React's internal state management and rendering cycle, which don't exist in regular JavaScript functions, making them fundamentally incompatible.
+
    ```typescript
    // ❌ WRONG: Hook in regular function
    function submitReview(data) {
@@ -634,6 +667,8 @@ onSuccess: (data, variables) => {
 
 7. **MUST NOT** skip `'use client'` directive
 
+   **Why?** Missing `'use client'` directive causes Next.js to treat the file as server-side code, resulting in runtime errors when React hooks (`useMutation`, `useQueryClient`) execute on the server. These hooks require browser context (client-side APIs like `window`, `localStorage`) which don't exist in Node.js, causing "ReferenceError: window is not defined".
+
    ```typescript
    // ❌ WRONG: No client directive
    import { useMutation } from '@tanstack/react-query';
@@ -644,6 +679,8 @@ onSuccess: (data, variables) => {
    ```
 
 8. **MUST NOT** invalidate too broadly (unless necessary)
+
+   **Why?** Over-invalidation (e.g., `invalidateQueries()` with no parameters) triggers unnecessary refetches across the entire application, wasting network bandwidth, slowing down the UI, and causing unrelated components to re-render. Targeted invalidation (using specific query keys) ensures only affected queries refetch, maintaining optimal performance and better user experience.
 
    ```typescript
    // ❌ WRONG: Over-invalidation
@@ -891,7 +928,7 @@ Mutation Hooks are the **bridge between UseCases and React Components for data m
 
 1. **File Naming**: `[action]-[resource].mutation.ts`
 2. **Hook Naming**: `use[Action][Resource]`
-3. **Container**: Use Client Container (`getXXXClientContainer()`)
+3. **DI Container**: Use Client DI Container (`getXXXClientContainer()`)
 4. **UseCase Getter**: Individual getter pattern (`container.getCreateCafeteriaReview()`)
 5. **Query Keys**: Centralized constants for invalidation (see [query-keys.md](./query-keys.md))
 6. **Invalidation**: Always invalidate related queries after mutations
@@ -905,5 +942,5 @@ Mutation Hooks are the **bridge between UseCases and React Components for data m
 
 - [query-hooks.md](./query-hooks.md) - Query hooks and data fetching patterns
 - [query-keys.md](./query-keys.md) - Query key conventions and hierarchical structure
-- [di-containers.md](../di-containers.md) - Client Container patterns
+- [di-containers.md](../di-containers.md) - Client DI Container patterns
 - [frontend.md](../frontend.md) - Component integration
