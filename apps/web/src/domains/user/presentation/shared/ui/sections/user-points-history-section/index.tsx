@@ -5,13 +5,14 @@ import {
   type DailyPointData,
   UserPointsHistoryList,
 } from "../../components/user-points-history-list";
+import * as styles from "./index.css";
 
 export const UserPointsHistorySection = () => {
   // TODO: Replace with actual data from API
   const pointsData = usePointsData();
 
   return (
-    <VStack gap={16}>
+    <VStack gap={16} pY={16} grow={1} className={styles.container}>
       <UserPointsHistoryList pointsData={pointsData} />
     </VStack>
   );

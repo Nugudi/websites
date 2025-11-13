@@ -17,7 +17,7 @@ interface UserPointsBalanceProps {
 
 export const UserPointsBalance = ({ balance }: UserPointsBalanceProps) => {
   return (
-    <VStack gap={8} width="full" className={styles.container}>
+    <VStack gap={8} width="full" className={styles.container} pX={16}>
       <MyPointInfo balance={balance} />
       <NuguriImage />
     </VStack>

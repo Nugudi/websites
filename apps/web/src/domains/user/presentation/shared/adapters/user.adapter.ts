@@ -1,15 +1,6 @@
 import type { UserProfile } from "../../../domain/entities/user.entity";
 import type { UserProfileItem } from "../types/user.type";
 
-type UserProfileData = {
-  id: number;
-  nickname: string;
-  email?: string;
-  profileImageUrl?: string;
-  createdAt?: string;
-  updatedAt?: string;
-};
-
 export const UserAdapter = {
   /**
    * Transform UserProfile entity to UI item
@@ -25,6 +16,8 @@ export const UserAdapter = {
       nickname: profile.getNickname(),
       email: profile.getEmail(),
       profileImageUrl: profile.getProfileImageUrl(),
+      height: profile.getHeight(),
+      weight: profile.getWeight(),
       createdAt: profile.getCreatedAt(),
       updatedAt: profile.getUpdatedAt(),
     };
@@ -170,7 +163,7 @@ export const UserAdapter = {
    * @param changes - Partial profile data with proposed changes
    * @returns True if profile can be updated with these changes
    */
-  canEdit(profile: UserProfile, changes: Partial<UserProfileData>): boolean {
+  canEdit(profile: UserProfile, changes: Partial<UserProfileItem>): boolean {
     if (
       "canUpdateProfile" in profile &&
       typeof profile.canUpdateProfile === "function"

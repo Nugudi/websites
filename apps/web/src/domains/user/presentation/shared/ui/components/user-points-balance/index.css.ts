@@ -3,6 +3,7 @@ import { style } from "@vanilla-extract/css";
 export const container = style({
   position: "relative",
   height: 190,
+  boxSizing: "border-box",
 });
 
 export const imageWrapper = style({

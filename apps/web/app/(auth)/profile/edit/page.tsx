@@ -1,5 +1,7 @@
+import { UserProfileEditView } from "@/src/domains/user/presentation/ui/views/user-profile-edit-view";
+
 const ProfileEditPage = () => {
-  return <div>ProfileEditPage</div>;
+  return <UserProfileEditView />;
 };
 
 export default ProfileEditPage;

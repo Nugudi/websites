@@ -4,13 +4,14 @@ import { style } from "@vanilla-extract/css";
 export const container = style({
   width: "100%",
   gap: "16px",
-  padding: "16px",
+  paddingLeft: vars.box.spacing[4],
+  paddingRight: vars.box.spacing[4],
   boxSizing: "border-box",
   alignItems: "center",
 });
 
 export const profileImage = style({
-  objectFit: "cover",
+  objectFit: "contain",
 });
 
 export const infoWrapper = style({
@@ -26,18 +27,24 @@ export const levelText = style({
   color: vars.colors.$scale.main[500],
 });
 
-export const nameText = style({
-  ...classes.typography.title.t3,
-  fontWeight: vars.typography.fontWeight[600],
-  color: vars.colors.$scale.zinc[600],
-});
-
 export const nameSuffix = style({
   ...classes.typography.body.b4,
 });
 
 export const editButton = style({
+  position: "relative",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
   color: vars.colors.$scale.zinc[600],
+  cursor: "pointer",
+  transition: "color 0.2s ease",
+  "::before": {
+    content: '""',
+    position: "absolute",
+    inset: "-12px",
+    zIndex: 0,
+  },
   ":hover": {
     color: vars.colors.$scale.main[500],
   },
