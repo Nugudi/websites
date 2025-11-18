@@ -3,6 +3,7 @@
  */
 
 import { PageInfoSchema } from "@core/types";
+import { parseHour, parseMinute, parseSecond } from "@core/utils/date";
 // Import Entity classes from Domain Layer
 import {
   type BusinessHours,
@@ -58,19 +59,23 @@ export function businessHoursDtoToDomain(
 
   // Helper to validate and convert LocalTime DTO
   const convertLocalTime = (time: any) => {
-    if (
-      !time ||
-      typeof time.hour !== "number" ||
-      typeof time.minute !== "number"
-    ) {
-      return null;
+    if (!time) return null;
+
+    // 문자열 형식 처리 ("11:30:00" 또는 "11:30")
+    if (typeof time === "string") {
+      const parts = time.split(":");
+      if (parts.length < 2) return null;
+
+      const hour = parseHour(parts[0]);
+      const minute = parseMinute(parts[1]);
+      const second = parseSecond(parts[2]);
+
+      if (hour === null || minute === null) return null;
+
+      return { hour, minute, second, nano: 0 };
     }
-    return {
-      hour: time.hour,
-      minute: time.minute,
-      second: time.second ?? 0,
-      nano: time.nano ?? 0,
-    };
+
+    return null;
   };
 
   // Helper to convert TimeRange DTO

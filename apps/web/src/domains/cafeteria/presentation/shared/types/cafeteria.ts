@@ -64,10 +64,10 @@ export interface CafeteriaDetailItem extends CafeteriaItem {
   hasLocation: boolean;
   hasPhone: boolean;
   hasMealTicketPrice: boolean;
+  hasNote: boolean;
   isOpenNow: boolean;
   currentPeriod: "lunch" | "dinner" | "closed";
   canTakeout: boolean;
-  acceptsMealTicket: boolean;
 }
 
 export interface CafeteriaMenuItem {

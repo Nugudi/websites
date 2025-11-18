@@ -1,4 +1,4 @@
-import type { CafeteriaItem } from "@cafeteria/presentation/shared/types";
+import type { CafeteriaDetailItem } from "@cafeteria/presentation/shared/types";
 import { HeartIcon, ShareIcon } from "@nugudi/assets-icons";
 import {
   Body,
@@ -11,7 +11,7 @@ import {
 import * as styles from "./index.css";
 
 interface CafeteriaInfoCardProps {
-  cafeteria: CafeteriaItem;
+  cafeteria: CafeteriaDetailItem;
 }
 
 export const CafeteriaInfoCard = ({ cafeteria }: CafeteriaInfoCardProps) => {
@@ -19,10 +19,10 @@ export const CafeteriaInfoCard = ({ cafeteria }: CafeteriaInfoCardProps) => {
     <Box className={styles.infoCard} marginTop={-64} mX={16}>
       <VStack align="center" gap={16} padding={24}>
         <VStack gap={8} align="center" width="100%">
-          {cafeteria.takeoutAvailable && <PackagingAvailableNotice />}
-          <CafeteriaNameWithActions name={cafeteria.name || ""} />
+          {cafeteria.canTakeout && <PackagingAvailableNotice />}
+          <CafeteriaNameWithActions name={cafeteria.name} />
           <Divider />
-          <LocationInfo address={cafeteria.address || ""} />
+          <LocationInfo address={cafeteria.address} />
         </VStack>
       </VStack>
     </Box>

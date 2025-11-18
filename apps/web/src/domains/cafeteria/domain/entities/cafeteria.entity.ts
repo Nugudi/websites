@@ -131,6 +131,13 @@ export class CafeteriaEntity {
     return this._mealTicketPrice !== null && this._mealTicketPrice > 0;
   }
 
+  /**
+   * 영업시간 비고 정보가 있는지 확인
+   */
+  hasNote(): boolean {
+    return this._businessHours?.hasNote() ?? false;
+  }
+
   // === Operating Status ===
 
   /**
@@ -192,13 +199,6 @@ export class CafeteriaEntity {
    */
   canTakeout(): boolean {
     return this._takeoutAvailable;
-  }
-
-  /**
-   * 식권 사용 가능 여부
-   */
-  acceptsMealTicket(): boolean {
-    return this._mealTicketPrice !== null && this._mealTicketPrice > 0;
   }
 
   // === Computed Values ===

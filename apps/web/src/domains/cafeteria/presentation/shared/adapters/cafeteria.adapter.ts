@@ -173,10 +173,10 @@ export const CafeteriaAdapter = {
       hasLocation: cafeteria.hasLocation(),
       hasPhone: cafeteria.hasPhone(),
       hasMealTicketPrice: cafeteria.hasMealTicketPrice(),
+      hasNote: cafeteria.hasNote(),
       isOpenNow: cafeteria.isOpenNow(),
       currentPeriod: cafeteria.getCurrentPeriod(),
       canTakeout: cafeteria.canTakeout(),
-      acceptsMealTicket: cafeteria.acceptsMealTicket(),
     };
   },
 
@@ -399,10 +399,8 @@ export const CafeteriaAdapter = {
       return "영업시간 정보 없음";
     }
 
-    const hoursText = parts.join(" / ");
-    const note = businessHours.getNote();
-
-    return note ? `${hoursText} (${note})` : hoursText;
+    // note는 별도로 표시하므로 영업시간만 반환
+    return parts.join(" / ");
   },
 
   /**
