@@ -6,7 +6,7 @@ import "server-only";
 
 // Data Layer
 import {
-  CafeteriaRemoteDataSourceMockImpl,
+  CafeteriaRemoteDataSourceImpl,
   CafeteriaRepositoryImpl,
   CafeteriaReviewRemoteDataSourceMockImpl,
   CafeteriaReviewRepositoryImpl,
@@ -77,8 +77,8 @@ class CafeteriaServerContainer {
       refreshTokenService, // Server-side: RefreshTokenService 주입
     );
 
-    // Data Layer - Use mock DataSource for both cafeteria and reviews (for development)
-    const cafeteriaDataSource = new CafeteriaRemoteDataSourceMockImpl();
+    // Data Layer
+    const cafeteriaDataSource = new CafeteriaRemoteDataSourceImpl(_httpClient);
     const cafeteriaRepository = new CafeteriaRepositoryImpl(
       cafeteriaDataSource,
     );
