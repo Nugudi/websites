@@ -1,9 +1,7 @@
 "use client";
 
-import { CafeteriaAdapter } from "@cafeteria/presentation/shared/adapters";
+import { useGetCafeteriaDetail } from "@cafeteria/presentation/client/hooks/queries/get-cafeteria-detail.query";
 import { Tabs } from "@nugudi/react-components-tab";
-import { useQuery } from "@tanstack/react-query";
-import { getCafeteriaClientContainer } from "@/src/domains/cafeteria/di/cafeteria-client-container";
 import { CafeteriaInfoTab } from "../../components/cafeteria-info-tab";
 import { CafeteriaMenuTab } from "../../components/cafeteria-menu-tab";
 
@@ -14,30 +12,7 @@ interface CafeteriaTabSectionProps {
 export const CafeteriaTabSection = ({
   cafeteriaId,
 }: CafeteriaTabSectionProps) => {
-  const container = getCafeteriaClientContainer();
-  const getCafeteriaByIdUseCase = container.getGetCafeteriaById();
-
-  const {
-    data: cafeteria,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["cafeteria", "detail", cafeteriaId],
-    queryFn: async () => {
-      const entity = await getCafeteriaByIdUseCase.execute(cafeteriaId);
-      return CafeteriaAdapter.toUiDetailItem(entity);
-    },
-    staleTime: 5 * 60 * 1000,
-    gcTime: 30 * 60 * 1000,
-  });
-
-  if (isLoading) {
-    return <div>Loading tabs...</div>;
-  }
-
-  if (isError || !cafeteria) {
-    return null;
-  }
+  const { data: cafeteria } = useGetCafeteriaDetail(cafeteriaId);
 
   return (
     <Tabs defaultValue="info" scrollOffset={42}>
