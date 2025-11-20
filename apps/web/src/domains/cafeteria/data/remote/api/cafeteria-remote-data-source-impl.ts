@@ -30,6 +30,7 @@ import type {
   SuccessResponseRegisterCafeteriaMenuResponse,
   SuccessResponseRegisterCafeteriaResponse,
 } from "../dto";
+import { CafeteriaRemoteDataSourceMockImpl } from "./cafeteria-remote-data-source-mock-impl";
 
 export class CafeteriaRemoteDataSourceImpl
   implements CafeteriaRemoteDataSource
@@ -109,7 +110,7 @@ export class CafeteriaRemoteDataSourceImpl
    * 구내식당 메뉴 타임라인 조회 (무한 스크롤)
    *
    * TODO: 백엔드 API 완성되면 실제 엔드포인트로 교체
-   * TEMPORARY: 현재는 stub 구현에서만 사용됨
+   * TEMPORARY: Mock 데이터 사용
    */
   async getCafeteriaMenuTimeline(
     _id: string,
@@ -121,6 +122,9 @@ export class CafeteriaRemoteDataSourceImpl
     data: GetCafeteriaMenuTimelineResponse[];
     pageInfo: PageInfo;
   }> {
+    // TEMPORARY: 백엔드 API 준비 전까지 Mock 데이터 사용
+    const mockImpl = new CafeteriaRemoteDataSourceMockImpl();
+    return mockImpl.getCafeteriaMenuTimeline();
     // TODO: 실제 API 구현 시 아래 코드로 교체
     // const response = await this.httpClient.get<PageResponse...>(
     //   `/api/v1/cafeterias/${id}/menus/timeline`,
@@ -128,9 +132,9 @@ export class CafeteriaRemoteDataSourceImpl
     // );
     // return { data: response.data.data || [], pageInfo: response.data.pageInfo || ... };
 
-    throw new Error(
-      "getCafeteriaMenuTimeline is not yet implemented in real API - use stub repository",
-    );
+    // throw new Error(
+    //   "getCafeteriaMenuTimeline is not yet implemented in real API - use stub repository",
+    // );
   }
 
   /**

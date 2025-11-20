@@ -29,9 +29,6 @@ type BusinessInfoProps = {
 };
 
 const BusinessInfo = ({ cafeteria }: BusinessInfoProps) => {
-  const fullHours = cafeteria.fullBusinessHours;
-  const phone = cafeteria.phone;
-
   return (
     <VStack gap={12}>
       <Title fontSize="t3" colorShade={800}>
@@ -43,13 +40,18 @@ const BusinessInfo = ({ cafeteria }: BusinessInfoProps) => {
         borderRadius="md"
         className={styles.infoSection}
       >
-        <InfoRow icon="⏰" label={fullHours} />
-        <InfoRow
-          icon="💰"
-          label={`가격 ${formatPriceWithCurrency(cafeteria.mealTicketPrice ?? 0)}`}
-        />
-        {cafeteria.takeoutAvailable && <InfoRow icon="📦" label="포장 가능" />}
-        {phone && <InfoRow icon="📞" label={phone} />}
+        <InfoRow icon="⏰" label={cafeteria.fullBusinessHours} />
+        {cafeteria.hasNote && (
+          <InfoRow icon="📝" label={cafeteria.businessHours!.note!} />
+        )}
+        {cafeteria.hasMealTicketPrice && (
+          <InfoRow
+            icon="💰"
+            label={`가격 ${formatPriceWithCurrency(cafeteria.mealTicketPrice!)}`}
+          />
+        )}
+        {cafeteria.canTakeout && <InfoRow icon="📦" label="포장 가능" />}
+        {cafeteria.hasPhone && <InfoRow icon="📞" label={cafeteria.phone!} />}
       </VStack>
     </VStack>
   );
@@ -60,7 +62,7 @@ type LocationInfoProps = {
 };
 
 const LocationInfo = ({ cafeteria }: LocationInfoProps) => {
-  const hasCoordinates = cafeteria.latitude && cafeteria.longitude;
+  const hasCoordinates = cafeteria.hasLocation;
 
   return (
     <VStack gap={12}>
@@ -118,7 +120,7 @@ const InfoRow = ({ icon, label }: InfoRowProps) => {
   return (
     <HStack gap={8} align="center">
       <Box className={styles.infoIcon}>{icon}</Box>
-      <Body fontSize="b3" colorShade={700}>
+      <Body fontSize="b3" colorShade={700} className={styles.infoLabel}>
         {label}
       </Body>
     </HStack>

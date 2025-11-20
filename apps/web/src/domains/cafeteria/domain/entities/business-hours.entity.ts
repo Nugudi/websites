@@ -45,6 +45,11 @@ export interface BusinessHours {
   hasDinner(): boolean;
 
   /**
+   * 영업시간 비고 정보가 있는지 확인
+   */
+  hasNote(): boolean;
+
+  /**
    * 특정 시각에 영업 중인지 확인
    * @param hour - 시간 (0-23)
    * @param minute - 분 (0-59)
@@ -163,6 +168,10 @@ export class BusinessHoursEntity implements BusinessHours {
 
   hasDinner(): boolean {
     return this._dinner !== null;
+  }
+
+  hasNote(): boolean {
+    return this._note !== null;
   }
 
   isOpenAt(

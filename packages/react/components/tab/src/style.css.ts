@@ -5,7 +5,6 @@ import { recipe } from "@vanilla-extract/recipes";
 export const tabsContainerStyle = style({
   width: "100%",
   WebkitTapHighlightColor: "transparent",
-  overflowX: "hidden",
 });
 
 export const tabListWrapper = style({
@@ -15,14 +14,12 @@ export const tabListWrapper = style({
   zIndex: 100,
   width: "100%",
   borderBottom: `1px solid ${vars.colors.$scale.zinc[200]}`,
-  overflowX: "hidden",
 });
 
 export const tabListStyle = recipe({
   base: {
     display: "flex",
     width: "100%",
-    overflowX: "hidden",
   },
 });
 

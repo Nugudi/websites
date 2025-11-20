@@ -17,3 +17,7 @@ export const mapPlaceholder = style({
 export const infoIcon = style({
   color: vars.colors.$scale.zinc[500],
 });
+
+export const infoLabel = style({
+  wordBreak: "keep-all",
+});

@@ -1,10 +1,8 @@
 "use client";
 
-import { CafeteriaAdapter } from "@cafeteria/presentation/shared/adapters";
+import { useGetCafeteriaDetail } from "@cafeteria/presentation/client/hooks/queries/get-cafeteria-detail.query";
 import { VStack } from "@nugudi/react-components-layout";
-import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
-import { getCafeteriaClientContainer } from "@/src/domains/cafeteria/di/cafeteria-client-container";
 import { CafeteriaInfoCard } from "../../components/cafeteria-info-card";
 import * as styles from "./index.css";
 
@@ -15,45 +13,21 @@ interface CafeteriaHeroSectionProps {
 export const CafeteriaHeroSection = ({
   cafeteriaId,
 }: CafeteriaHeroSectionProps) => {
-  const container = getCafeteriaClientContainer();
-  const getCafeteriaByIdUseCase = container.getGetCafeteriaById();
-
-  const {
-    data: cafeteria,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["cafeteria", "detail", cafeteriaId],
-    queryFn: async () => {
-      const entity = await getCafeteriaByIdUseCase.execute(cafeteriaId);
-      return CafeteriaAdapter.toUiDetailItem(entity);
-    },
-    staleTime: 5 * 60 * 1000,
-    gcTime: 30 * 60 * 1000,
-  });
-
-  if (isLoading) {
-    return (
-      <VStack width="full">
-        <HeroImage cafeteriaName="로딩 중..." />
-        <div>Loading...</div>
-      </VStack>
-    );
-  }
-
-  if (isError || !cafeteria) {
-    return null;
-  }
+  const { data: cafeteria } = useGetCafeteriaDetail(cafeteriaId);
 
   return (
     <VStack width="full">
-      <HeroImage cafeteriaName={cafeteria.name || ""} />
+      <HeroImage cafeteriaName={cafeteria.name} />
       <CafeteriaInfoCard cafeteria={cafeteria} />
     </VStack>
   );
 };
 
-const HeroImage = ({ cafeteriaName }: { cafeteriaName: string }) => {
+interface HeroImageProps {
+  cafeteriaName: string;
+}
+
+const HeroImage = ({ cafeteriaName }: HeroImageProps) => {
   return (
     <Image
       src="/images/cafeterias-test.png"

@@ -10,3 +10,4 @@ export {
   type RelativeTimeOptions,
 } from "./format-relative-time";
 export { formatTime, formatTimeRange } from "./format-time";
+export { parseHour, parseMinute, parseSecond } from "./parse-time";

@@ -4,7 +4,7 @@
 
 // Data Layer
 import {
-  CafeteriaRemoteDataSourceMockImpl,
+  CafeteriaRemoteDataSourceImpl,
   CafeteriaRepositoryImpl,
   CafeteriaReviewRemoteDataSourceMockImpl,
   CafeteriaReviewRepositoryImpl,
@@ -34,6 +34,12 @@ import {
   type RegisterCafeteriaUseCase,
   RegisterCafeteriaUseCaseImpl,
 } from "@cafeteria/domain";
+// Infrastructure Layer
+import { AuthenticatedHttpClient } from "@core/infrastructure/http/authenticated-http-client";
+import { ClientTokenProvider } from "@core/infrastructure/http/client-token-provider";
+import { FetchHttpClient } from "@core/infrastructure/http/fetch-http-client";
+import type { HttpClient } from "@core/infrastructure/http/http-client.interface";
+import { ClientSessionManager } from "@core/infrastructure/storage/client-session-manager";
 
 export interface CafeteriaClientContainer {
   // Cafeteria UseCase Getters
@@ -52,31 +58,56 @@ export interface CafeteriaClientContainer {
 }
 
 class CafeteriaClientContainerImpl implements CafeteriaClientContainer {
-  // Data Layer (Lazy)
-  private _cafeteriaDataSource?: CafeteriaRemoteDataSourceMockImpl;
+  private _sessionManager?: ClientSessionManager;
+  private _tokenProvider?: ClientTokenProvider;
+  private _baseClient?: FetchHttpClient;
+  private _httpClient?: HttpClient;
+
+  private _cafeteriaDataSource?: CafeteriaRemoteDataSourceImpl;
   private _cafeteriaRepository?: CafeteriaRepositoryImpl;
   private _reviewDataSource?: CafeteriaReviewRemoteDataSourceMockImpl;
   private _reviewRepository?: CafeteriaReviewRepositoryImpl;
 
-  // Cafeteria UseCases (Lazy)
-  private _getCafeteriasWithMenuUseCase?: GetCafeteriasWithMenuUseCase;
-  private _getCafeteriaByIdUseCase?: GetCafeteriaByIdUseCase;
-  private _getCafeteriaMenuByDateUseCase?: GetCafeteriaMenuByDateUseCase;
-  private _getCafeteriaMenuTimelineUseCase?: GetCafeteriaMenuTimelineUseCase;
-  private _getCafeteriaMenuAvailabilityUseCase?: GetCafeteriaMenuAvailabilityUseCase;
-  private _registerCafeteriaUseCase?: RegisterCafeteriaUseCase;
-  private _registerCafeteriaMenuUseCase?: RegisterCafeteriaMenuUseCase;
+  private getSessionManager(): ClientSessionManager {
+    if (!this._sessionManager) {
+      this._sessionManager = new ClientSessionManager();
+    }
+    return this._sessionManager;
+  }
 
-  // Review UseCases (Lazy)
-  private _createReviewUseCase?: CreateReviewUseCase;
-  private _getReviewCommentsUseCase?: GetReviewCommentsUseCase;
-  private _createReviewCommentUseCase?: CreateReviewCommentUseCase;
-  private _createReviewCommentReplyUseCase?: CreateReviewCommentReplyUseCase;
+  private getTokenProvider(): ClientTokenProvider {
+    if (!this._tokenProvider) {
+      this._tokenProvider = new ClientTokenProvider(this.getSessionManager());
+    }
+    return this._tokenProvider;
+  }
 
-  // Data Layer Getters (Private - Lazy Initialization)
-  private getCafeteriaDataSource(): CafeteriaRemoteDataSourceMockImpl {
+  private getBaseClient(): FetchHttpClient {
+    if (!this._baseClient) {
+      this._baseClient = new FetchHttpClient({
+        baseUrl: process.env.NEXT_PUBLIC_API_URL || "",
+      });
+    }
+    return this._baseClient;
+  }
+
+  private getHttpClient(): HttpClient {
+    if (!this._httpClient) {
+      this._httpClient = new AuthenticatedHttpClient(
+        this.getBaseClient(),
+        this.getTokenProvider(),
+        this.getSessionManager(),
+        undefined,
+      );
+    }
+    return this._httpClient;
+  }
+
+  private getCafeteriaDataSource(): CafeteriaRemoteDataSourceImpl {
     if (!this._cafeteriaDataSource) {
-      this._cafeteriaDataSource = new CafeteriaRemoteDataSourceMockImpl();
+      this._cafeteriaDataSource = new CafeteriaRemoteDataSourceImpl(
+        this.getHttpClient(),
+      );
     }
     return this._cafeteriaDataSource;
   }
@@ -106,103 +137,53 @@ class CafeteriaClientContainerImpl implements CafeteriaClientContainer {
     return this._reviewRepository;
   }
 
-  // Cafeteria UseCase Getters (Public - Lazy Initialization)
   getGetCafeteriasWithMenu(): GetCafeteriasWithMenuUseCase {
-    if (!this._getCafeteriasWithMenuUseCase) {
-      this._getCafeteriasWithMenuUseCase = new GetCafeteriasWithMenuUseCaseImpl(
-        this.getCafeteriaRepository(),
-      );
-    }
-    return this._getCafeteriasWithMenuUseCase;
+    return new GetCafeteriasWithMenuUseCaseImpl(this.getCafeteriaRepository());
   }
 
   getGetCafeteriaById(): GetCafeteriaByIdUseCase {
-    if (!this._getCafeteriaByIdUseCase) {
-      this._getCafeteriaByIdUseCase = new GetCafeteriaByIdUseCaseImpl(
-        this.getCafeteriaRepository(),
-      );
-    }
-    return this._getCafeteriaByIdUseCase;
+    return new GetCafeteriaByIdUseCaseImpl(this.getCafeteriaRepository());
   }
 
   getGetCafeteriaMenuByDate(): GetCafeteriaMenuByDateUseCase {
-    if (!this._getCafeteriaMenuByDateUseCase) {
-      this._getCafeteriaMenuByDateUseCase =
-        new GetCafeteriaMenuByDateUseCaseImpl(this.getCafeteriaRepository());
-    }
-    return this._getCafeteriaMenuByDateUseCase;
+    return new GetCafeteriaMenuByDateUseCaseImpl(this.getCafeteriaRepository());
   }
 
   getGetCafeteriaMenuTimeline(): GetCafeteriaMenuTimelineUseCase {
-    if (!this._getCafeteriaMenuTimelineUseCase) {
-      this._getCafeteriaMenuTimelineUseCase =
-        new GetCafeteriaMenuTimelineUseCaseImpl(this.getCafeteriaRepository());
-    }
-    return this._getCafeteriaMenuTimelineUseCase;
+    return new GetCafeteriaMenuTimelineUseCaseImpl(
+      this.getCafeteriaRepository(),
+    );
   }
 
   getGetCafeteriaMenuAvailability(): GetCafeteriaMenuAvailabilityUseCase {
-    if (!this._getCafeteriaMenuAvailabilityUseCase) {
-      this._getCafeteriaMenuAvailabilityUseCase =
-        new GetCafeteriaMenuAvailabilityUseCaseImpl(
-          this.getCafeteriaRepository(),
-        );
-    }
-    return this._getCafeteriaMenuAvailabilityUseCase;
+    return new GetCafeteriaMenuAvailabilityUseCaseImpl(
+      this.getCafeteriaRepository(),
+    );
   }
 
   getRegisterCafeteria(): RegisterCafeteriaUseCase {
-    if (!this._registerCafeteriaUseCase) {
-      this._registerCafeteriaUseCase = new RegisterCafeteriaUseCaseImpl(
-        this.getCafeteriaRepository(),
-      );
-    }
-    return this._registerCafeteriaUseCase;
+    return new RegisterCafeteriaUseCaseImpl(this.getCafeteriaRepository());
   }
 
   getRegisterCafeteriaMenu(): RegisterCafeteriaMenuUseCase {
-    if (!this._registerCafeteriaMenuUseCase) {
-      this._registerCafeteriaMenuUseCase = new RegisterCafeteriaMenuUseCaseImpl(
-        this.getCafeteriaRepository(),
-      );
-    }
-    return this._registerCafeteriaMenuUseCase;
+    return new RegisterCafeteriaMenuUseCaseImpl(this.getCafeteriaRepository());
   }
 
-  // Review UseCase Getters (Public - Lazy Initialization)
+  // Review UseCase Getters (Public - 매번 새로 생성)
   getCreateReview(): CreateReviewUseCase {
-    if (!this._createReviewUseCase) {
-      this._createReviewUseCase = new CreateReviewUseCaseImpl(
-        this.getReviewRepository(),
-      );
-    }
-    return this._createReviewUseCase;
+    return new CreateReviewUseCaseImpl(this.getReviewRepository());
   }
 
   getGetReviewComments(): GetReviewCommentsUseCase {
-    if (!this._getReviewCommentsUseCase) {
-      this._getReviewCommentsUseCase = new GetReviewCommentsUseCaseImpl(
-        this.getReviewRepository(),
-      );
-    }
-    return this._getReviewCommentsUseCase;
+    return new GetReviewCommentsUseCaseImpl(this.getReviewRepository());
   }
 
   getCreateReviewComment(): CreateReviewCommentUseCase {
-    if (!this._createReviewCommentUseCase) {
-      this._createReviewCommentUseCase = new CreateReviewCommentUseCaseImpl(
-        this.getReviewRepository(),
-      );
-    }
-    return this._createReviewCommentUseCase;
+    return new CreateReviewCommentUseCaseImpl(this.getReviewRepository());
   }
 
   getCreateReviewCommentReply(): CreateReviewCommentReplyUseCase {
-    if (!this._createReviewCommentReplyUseCase) {
-      this._createReviewCommentReplyUseCase =
-        new CreateReviewCommentReplyUseCaseImpl(this.getReviewRepository());
-    }
-    return this._createReviewCommentReplyUseCase;
+    return new CreateReviewCommentReplyUseCaseImpl(this.getReviewRepository());
   }
 }
 
