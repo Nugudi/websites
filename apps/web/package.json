@@ -44,7 +44,7 @@
     "dayjs": "^1.11.19",
     "import-in-the-middle": "^1.11.2",
     "jose": "^6.1.0",
-    "next": "16.0.7",
+    "next": "16.0.10",
     "openapi-fetch": "^0.13.8",
     "pretendard": "^1.3.9",
     "react": "^19.2.0",
